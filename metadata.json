@@ -1,0 +1,8 @@
+{
+  "name": "FezGuideTours - Authentic Fez Tours & Day Trips",
+  "description": "Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

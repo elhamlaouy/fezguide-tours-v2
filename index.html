@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          var currentFetch = (typeof window !== 'undefined' && typeof window.fetch === 'function')
+            ? window.fetch.bind(window)
+            : (typeof window !== 'undefined' ? window.fetch : null);
+
+          var propDesc = {
+            get: function() {
+              return currentFetch;
+            },
+            set: function(val) {
+              currentFetch = val;
+            },
+            configurable: true,
+            enumerable: true
+          };
+
+          try {
+            Object.defineProperty(window, 'fetch', propDesc);
+          } catch (e1) {}
+
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            try {
+              Object.defineProperty(Window.prototype, 'fetch', propDesc);
+            } catch (e2) {}
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FezGuideTours - Authentic Fez Tours &amp; Day Trips</title>
+    <meta name="description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
+    <meta property="og:title" content="FezGuideTours - Authentic Fez Tours &amp; Day Trips" />
+    <meta property="og:description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#005F5A" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#FAF8F5] text-[#1C2524] antialiased selection:bg-[#005F5A]/15 selection:text-[#005F5A]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
