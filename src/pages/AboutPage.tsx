@@ -24,28 +24,30 @@ export const AboutPage: React.FC<AboutPageProps> = ({
   return (
     <div className="space-y-16 pb-20">
       {/* Header Banner */}
-      <section className="relative bg-[#15201F] text-white py-16 sm:py-24 overflow-hidden">
+      <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
           src="/src/assets/images/real/fez_explore_medina_image1.jpg"
           alt="Medina of Fez"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-25"
+          className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15201F] via-[#15201F]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-black/15 to-black/20" />
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#E07A5F]">
-            <Compass className="w-4 h-4 text-[#00A896]" />
-            <span>Fez Guide Tours — Local Guiding Team</span>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
+              <Compass className="w-4 h-4 text-[#005F5A]" />
+              <span>Fez Guide Tours — Local Guiding Team</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
+              {story.title[language]}
+            </h1>
+
+            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
+              {story.subtitle[language]}
+            </p>
           </div>
-
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-balance">
-            {story.title[language]}
-          </h1>
-
-          <p className="text-sm sm:text-base text-[#CCD8D6] max-w-2xl mx-auto leading-relaxed">
-            {story.subtitle[language]}
-          </p>
         </div>
       </section>
 
@@ -58,7 +60,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
                 {language === 'ar' ? 'من نحن' : language === 'fr' ? 'À Propos de Nous' : 'About Us'}
               </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
                 {language === 'ar'
                   ? 'اكتشف فاس بطريقة بسيطة، مريحة وتجربة خاصة بك'
                   : language === 'fr'

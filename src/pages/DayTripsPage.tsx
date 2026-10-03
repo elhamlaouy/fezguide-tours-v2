@@ -42,28 +42,30 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
   return (
     <div className="space-y-16 pb-20">
       {/* Header Banner */}
-      <section className="relative bg-[#15201F] text-white py-16 sm:py-24 overflow-hidden">
+      <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
           src="/src/assets/images/real/daytrip_chefchaouen_image1.jpg"
           alt="Chefchaouen Blue City"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15201F] via-[#15201F]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-black/15 to-black/20" />
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#E07A5F]">
-            <MapPin className="w-4 h-4 text-[#00A896]" />
-            <span>Chefchaouen · Volubilis & Meknes · Middle Atlas & Ifrane</span>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
+              <MapPin className="w-4 h-4 text-[#005F5A]" />
+              <span>Chefchaouen · Volubilis & Meknes · Middle Atlas & Ifrane</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
+              {headers.title[language]}
+            </h1>
+
+            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
+              {headers.subtitle[language]}
+            </p>
           </div>
-
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-balance">
-            {headers.title[language]}
-          </h1>
-
-          <p className="text-sm sm:text-base text-[#CCD8D6] max-w-2xl mx-auto leading-relaxed">
-            {headers.subtitle[language]}
-          </p>
         </div>
       </section>
 
@@ -176,7 +178,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
               {language === 'ar' ? 'روائع الطبيعة والتاريخ' : 'Scenic Landscapes & Heritage'}
             </span>
-            <h3 className="text-2xl font-bold text-[#1C2524]">
+            <h3 className="text-2xl font-bold text-[#005F5A]">
               {language === 'ar' ? 'ما ستراه خلال رحلاتك خارج فاس' : 'What You Discover Beyond the City'}
             </h3>
           </div>

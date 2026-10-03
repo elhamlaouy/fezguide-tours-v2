@@ -158,62 +158,69 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="space-y-20 pb-16">
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[560px] lg:min-h-[640px] flex items-center justify-center bg-[#15201F] text-white overflow-hidden">
-        {/* Background Image with Scrim */}
+      <section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#FAF8F5] overflow-hidden py-12 sm:py-16">
+        {/* Background Image - Lighter, clearly shown without heavy dark veil */}
         <img
           src="/src/assets/images/real/about_us_image7.jpg"
           alt="Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-40 object-center"
+          className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#15201F] via-[#15201F]/40 to-transparent" />
+        {/* Soft edge gradients so the image blends into the page */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-black/15 to-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-6">
-          {/* Subtle Tagline kicker (No pill) */}
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#E07A5F]">
-            <MapPin className="w-3.5 h-3.5 text-[#00A896]" />
-            <span>{tHero.tagline[language]}</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight max-w-4xl mx-auto text-balance">
-            {tHero.title[language]}
-          </h1>
-
-          <p className="text-base sm:text-lg text-[#CCD8D6] max-w-2xl mx-auto leading-relaxed">
-            {tHero.subtitle[language]}
-          </p>
-
-          {/* Action CTAs */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button
-              onClick={() => onNavigate('fez')}
-              className="w-full sm:w-auto px-7 py-3.5 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-sm rounded-xl shadow-lg transition-transform active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-            >
-              <Compass className="w-4 h-4" />
-              <span>{tHero.ctaExplore[language]}</span>
-            </button>
-            <button
-              onClick={() => onNavigate('day-trips')}
-              className="w-full sm:w-auto px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl border border-white/20 backdrop-blur-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
-            >
-              <MapPin className="w-4 h-4 text-[#00A896]" />
-              <span>{tHero.ctaDayTrips[language]}</span>
-            </button>
-          </div>
-
-          {/* Trust Row */}
-          <div className="pt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-[#9BB1AF]">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-[#00A896]" />
-              <span>Ministry of Tourism Licensed #FEZ-2849</span>
+        {/* Hero Card Container - Transparent light blur for photo visibility & crystal clear contrast */}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-2xl border border-white/40 text-center space-y-6">
+            {/* Tagline kicker */}
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
+              <MapPin className="w-4 h-4 text-[#005F5A]" />
+              <span>{tHero.tagline[language]}</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 text-[#E07A5F] fill-current" />
-              <span>5.0 Star Rated (320+ Verified Reviews)</span>
+
+            {/* Big Main Title - Logo Brand Green #005F5A */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#005F5A] max-w-3xl mx-auto text-balance drop-shadow-xs">
+              {tHero.title[language]}
+            </h1>
+
+            {/* Subtitle - Sharp, high-contrast readable text */}
+            <p className="text-base sm:text-lg text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
+              {tHero.subtitle[language]}
+            </p>
+
+            {/* Action CTAs */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <button
+                onClick={() => onNavigate('fez')}
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-sm rounded-xl shadow-lg ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <Compass className="w-4 h-4" />
+                <span>{tHero.ctaExplore[language]}</span>
+              </button>
+              <button
+                onClick={() => onNavigate('day-trips')}
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-sm rounded-xl shadow-md ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+              >
+                <MapPin className="w-4 h-4 text-[#E6F4F2]" />
+                <span>{tHero.ctaDayTrips[language]}</span>
+              </button>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-[#00A896]" />
-              <span>24/7 WhatsApp Assistance</span>
+
+            {/* Trust Row */}
+            <div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">
+              <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
+                <ShieldCheck className="w-4 h-4 text-[#005F5A]" />
+                <span>Ministry of Tourism Licensed #FEZ-2849</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
+                <Star className="w-4 h-4 text-[#E07A5F] fill-current" />
+                <span>5.0 Star Rated (320+ Verified Reviews)</span>
+              </div>
+              <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
+                <Clock className="w-4 h-4 text-[#005F5A]" />
+                <span>24/7 WhatsApp Assistance</span>
+              </div>
             </div>
           </div>
         </div>
@@ -225,7 +232,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
             FezGuideTours Ecosystem
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
             {tHomeNav.title[language]}
           </h2>
           <p className="text-xs sm:text-sm text-[#52605E] leading-relaxed">
@@ -293,7 +300,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
               Handcrafted Itineraries
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight mt-1">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight mt-1">
               Top Featured Medina Tours & Excursions
             </h2>
           </div>
@@ -327,7 +334,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
               The Local Difference
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
               Why Discerning Travelers Choose Us
             </h2>
             <p className="text-xs sm:text-sm text-[#52605E]">
@@ -365,7 +372,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
             Verified Guest Reviews
           </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
             Memories Made in Fez
           </h2>
         </div>
