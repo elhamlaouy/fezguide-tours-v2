@@ -904,10 +904,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 8. FOOD TOURS: STREET FOOD TASTING WALK =====================
   'food-tasting-walk': {
     galleryImages: [
-      '/src/assets/images/real/food_tasting_walk_image1.jpg',
-      '/src/assets/images/real/food_culture_life_image1.jpg',
-      '/src/assets/images/real/food_markets_souks_image1.jpg',
-      '/src/assets/images/real/tips_practical_image1.jpg',
+      '/src/assets/images/real/food_medina_walk.jpg',
+      '/src/assets/images/real/food_tagine_table.jpg',
+      '/src/assets/images/real/food_feast_board.jpg',
+      '/src/assets/images/real/food_couscous_plate.jpg',
+      '/src/assets/images/real/food_spice_souk.jpg',
     ],
     itinerary: [
       {
@@ -1039,6 +1040,218 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
           en: 'As a chef, this was the most genuine food experience I had in Morocco. No sanitized tourist restaurant, just raw, honest, delicious heritage food eaten where the locals eat. The hot sfenj and bissara were extraordinary!',
           fr: 'En tant que cuisinier, c’est la meilleure expérience culinaire de mon voyage. Une nourriture authentique, généreuse et pleine d’âme.',
           ar: 'كطاهٍ محترف، كانت هذه أصدق جولة طعام عشتها في المغرب. أكل شعبي حقيقي ولذيذ وسط أهل فاس، والسفنج والبيصارة حكاية استثنائية!',
+        },
+      },
+    ],
+  },
+
+  // ===================== 9. FOOD TOURS: TRADITIONAL FASSI FEAST =====================
+  'food-traditional-fassi': {
+    galleryImages: [
+      '/src/assets/images/real/food_feast_board.jpg',
+      '/src/assets/images/real/food_tagine_table.jpg',
+      '/src/assets/images/real/food_couscous_plate.jpg',
+      '/src/assets/images/real/food_medina_walk.jpg',
+      '/src/assets/images/real/food_spice_souk.jpg',
+    ],
+    itinerary: [
+      {
+        time: '11:00 AM',
+        title: {
+          en: 'The History of Fassi Imperial Gastronomy',
+          fr: 'Histoire de la Gastronomie Impériale Fassie',
+          ar: 'تاريخ المطبخ الفاسي الإمبراطوري وأصوله الأندلسية',
+        },
+        description: {
+          en: 'Introduction to Arab-Andalusian culinary crosscurrents, spice blending with Ras el Hanout, and the royal pastilla tradition.',
+          fr: 'Introduction aux influences arabo-andalouses, composition du Ras el Hanout et secrets de la pastilla royale.',
+          ar: 'مقدمة عن التأثيرات الأندلسية والمغربية في الطبخ الفاسي، وتركيبة بهارات رأس الحانوت النادرة وأسرار البسطيلة الملكية.',
+        },
+        badge: { en: 'Culinary Heritage', fr: 'Héritage Culinaire', ar: 'تراث الطهي' },
+      },
+      {
+        time: '12:30 PM',
+        title: {
+          en: 'Royal Pastilla & Slow-Simmered Tajine Tasting',
+          fr: 'Dégustation de Pastilla Royale & Tajines Mijotés',
+          ar: 'مائدة البسطيلة الفاسية وطواجن اللحم بالبرقوق واللوز',
+        },
+        description: {
+          en: 'Savor crisp golden pastilla dusted with cinnamon and sugar, followed by slow-cooked lamb with caramelized prunes, toasted almonds, and handmade flatbreads.',
+          fr: 'Dégustation de pastilla croustillante à la cannelle suivie d’un tajine d’agneau fondant aux pruneaux caramélisés et amandes torréfiées.',
+          ar: 'تذوق البسطيلة المقرمشة بالقرفة واللوز، يليها طاجين لحم الغنم الفاسي بالبرقوق المعسل واللوز المقلي والخبز البلدي الساخن.',
+        },
+        badge: { en: 'Royal Feast', fr: 'Festin Royal', ar: 'وليمة ملكية' },
+      },
+      {
+        time: '02:00 PM',
+        title: {
+          en: 'Tea Ceremony & Gazelle Horns (Kaab el-Ghzal)',
+          fr: 'Cérémonie du Thé & Cornes de Gazelle',
+          ar: 'جلسة الشاي الفاسي وكعب الغزال الأصيل',
+        },
+        description: {
+          en: 'End the feast with orange blossom infused almond pastries and authentic fresh mint tea.',
+          fr: 'Clôture avec pâtisseries aux amandes et eau de fleur d’oranger, accompagnées du thé à la menthe.',
+          ar: 'ختام الجلسة بكعب الغزال المعطر بماء الزهر الحر وشاي النعناع المنعش.',
+        },
+        badge: { en: 'Sweet Finish', fr: 'Douceur', ar: 'حلويات فاسية' },
+      },
+    ],
+    included: {
+      en: [
+        'Full multi-course royal Moroccan meal (Pastilla, Tagines, Salads, Pastries, Drinks)',
+        '100% Private dining experience in an authentic Medina Riad',
+        'Expert commentary from a local food historian',
+        'Traditional mint tea ritual',
+      ],
+      fr: [
+        'Repas complet gastronomique d’exception (Pastilla, tajines, salades, pâtisseries, boissons)',
+        'Expérience 100% privée dans un riad traditionnel de la médina',
+        'Explications passionnantes d’un expert culinaire local',
+        'Cérémonie traditionnelle du thé à la menthe',
+      ],
+      ar: [
+        'وجبة غداء مغربية ملكية كاملة (بسطيلة، طواجن، سلطات مغربية، حلويات، مشروبات)',
+        'تجربة خاصة 100% في رياض فاسي تراثي عريق',
+        'شروحات موثقة لأسرار الطبخ من خبير محلي',
+        'صينية شاي مغربي بالنعناع والحلويات التقليدية',
+      ],
+    },
+    excluded: {
+      en: ['Alcoholic beverages', 'Personal souvenir purchases', 'Staff gratuities'],
+      fr: ['Boissons alcoolisées', 'Achats personnels', 'Pourboires'],
+      ar: ['المشروبات الكحولية', 'المشتريات الشخصية', 'الإكراميات'],
+    },
+    whatToBring: {
+      en: ['Good appetite', 'Camera for beautiful food presentation photos'],
+      fr: ['Bonne faim', 'Appareil photo pour les superbes présentations'],
+      ar: ['شهية جيدة', 'كاميرا لتوثيق أطباق المائدة الفاسية الفاخرة'],
+    },
+    meetingPointDetails: {
+      en: 'Doorstep pickup at your Riad or hotel in Fez at 11:00 AM.',
+      fr: 'Prise en charge à votre riad à Fès à 11h00.',
+      ar: 'التوصيل من باب مقر إقامتك بالرياض في فاس عند الساعة 11:00 صباحاً.',
+    },
+    cancellationPolicy: {
+      en: 'Free cancellation up to 24 hours prior to experience.',
+      fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
+      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+    },
+    suitableFor: {
+      en: ['Couples', 'Food Connoisseurs', 'Families', 'Special Occasion Celebrations'],
+      fr: ['Couples', 'Gastronomes', 'Familles', 'Célébrations'],
+      ar: ['الأزواج', 'عشاق المطبخ الرفيع', 'العائلات', 'المناسبات والاحتفالات الخاصة'],
+    },
+    reviews: [
+      {
+        author: 'Guillaume & Claire Bernard',
+        location: 'Paris, France',
+        rating: 5,
+        date: 'October 2026',
+        comment: {
+          en: 'The pastilla here is a work of art. Melt-in-your-mouth perfection with just the right touch of cinnamon. Best meal in our entire 2 weeks in Morocco!',
+          fr: 'La pastilla est une œuvre d’art. Meilleur repas de nos 2 semaines au Maroc !',
+          ar: 'البسطيلة هنا تحفة فنية لا تُضاهى، تذوب في الفم بنكهة القرفة واللوز المتوازنة. أفضل وجبة تذوقناها في المغرب!',
+        },
+      },
+    ],
+  },
+
+  // ===================== 10. FOOD TOURS: FOOD CULTURE & LOCAL LIFE =====================
+  'food-culture-life': {
+    galleryImages: [
+      '/src/assets/images/real/food_couscous_plate.jpg',
+      '/src/assets/images/real/food_medina_walk.jpg',
+      '/src/assets/images/real/food_tagine_table.jpg',
+      '/src/assets/images/real/food_feast_board.jpg',
+      '/src/assets/images/real/food_spice_souk.jpg',
+    ],
+    itinerary: [
+      {
+        time: '09:30 AM',
+        title: {
+          en: 'Communal Oven (Ferran l-Houma) & Bread Making',
+          fr: 'Le Fournil de Quartier (Ferran) & Tradition du Pain',
+          ar: 'فران الحومة الشعبي وتقاليد خبز الدار البلدي',
+        },
+        description: {
+          en: 'Witness families and children delivering proofed bread dough to be baked on scented cedar wood embers. Learn the unique bread seals of neighborhood families.',
+          fr: 'Découvrez la tradition vivante du pain cuit au feu de bois dans les vieux fournil souterrains de la médina.',
+          ar: 'مشاهدة أهالي الحومة وهم يحملون صواني الخبز المطبوع بختم العائلة ليخبز على جمر خشب الأرز الفواح.',
+        },
+        badge: { en: 'Living Tradition', fr: 'Tradition Vivante', ar: 'تقليد حي' },
+      },
+      {
+        time: '11:00 AM',
+        title: {
+          en: 'Sacred Friday Couscous Ritual & Seven Vegetables',
+          fr: 'Le Rituel Sacré du Couscous du Vendredi & Sept Légumes',
+          ar: 'طقوس كسكس يوم الجمعة المباركة والخضار السبع',
+        },
+        description: {
+          en: 'Learn how couscous is hand-rolled from durum semolina, steamed three times in a couscoussier, and crowned with pumpkin, carrots, zucchini, turnips, cabbage, chickpeas, and sweet caramelized tfaya.',
+          fr: 'Comprenez le savoir-faire ancestral du couscous roulé à la main, cuit à la vapeur trois fois et garni des 7 légumes et tfaya caramélisée.',
+          ar: 'التعرف على فن فتل الكسكس يدوياً، وتفويره 3 مرات فوق المرق العطر، وتزيينه بالقرع والجزر والكوسا والحمص والتفاية المعسلة.',
+        },
+        badge: { en: 'Friday Heritage', fr: 'Couscous Rituel', ar: 'كسكس الجمعة' },
+      },
+    ],
+    included: {
+      en: [
+        'Private guided walking tour through authentic residential quarters',
+        'Exclusive access to historical working neighborhood ovens and mills',
+        'Tasting of fresh warm bread, olives, and traditional mint tea',
+        'Deep cultural storytelling on neighborhood solidarity and rituals',
+      ],
+      fr: [
+        'Visite pédestre privée des ruelles résidentielles préservées',
+        'Accès exclusif aux fournils et moulins traditionnels en activité',
+        'Dégustation de pain chaud tout juste sorti du four et thé à la menthe',
+        'Explications sur la vie sociale et la solidarité de quartier',
+      ],
+      ar: [
+        'جولة مشي خاصة داخل دروب وأحياء فاس السكنية الأصيلة',
+        'دخول حصري لأفران الحومة والمطاحن التقليدية التاريخية',
+        'تذوق الخبز الساخن الخارج لتوه من الفران مع زيت الزيتون والشاي',
+        'شرح ممتع لأواصر التضامن الاجتماعي وعادات أهل فاس العريقة',
+      ],
+    },
+    excluded: {
+      en: ['Personal grocery shopping', 'Guide tip'],
+      fr: ['Achats personnels', 'Pourboire guide'],
+      ar: ['المشتريات التذكارية', 'إكرامية المرشد'],
+    },
+    whatToBring: {
+      en: ['Comfortable walking shoes', 'Modest clothing for residential quarters', 'Camera'],
+      fr: ['Chaussures confortables', 'Tenue décente pour les quartiers résidentiels', 'Appareil photo'],
+      ar: ['حذاء مريح', 'لباس محتشم ومريح يناسب الأحياء السكنية', 'كاميرا'],
+    },
+    meetingPointDetails: {
+      en: 'Bab Boujloud or pickup at your Riad in Fez.',
+      fr: 'Bab Boujloud ou départ de votre riad.',
+      ar: 'أمام باب بوجلود أو من مقر إقامتك بالرياض.',
+    },
+    cancellationPolicy: {
+      en: 'Free cancellation up to 24 hours in advance.',
+      fr: 'Annulation gratuite jusqu’à 24h avant.',
+      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+    },
+    suitableFor: {
+      en: ['Anthropology & Culture Seekers', 'Families', 'Slow Travel Enthusiasts'],
+      fr: ['Amateurs de culture', 'Familles', 'Voyageurs curieux'],
+      ar: ['الباحثون عن الأصالة الثقافية', 'العائلات', 'عشاق السفر الهادئ'],
+    },
+    reviews: [
+      {
+        author: 'Elena & Matteo Rossi',
+        location: 'Florence, Italy',
+        rating: 5,
+        date: 'September 2026',
+        comment: {
+          en: 'Entering the underground communal bakery and smelling the cedar wood was a sensory memory we will keep forever. The couscous story is so beautiful.',
+          fr: 'Entrer dans le four à bois souterrain était un souvenir sensoriel inoubliable. L’histoire du couscous est magnifique.',
+          ar: 'دخول فران الحومة واستنشاق رائحة خشب الأرز والخبز الساخن تجربة حفرت في ذاكرتنا. حكاية الكسكس الفاسي وثقافته رائعة جداً.',
         },
       },
     ],

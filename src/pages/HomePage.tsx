@@ -73,7 +73,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'تذوق أكلات الشارع: الحرشة، البغرير، حساء البيصارة الساخن، أجبان الجبل والشاي بالنعناع.',
       },
       icon: UtensilsCrossed,
-      image: '/src/assets/images/real/food_tasting_walk_image1.jpg',
+      image: '/src/assets/images/real/food_medina_walk.jpg',
       badge: { en: 'Street Food Safari', fr: 'Dégustations', ar: 'تذوق أصيل' },
     },
     {

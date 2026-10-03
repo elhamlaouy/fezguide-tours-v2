@@ -63,7 +63,7 @@ interface CmsContextType extends CmsData {
   resetToDefaults: () => void;
 }
 
-const STORAGE_KEY = 'fezguidetours_cms_store_v2';
+const STORAGE_KEY = 'fezguidetours_cms_store_v6';
 
 const getInitialData = (): CmsData => {
   const initialTours: SectionPillar[] = [
@@ -72,6 +72,8 @@ const getInitialData = (): CmsData => {
     ...FOOD_TOURS_PILLARS.map((p) => ({ ...p, published: true })),
     ...TRAVEL_TIPS_PILLARS.map((p) => ({ ...p, published: true })),
   ];
+
+  const defaultToursMap = new Map(initialTours.map((t) => [t.id, t]));
 
   const defaultData: CmsData = {
     tours: initialTours,
@@ -101,8 +103,21 @@ const getInitialData = (): CmsData => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
+      // Synchronize canonical tour images so cached localStorage never serves outdated/inaccurate pictures
+      const syncedTours = (parsed.tours || defaultData.tours).map((t: SectionPillar) => {
+        const canonical = defaultToursMap.get(t.id);
+        if (canonical) {
+          return {
+            ...t,
+            image: canonical.image,
+            imageAlt: canonical.imageAlt,
+          };
+        }
+        return t;
+      });
+
       return {
-        tours: parsed.tours || defaultData.tours,
+        tours: syncedTours,
         customPages: parsed.customPages || defaultData.customPages,
         blogPosts: parsed.blogPosts || defaultData.blogPosts,
         teamMembers: parsed.teamMembers || defaultData.teamMembers,

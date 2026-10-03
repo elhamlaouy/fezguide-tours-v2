@@ -79,10 +79,10 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#15201F] text-white py-16 sm:py-24 overflow-hidden">
         <img
-          src="/src/assets/images/real/food_tasting_walk_image1.jpg"
+          src="/src/assets/images/real/food_medina_walk.jpg"
           alt="Moroccan Food Tasting Walk"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#15201F] via-[#15201F]/60 to-transparent" />
 
@@ -191,20 +191,20 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
-                src: '/src/assets/images/real/food_tasting_walk_image1.jpg',
-                title: language === 'ar' ? 'معجنات وحلويات شعبية' : 'Fresh Moroccan Pastries',
+                src: '/src/assets/images/real/food_medina_walk.jpg',
+                title: language === 'ar' ? 'دروب فاس ودكاكين التذوق' : 'Medina Food Walk Alleys',
               },
               {
-                src: '/src/assets/images/real/food_traditional_fassi_image1.jpg',
-                title: language === 'ar' ? 'طاجين بالبرقوق واللوز' : 'Slow-Cooked Tajines',
+                src: '/src/assets/images/real/food_tagine_table.jpg',
+                title: language === 'ar' ? 'مائدة طاجين وسلطات مغربية' : 'Tagine & Moroccan Mezze',
               },
               {
-                src: '/src/assets/images/real/food_culture_life_image1.jpg',
-                title: language === 'ar' ? 'فران الحومة الشعبي' : 'Ferran Bread Ovens',
+                src: '/src/assets/images/real/food_feast_board.jpg',
+                title: language === 'ar' ? 'بسطيلة ملكية ومأكولات فاخرة' : 'Royal Pastilla & Skewers',
               },
               {
-                src: '/src/assets/images/real/food_markets_souks_image1.jpg',
-                title: language === 'ar' ? 'سوق التوابل والأعشاب' : 'Spice & Olive Souks',
+                src: '/src/assets/images/real/food_couscous_plate.jpg',
+                title: language === 'ar' ? 'كسكس مغربي بالسبع خضار' : 'Seven-Vegetable Couscous',
               },
             ].map((img, idx) => (
               <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group bg-[#1C2524]">
