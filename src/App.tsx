@@ -12,6 +12,7 @@ import { BookingModal } from './components/BookingModal';
 import { DetailModal } from './components/DetailModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { AdminLoginModal } from './components/admin/AdminLoginModal';
+import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -22,11 +23,13 @@ import { TravelTipsPage } from './pages/TravelTipsPage';
 import { AboutPage } from './pages/AboutPage';
 import { BlogPage } from './pages/BlogPage';
 import { CustomPageRenderer } from './pages/CustomPageRenderer';
+import { ExperienceDetailPage } from './pages/ExperienceDetailPage';
 
 function AppContent() {
-  const { customPages } = useCms();
+  const { tours, customPages } = useCms();
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [language, setLanguage] = useState<Language>('en');
+  const [selectedExperience, setSelectedExperience] = useState<SectionPillar | null>(null);
   const [selectedPillar, setSelectedPillar] = useState<SectionPillar | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
@@ -41,9 +44,48 @@ function AppContent() {
     document.documentElement.setAttribute('lang', language);
   }, [language]);
 
+  // Read URL search params on mount or when tours are available
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tourParam = params.get('experience') || params.get('tour');
+    if (tourParam) {
+      const found = tours.find((t) => t.id === tourParam);
+      if (found) {
+        setSelectedExperience(found);
+        setCurrentPage('experience-detail');
+      }
+    }
+  }, [tours]);
+
+  // Handle browser back and forward button clicks
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      const params = new URLSearchParams(window.location.search);
+      const tourParam = params.get('experience') || params.get('tour');
+      if (tourParam) {
+        const found = tours.find((t) => t.id === tourParam);
+        if (found) {
+          setSelectedExperience(found);
+          setCurrentPage('experience-detail');
+          return;
+        }
+      }
+      // If no tour param, restore to page from state or fallback
+      setSelectedExperience(null);
+      if (e.state?.page) {
+        setCurrentPage(e.state.page);
+      } else {
+        setCurrentPage('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [tours]);
+
   // When a custom page is deleted, automatically fall back to home if user was on that page
   useEffect(() => {
-    const standardPages = ['home', 'fez', 'day-trips', 'food-tours', 'travel-tips', 'about', 'blog'];
+    const standardPages = ['home', 'fez', 'day-trips', 'food-tours', 'travel-tips', 'about', 'blog', 'experience-detail'];
     if (!standardPages.includes(currentPage)) {
       const exists = customPages.some((p) => p.slug === currentPage);
       if (!exists) {
@@ -57,9 +99,24 @@ function AppContent() {
     setBookingModalOpen(true);
   };
 
+  // Redirect to dedicated Product/Experience Page on card click
   const handleExplorePillar = (pillar: SectionPillar) => {
-    setSelectedPillar(pillar);
-    setDetailModalOpen(true);
+    setSelectedExperience(pillar);
+    setCurrentPage('experience-detail');
+    const url = new URL(window.location.href);
+    url.searchParams.set('experience', pillar.id);
+    window.history.pushState({ page: 'experience-detail', experienceId: pillar.id }, '', url.toString());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigatePage = (pageId: PageId) => {
+    setSelectedExperience(null);
+    setCurrentPage(pageId);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('experience');
+    url.searchParams.delete('tour');
+    window.history.pushState({ page: pageId }, '', url.toString());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBookFromPillar = (tourTitle?: string) => {
@@ -69,13 +126,26 @@ function AppContent() {
   };
 
   const renderCurrentPage = () => {
+    // 0. Dedicated Product / Experience Detail Page
+    if (currentPage === 'experience-detail' && selectedExperience) {
+      return (
+        <ExperienceDetailPage
+          pillar={selectedExperience}
+          language={language}
+          onNavigate={handleNavigatePage}
+          onSelectExperience={handleExplorePillar}
+          onBookTour={handleBookFromPillar}
+        />
+      );
+    }
+
     // 1. Standard Core Pages
     switch (currentPage) {
       case 'home':
         return (
           <HomePage
             language={language}
-            onNavigate={setCurrentPage}
+            onNavigate={handleNavigatePage}
             onExplore={handleExplorePillar}
             onBookTour={handleBookFromPillar}
           />
@@ -134,7 +204,7 @@ function AppContent() {
             <CustomPageRenderer
               page={matchedCustomPage}
               language={language}
-              onNavigate={setCurrentPage}
+              onNavigate={handleNavigatePage}
               onBookTour={handleBookFromPillar}
             />
           );
@@ -142,7 +212,7 @@ function AppContent() {
         return (
           <HomePage
             language={language}
-            onNavigate={setCurrentPage}
+            onNavigate={handleNavigatePage}
             onExplore={handleExplorePillar}
             onBookTour={handleBookFromPillar}
           />
@@ -165,8 +235,9 @@ function AppContent() {
       {/* Top Bar Navigation */}
       <Navbar
         currentPage={currentPage}
+        activeCategory={selectedExperience?.pageId}
         language={language}
-        onNavigate={setCurrentPage}
+        onNavigate={handleNavigatePage}
         onLanguageChange={setLanguage}
         onOpenBooking={(id, title) => handleOpenBooking(id, title)}
         onOpenAdmin={() => setAdminLoginOpen(true)}
@@ -180,7 +251,7 @@ function AppContent() {
       {/* Site Footer */}
       <Footer
         language={language}
-        onNavigate={setCurrentPage}
+        onNavigate={handleNavigatePage}
         onOpenAdmin={() => setAdminLoginOpen(true)}
       />
 
@@ -209,6 +280,13 @@ function AppContent() {
           setAdminLoginOpen(false);
           setAdminOpen(true);
         }}
+      />
+
+      {/* Floating Real-Time Guide WhatsApp Inquiry Button */}
+      <FloatingWhatsAppButton
+        language={language}
+        currentPage={currentPage}
+        activePillar={selectedExperience}
       />
     </div>
   );

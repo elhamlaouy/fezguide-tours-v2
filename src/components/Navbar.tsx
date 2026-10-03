@@ -7,6 +7,7 @@ import { Globe, Menu, X, Calendar, Phone, Lock } from 'lucide-react';
 
 interface NavbarProps {
   currentPage: PageId;
+  activeCategory?: PageId;
   language: Language;
   onNavigate: (page: PageId) => void;
   onLanguageChange: (lang: Language) => void;
@@ -16,6 +17,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentPage,
+  activeCategory,
   language,
   onNavigate,
   onLanguageChange,
@@ -82,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
         <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
           {allNavLinks.map((link) => {
-            const isActive = currentPage === link.id;
+            const isActive = currentPage === link.id || activeCategory === link.id;
             return (
               <button
                 key={link.id}
@@ -175,7 +177,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="lg:hidden border-t border-[#E7E2DA] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-2 shadow-xl max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col gap-1">
             {allNavLinks.map((link) => {
-              const isActive = currentPage === link.id;
+              const isActive = currentPage === link.id || activeCategory === link.id;
               return (
                 <button
                   key={link.id}

@@ -3,6 +3,13 @@ export type Language = 'en' | 'fr' | 'ar';
 export type StandardPageId = 'home' | 'fez' | 'day-trips' | 'food-tours' | 'travel-tips' | 'about' | 'blog' | 'admin';
 export type PageId = StandardPageId | string;
 
+export interface ItineraryStop {
+  time?: string;
+  title: Record<Language, string>;
+  description: Record<Language, string>;
+  badge?: Record<Language, string>;
+}
+
 export interface SectionPillar {
   id: string;
   pageId: StandardPageId | string;
@@ -22,6 +29,12 @@ export interface SectionPillar {
   imageAlt: Record<Language, string>;
   actionType: 'view_more' | 'explore' | 'book_tour';
   published?: boolean;
+  galleryImages?: string[];
+  itinerary?: ItineraryStop[];
+  included?: Record<Language, string[]>;
+  excluded?: Record<Language, string[]>;
+  whatToBring?: Record<Language, string[]>;
+  meetingPointDetails?: Record<Language, string>;
 }
 
 export interface CustomPage {

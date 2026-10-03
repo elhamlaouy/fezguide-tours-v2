@@ -161,10 +161,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="relative min-h-[560px] lg:min-h-[640px] flex items-center justify-center bg-[#15201F] text-white overflow-hidden">
         {/* Background Image with Scrim */}
         <img
-          src="/src/assets/images/real/fez_explore_medina_image1.jpg"
-          alt="Panoramic view of Fez Medina rooftops at sunset"
+          src="/src/assets/images/real/about_us_image7.jpg"
+          alt="Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#15201F] via-[#15201F]/40 to-transparent" />
 

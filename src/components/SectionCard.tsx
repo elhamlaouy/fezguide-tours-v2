@@ -17,30 +17,11 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   onBookTour,
 }) => {
   const getActionConfig = () => {
-    switch (pillar.actionType) {
-      case 'book_tour':
-        return {
-          label: UI_TEXT.common.bookNow[language],
-          icon: Calendar,
-          variant: 'primary',
-          action: () => onBookTour(pillar.title[language]),
-        };
-      case 'explore':
-        return {
-          label: UI_TEXT.common.explore[language],
-          icon: Compass,
-          variant: 'secondary',
-          action: () => onExplore(pillar),
-        };
-      case 'view_more':
-      default:
-        return {
-          label: UI_TEXT.common.viewMore[language],
-          icon: Eye,
-          variant: 'secondary',
-          action: () => onExplore(pillar),
-        };
-    }
+    return {
+      label: language === 'ar' ? 'عرض التفاصيل والبرنامج' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary',
+      icon: Compass,
+      action: () => onExplore(pillar),
+    };
   };
 
   const actionCfg = getActionConfig();
@@ -48,8 +29,14 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 
   return (
     <div className="group bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full">
-      {/* Visual Asset Container */}
-      <div className="relative aspect-4/3 w-full bg-[#1C2524] overflow-hidden">
+      {/* Visual Asset Container - Clickable */}
+      <div
+        onClick={() => onExplore(pillar)}
+        className="relative aspect-4/3 w-full bg-[#1C2524] overflow-hidden cursor-pointer"
+        role="button"
+        tabIndex={0}
+        aria-label={pillar.title[language]}
+      >
         <img
           src={pillar.image}
           alt={pillar.imageAlt[language]}
@@ -77,7 +64,12 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 
       {/* Card Body */}
       <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
-        <div className="space-y-2">
+        <div
+          onClick={() => onExplore(pillar)}
+          className="space-y-2 cursor-pointer"
+          role="button"
+          tabIndex={0}
+        >
           {/* Subtitle kicker (clean text, no pill) */}
           <span className="text-[11px] font-bold uppercase tracking-wider text-[#C84B31] block">
             {pillar.subtitle[language]}
@@ -110,11 +102,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         <div className="pt-2 flex items-center gap-2">
           <button
             onClick={actionCfg.action}
-            className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer ${
-              actionCfg.variant === 'primary'
-                ? 'bg-[#C84B31] hover:bg-[#B33D25] text-white shadow-xs'
-                : 'bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#DCD5CB]'
-            }`}
+            className="w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#DCD5CB]"
           >
             <IconComponent className="w-3.5 h-3.5" />
             <span>{actionCfg.label}</span>
