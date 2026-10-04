@@ -1,0 +1,4 @@
+name = "fezguidetours"
+
+[pages]
+build_output_dir = "dist"
