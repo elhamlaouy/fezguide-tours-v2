@@ -7,3 +7,7 @@ workers_dev = true
 directory = "./dist"
 not_found_handling = "single-page-application"
 run_worker_first = ["/api/*"]
+
+[[kv_namespaces]]
+binding = "CMS_KV"
+id = "49f69448fb834d4496a05e0d41b19b3c"
