@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CustomPage, Language, PageId } from '../types';
 import { UI_TEXT } from '../data/translations';
 import { useCms } from '../context/CmsContext';
-import { Calendar, Check, Compass, MessageCircle, ArrowLeft, Trash2 } from 'lucide-react';
+import { Calendar, Check, Compass, MessageCircle, ArrowLeft } from 'lucide-react';
 
 interface CustomPageRendererProps {
   page: CustomPage;
@@ -17,14 +17,10 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
   onNavigate,
   onBookTour,
 }) => {
-  const { deleteCustomPage } = useCms();
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const { siteSettings } = useCms();
+  const pageTitle = page.title[language] || page.title.en;
+  const cleanNumber = (siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '');
 
-  const handleDelete = () => {
-    deleteCustomPage(page.id);
-    onNavigate('home');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <div className="space-y-12 pb-32">
@@ -58,27 +54,15 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Navigation & Admin Bar */}
+        {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-3 text-xs">
           <button
             onClick={() => onNavigate('home')}
             className="inline-flex items-center gap-1.5 font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5" />
+            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
             <span>
               {language === 'ar' ? 'العودة للرئيسية' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
-            </span>
-          </button>
-
-          {/* Direct Delete Page button */}
-          <button
-            onClick={() => setShowConfirmDelete(true)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-[#728280] hover:text-[#C84B31] hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-            title="Delete this custom page"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>
-              {language === 'ar' ? 'حذف الصفحة' : language === 'fr' ? 'Supprimer la page' : 'Delete Page'}
             </span>
           </button>
         </div>
@@ -120,8 +104,12 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
             </button>
 
             <a
-              href={`https://wa.me/212661234567?text=${encodeURIComponent(
-                `Hello! I'm interested in the "${page.title[language] || page.title.en}" experience with FezGuideTours.`
+              href={`https://wa.me/${cleanNumber}?text=${encodeURIComponent(
+                language === 'ar'
+                  ? `السلام عليكم ورحمة الله، أنا مهتم بتجربة "${pageTitle}" عبر FezGuideTours.`
+                  : language === 'fr'
+                  ? `Bonjour ! Je suis intéressé(e) par l'expérience "${pageTitle}" avec FezGuideTours.`
+                  : `Hello! I'm interested in the "${pageTitle}" experience with FezGuideTours.`
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -133,41 +121,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
           </div>
         </div>
       </div>
-
-      {/* In-app Delete Confirmation Modal */}
-      {showConfirmDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 sm:p-7 max-w-sm w-full space-y-4 shadow-2xl border border-[#E7E2DA]">
-            <div className="w-12 h-12 rounded-2xl bg-red-100 text-[#C84B31] flex items-center justify-center mx-auto">
-              <Trash2 className="w-6 h-6" />
-            </div>
-            <div className="text-center space-y-1">
-              <h3 className="text-base font-extrabold text-[#1C2524]">
-                {language === 'ar' ? 'تأكيد حذف الصفحة' : 'Delete Custom Page?'}
-              </h3>
-              <p className="text-xs text-[#52605E]">
-                {language === 'ar'
-                  ? `هل أنت متأكد من حذف صفحة "${page.title[language] || page.title.en}"؟ سيتم حذفها نهائياً من الموقع.`
-                  : `Are you sure you want to permanently delete "/${page.slug}"?`}
-              </p>
-            </div>
-            <div className="flex gap-2.5 pt-2">
-              <button
-                onClick={() => setShowConfirmDelete(false)}
-                className="flex-1 py-2.5 px-3 border border-[#D5CEC4] rounded-xl text-xs font-bold text-[#52605E] hover:bg-[#FAF8F5] transition-colors cursor-pointer"
-              >
-                {language === 'ar' ? 'إلغاء' : 'Cancel'}
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex-1 py-2.5 px-3 bg-[#C84B31] hover:bg-[#B33D25] text-white rounded-xl text-xs font-bold shadow-xs transition-colors cursor-pointer"
-              >
-                {language === 'ar' ? 'تأكيد الحذف' : 'Delete Now'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
+

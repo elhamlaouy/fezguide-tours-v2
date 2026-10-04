@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SectionPillar, Language } from '../types';
 import { UI_TEXT } from '../data/translations';
+import { useCms } from '../context/CmsContext';
 import { X, Check, Clock, MapPin, Users, Calendar, MessageCircle, ShieldCheck } from 'lucide-react';
 
 interface DetailModalProps {
@@ -18,11 +19,45 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   language,
   onBookNow,
 }) => {
+  const { siteSettings } = useCms();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !pillar) return null;
 
+  const rawNumber = siteSettings.whatsappNumber || '212661234567';
+  const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
+  const tourName = pillar.title[language] || pillar.title.en;
+
+  const getWhatsAppMessage = () => {
+    if (language === 'ar') {
+      return `السلام عليكم ورحمة الله، أنا مهتم بجولة "${tourName}" عبر موقع FezGuideTours. هل يمكن تزويدي بالتواريخ المتاحة؟`;
+    }
+    if (language === 'fr') {
+      return `Bonjour ! Je suis intéressé(e) par la visite "${tourName}" via FezGuideTours. Pourriez-vous me donner les disponibilités ?`;
+    }
+    return `Hello Med! I am interested in the "${tourName}" experience with FezGuideTours. Could you please share availability and details?`;
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
+    <div
+      role="dialog"
+      aria-modal="true"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto"
+    >
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-[#E7E2DA] overflow-hidden my-8 text-[#1C2524]">
+
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -125,9 +160,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               <span>{UI_TEXT.common.bookNow[language]}</span>
             </button>
             <a
-              href={`https://wa.me/212661234567?text=${encodeURIComponent(
-                `Hello! I'm interested in the "${pillar.title[language]}" experience with FezGuideTours.`
-              )}`}
+              href={`https://wa.me/${cleanNumber}?text=${encodeURIComponent(getWhatsAppMessage())}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto py-3 px-5 border border-[#005F5A] text-[#005F5A] hover:bg-[#005F5A]/5 font-semibold text-xs rounded-xl transition-colors flex items-center justify-center gap-2"

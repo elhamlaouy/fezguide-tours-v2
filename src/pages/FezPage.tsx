@@ -44,7 +44,7 @@ export const FezPage: React.FC<FezPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/src/assets/images/real/fez_explore_medina_image1.jpg"
+          src="/images/real/fez_explore_medina_image1.jpg"
           alt="Medina of Fez gates and rooftops"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -166,22 +166,22 @@ export const FezPage: React.FC<FezPageProps> = ({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {
-                src: '/src/assets/images/real/fez_explore_medina_image2.jpg',
+                src: '/images/real/fez_explore_medina_image2.jpg',
                 alt: 'Narrow Medina passage',
                 caption: language === 'ar' ? 'دروب فاس الهادئة' : 'Quiet Medina lanes',
               },
               {
-                src: '/src/assets/images/real/fez_history_culture_image2.jpg',
+                src: '/images/real/fez_history_culture_image2.jpg',
                 alt: 'Madrasa woodwork and plaster carving',
                 caption: language === 'ar' ? 'نقوش خشب الأرز والجبس' : 'Carved cedar & plaster',
               },
               {
-                src: '/src/assets/images/real/fez_things_to_do_image2.jpg',
+                src: '/images/real/fez_things_to_do_image2.jpg',
                 alt: 'Master craftsmen workshop',
                 caption: language === 'ar' ? 'حرفيون في ورشاتهم' : 'Artisans at work',
               },
               {
-                src: '/src/assets/images/real/fez_explore_medina_image4.jpg',
+                src: '/images/real/fez_explore_medina_image4.jpg',
                 alt: 'Panoramic rooftop view',
                 caption: language === 'ar' ? 'إطلالة من الأعلى' : 'Panoramic rooftops',
               },
@@ -213,11 +213,15 @@ export const FezPage: React.FC<FezPageProps> = ({
             <h3 className="text-xl sm:text-2xl font-bold text-[#1C2524]">
               {language === 'ar'
                 ? 'استكشف فاس برفقة من يعرف أزقتها، قصصها وخفاياها'
+                : language === 'fr'
+                ? 'Découvrez la médina avec un guide qui en connaît chaque ruelle et secret'
                 : 'Discover the Medina with Someone Who Knows Its Streets and Stories'}
             </h3>
             <p className="text-xs sm:text-sm text-[#4E5B59] leading-relaxed">
               {language === 'ar'
                 ? 'تجاوز المعالم المزدحمة المعتادة، التقي بأهل المدينة وتذوق مأكولاتها الشعبية واستمتع بنبض الحياة اليومية. مرحباً بكم في فاس.'
+                : language === 'fr'
+                ? 'Allez au-delà des sentiers battus, rencontrez les artisans locaux, dégustez les spécialités de Fès et vivez une immersion authentique.'
                 : 'Walk beyond the famous landmarks, meet local people, taste traditional food and experience everyday life. Our local guides ensure an effortless, memorable journey.'}
             </p>
           </div>
@@ -226,9 +230,14 @@ export const FezPage: React.FC<FezPageProps> = ({
               onClick={() => onBookTour('Custom Medina Exploration')}
               className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
             >
-              {language === 'ar' ? 'احجز جولتك في فاس العتيقة' : 'Explore Our Fez Medina Tours'}
+              {language === 'ar'
+                ? 'احجز جولتك في فاس العتيقة'
+                : language === 'fr'
+                ? 'Découvrir nos visites de Fès'
+                : 'Explore Our Fez Medina Tours'}
             </button>
           </div>
+
         </div>
       </div>
     </div>

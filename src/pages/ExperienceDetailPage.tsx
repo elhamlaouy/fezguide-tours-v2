@@ -35,14 +35,20 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   onBookTour,
 }) => {
   const { tours, siteSettings } = useCms();
-  const extra: ExperienceExtraDetails | undefined = EXPERIENCE_EXTRAS[pillar.id];
+  // Find live tour from CMS store to reflect real-time edits
+  const livePillar = tours.find((t) => t.id === pillar.id) || pillar;
+  const extra: ExperienceExtraDetails | undefined = EXPERIENCE_EXTRAS[livePillar.id];
 
-  // Gallery images list: combine extra images or fallback to pillar image
-  const galleryList = extra?.galleryImages && extra.galleryImages.length > 0
-    ? extra.galleryImages
-    : [pillar.image];
+  // Gallery images list: prioritize custom gallery from CMS, then extras, then main image
+  const galleryList =
+    livePillar.galleryImages && livePillar.galleryImages.length > 0
+      ? livePillar.galleryImages
+      : extra?.galleryImages && extra.galleryImages.length > 0
+      ? extra.galleryImages
+      : [livePillar.image];
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
 
   // Scroll to top on experience change
   useEffect(() => {
@@ -312,7 +318,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </section>
 
             {/* Detailed Step-by-Step Itinerary / Stops */}
-            {extra?.itinerary && extra.itinerary.length > 0 && (
+            {(livePillar.itinerary && livePillar.itinerary.length > 0
+              ? livePillar.itinerary
+              : extra?.itinerary || []
+            ).length > 0 && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
@@ -328,7 +337,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 </div>
 
                 <div className="relative pl-6 rtl:pl-0 rtl:pr-6 border-l-2 rtl:border-l-0 rtl:border-r-2 border-[#005F5A]/20 space-y-8">
-                  {extra.itinerary.map((stop, idx) => (
+                  {(livePillar.itinerary && livePillar.itinerary.length > 0
+                    ? livePillar.itinerary
+                    : extra?.itinerary || []
+                  ).map((stop, idx) => (
                     <div key={idx} className="relative space-y-1.5 group">
                       {/* Timeline Dot */}
                       <span className="absolute -left-[31px] rtl:-left-auto rtl:-right-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-[#005F5A] group-hover:scale-125 transition-transform" />
@@ -341,17 +353,17 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                         )}
                         {stop.badge && (
                           <span className="text-[10px] font-bold text-[#C84B31] bg-[#C84B31]/10 px-2 py-0.5 rounded-md">
-                            {stop.badge[language]}
+                            {stop.badge[language] || stop.badge.en}
                           </span>
                         )}
                       </div>
 
                       <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">
-                        {stop.title[language]}
+                        {stop.title[language] || stop.title.en}
                       </h3>
 
                       <p className="text-xs text-[#52605E] leading-relaxed">
-                        {stop.description[language]}
+                        {stop.description[language] || stop.description.en}
                       </p>
                     </div>
                   ))}
@@ -359,8 +371,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               </section>
             )}
 
+
             {/* Inclusions & Exclusions */}
-            {extra && (
+            {((livePillar.included && livePillar.included[language]?.length > 0) ||
+              (extra?.included && extra.included[language]?.length > 0)) && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
                   {language === 'ar' ? 'ما تشمله التجربة وما لا تشمله' : language === 'fr' ? 'Inclusions & Exclusions' : 'What is Included & Excluded'}
@@ -374,7 +388,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       {language === 'ar' ? 'مشمول في الحجز:' : language === 'fr' ? 'Inclus :' : 'Included in Tour:'}
                     </span>
                     <ul className="space-y-2">
-                      {extra.included[language].map((inc, i) => (
+                      {(livePillar.included && livePillar.included[language]?.length > 0
+                        ? livePillar.included[language]
+                        : extra?.included[language] || []
+                      ).map((inc, i) => (
                         <li key={i} className="text-xs text-[#2A4843] flex items-start gap-2 leading-relaxed">
                           <Check className="w-3.5 h-3.5 text-[#00A896] shrink-0 mt-0.5" />
                           <span>{inc}</span>
@@ -390,7 +407,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       {language === 'ar' ? 'غير مشمول:' : language === 'fr' ? 'Non inclus :' : 'Not Included:'}
                     </span>
                     <ul className="space-y-2">
-                      {extra.excluded[language].map((exc, i) => (
+                      {(livePillar.excluded && livePillar.excluded[language]?.length > 0
+                        ? livePillar.excluded[language]
+                        : extra?.excluded[language] || []
+                      ).map((exc, i) => (
                         <li key={i} className="text-xs text-[#6A3930] flex items-start gap-2 leading-relaxed">
                           <X className="w-3.5 h-3.5 text-[#C84B31] shrink-0 mt-0.5" />
                           <span>{exc}</span>
@@ -403,7 +423,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             )}
 
             {/* Practical Advice & What to Bring */}
-            {extra?.whatToBring && (
+            {((livePillar.whatToBring && livePillar.whatToBring[language]?.length > 0) ||
+              (extra?.whatToBring && extra.whatToBring[language]?.length > 0)) && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-4">
                 <h2 className="text-lg sm:text-xl font-bold text-[#1C2524] flex items-center gap-2">
                   <HelpCircle className="w-5 h-5 text-[#005F5A]" />
@@ -412,7 +433,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   </span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  {extra.whatToBring[language].map((item, idx) => (
+                  {(livePillar.whatToBring && livePillar.whatToBring[language]?.length > 0
+                    ? livePillar.whatToBring[language]
+                    : extra?.whatToBring[language] || []
+                  ).map((item, idx) => (
                     <div key={idx} className="flex items-center gap-2 p-3 rounded-xl bg-[#FAF8F5] border border-[#E7E2DA] text-xs text-[#445250]">
                       <span className="w-2 h-2 rounded-full bg-[#005F5A] shrink-0" />
                       <span>{item}</span>
@@ -421,6 +445,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 </div>
               </section>
             )}
+
 
             {/* Verified Traveler Testimonials */}
             {extra?.reviews && extra.reviews.length > 0 && (

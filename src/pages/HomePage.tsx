@@ -49,7 +49,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'جولات مشي في فاس البالي، ورشات الحرفيين، المدارس التاريخية، والمطلات البانورامية الساحرة.',
       },
       icon: Compass,
-      image: '/src/assets/images/real/fez_explore_medina_image1.jpg',
+      image: '/images/real/fez_explore_medina_image1.jpg',
       badge: { en: 'Living City', fr: 'Cité Vivante', ar: 'مدينة حية' },
     },
     {
@@ -61,7 +61,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'شفشاون الزرقاء في جبال الريف، آثار وليلي ومكناس، وإفران وغابات الأرز الأطلسي.',
       },
       icon: MapPin,
-      image: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
+      image: '/images/real/daytrip_chefchaouen_image1.jpg',
       badge: { en: 'Private Transport', fr: 'Transport Privé', ar: 'نقل خاص مريح' },
     },
     {
@@ -73,7 +73,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'تذوق أكلات الشارع: الحرشة، البغرير، حساء البيصارة الساخن، أجبان الجبل والشاي بالنعناع.',
       },
       icon: UtensilsCrossed,
-      image: '/src/assets/images/real/food_medina_walk.jpg',
+      image: '/images/real/food_medina_walk.jpg',
       badge: { en: 'Street Food Safari', fr: 'Dégustations', ar: 'تذوق أصيل' },
     },
     {
@@ -85,7 +85,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'التنقل مشياً، سيارات التاكسي الأحمر، النقود، خصوصية يوم الجمعة وآداب الزيارة.',
       },
       icon: HelpCircle,
-      image: '/src/assets/images/real/tips_getting_around_image1.jpg',
+      image: '/images/real/tips_getting_around_image1.jpg',
       badge: { en: 'Local Advice', fr: 'Conseils Locaux', ar: 'إرشادات عملية' },
     },
     {
@@ -97,7 +97,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         ar: 'تعرف على المؤسس والمضيف المحلي (Med)، مرشدينا المعتمدين وسائقينا الموثوقين.',
       },
       icon: Users,
-      image: '/src/assets/images/real/about_us_image1.jpg',
+      image: '/images/real/about_us_image1.jpg',
       badge: { en: 'Local Team', fr: 'Équipe Locale', ar: 'فريق محلي' },
     },
   ];
@@ -161,7 +161,7 @@ export const HomePage: React.FC<HomePageProps> = ({
       <section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#FAF8F5] overflow-hidden py-12 sm:py-16">
         {/* Background Image - Lighter, clearly shown without heavy dark veil */}
         <img
-          src="/src/assets/images/real/about_us_image7.jpg"
+          src={siteSettings?.heroImage || '/images/real/about_us_image7.jpg'}
           alt="Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -176,17 +176,17 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* Tagline kicker */}
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <MapPin className="w-4 h-4 text-[#005F5A]" />
-              <span>{tHero.tagline[language]}</span>
+              <span>{siteSettings?.heroTagline?.[language] || tHero.tagline[language]}</span>
             </div>
 
             {/* Big Main Title - Logo Brand Green #005F5A */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#005F5A] max-w-3xl mx-auto text-balance drop-shadow-xs">
-              {tHero.title[language]}
+              {siteSettings?.heroTitle?.[language] || tHero.title[language]}
             </h1>
 
             {/* Subtitle - Sharp, high-contrast readable text */}
             <p className="text-base sm:text-lg text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {tHero.subtitle[language]}
+              {siteSettings?.heroSubtitle?.[language] || tHero.subtitle[language]}
             </p>
 
             {/* Action CTAs */}
@@ -405,10 +405,18 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="bg-[#005F5A] rounded-3xl p-8 sm:p-12 text-white text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3">
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              Ready to Explore Fez with an Official Local Guide?
+              {language === 'ar'
+                ? 'جاهز لاكتشاف فاس برفقة مرشد سياحي معتمد؟'
+                : language === 'fr'
+                ? 'Prêt à explorer Fès avec un guide officiel ?'
+                : 'Ready to Explore Fez with an Official Local Guide?'}
             </h2>
             <p className="text-xs sm:text-sm text-[#D4ECE9] leading-relaxed">
-              Book online today with free flexible cancellation, or chat with our team directly on WhatsApp for custom private requests.
+              {language === 'ar'
+                ? 'احجز عبر الموقع مع إمكانية الإلغاء المرن، أو تواصل معنا مباشرة عبر واتساب لترتيب جولة مخصصة لك.'
+                : language === 'fr'
+                ? 'Réservez en ligne avec annulation flexible, ou écrivez-nous sur WhatsApp pour une visite sur mesure.'
+                : 'Book online today with free flexible cancellation, or chat with our team directly on WhatsApp for custom private requests.'}
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
@@ -419,16 +427,27 @@ export const HomePage: React.FC<HomePageProps> = ({
               {UI_TEXT.common.bookNow[language]}
             </button>
             <a
-              href="https://wa.me/212661234567?text=Hello%20FezGuideTours,%20I%20would%20like%20to%20plan%20a%20tour"
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                language === 'ar'
+                  ? 'السلام عليكم ورحمة الله، أود التنسيق معكم لحجز جولة في فاس عبر FezGuideTours'
+                  : language === 'fr'
+                  ? "Bonjour FezGuideTours ! J'aimerais planifier une visite guidée à Fès."
+                  : 'Hello FezGuideTours! I would like to plan a guided tour in Fez.'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#005F5A] hover:bg-[#FAF8F5] font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-colors"
             >
-              WhatsApp Us (+212 661-234567)
+              {language === 'ar'
+                ? `تواصل عبر واتساب (${siteSettings.phoneNumber})`
+                : language === 'fr'
+                ? `WhatsApp (${siteSettings.phoneNumber})`
+                : `WhatsApp Us (${siteSettings.phoneNumber})`}
             </a>
           </div>
         </div>
       </section>
+
     </div>
   );
 };

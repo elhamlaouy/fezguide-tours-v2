@@ -7,7 +7,16 @@ import {
   TeamMember,
   BookingRecord,
   Language,
+  FaqItem,
 } from '../../types';
+import { ImagePickerField } from './ImagePickerField';
+import { GalleryManagerField } from './GalleryManagerField';
+import { TourEditorModal } from './TourEditorModal';
+import { FaqEditorModal } from './FaqEditorModal';
+import { CustomPageEditorModal } from './CustomPageEditorModal';
+import { BlogEditorModal } from './BlogEditorModal';
+import { TeamEditorModal } from './TeamEditorModal';
+
 import {
   Compass,
   FileText,
@@ -29,14 +38,26 @@ import {
   Save,
   Globe,
   ArrowLeft,
+  HelpCircle,
+  ArrowUp,
+  ArrowDown,
+  Search,
+  Share2,
+  Phone,
+  Mail,
+  MapPin,
+  ShieldCheck,
+  Image as ImageIcon,
+  Sparkles,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
   onClose: () => void;
   language: Language;
+  onNavigate?: (page: any) => void;
 }
 
-type AdminTab = 'tours' | 'pages' | 'blog' | 'team' | 'bookings' | 'settings';
+type AdminTab = 'tours' | 'pages' | 'blog' | 'team' | 'faqs' | 'bookings' | 'settings';
 
 interface ConfirmModalState {
   isOpen: boolean;
@@ -49,6 +70,7 @@ interface ConfirmModalState {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   onClose,
   language,
+  onNavigate,
 }) => {
   const cms = useCms();
   const [activeTab, setActiveTab] = useState<AdminTab>('tours');
@@ -57,8 +79,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // Edit / Create States
   const [editingTour, setEditingTour] = useState<SectionPillar | null>(null);
   const [editingPage, setEditingPage] = useState<CustomPage | null>(null);
+  const [pageSearchQuery, setPageSearchQuery] = useState<string>('');
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
   const [editingTeam, setEditingTeam] = useState<TeamMember | null>(null);
+  const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
+  const [isCreatingFaq, setIsCreatingFaq] = useState<boolean>(false);
+  const [faqCategoryFilter, setFaqCategoryFilter] = useState<string>('all');
+  const [faqSearchQuery, setFaqSearchQuery] = useState<string>('');
+  const [settingsHeroLang, setSettingsHeroLang] = useState<Language>('en');
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -189,6 +217,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             { id: 'pages', label: 'Custom Pages', count: cms.customPages.length, icon: FileText },
             { id: 'blog', label: 'Blog & Articles', count: cms.blogPosts.length, icon: BookOpen },
             { id: 'team', label: 'Team & Guides', count: cms.teamMembers.length, icon: Users },
+            { id: 'faqs', label: 'FAQs & Questions', count: (cms.faqs || []).length, icon: HelpCircle },
             {
               id: 'bookings',
               label: 'Bookings Inbox',
@@ -209,6 +238,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   setEditingPage(null);
                   setEditingBlog(null);
                   setEditingTeam(null);
+                  setEditingFaq(null);
+                  setIsCreatingFaq(false);
                 }}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
@@ -290,7 +321,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         priceMAD: 450,
                         priceEUR: 42,
                       },
-                      image: '/src/assets/images/real/fez_explore_medina_image1.jpg',
+                      image: '/images/real/fez_explore_medina_image1.jpg',
                       imageAlt: { en: 'Tour image', fr: 'Image visite', ar: 'صورة الجولة' },
                       actionType: 'book_tour',
                       published: true,
@@ -372,216 +403,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 ))}
             </div>
 
-            {/* Tour Edit Drawer / Modal */}
-            {editingTour && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
-                <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] p-6 sm:p-8 my-8 space-y-6 max-h-[90vh] overflow-y-auto">
-                  <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-4">
-                    <h3 className="text-base font-extrabold text-[#1C2524]">
-                      Edit Tour: {editingTour.title.en}
-                    </h3>
-                    <button
-                      onClick={() => setEditingTour(null)}
-                      className="p-1 text-[#728280] hover:text-[#1C2524]"
-                    >
-                      <X className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  <div className="space-y-4 text-xs">
-                    <div>
-                      <label className="block font-bold text-[#2A3735] mb-1">
-                        Department / Page:
-                      </label>
-                      <select
-                        value={editingTour.pageId}
-                        onChange={(e) =>
-                          setEditingTour({ ...editingTour, pageId: e.target.value as any })
-                        }
-                        className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                      >
-                        <option value="fez">Fez</option>
-                        <option value="day-trips">Day Trips from Fez</option>
-                        <option value="food-tours">Food & Tasting Tours</option>
-                        <option value="travel-tips">Travel Tips</option>
-                      </select>
-                    </div>
-
-                    <div className="space-y-2 p-3 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA]">
-                      <span className="font-bold text-[#005F5A] block">Titles (Multilingual)</span>
-                      <div>
-                        <span className="text-[10px] text-[#728280]">English:</span>
-                        <input
-                          type="text"
-                          value={editingTour.title.en}
-                          onChange={(e) =>
-                            setEditingTour({
-                              ...editingTour,
-                              title: { ...editingTour.title, en: e.target.value },
-                            })
-                          }
-                          className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#728280]">Français:</span>
-                        <input
-                          type="text"
-                          value={editingTour.title.fr}
-                          onChange={(e) =>
-                            setEditingTour({
-                              ...editingTour,
-                              title: { ...editingTour.title, fr: e.target.value },
-                            })
-                          }
-                          className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-[#728280]">العربية:</span>
-                        <input
-                          type="text"
-                          value={editingTour.title.ar}
-                          onChange={(e) =>
-                            setEditingTour({
-                              ...editingTour,
-                              title: { ...editingTour.title, ar: e.target.value },
-                            })
-                          }
-                          className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 p-3 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA]">
-                      <span className="font-bold text-[#005F5A] block">Short Description</span>
-                      <textarea
-                        rows={2}
-                        value={editingTour.shortDescription.en}
-                        onChange={(e) =>
-                          setEditingTour({
-                            ...editingTour,
-                            shortDescription: {
-                              ...editingTour.shortDescription,
-                              en: e.target.value,
-                            },
-                          })
-                        }
-                        placeholder="English description..."
-                        className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                      />
-                      <textarea
-                        rows={2}
-                        value={editingTour.shortDescription.ar}
-                        onChange={(e) =>
-                          setEditingTour({
-                            ...editingTour,
-                            shortDescription: {
-                              ...editingTour.shortDescription,
-                              ar: e.target.value,
-                            },
-                          })
-                        }
-                        placeholder="الوصف بالعربية..."
-                        className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block font-bold text-[#2A3735] mb-1">Price (MAD):</label>
-                        <input
-                          type="number"
-                          value={editingTour.practicalInfo?.priceMAD || 0}
-                          onChange={(e) =>
-                            setEditingTour({
-                              ...editingTour,
-                              practicalInfo: {
-                                ...(editingTour.practicalInfo || {
-                                  duration: { en: '', fr: '', ar: '' },
-                                }),
-                                priceMAD: parseInt(e.target.value) || 0,
-                                priceEUR: Math.round((parseInt(e.target.value) || 0) / 10.8),
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block font-bold text-[#2A3735] mb-1">Duration (EN):</label>
-                        <input
-                          type="text"
-                          value={editingTour.practicalInfo?.duration.en || '4 hours'}
-                          onChange={(e) =>
-                            setEditingTour({
-                              ...editingTour,
-                              practicalInfo: {
-                                ...(editingTour.practicalInfo || { priceMAD: 0 }),
-                                duration: {
-                                  ...(editingTour.practicalInfo?.duration || { fr: '', ar: '' }),
-                                  en: e.target.value,
-                                },
-                              },
-                            })
-                          }
-                          className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block font-bold text-[#2A3735] mb-1">Image Path/URL:</label>
-                        <input
-                          type="text"
-                          value={editingTour.image}
-                          onChange={(e) => setEditingTour({ ...editingTour, image: e.target.value })}
-                          className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-[#E7E2DA]">
-                    <button
-                      onClick={() => {
-                        askConfirm(
-                          `Delete Tour "${editingTour.title.en}"?`,
-                          'Are you sure you want to permanently delete this tour?',
-                          () => {
-                            cms.deleteTour(editingTour.id);
-                            setEditingTour(null);
-                            showToast('Tour deleted.');
-                          }
-                        );
-                      }}
-                      className="px-3 py-2 text-xs font-bold text-[#C84B31] hover:bg-red-50 rounded-xl cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Delete Tour</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setEditingTour(null)}
-                        className="px-4 py-2 text-xs font-bold text-[#52605E] hover:bg-[#FAF8F5] rounded-xl cursor-pointer"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          cms.updateTour(editingTour.id, editingTour);
-                          setEditingTour(null);
-                          showToast('Tour changes saved!');
-                        }}
-                        className="px-5 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
-                      >
-                        <Save className="w-3.5 h-3.5" />
-                        <span>Save Changes</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Full Tour & Itinerary Editor Modal */}
+            <TourEditorModal
+              tour={editingTour}
+              isOpen={!!editingTour}
+              onClose={() => setEditingTour(null)}
+              onSave={(updatedTour) => {
+                cms.updateTour(updatedTour.id, updatedTour);
+                setEditingTour(null);
+                showToast('Tour and itinerary details saved!');
+              }}
+              onDelete={(tourId) => {
+                askConfirm(
+                  `Delete Tour?`,
+                  'Are you sure you want to permanently delete this tour?',
+                  () => {
+                    cms.deleteTour(tourId);
+                    setEditingTour(null);
+                    showToast('Tour deleted.');
+                  }
+                );
+              }}
+            />
           </div>
         )}
 
@@ -591,10 +434,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-extrabold text-[#1C2524]">
-                  Custom Standalone Pages Builder
+                  Custom Standalone Pages Builder ({cms.customPages.length})
                 </h2>
                 <p className="text-xs text-[#52605E]">
-                  Create new pages (e.g. Sahara Desert, Cooking Classes, FAQ) and toggle whether they appear in the top navigation bar.
+                  Create bespoke pages (e.g. Sahara Desert, Cooking Classes, Bespoke Journeys) with hero banners, body prose, and navigation menu visibility.
                 </p>
               </div>
 
@@ -602,27 +445,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 onClick={() => {
                   const newPage: CustomPage = {
                     id: 'page-' + Date.now(),
-                    slug: 'new-experience-' + Math.floor(Math.random() * 1000),
+                    slug: 'bespoke-experience-' + Math.floor(100 + Math.random() * 900),
                     title: {
                       en: 'New Custom Experience',
-                      fr: 'Nouvelle Expérience',
-                      ar: 'صفحة جديدة ومخصصة',
+                      fr: 'Nouvelle Expérience Personnalisée',
+                      ar: 'تجربة سياحية مخصصة جديدة',
                     },
                     subtitle: {
-                      en: 'Tailored Fez Special',
-                      fr: 'Programme Spécial Fès',
-                      ar: 'برنامج سياحي مميز',
+                      en: 'Tailored Fez Special Itinerary',
+                      fr: 'Programme Spécial Fès sur Mesure',
+                      ar: 'مسار مميز ومخصص من فاس',
                     },
-                    heroImage: '/src/assets/images/real/fez_explore_medina_image1.jpg',
+                    heroImage: '/images/real/daytrip_custom_image1.jpg',
                     content: {
-                      en: 'Detailed content for this new custom page.',
-                      fr: 'Contenu détaillé pour cette nouvelle page.',
-                      ar: 'المحتوى والشرح الكامل لهذه الصفحة الجديدة.',
+                      en: 'Comprehensive description and details for this tailored private experience in Fez and surrounding regions.',
+                      fr: 'Description complète et détaillée de cette expérience privée à Fès et ses environs.',
+                      ar: 'شرح وتفاصيل وافية لهذه التجربة السياحية الخاصة في فاس والمناطق المجاورة.',
                     },
                     highlights: {
-                      en: ['Private transport included', 'Professional licensed guide'],
-                      fr: ['Transport privé inclus', 'Guide officiel agréé'],
-                      ar: ['نقل خاص متضمن', 'مرشد سياحي معتمد'],
+                      en: ['Private air-conditioned transport', 'Certified local Medina guide', 'Flexible schedule & custom stops'],
+                      fr: ['Transport climatisé privé', 'Guide officiel agréé', 'Horaires flexibles & arrêts sur mesure'],
+                      ar: ['نقل خاص ومكيف حديث', 'مرشد محلي معتمد', 'مرونة كاملة في المواعيد والمسار'],
                     },
                     showInNav: true,
                     published: true,
@@ -639,215 +482,190 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </button>
             </div>
 
-            {/* Custom Pages List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {cms.customPages.map((page) => (
-                <div
-                  key={page.id}
-                  className="bg-white rounded-2xl border border-[#E7E2DA] p-6 shadow-xs flex flex-col justify-between space-y-4"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-mono text-[#005F5A] bg-[#005F5A]/10 px-2 py-0.5 rounded-md">
-                        /{page.slug}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                          page.showInNav
-                            ? 'bg-emerald-100 text-emerald-800'
-                            : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
-                        {page.showInNav ? 'Shown in Menu' : 'Hidden from Menu'}
-                      </span>
-                    </div>
+            {/* Search Box */}
+            <div className="flex items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#E7E2DA]">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="w-3.5 h-3.5 text-[#728280] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={pageSearchQuery}
+                  onChange={(e) => setPageSearchQuery(e.target.value)}
+                  placeholder="Search custom pages by title or slug..."
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                />
+              </div>
 
-                    <h3 className="text-base font-bold text-[#1C2524]">
-                      {page.title.en} / {page.title.ar}
-                    </h3>
-                    <p className="text-xs text-[#52605E] line-clamp-2">
-                      {page.content.en}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-[#F2ECE4]">
-                    <span className="text-[11px] text-[#728280]">Created: {page.createdAt}</span>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setEditingPage(page)}
-                        className="py-1 px-3 bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#D5CEC4] text-xs font-bold rounded-lg transition-colors cursor-pointer"
-                      >
-                        Edit Page
-                      </button>
-                      <button
-                        onClick={() => {
-                          askConfirm(
-                            `Delete Page "${page.title[language] || page.title.en}"?`,
-                            `This will permanently remove "/${page.slug}" from your website.`,
-                            () => {
-                              cms.deleteCustomPage(page.id);
-                              showToast('Page deleted successfully.');
-                            }
-                          );
-                        }}
-                        className="p-1.5 text-[#728280] hover:text-[#C84B31] cursor-pointer"
-                        title="Delete page"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+              <span className="text-[11px] text-[#728280] font-mono">
+                {cms.customPages.filter((p) => p.showInNav).length} shown in main menu
+              </span>
             </div>
 
-            {/* Custom Page Edit Modal */}
-            {editingPage && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
-                <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] p-6 sm:p-8 my-8 space-y-6 max-h-[90vh] overflow-y-auto text-xs">
-                  <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-4">
-                    <h3 className="text-base font-extrabold text-[#1C2524]">
-                      Edit Custom Page: {editingPage.slug}
-                    </h3>
-                    <button onClick={() => setEditingPage(null)}>
-                      <X className="w-5 h-5 text-[#728280]" />
-                    </button>
-                  </div>
+            {/* Custom Pages Grid */}
+            {(() => {
+              const filtered = cms.customPages.filter((p) => {
+                if (!pageSearchQuery.trim()) return true;
+                const query = pageSearchQuery.toLowerCase();
+                return (
+                  p.slug.toLowerCase().includes(query) ||
+                  p.title.en.toLowerCase().includes(query) ||
+                  p.title.fr.toLowerCase().includes(query) ||
+                  p.title.ar.includes(query) ||
+                  (p.subtitle?.en && p.subtitle.en.toLowerCase().includes(query))
+                );
+              });
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block font-bold mb-1">Page URL Slug:</label>
-                      <input
-                        type="text"
-                        value={editingPage.slug}
-                        onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] font-mono"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-bold mb-1">Show in Main Nav Menu?</label>
-                      <select
-                        value={editingPage.showInNav ? 'yes' : 'no'}
-                        onChange={(e) =>
-                          setEditingPage({ ...editingPage, showInNav: e.target.value === 'yes' })
-                        }
-                        className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                      >
-                        <option value="yes">Yes (Visible in Navbar)</option>
-                        <option value="no">No (Direct Link Only)</option>
-                      </select>
-                    </div>
+              if (filtered.length === 0) {
+                return (
+                  <div className="text-center py-12 bg-white rounded-3xl border border-[#E7E2DA] p-8 space-y-3">
+                    <FileText className="w-8 h-8 text-[#A0AFA0] mx-auto" />
+                    <p className="text-sm font-bold text-[#1C2524]">No custom pages found</p>
+                    <p className="text-xs text-[#728280]">
+                      Try adjusting your search query or click "Create New Page" to add one.
+                    </p>
                   </div>
+                );
+              }
 
-                  <div className="space-y-3 p-4 bg-[#FAF8F5] rounded-2xl border border-[#E7E2DA]">
-                    <span className="font-bold text-[#005F5A] block">Page Titles</span>
-                    <input
-                      type="text"
-                      placeholder="Title in English"
-                      value={editingPage.title.en}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          title: { ...editingPage.title, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Titre en Français"
-                      value={editingPage.title.fr}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          title: { ...editingPage.title, fr: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                    />
-                    <input
-                      type="text"
-                      placeholder="العنوان بالعربية"
-                      value={editingPage.title.ar}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          title: { ...editingPage.title, ar: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                    />
-                  </div>
-
-                  <div className="space-y-3 p-4 bg-[#FAF8F5] rounded-2xl border border-[#E7E2DA]">
-                    <span className="font-bold text-[#005F5A] block">Content Body</span>
-                    <textarea
-                      rows={3}
-                      placeholder="Content in English..."
-                      value={editingPage.content.en}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          content: { ...editingPage.content, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                    />
-                    <textarea
-                      rows={3}
-                      placeholder="المحتوى بالعربية..."
-                      value={editingPage.content.ar}
-                      onChange={(e) =>
-                        setEditingPage({
-                          ...editingPage,
-                          content: { ...editingPage.content, ar: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-[#E7E2DA]">
-                    <button
-                      onClick={() => {
-                        askConfirm(
-                          `Delete Page "${editingPage.title.en}"?`,
-                          `Are you sure you want to permanently delete "/${editingPage.slug}"?`,
-                          () => {
-                            cms.deleteCustomPage(editingPage.id);
-                            setEditingPage(null);
-                            showToast('Page deleted.');
-                          }
-                        );
-                      }}
-                      className="px-3 py-2 font-bold text-[#C84B31] hover:bg-red-50 rounded-xl cursor-pointer flex items-center gap-1.5"
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {filtered.map((page) => (
+                    <div
+                      key={page.id}
+                      className="bg-white rounded-3xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:border-[#005F5A]/40 transition-all flex flex-col justify-between"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Delete Page</span>
-                    </button>
+                      {/* Top Banner Thumbnail */}
+                      <div className="relative h-32 w-full overflow-hidden bg-[#FAF8F5]">
+                        <img
+                          src={page.heroImage || '/images/real/daytrip_custom_image1.jpg'}
+                          alt={page.title.en}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                          <span className="text-[11px] font-mono font-bold text-white bg-black/50 backdrop-blur-xs px-2.5 py-0.5 rounded-lg border border-white/20">
+                            /{page.slug}
+                          </span>
+                          <span
+                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-xs ${
+                              page.showInNav
+                                ? 'bg-emerald-500 text-white'
+                                : 'bg-black/50 text-white/80 backdrop-blur-xs border border-white/20'
+                            }`}
+                          >
+                            {page.showInNav ? 'Shown in Navbar' : 'Direct Link Only'}
+                          </span>
+                        </div>
+                        <div className="absolute bottom-2.5 left-3.5 right-3.5">
+                          <h3 className="text-sm font-extrabold text-white truncate drop-shadow-xs">
+                            {page.title.en}
+                          </h3>
+                        </div>
+                      </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setEditingPage(null)}
-                        className="px-4 py-2 font-bold text-[#52605E]"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          cms.updateCustomPage(editingPage.id, editingPage);
-                          setEditingPage(null);
-                          showToast('Custom page saved!');
-                        }}
-                        className="px-5 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold rounded-xl cursor-pointer"
-                      >
-                        Save Page
-                      </button>
+                      {/* Content Overview */}
+                      <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                        <div className="space-y-1.5">
+                          <p className="text-xs font-semibold text-[#005F5A]">
+                            {page.subtitle?.en || page.subtitle?.fr || page.subtitle?.ar || 'Bespoke Experience'}
+                          </p>
+                          <p className="text-xs text-[#52605E] line-clamp-2 leading-relaxed">
+                            {page.content.en || page.content.fr || page.content.ar}
+                          </p>
+
+                          <div className="flex items-center gap-1.5 pt-1 text-[10px] text-[#728280]">
+                            <span className={page.title.en ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>EN</span>
+                            <span>•</span>
+                            <span className={page.title.fr ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>FR</span>
+                            <span>•</span>
+                            <span className={page.title.ar ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>AR</span>
+                            {page.highlights?.en && page.highlights.en.length > 0 && (
+                              <span className="ml-2 bg-[#FAF8F5] border border-[#E7E2DA] px-2 py-0.5 rounded-md font-mono">
+                                {page.highlights.en.length} highlights
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="flex items-center justify-between pt-3 border-t border-[#F2ECE4] text-xs">
+                          <span className="text-[11px] text-[#728280]">
+                            Created: {page.createdAt || 'Recent'}
+                          </span>
+
+                          <div className="flex items-center gap-2">
+                            {onNavigate && (
+                              <button
+                                type="button"
+                                onClick={() => onNavigate(page.slug)}
+                                className="p-1.5 text-[#52605E] hover:text-[#005F5A] hover:bg-[#FAF8F5] rounded-xl border border-[#E7E2DA] transition-colors cursor-pointer"
+                                title="View live page on website"
+                              >
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => setEditingPage(page)}
+                              className="flex items-center gap-1.5 py-1 px-3 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                              <span>Edit Page</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                askConfirm(
+                                  `Delete Page "${page.title.en}"?`,
+                                  `Are you sure you want to permanently delete "/${page.slug}"?`,
+                                  () => {
+                                    cms.deleteCustomPage(page.id);
+                                    showToast('Page deleted.');
+                                  }
+                                );
+                              }}
+                              className="p-1.5 text-[#728280] hover:text-[#C84B31] hover:bg-red-50 rounded-xl border border-[#E7E2DA] transition-colors cursor-pointer"
+                              title="Delete page"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </div>
-            )}
+              );
+            })()}
+
+            {/* Custom Page Editor Modal */}
+            <CustomPageEditorModal
+              page={editingPage}
+              isOpen={!!editingPage}
+              onClose={() => setEditingPage(null)}
+              onSave={(updatedPage) => {
+                cms.updateCustomPage(updatedPage.id, updatedPage);
+                setEditingPage(null);
+                showToast('Custom page saved successfully!');
+              }}
+              onDelete={(pageId) => {
+                askConfirm(
+                  'Delete Custom Page?',
+                  'Are you sure you want to permanently delete this page?',
+                  () => {
+                    cms.deleteCustomPage(pageId);
+                    setEditingPage(null);
+                    showToast('Page deleted.');
+                  }
+                );
+              }}
+              onPreview={(slug) => {
+                if (onNavigate) {
+                  onNavigate(slug);
+                }
+              }}
+            />
           </div>
         )}
 
@@ -884,7 +702,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       fr: 'Contenu complet et histoire détaillée...',
                       ar: 'المحتوى الكامل والقصة المفصلة...',
                     },
-                    coverImage: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
+                    coverImage: '/images/real/daytrip_chefchaouen_image1.jpg',
                     category: { en: 'Heritage', fr: 'Patrimoine', ar: 'تراث' },
                     author: 'Youssef El Fassi',
                     date: new Date().toISOString().slice(0, 10),
@@ -950,137 +768,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               ))}
             </div>
 
-            {/* Blog Edit Modal */}
-            {editingBlog && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
-                <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] p-6 sm:p-8 my-8 space-y-4 max-h-[90vh] overflow-y-auto text-xs">
-                  <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-3">
-                    <h3 className="text-base font-extrabold text-[#1C2524]">
-                      Edit Article: {editingBlog.title.en}
-                    </h3>
-                    <button onClick={() => setEditingBlog(null)}>
-                      <X className="w-5 h-5 text-[#728280]" />
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block font-bold mb-1">Author Name:</label>
-                      <input
-                        type="text"
-                        value={editingBlog.author}
-                        onChange={(e) => setEditingBlog({ ...editingBlog, author: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-bold mb-1">Date:</label>
-                      <input
-                        type="date"
-                        value={editingBlog.date}
-                        onChange={(e) => setEditingBlog({ ...editingBlog, date: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 p-3 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA]">
-                    <span className="font-bold text-[#005F5A]">Article Titles</span>
-                    <input
-                      type="text"
-                      placeholder="Title in English"
-                      value={editingBlog.title.en}
-                      onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          title: { ...editingBlog.title, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                    />
-                    <input
-                      type="text"
-                      placeholder="العنوان بالعربية"
-                      value={editingBlog.title.ar}
-                      onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          title: { ...editingBlog.title, ar: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-white"
-                    />
-                  </div>
-
-                  <div className="space-y-2 p-3 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA]">
-                    <span className="font-bold text-[#005F5A]">Full Article Content</span>
-                    <textarea
-                      rows={5}
-                      placeholder="Full content in English..."
-                      value={editingBlog.content.en}
-                      onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          content: { ...editingBlog.content, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-lg border border-[#D5CEC4] bg-white"
-                    />
-                    <textarea
-                      rows={5}
-                      placeholder="المحتوى الكامل بالعربية..."
-                      value={editingBlog.content.ar}
-                      onChange={(e) =>
-                        setEditingBlog({
-                          ...editingBlog,
-                          content: { ...editingBlog.content, ar: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-lg border border-[#D5CEC4] bg-white"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-3 border-t border-[#E7E2DA]">
-                    <button
-                      onClick={() => {
-                        askConfirm(
-                          `Delete Article "${editingBlog.title.en}"?`,
-                          'Are you sure you want to permanently delete this article?',
-                          () => {
-                            cms.deleteBlogPost(editingBlog.id);
-                            setEditingBlog(null);
-                            showToast('Article deleted.');
-                          }
-                        );
-                      }}
-                      className="px-3 py-2 font-bold text-[#C84B31] hover:bg-red-50 rounded-xl cursor-pointer flex items-center gap-1.5"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Delete Article</span>
-                    </button>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setEditingBlog(null)}
-                        className="px-4 py-2 font-bold text-[#52605E]"
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        onClick={() => {
-                          cms.updateBlogPost(editingBlog.id, editingBlog);
-                          setEditingBlog(null);
-                          showToast('Article saved!');
-                        }}
-                        className="px-5 py-2 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold rounded-xl cursor-pointer"
-                      >
-                        Save Article
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Full Blog Editor Modal */}
+            <BlogEditorModal
+              post={editingBlog}
+              isOpen={!!editingBlog}
+              onClose={() => setEditingBlog(null)}
+              onSave={(updatedPost) => {
+                cms.updateBlogPost(updatedPost.id, updatedPost);
+                setEditingBlog(null);
+                showToast('Article saved successfully!');
+              }}
+              onDelete={(postId) => {
+                askConfirm(
+                  'Delete Article?',
+                  'Are you sure you want to permanently delete this article?',
+                  () => {
+                    cms.deleteBlogPost(postId);
+                    setEditingBlog(null);
+                    showToast('Article deleted.');
+                  }
+                );
+              }}
+            />
           </div>
         )}
 
@@ -1111,7 +820,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     languages: ['Arabic', 'English', 'French'],
                     experience: { en: '8+ Years', fr: '8+ ans', ar: '8+ سنوات' },
                     licenseNumber: 'FEZ-' + Math.floor(1000 + Math.random() * 9000),
-                    avatarUrl: '/src/assets/images/real/about_us_image1.jpg',
+                    avatarUrl: '/images/real/about_us_image1.jpg',
                   };
                   cms.addTeamMember(newMember);
                   setEditingTeam(newMember);
@@ -1175,87 +884,282 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               ))}
             </div>
 
-            {/* Team Edit Modal */}
-            {editingTeam && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-                <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] p-6 space-y-4 text-xs">
-                  <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-2">
-                    <h3 className="text-base font-extrabold">Edit Guide: {editingTeam.name}</h3>
-                    <button onClick={() => setEditingTeam(null)}>
-                      <X className="w-5 h-5 text-[#728280]" />
-                    </button>
-                  </div>
+            {/* Full Team Editor Modal */}
+            <TeamEditorModal
+              member={editingTeam}
+              isOpen={!!editingTeam}
+              onClose={() => setEditingTeam(null)}
+              onSave={(updatedMember) => {
+                cms.updateTeamMember(updatedMember.id, updatedMember);
+                setEditingTeam(null);
+                showToast('Guide details saved successfully!');
+              }}
+              onDelete={(memberId) => {
+                askConfirm(
+                  'Remove Team Member?',
+                  'Are you sure you want to remove this guide from the team?',
+                  () => {
+                    cms.deleteTeamMember(memberId);
+                    setEditingTeam(null);
+                    showToast('Team member removed.');
+                  }
+                );
+              }}
+            />
+          </div>
+        )}
 
-                  <div>
-                    <label className="block font-bold mb-1">Full Name:</label>
-                    <input
-                      type="text"
-                      value={editingTeam.name}
-                      onChange={(e) => setEditingTeam({ ...editingTeam, name: e.target.value })}
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-bold mb-1">Role (English):</label>
-                    <input
-                      type="text"
-                      value={editingTeam.role.en}
-                      onChange={(e) =>
-                        setEditingTeam({
-                          ...editingTeam,
-                          role: { ...editingTeam.role, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-bold mb-1">Ministerial License Number:</label>
-                    <input
-                      type="text"
-                      value={editingTeam.licenseNumber || ''}
-                      onChange={(e) =>
-                        setEditingTeam({ ...editingTeam, licenseNumber: e.target.value })
-                      }
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-bold mb-1">Bio (English):</label>
-                    <textarea
-                      rows={3}
-                      value={editingTeam.bio.en}
-                      onChange={(e) =>
-                        setEditingTeam({
-                          ...editingTeam,
-                          bio: { ...editingTeam.bio, en: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-1.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5]"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E7E2DA]">
-                    <button
-                      onClick={() => setEditingTeam(null)}
-                      className="px-3 py-1.5 font-bold text-[#52605E]"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => {
-                        cms.updateTeamMember(editingTeam.id, editingTeam);
-                        setEditingTeam(null);
-                        showToast('Guide details saved!');
-                      }}
-                      className="px-4 py-1.5 bg-[#005F5A] text-white font-bold rounded-xl cursor-pointer"
-                    >
-                      Save Guide
-                    </button>
-                  </div>
-                </div>
+        {/* TAB: FAQS & QUESTIONS */}
+        {activeTab === 'faqs' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-extrabold text-[#1C2524]">
+                  Manage FAQs & Answers ({cms.faqs.length})
+                </h2>
+                <p className="text-xs text-[#52605E]">
+                  Create, translate, reorder, or edit all traveller questions displayed in the About Us accordion.
+                </p>
               </div>
-            )}
+              <button
+                onClick={() => {
+                  setEditingFaq({
+                    id: `faq-${Date.now()}`,
+                    category: 'tours',
+                    question: { en: '', fr: '', ar: '' },
+                    answer: { en: '', fr: '', ar: '' },
+                  });
+                  setIsCreatingFaq(true);
+                }}
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer shrink-0"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add FAQ</span>
+              </button>
+            </div>
+
+            {/* Filter Pills & Search */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-[#E7E2DA]">
+              {/* Category Pills */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+                {[
+                  { id: 'all', label: 'All Topics' },
+                  { id: 'tours', label: 'Tours' },
+                  { id: 'booking', label: 'Booking' },
+                  { id: 'guides', label: 'Guides' },
+                  { id: 'transport', label: 'Transport' },
+                  { id: 'walking', label: 'Walking' },
+                  { id: 'food', label: 'Food' },
+                  { id: 'daytrips', label: 'Day Trips' },
+                  { id: 'general', label: 'General' },
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setFaqCategoryFilter(cat.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors cursor-pointer ${
+                      faqCategoryFilter === cat.id
+                        ? 'bg-[#005F5A] text-white'
+                        : 'bg-[#FAF8F5] text-[#52605E] hover:bg-[#EFEAE2] border border-[#E7E2DA]'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search Box */}
+              <div className="relative shrink-0 md:w-64">
+                <Search className="w-3.5 h-3.5 text-[#728280] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={faqSearchQuery}
+                  onChange={(e) => setFaqSearchQuery(e.target.value)}
+                  placeholder="Search questions or answers..."
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                />
+              </div>
+            </div>
+
+            {/* FAQ List */}
+            {(() => {
+              const filtered = (cms.faqs || []).filter((f) => {
+                const matchCategory =
+                  faqCategoryFilter === 'all' || f.category === faqCategoryFilter;
+                const matchSearch =
+                  !faqSearchQuery.trim() ||
+                  f.question.en.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  f.question.fr.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  f.question.ar.includes(faqSearchQuery) ||
+                  f.answer.en.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  f.answer.fr.toLowerCase().includes(faqSearchQuery.toLowerCase()) ||
+                  f.answer.ar.includes(faqSearchQuery);
+                return matchCategory && matchSearch;
+              });
+
+              if (filtered.length === 0) {
+                return (
+                  <div className="text-center py-12 bg-white rounded-3xl border border-[#E7E2DA] p-8 space-y-3">
+                    <HelpCircle className="w-8 h-8 text-[#A0AFA0] mx-auto" />
+                    <p className="text-sm font-bold text-[#1C2524]">No FAQs found</p>
+                    <p className="text-xs text-[#728280]">
+                      Try changing your category filter or search query, or click "Add FAQ" to create one.
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3">
+                  {filtered.map((item) => {
+                    const originalIndex = cms.faqs.findIndex((f) => f.id === item.id);
+                    const canMoveUp = originalIndex > 0;
+                    const canMoveDown = originalIndex < cms.faqs.length - 1;
+
+                    return (
+                      <div
+                        key={item.id}
+                        className="bg-white rounded-2xl border border-[#E7E2DA] p-4 sm:p-5 shadow-xs hover:border-[#005F5A]/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      >
+                        {/* Left: Reorder arrows & Content */}
+                        <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                          {/* Reordering Buttons */}
+                          <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
+                            <button
+                              type="button"
+                              disabled={!canMoveUp}
+                              onClick={() => {
+                                if (!canMoveUp) return;
+                                const reordered = [...cms.faqs];
+                                const temp = reordered[originalIndex - 1];
+                                reordered[originalIndex - 1] = reordered[originalIndex];
+                                reordered[originalIndex] = temp;
+                                cms.reorderFaqs(reordered);
+                              }}
+                              className={`p-1 rounded-md border text-xs cursor-pointer ${
+                                canMoveUp
+                                  ? 'border-[#D5CEC4] text-[#52605E] hover:bg-[#FAF8F5] hover:text-[#005F5A]'
+                                  : 'border-[#F2ECE4] text-[#D5CEC4] cursor-not-allowed'
+                              }`}
+                              title="Move up in order"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={!canMoveDown}
+                              onClick={() => {
+                                if (!canMoveDown) return;
+                                const reordered = [...cms.faqs];
+                                const temp = reordered[originalIndex + 1];
+                                reordered[originalIndex + 1] = reordered[originalIndex];
+                                reordered[originalIndex] = temp;
+                                cms.reorderFaqs(reordered);
+                              }}
+                              className={`p-1 rounded-md border text-xs cursor-pointer ${
+                                canMoveDown
+                                  ? 'border-[#D5CEC4] text-[#52605E] hover:bg-[#FAF8F5] hover:text-[#005F5A]'
+                                  : 'border-[#F2ECE4] text-[#D5CEC4] cursor-not-allowed'
+                              }`}
+                              title="Move down in order"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Content */}
+                          <div className="space-y-1.5 flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#005F5A]/10 text-[#005F5A]">
+                                {item.category}
+                              </span>
+                              <span className="text-[10px] font-mono text-[#A0AFA0]">
+                                #{originalIndex + 1}
+                              </span>
+                              <div className="flex items-center gap-1 text-[10px] text-[#728280]">
+                                <span className={item.question.en ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>EN</span>
+                                <span>•</span>
+                                <span className={item.question.fr ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>FR</span>
+                                <span>•</span>
+                                <span className={item.question.ar ? 'text-[#005F5A] font-bold' : 'text-[#D5CEC4]'}>AR</span>
+                              </div>
+                            </div>
+
+                            <h4 className="text-xs sm:text-sm font-bold text-[#1C2524] truncate">
+                              {item.question.en || item.question.fr || item.question.ar}
+                            </h4>
+
+                            <p className="text-xs text-[#52605E] line-clamp-2 leading-relaxed">
+                              {item.answer.en || item.answer.fr || item.answer.ar}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Right: Actions */}
+                        <div className="flex items-center gap-2 self-end md:self-center shrink-0 border-t md:border-t-0 pt-2 md:pt-0 border-[#F2ECE4]">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingFaq(item);
+                              setIsCreatingFaq(false);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#D5CEC4] text-[#005F5A] hover:bg-[#FAF8F5] text-xs font-bold transition-colors cursor-pointer"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              askConfirm(
+                                `Delete FAQ?`,
+                                `Are you sure you want to permanently delete "${item.question.en.slice(0, 50)}..."?`,
+                                () => {
+                                  cms.deleteFaq(item.id);
+                                  showToast('FAQ deleted.');
+                                }
+                              );
+                            }}
+                            className="p-1.5 rounded-xl border border-[#E7E2DA] text-[#728280] hover:text-[#C84B31] hover:border-[#C84B31] transition-colors cursor-pointer"
+                            title="Delete FAQ"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            {/* FAQ Editor Modal */}
+            <FaqEditorModal
+              faq={editingFaq}
+              isOpen={!!editingFaq || isCreatingFaq}
+              onClose={() => {
+                setEditingFaq(null);
+                setIsCreatingFaq(false);
+              }}
+              onSave={(updated) => {
+                if (isCreatingFaq) {
+                  cms.addFaq(updated);
+                  showToast('New FAQ created!');
+                } else {
+                  cms.updateFaq(updated.id, updated);
+                  showToast('FAQ updated!');
+                }
+                setEditingFaq(null);
+                setIsCreatingFaq(false);
+              }}
+              onDelete={(id) => {
+                askConfirm('Delete FAQ?', 'Are you sure you want to permanently delete this FAQ item?', () => {
+                  cms.deleteFaq(id);
+                  setEditingFaq(null);
+                  setIsCreatingFaq(false);
+                  showToast('FAQ deleted.');
+                });
+              }}
+            />
           </div>
         )}
 
@@ -1390,27 +1294,183 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         )}
 
-        {/* TAB 6: SITE SETTINGS & BACKUP */}
+        {/* TAB 6: SITE SETTINGS, HERO BANNER & BACKUP */}
         {activeTab === 'settings' && (
-          <div className="bg-white p-8 rounded-3xl border border-[#E7E2DA] space-y-6 shadow-xs max-w-3xl">
+          <div className="space-y-8 max-w-4xl">
+            {/* Header */}
             <div>
               <h2 className="text-lg font-extrabold text-[#1C2524]">
-                Global Site Settings & Contact Coordinates
+                Global Site Settings & Homepage Customizer
               </h2>
               <p className="text-xs text-[#52605E]">
-                Update telephone numbers, WhatsApp contact, office location, and legal badges.
+                Customize your homepage hero banner, contact coordinates, social media links, and export full backups.
               </p>
             </div>
 
-            <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* CARD 1: HOMEPAGE HERO BANNER & VISUAL COVER */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E7E2DA] space-y-6 shadow-xs">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#E7E2DA] pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#005F5A]/10 text-[#005F5A] flex items-center justify-center">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-[#1C2524]">
+                      Homepage Hero Banner Customizer
+                    </h3>
+                    <p className="text-[11px] text-[#728280]">
+                      The prominent top section travellers see when landing on FezGuideTours.com.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Trilingual Switcher for Hero Texts */}
+                <div className="flex items-center gap-1 p-1 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA] self-start sm:self-auto">
+                  {(['en', 'fr', 'ar'] as Language[]).map((lang) => (
+                    <button
+                      key={lang}
+                      type="button"
+                      onClick={() => setSettingsHeroLang(lang)}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all uppercase cursor-pointer ${
+                        settingsHeroLang === lang
+                          ? 'bg-[#005F5A] text-white shadow-xs'
+                          : 'text-[#52605E] hover:bg-white'
+                      }`}
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hero Image Field */}
+              <div>
+                <ImagePickerField
+                  label="Hero Background Photo"
+                  value={cms.siteSettings.heroImage || '/images/real/about_us_image7.jpg'}
+                  onChange={(newPath) => cms.updateSiteSettings({ heroImage: newPath })}
+                  helperText="Primary high-resolution photo displayed across the full-width cinematic hero section."
+                />
+              </div>
+
+              {/* Multilingual Text Inputs */}
+              <div className="space-y-4 p-4 bg-[#FAF8F5] rounded-2xl border border-[#E7E2DA]">
+                <div>
+                  <label className="block text-xs font-bold text-[#2A3735] mb-1">
+                    Tagline Kicker Badge ({settingsHeroLang.toUpperCase()}):
+                  </label>
+                  <input
+                    type="text"
+                    dir={settingsHeroLang === 'ar' ? 'rtl' : 'ltr'}
+                    value={cms.siteSettings.heroTagline?.[settingsHeroLang] || ''}
+                    onChange={(e) =>
+                      cms.updateSiteSettings({
+                        heroTagline: {
+                          ...cms.siteSettings.heroTagline,
+                          [settingsHeroLang]: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="e.g. Fez Guide Tours — Discover the City Through Local Eyes"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2A3735] mb-1">
+                    Main Headline / Title ({settingsHeroLang.toUpperCase()}):
+                  </label>
+                  <input
+                    type="text"
+                    dir={settingsHeroLang === 'ar' ? 'rtl' : 'ltr'}
+                    value={cms.siteSettings.heroTitle?.[settingsHeroLang] || ''}
+                    onChange={(e) =>
+                      cms.updateSiteSettings({
+                        heroTitle: {
+                          ...cms.siteSettings.heroTitle,
+                          [settingsHeroLang]: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="e.g. Discover Fez in a Simple, Comfortable and Personal Way"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white text-xs font-bold text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#2A3735] mb-1">
+                    Hero Subtitle / Description ({settingsHeroLang.toUpperCase()}):
+                  </label>
+                  <textarea
+                    rows={3}
+                    dir={settingsHeroLang === 'ar' ? 'rtl' : 'ltr'}
+                    value={cms.siteSettings.heroSubtitle?.[settingsHeroLang] || ''}
+                    onChange={(e) =>
+                      cms.updateSiteSettings({
+                        heroSubtitle: {
+                          ...cms.siteSettings.heroSubtitle,
+                          [settingsHeroLang]: e.target.value,
+                        },
+                      })
+                    }
+                    placeholder="Describe your authentic experience in Fez..."
+                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-white text-xs text-[#1C2524] leading-relaxed focus:outline-none focus:border-[#005F5A]"
+                  />
+                </div>
+              </div>
+
+              {/* Hero Live Mini-Mockup Preview */}
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-[#728280] uppercase tracking-wider flex items-center gap-1.5">
+                  <Eye className="w-3.5 h-3.5 text-[#005F5A]" />
+                  <span>Homepage Live Hero Preview ({settingsHeroLang.toUpperCase()})</span>
+                </span>
+                <div className="relative rounded-2xl overflow-hidden min-h-[220px] flex items-center justify-center p-6 border border-[#E7E2DA]">
+                  <img
+                    src={cms.siteSettings.heroImage || '/images/real/about_us_image7.jpg'}
+                    alt="Hero Preview"
+                    className="absolute inset-0 w-full h-full object-cover opacity-85"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-black/30" />
+                  <div className="relative z-10 max-w-lg mx-auto bg-white/40 backdrop-blur-md rounded-2xl p-5 border border-white/50 text-center space-y-2 shadow-lg">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/80 text-[#C84B31]">
+                      {cms.siteSettings.heroTagline?.[settingsHeroLang] || 'Fez Guide Tours'}
+                    </span>
+                    <h3 className="text-base sm:text-lg font-extrabold text-[#005F5A] leading-snug">
+                      {cms.siteSettings.heroTitle?.[settingsHeroLang] || 'Discover Fez in a Personal Way'}
+                    </h3>
+                    <p className="text-xs text-[#15201F] font-medium line-clamp-2 leading-relaxed">
+                      {cms.siteSettings.heroSubtitle?.[settingsHeroLang] || 'Authentic Medina tours and day trips.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 2: BRAND IDENTITY & CONTACT COORDINATES */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E7E2DA] space-y-6 shadow-xs">
+              <div className="flex items-center gap-2.5 border-b border-[#E7E2DA] pb-4">
+                <div className="w-9 h-9 rounded-xl bg-[#005F5A]/10 text-[#005F5A] flex items-center justify-center">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1C2524]">
+                    Brand Identity & Contact Coordinates
+                  </h3>
+                  <p className="text-[11px] text-[#728280]">
+                    Phone numbers, WhatsApp gateway, email, and security PIN.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">Site Brand Name:</label>
                   <input
                     type="text"
                     value={cms.siteSettings.siteName}
                     onChange={(e) => cms.updateSiteSettings({ siteName: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
                   />
                 </div>
                 <div>
@@ -1419,87 +1479,246 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     type="email"
                     value={cms.siteSettings.email}
                     onChange={(e) => cms.updateSiteSettings({ email: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">Phone Number Display:</label>
                   <input
                     type="text"
                     value={cms.siteSettings.phoneNumber}
                     onChange={(e) => cms.updateSiteSettings({ phoneNumber: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
+                    placeholder="+212 661-234567"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2A3735] mb-1">WhatsApp Digits (for links):</label>
+                  <label className="block font-bold text-[#2A3735] mb-1">
+                    WhatsApp Digits (used in chat links):
+                  </label>
                   <input
                     type="text"
                     value={cms.siteSettings.whatsappNumber}
-                    onChange={(e) => cms.updateSiteSettings({ whatsappNumber: e.target.value })}
+                    onChange={(e) =>
+                      cms.updateSiteSettings({
+                        whatsappNumber: e.target.value.replace(/[^0-9]/g, ''),
+                      })
+                    }
                     placeholder="e.g. 212661234567"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] font-mono focus:outline-none focus:border-[#005F5A]"
+                  />
+                  <span className="text-[10px] text-[#728280] mt-0.5 block">
+                    Numbers only (no plus, spaces or dashes). E.g. 212661234567
+                  </span>
+                </div>
+                <div>
+                  <label className="block font-bold text-[#2A3735] mb-1">Admin Dashboard PIN:</label>
+                  <input
+                    type="text"
+                    defaultValue={localStorage.getItem('fezguidetours_admin_pin') || '1234'}
+                    onChange={(e) => {
+                      if (e.target.value.trim()) {
+                        localStorage.setItem('fezguidetours_admin_pin', e.target.value.trim());
+                      }
+                    }}
+                    placeholder="e.g. 1234"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs font-mono tracking-wider text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                  />
+                  <span className="text-[10px] text-[#728280] mt-0.5 block">
+                    Saved in browser memory. Fallback master PIN: fez2026
+                  </span>
+                </div>
+              </div>
+
+              {/* Social Profiles */}
+              <div className="space-y-3 pt-3 border-t border-[#E7E2DA]">
+                <span className="text-xs font-bold text-[#005F5A] flex items-center gap-1.5">
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Social Profiles & Online Links</span>
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label className="block font-medium text-[#52605E] mb-1">Instagram URL:</label>
+                    <input
+                      type="url"
+                      value={cms.siteSettings.socialInstagram || ''}
+                      onChange={(e) =>
+                        cms.updateSiteSettings({ socialInstagram: e.target.value })
+                      }
+                      placeholder="https://instagram.com/..."
+                      className="w-full px-3 py-1.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-[#52605E] mb-1">Facebook URL:</label>
+                    <input
+                      type="url"
+                      value={cms.siteSettings.socialFacebook || ''}
+                      onChange={(e) =>
+                        cms.updateSiteSettings({ socialFacebook: e.target.value })
+                      }
+                      placeholder="https://facebook.com/..."
+                      className="w-full px-3 py-1.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-[#52605E] mb-1">TripAdvisor URL:</label>
+                    <input
+                      type="url"
+                      value={cms.siteSettings.socialTripadvisor || ''}
+                      onChange={(e) =>
+                        cms.updateSiteSettings({ socialTripadvisor: e.target.value })
+                      }
+                      placeholder="https://tripadvisor.com/..."
+                      className="w-full px-3 py-1.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Office Address & Badges */}
+              <div className="space-y-3 pt-3 border-t border-[#E7E2DA] text-xs">
+                <span className="font-bold text-[#005F5A] flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Physical Office & Meeting Addresses</span>
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-medium text-[#52605E] mb-1">Address (English):</label>
+                    <input
+                      type="text"
+                      value={cms.siteSettings.address.en}
+                      onChange={(e) =>
+                        cms.updateSiteSettings({
+                          address: { ...cms.siteSettings.address, en: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-[#52605E] mb-1">العنوان بالعربية:</label>
+                    <input
+                      type="text"
+                      dir="rtl"
+                      value={cms.siteSettings.address.ar}
+                      onChange={(e) =>
+                        cms.updateSiteSettings({
+                          address: { ...cms.siteSettings.address, ar: e.target.value },
+                        })
+                      }
+                      className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <label className="block font-medium text-[#52605E] mb-1">
+                    Official Certification / Trust Badge (EN):
+                  </label>
+                  <input
+                    type="text"
+                    value={cms.siteSettings.licenseBadge?.en || ''}
+                    onChange={(e) =>
+                      cms.updateSiteSettings({
+                        licenseBadge: { ...cms.siteSettings.licenseBadge, en: e.target.value },
+                      })
+                    }
+                    placeholder="e.g. Local Native Hosts & Certified Medina Guides"
                     className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block font-bold text-[#2A3735] mb-1">Office Address (English):</label>
-                <input
-                  type="text"
-                  value={cms.siteSettings.address.en}
-                  onChange={(e) =>
-                    cms.updateSiteSettings({
-                      address: { ...cms.siteSettings.address, en: e.target.value },
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-[#2A3735] mb-1">العنوان بالعربية:</label>
-                <input
-                  type="text"
-                  value={cms.siteSettings.address.ar}
-                  onChange={(e) =>
-                    cms.updateSiteSettings({
-                      address: { ...cms.siteSettings.address, ar: e.target.value },
-                    })
-                  }
-                  className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
-                />
-              </div>
             </div>
 
-            <div className="pt-6 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">
-              <button
-                onClick={() => {
-                  askConfirm(
-                    'Reset All Content to Factory Defaults?',
-                    'This will restore all default tours, pages, and guides. Any custom additions will be cleared.',
-                    () => {
-                      cms.resetToDefaults();
-                      showToast('Content reset to factory defaults.');
-                    },
-                    'Reset Everything'
-                  );
-                }}
-                className="flex items-center gap-1.5 px-4 py-2 border border-[#C84B31] text-[#C84B31] hover:bg-[#C84B31]/10 text-xs font-bold rounded-xl cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Factory Defaults</span>
-              </button>
+            {/* CARD 3: BACKUP, RESTORE & DATA INTEGRITY */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E7E2DA] space-y-6 shadow-xs">
+              <div className="flex items-center gap-2.5 border-b border-[#E7E2DA] pb-4">
+                <div className="w-9 h-9 rounded-xl bg-[#005F5A]/10 text-[#005F5A] flex items-center justify-center">
+                  <Download className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1C2524]">
+                    Cloudflare Static Persistence & JSON Backups
+                  </h3>
+                  <p className="text-[11px] text-[#728280]">
+                    Download a full JSON snapshot of all your tours, custom pages, FAQs, and guides.
+                  </p>
+                </div>
+              </div>
 
-              <button
-                onClick={() => showToast('Settings saved successfully!')}
-                className="px-6 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer"
-              >
-                Save Settings
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Export Backup Card */}
+                <div className="p-4 rounded-2xl border border-[#E7E2DA] bg-[#FAF8F5] space-y-2">
+                  <h4 className="text-xs font-bold text-[#1C2524] flex items-center gap-1.5">
+                    <Download className="w-4 h-4 text-[#005F5A]" />
+                    <span>Download JSON Backup</span>
+                  </h4>
+                  <p className="text-[11px] text-[#728280] leading-relaxed">
+                    Saves all tours, itineraries, FAQs, blog articles, and settings as a portable JSON file to your device.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={cms.exportBackup}
+                    className="mt-2 w-full py-2 px-3 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export Backup Now</span>
+                  </button>
+                </div>
+
+                {/* Import Backup Card */}
+                <div className="p-4 rounded-2xl border border-[#E7E2DA] bg-[#FAF8F5] space-y-2">
+                  <h4 className="text-xs font-bold text-[#1C2524] flex items-center gap-1.5">
+                    <Upload className="w-4 h-4 text-[#C84B31]" />
+                    <span>Restore from Backup</span>
+                  </h4>
+                  <p className="text-[11px] text-[#728280] leading-relaxed">
+                    Select a previously downloaded `.json` backup file to instantly reload all website data.
+                  </p>
+                  <label className="mt-2 w-full py-2 px-3 border border-[#D5CEC4] bg-white hover:bg-[#FAF8F5] text-[#1C2524] text-xs font-bold rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1.5">
+                    <Upload className="w-3.5 h-3.5 text-[#C84B31]" />
+                    <span>Choose Backup File</span>
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={handleImportFile}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Danger Zone: Factory Reset */}
+              <div className="pt-4 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    askConfirm(
+                      'Reset All Content to Factory Defaults?',
+                      'This will restore all default tours, pages, FAQs, and guides. Any custom additions will be cleared.',
+                      () => {
+                        cms.resetToDefaults();
+                        showToast('Content reset to factory defaults.');
+                      },
+                      'Reset Everything'
+                    );
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 border border-[#C84B31] text-[#C84B31] hover:bg-[#C84B31]/10 text-xs font-bold rounded-xl cursor-pointer transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Reset to Factory Defaults</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => showToast('All settings and hero changes saved!')}
+                  className="px-6 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save All Settings</span>
+                </button>
+              </div>
             </div>
           </div>
         )}

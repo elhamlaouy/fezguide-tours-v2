@@ -226,6 +226,10 @@ function AppContent() {
       <AdminDashboard
         onClose={() => setAdminOpen(false)}
         language={language}
+        onNavigate={(pageId) => {
+          setAdminOpen(false);
+          handleNavigatePage(pageId);
+        }}
       />
     );
   }

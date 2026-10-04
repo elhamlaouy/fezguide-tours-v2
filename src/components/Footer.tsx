@@ -106,13 +106,14 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#00A896] shrink-0" />
                 <a
-                  href={`https://wa.me/${siteSettings.whatsappNumber}`}
+                  href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors underline decoration-[#00A896]/50"
                 >
                   {siteSettings.phoneNumber} (WhatsApp 24/7)
                 </a>
+
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#00A896] shrink-0" />
@@ -122,6 +123,40 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
                 <Award className="w-4 h-4 text-[#E07A5F] shrink-0" />
                 <span>Ministry of Tourism Licensed Guides Collective</span>
               </div>
+              {(siteSettings.socialInstagram || siteSettings.socialFacebook || siteSettings.socialTripadvisor) && (
+                <div className="flex items-center gap-3 pt-2 border-t border-[#233130]/60">
+                  {siteSettings.socialInstagram && (
+                    <a
+                      href={siteSettings.socialInstagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#00A896] hover:text-white transition-colors"
+                    >
+                      Instagram
+                    </a>
+                  )}
+                  {siteSettings.socialFacebook && (
+                    <a
+                      href={siteSettings.socialFacebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#00A896] hover:text-white transition-colors"
+                    >
+                      Facebook
+                    </a>
+                  )}
+                  {siteSettings.socialTripadvisor && (
+                    <a
+                      href={siteSettings.socialTripadvisor}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#00A896] hover:text-white transition-colors"
+                    >
+                      TripAdvisor
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

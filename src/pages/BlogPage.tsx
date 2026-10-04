@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, BlogPost } from '../types';
 import { useCms } from '../context/CmsContext';
 import { BookOpen, Calendar, Clock, User, ArrowRight, X, ChevronRight } from 'lucide-react';
@@ -12,6 +12,17 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
   const { blogPosts } = useCms();
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedPost) {
+        setSelectedPost(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedPost]);
+
 
   const publishedPosts = blogPosts.filter((p) => p.published !== false);
 
@@ -43,7 +54,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
       {/* Hero Header */}
       <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/src/assets/images/real/fez_history_culture_image1.jpg"
+          src="/images/real/fez_history_culture_image1.jpg"
           alt="Fez Travel Blog"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -143,9 +154,12 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                     onClick={() => setSelectedPost(post)}
                     className="text-xs font-bold text-[#005F5A] hover:text-[#C84B31] flex items-center gap-1 cursor-pointer transition-colors"
                   >
-                    <span>Read More</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span>
+                      {language === 'ar' ? 'اقرأ المزيد' : language === 'fr' ? 'Lire la suite' : 'Read More'}
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                   </button>
+
                 </div>
               </div>
             </article>
@@ -155,7 +169,14 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
 
       {/* Reader Modal */}
       {selectedPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto">
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedPost(null);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto"
+        >
           <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] overflow-hidden my-8 text-[#1C2524]">
             <button
               onClick={() => setSelectedPost(null)}
@@ -191,7 +212,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
 
             {/* Prose Content */}
             <div className="p-6 sm:p-10 space-y-6">
-              <p className="text-base font-medium text-[#2A3735] leading-relaxed italic border-l-4 border-[#005F5A] pl-4">
+              <p className="text-base font-medium text-[#2A3735] leading-relaxed italic border-l-4 border-[#005F5A] pl-4 rtl:border-l-0 rtl:border-r-4 rtl:pl-0 rtl:pr-4">
                 {selectedPost.excerpt[language]}
               </p>
 
@@ -202,7 +223,11 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
               {/* Author & Booking CTA */}
               <div className="pt-6 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-[#728280]">
-                  Written with love by the certified guides of FezGuideTours.
+                  {language === 'ar'
+                    ? 'كُتب بكل شغف بواسطة المرشدين المعتمدين لـ FezGuideTours.'
+                    : language === 'fr'
+                    ? 'Rédigé avec passion par les guides certifiés de FezGuideTours.'
+                    : 'Written with love by the certified guides of FezGuideTours.'}
                 </div>
                 <button
                   onClick={() => {
@@ -211,13 +236,18 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                   }}
                   className="py-2.5 px-5 bg-[#C84B31] hover:bg-[#B33D25] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
                 >
-                  Book a Tour in Fez
+                  {language === 'ar'
+                    ? 'احجز جولة في فاس'
+                    : language === 'fr'
+                    ? 'Réserver une visite'
+                    : 'Book a Tour in Fez'}
                 </button>
               </div>
             </div>
           </div>
         </div>
       )}
+
     </div>
   );
 };

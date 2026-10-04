@@ -205,7 +205,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span>{tNav.bookTour[language]}</span>
             </button>
             <a
-              href={`https://wa.me/${siteSettings.whatsappNumber}?text=Hello%20FezGuideTours,%20I%20would%20like%20to%20inquire%20about%20a%20tour`}
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                language === 'ar'
+                  ? 'السلام عليكم ورحمة الله، أود الاستفسار عن جولاتكم السياحية في فاس.'
+                  : language === 'fr'
+                  ? 'Bonjour FezGuideTours ! J’aimerais me renseigner sur vos visites à Fès.'
+                  : 'Hello FezGuideTours! I would like to inquire about a tour.'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-[#005F5A] border border-[#005F5A] rounded-lg hover:bg-[#005F5A]/5 transition-colors"
@@ -215,6 +221,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {UI_TEXT.common.whatsappChat[language]} ({siteSettings.phoneNumber})
               </span>
             </a>
+
           </div>
         </div>
       )}

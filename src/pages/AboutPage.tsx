@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
-import { ABOUT_STORY, FAQ_ITEMS, UI_TEXT } from '../data/translations';
+import { ABOUT_STORY, UI_TEXT } from '../data/translations';
 import { useCms } from '../context/CmsContext';
-import { Users, Award, ShieldCheck, Calendar, Heart, HelpCircle, ChevronDown, ChevronUp, MapPin, Compass } from 'lucide-react';
+import { Users, Award, ShieldCheck, Calendar, Heart, HelpCircle, ChevronDown, ChevronUp, MapPin, Compass, Filter } from 'lucide-react';
 
 interface AboutPageProps {
   language: Language;
@@ -13,9 +13,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({
   language,
   onBookTour,
 }) => {
-  const { teamMembers } = useCms();
+  const { teamMembers, siteSettings, faqs } = useCms();
   const story = ABOUT_STORY;
+
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [selectedFaqCategory, setSelectedFaqCategory] = useState<string>('all');
 
   const toggleFaq = (idx: number) => {
     setOpenFaqIndex(openFaqIndex === idx ? null : idx);
@@ -26,7 +28,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/src/assets/images/real/fez_explore_medina_image1.jpg"
+          src="/images/real/fez_explore_medina_image1.jpg"
           alt="Medina of Fez"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -91,7 +93,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
             <div className="lg:col-span-5">
               <div className="rounded-3xl overflow-hidden border border-[#E7E2DA] shadow-md bg-[#1C2524] relative aspect-4/3 group">
                 <img
-                  src="/src/assets/images/real/about_us_image1.jpg"
+                  src="/images/real/about_us_image1.jpg"
                   alt="Our team in Fez"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -211,10 +213,10 @@ export const AboutPage: React.FC<AboutPageProps> = ({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
-              { src: '/src/assets/images/real/about_us_image3.jpg', title: 'Medina Alleys' },
-              { src: '/src/assets/images/real/about_us_image5.jpg', title: 'Scenic Day Trips' },
-              { src: '/src/assets/images/real/about_us_image7.jpg', title: 'Local Crafts' },
-              { src: '/src/assets/images/real/about_us_image8.jpg', title: 'Authentic Moments' },
+              { src: '/images/real/about_us_image3.jpg', title: 'Medina Alleys' },
+              { src: '/images/real/about_us_image5.jpg', title: 'Scenic Day Trips' },
+              { src: '/images/real/about_us_image7.jpg', title: 'Local Crafts' },
+              { src: '/images/real/about_us_image8.jpg', title: 'Authentic Moments' },
             ].map((img, idx) => (
               <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group">
                 <img
@@ -246,44 +248,102 @@ export const AboutPage: React.FC<AboutPageProps> = ({
             </p>
           </div>
 
-          <div className="space-y-3 max-w-4xl mx-auto">
-            {FAQ_ITEMS.map((item, index) => {
-              const isOpen = openFaqIndex === index;
-              return (
-                <div
-                  key={item.id}
-                  className="border border-[#E7E2DA] rounded-2xl overflow-hidden transition-all bg-[#FAF8F5]/60 hover:bg-[#FAF8F5]"
-                >
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#1C2524] cursor-pointer"
-                  >
-                    <span>{item.question[language]}</span>
-                    {isOpen ? (
-                      <ChevronUp className="w-4 h-4 text-[#005F5A] shrink-0" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-[#728280] shrink-0" />
-                    )}
-                  </button>
-                  {isOpen && (
-                    <div className="px-4 sm:px-5 pb-5 pt-1 text-xs text-[#4E5B59] leading-relaxed border-t border-[#F2ECE4] bg-white">
-                      <p>{item.answer[language]}</p>
+          {/* Category Filter Pills */}
+          {(() => {
+            const allFaqs = faqs && faqs.length > 0 ? faqs : [];
+            const categories = [
+              { id: 'all', label: { en: 'All Topics', fr: 'Tous les sujets', ar: 'جميع الأسئلة' } },
+              { id: 'tours', label: { en: 'Tours & Medina', fr: 'Visites & Médina', ar: 'الجولات والمدينة' } },
+              { id: 'booking', label: { en: 'Booking & Payments', fr: 'Réservations', ar: 'الحجز والدفع' } },
+              { id: 'guides', label: { en: 'Guides', fr: 'Guides', ar: 'المرشدون' } },
+              { id: 'daytrips', label: { en: 'Day Trips', fr: 'Excursions', ar: 'الرحلات اليومية' } },
+              { id: 'food', label: { en: 'Food & Tasting', fr: 'Gastronomie', ar: 'الطعام والتذوق' } },
+            ];
+
+            const filteredFaqs = selectedFaqCategory === 'all'
+              ? allFaqs
+              : allFaqs.filter((item) => item.category === selectedFaqCategory);
+
+            return (
+              <div className="space-y-6 max-w-4xl mx-auto">
+                <div className="flex items-center justify-center flex-wrap gap-2">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedFaqCategory(cat.id);
+                        setOpenFaqIndex(null);
+                      }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                        selectedFaqCategory === cat.id
+                          ? 'bg-[#005F5A] text-white shadow-xs'
+                          : 'bg-[#FAF8F5] text-[#52605E] hover:bg-[#EFEAE2] border border-[#E7E2DA]'
+                      }`}
+                    >
+                      {cat.label[language] || cat.label.en}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-3">
+                  {filteredFaqs.map((item, index) => {
+                    const isOpen = openFaqIndex === index;
+                    return (
+                      <div
+                        key={item.id}
+                        className="border border-[#E7E2DA] rounded-2xl overflow-hidden transition-all bg-[#FAF8F5]/60 hover:bg-[#FAF8F5]"
+                      >
+                        <button
+                          onClick={() => toggleFaq(index)}
+                          className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#1C2524] cursor-pointer"
+                        >
+                          <span dir={language === 'ar' ? 'rtl' : 'ltr'}>
+                            {item.question[language] || item.question.en}
+                          </span>
+                          {isOpen ? (
+                            <ChevronUp className="w-4 h-4 text-[#005F5A] shrink-0" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-[#728280] shrink-0" />
+                          )}
+                        </button>
+                        {isOpen && (
+                          <div
+                            dir={language === 'ar' ? 'rtl' : 'ltr'}
+                            className="px-4 sm:px-5 pb-5 pt-1 text-xs text-[#4E5B59] leading-relaxed border-t border-[#F2ECE4] bg-white"
+                          >
+                            <p>{item.answer[language] || item.answer.en}</p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {filteredFaqs.length === 0 && (
+                    <div className="text-center py-8 text-xs text-[#728280]">
+                      No questions found in this category.
                     </div>
                   )}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })()}
 
           {/* Contact / Question CTA */}
           <div className="text-center pt-4 border-t border-[#F2ECE4]">
             <p className="text-xs text-[#52605E] mb-3">
               {language === 'ar'
                 ? 'هل لديك سؤال آخر؟ يسعدنا دائماً التحدث معك وتقديم المساعدة.'
+                : language === 'fr'
+                ? 'Vous avez une autre question ? Nos guides à Fès sont à votre disposition.'
                 : 'Still have a question? Talk to someone who knows Fez.'}
             </p>
             <a
-              href="https://wa.me/212661234567?text=Hello!%20I%20have%20a%20question%20about%20visiting%20Fez%20with%20FezGuideTours."
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                language === 'ar'
+                  ? 'السلام عليكم ورحمة الله، لدي استفسار حول زيارة فاس مع FezGuideTours.'
+                  : language === 'fr'
+                  ? 'Bonjour ! J’ai une question concernant une visite de Fès avec FezGuideTours.'
+                  : 'Hello! I have a question about visiting Fez with FezGuideTours.'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
@@ -291,6 +351,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({
               <span>{UI_TEXT.common.whatsappChat[language]}</span>
             </a>
           </div>
+
         </div>
       </div>
     </div>

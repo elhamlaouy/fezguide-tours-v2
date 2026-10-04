@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { UI_TEXT } from '../data/translations';
 import { useCms } from '../context/CmsContext';
-import { X, Calendar, Users, Phone, Mail, CheckCircle2, MessageCircle } from 'lucide-react';
+import { X, Calendar, Users, Phone, Mail, CheckCircle2, MessageCircle, AlertCircle } from 'lucide-react';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -30,6 +30,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [specialRequests, setSpecialRequests] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Minimum allowed booking date is today
+  const today = new Date().toISOString().split('T')[0];
 
   // Collect all available tours dynamically from CMS store
   const allTours = tours
@@ -48,41 +52,155 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setLanguagePreference(language);
   }, [language]);
 
+  // Handle ESC key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        resetAndClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
+  // Clean WhatsApp number removing non-digits
+  const cleanNumber = (siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '');
+
+  const resetAndClose = () => {
+    setIsSubmitted(false);
+    setValidationError(null);
+    onClose();
+  };
+
+  const validateForm = (): boolean => {
+    if (!fullName.trim()) {
+      setValidationError(
+        language === 'ar'
+          ? 'يرجى إدخال اسمكم الكامل'
+          : language === 'fr'
+          ? 'Veuillez saisir votre nom complet'
+          : 'Please enter your full name'
+      );
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      setValidationError(
+        language === 'ar'
+          ? 'يرجى إدخال بريد إلكتروني صحيح'
+          : language === 'fr'
+          ? 'Veuillez saisir une adresse e-mail valide'
+          : 'Please enter a valid email address'
+      );
+      return false;
+    }
+
+    const phoneDigits = phone.replace(/[^0-9]/g, '');
+    if (phoneDigits.length < 6) {
+      setValidationError(
+        language === 'ar'
+          ? 'يرجى إدخال رقم هاتف أو واتساب صحيح مع الرمز الدولي'
+          : language === 'fr'
+          ? 'Veuillez saisir un numéro de téléphone/WhatsApp valide avec indicatif'
+          : 'Please enter a valid WhatsApp or phone number with country code'
+      );
+      return false;
+    }
+
+    if (!date) {
+      setValidationError(
+        language === 'ar'
+          ? 'يرجى اختيار التاريخ المفضل للجولة'
+          : language === 'fr'
+          ? 'Veuillez sélectionner une date'
+          : 'Please select a preferred date'
+      );
+      return false;
+    }
+
+    if (date < today) {
+      setValidationError(
+        language === 'ar'
+          ? 'لا يمكن اختيار تاريخ في الماضي. يرجى اختيار تاريخ اليوم أو تاريخ لاحق.'
+          : language === 'fr'
+          ? 'La date ne peut pas être dans le passé. Veuillez choisir aujourd’hui ou une date ultérieure.'
+          : 'Date cannot be in the past. Please choose today or a future date.'
+      );
+      return false;
+    }
+
+    if (guests < 1 || guests > 50) {
+      setValidationError(
+        language === 'ar'
+          ? 'عدد المشاركين يجب أن يكون بين 1 و 50'
+          : language === 'fr'
+          ? 'Le nombre de participants doit être compris entre 1 et 50'
+          : 'Guest count must be between 1 and 50'
+      );
+      return false;
+    }
+
+    setValidationError(null);
+    return true;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     const ref = addBooking({
-      fullName,
-      email,
-      phone,
+      fullName: fullName.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
       tourId: initialTourId || 'custom',
       tourTitle: selectedTour,
       preferredDate: date,
       guestCount: guests,
       language: languagePreference,
-      specialRequests,
+      specialRequests: specialRequests.trim(),
     });
     setBookingRef(ref);
     setIsSubmitted(true);
   };
 
   const getWhatsAppMessage = () => {
-    const text = encodeURIComponent(
-      `Hello FezGuideTours! I would like to book a tour.\n` +
-      `Tour: ${selectedTour}\n` +
-      `Name: ${fullName || 'Guest'}\n` +
-      `Date: ${date || 'Flexible'}\n` +
-      `Guests: ${guests}\n` +
-      `Language: ${languagePreference.toUpperCase()}\n` +
-      `Notes: ${specialRequests || 'None'}`
-    );
-    return `https://wa.me/${siteSettings.whatsappNumber}?text=${text}`;
-  };
+    let text = '';
+    if (languagePreference === 'ar') {
+      text =
+        `السلام عليكم ورحمة الله، أود تأكيد حجز جولة عبر FezGuideTours:\n` +
+        `• الجولة: ${selectedTour}\n` +
+        `• الاسم: ${fullName || 'ضيف'}\n` +
+        `• التاريخ: ${date || 'مرن'}\n` +
+        `• عدد الأشخاص: ${guests}\n` +
+        `• لغة المرشد: العربية\n` +
+        `• ملاحظات: ${specialRequests || 'لا توجد'}\n` +
+        (bookingRef ? `• رقم المرجع: ${bookingRef}` : '');
+    } else if (languagePreference === 'fr') {
+      text =
+        `Bonjour FezGuideTours ! Je souhaite réserver une visite :\n` +
+        `• Visite : ${selectedTour}\n` +
+        `• Nom : ${fullName || 'Client'}\n` +
+        `• Date : ${date || 'Flexible'}\n` +
+        `• Personnes : ${guests}\n` +
+        `• Langue : Français\n` +
+        `• Notes : ${specialRequests || 'Aucune'}\n` +
+        (bookingRef ? `• Réf dossier : ${bookingRef}` : '');
+    } else {
+      text =
+        `Hello FezGuideTours! I would like to confirm a tour booking:\n` +
+        `• Tour: ${selectedTour}\n` +
+        `• Name: ${fullName || 'Guest'}\n` +
+        `• Date: ${date || 'Flexible'}\n` +
+        `• Guests: ${guests}\n` +
+        `• Language: ${languagePreference.toUpperCase()}\n` +
+        `• Notes: ${specialRequests || 'None'}\n` +
+        (bookingRef ? `• Ref: ${bookingRef}` : '');
+    }
 
-  const resetAndClose = () => {
-    setIsSubmitted(false);
-    onClose();
+    return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(text)}`;
   };
 
   const labels = {
@@ -112,7 +230,15 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="booking-modal-title"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) resetAndClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+    >
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#E7E2DA] p-6 sm:p-8 my-8 text-[#1C2524]">
         {/* Close Button */}
         <button
@@ -128,7 +254,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <div className="w-16 h-16 bg-[#005F5A]/10 text-[#005F5A] rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h3 className="text-xl font-bold text-[#1C2524]">
+            <h3 id="booking-modal-title" className="text-xl font-bold text-[#1C2524]">
               {labels.successTitle[language]}
             </h3>
             <p className="text-sm text-[#4A5755] leading-relaxed">
@@ -159,7 +285,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         ) : (
           <div>
             <div className="mb-6">
-              <h3 className="text-xl font-extrabold text-[#1C2524]">
+              <h3 id="booking-modal-title" className="text-xl font-extrabold text-[#1C2524]">
                 {labels.title[language]}
               </h3>
               <p className="text-xs text-[#5D6B69] mt-1">
@@ -167,7 +293,14 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+            {validationError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                <span>{validationError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4 text-xs" noValidate>
               {/* Tour Selection */}
               <div>
                 <label className="block font-bold text-[#2A3735] mb-1">
@@ -197,7 +330,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     type="text"
                     required
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(e) => {
+                      setFullName(e.target.value);
+                      if (validationError) setValidationError(null);
+                    }}
                     placeholder="e.g. Sarah Jenkins"
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
@@ -210,7 +346,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     type="tel"
                     required
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => {
+                      setPhone(e.target.value);
+                      if (validationError) setValidationError(null);
+                    }}
                     placeholder="+1 555 019 2834"
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
@@ -227,7 +366,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     type="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (validationError) setValidationError(null);
+                    }}
                     placeholder="sarah@example.com"
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
@@ -239,8 +381,12 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <input
                     type="date"
                     required
+                    min={today}
                     value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    onChange={(e) => {
+                      setDate(e.target.value);
+                      if (validationError) setValidationError(null);
+                    }}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
                 </div>
@@ -255,7 +401,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   <input
                     type="number"
                     min="1"
-                    max="30"
+                    max="50"
                     value={guests}
                     onChange={(e) => setGuests(parseInt(e.target.value) || 1)}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"

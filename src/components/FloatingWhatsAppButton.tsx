@@ -142,7 +142,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
           </button>
           <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[#005F5A] border border-[#005F5A]/20">
             <img
-              src="/src/assets/images/real/about_us_image1.jpg"
+              src="/images/real/about_us_image1.jpg"
               alt="Med Local Guide"
               className="w-full h-full object-cover"
             />
@@ -188,7 +188,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
               <div className="relative">
                 <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/30 bg-[#1C2524] shadow-xs">
                   <img
-                    src="/src/assets/images/real/about_us_image1.jpg"
+                    src="/images/real/about_us_image1.jpg"
                     alt="Med & Local Team"
                     className="w-full h-full object-cover"
                   />

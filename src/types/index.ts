@@ -111,5 +111,9 @@ export interface SiteSettings {
   heroTagline: Record<Language, string>;
   heroTitle: Record<Language, string>;
   heroSubtitle: Record<Language, string>;
+  heroImage?: string;
+  socialInstagram?: string;
+  socialFacebook?: string;
+  socialTripadvisor?: string;
 }
 

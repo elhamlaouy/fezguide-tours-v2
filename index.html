@@ -1,45 +1,73 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <script>
-      (function() {
-        try {
-          var currentFetch = (typeof window !== 'undefined' && typeof window.fetch === 'function')
-            ? window.fetch.bind(window)
-            : (typeof window !== 'undefined' ? window.fetch : null);
-
-          var propDesc = {
-            get: function() {
-              return currentFetch;
-            },
-            set: function(val) {
-              currentFetch = val;
-            },
-            configurable: true,
-            enumerable: true
-          };
-
-          try {
-            Object.defineProperty(window, 'fetch', propDesc);
-          } catch (e1) {}
-
-          if (typeof Window !== 'undefined' && Window.prototype) {
-            try {
-              Object.defineProperty(Window.prototype, 'fetch', propDesc);
-            } catch (e2) {}
-          }
-        } catch (e) {}
-      })();
-    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FezGuideTours - Authentic Fez Tours &amp; Day Trips</title>
+
+    <!-- Primary SEO -->
+    <title>Fez Guide Tours — Authentic Fez Medina Tours & Day Trips | Morocco</title>
     <meta name="description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
-    <meta property="og:title" content="FezGuideTours - Authentic Fez Tours &amp; Day Trips" />
-    <meta property="og:description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://fezguidetours.com/" />
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/images/hero_fez_medina_1790709688133.jpg" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#005F5A" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fezguidetours.com/" />
+    <meta property="og:title" content="Fez Guide Tours — Authentic Fez Medina Tours & Day Trips" />
+    <meta property="og:description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
+    <meta property="og:image" content="https://fezguidetours.com/images/hero_fez_medina_1790709688133.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content="Fez Guide Tours" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fez Guide Tours — Authentic Fez Medina Tours & Day Trips" />
+    <meta name="twitter:description" content="Discover authentic Fez medina tours, day trips to Chefchaouen, Volubilis and the Middle Atlas, immersive Moroccan food tasting experiences, and local travel tips with certified local guides." />
+    <meta name="twitter:image" content="https://fezguidetours.com/images/hero_fez_medina_1790709688133.jpg" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TravelAgency",
+      "name": "Fez Guide Tours",
+      "url": "https://fezguidetours.com",
+      "logo": "https://fezguidetours.com/favicon.svg",
+      "image": "https://fezguidetours.com/images/hero_fez_medina_1790709688133.jpg",
+      "description": "Certified local guides offering authentic Fez medina tours, day trips to Chefchaouen, Volubilis & the Middle Atlas, and immersive Moroccan food tasting experiences.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Fez",
+        "addressCountry": "MA"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 34.0331,
+        "longitude": -5.0003
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Fez"
+      },
+      "priceRange": "$$",
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "08:00",
+        "closes": "20:00"
+      },
+      "sameAs": []
+    }
+    </script>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -49,4 +77,5 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+
 

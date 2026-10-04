@@ -22,12 +22,12 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 1. FEZ: EXPLORE THE MEDINA =====================
   'fez-explore-medina': {
     galleryImages: [
-      '/src/assets/images/real/about_us_image7.jpg',
-      '/src/assets/images/real/fez_explore_medina_image1.jpg',
-      '/src/assets/images/real/fez_explore_medina_image2.jpg',
-      '/src/assets/images/real/fez_explore_medina_image3.jpg',
-      '/src/assets/images/real/fez_explore_medina_image4.jpg',
-      '/src/assets/images/real/fez_explore_medina_image7.jpg',
+      '/images/real/about_us_image7.jpg',
+      '/images/real/fez_explore_medina_image1.jpg',
+      '/images/real/fez_explore_medina_image2.jpg',
+      '/images/real/fez_explore_medina_image3.jpg',
+      '/images/real/fez_explore_medina_image4.jpg',
+      '/images/real/fez_explore_medina_image7.jpg',
     ],
     itinerary: [
       {
@@ -214,12 +214,12 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 2. FEZ: HISTORY, CULTURE & LANDMARKS =====================
   'fez-history-culture': {
     galleryImages: [
-      '/src/assets/images/real/fez_history_culture_image1.jpg',
-      '/src/assets/images/real/fez_history_culture_image2.jpg',
-      '/src/assets/images/real/fez_history_culture_image10.jpg',
-      '/src/assets/images/real/fez_history_culture_image11.jpg',
-      '/src/assets/images/real/fez_history_culture_image12.jpg',
-      '/src/assets/images/real/fez_history_culture_image13.jpg',
+      '/images/real/fez_history_culture_image1.jpg',
+      '/images/real/fez_history_culture_image2.jpg',
+      '/images/real/fez_history_culture_image10.jpg',
+      '/images/real/fez_history_culture_image11.jpg',
+      '/images/real/fez_history_culture_image12.jpg',
+      '/images/real/fez_history_culture_image13.jpg',
     ],
     itinerary: [
       {
@@ -345,12 +345,12 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 3. FEZ: THINGS TO DO IN FEZ =====================
   'fez-things-to-do': {
     galleryImages: [
-      '/src/assets/images/real/fez_things_to_do_image1.jpg',
-      '/src/assets/images/real/fez_things_to_do_image2.jpg',
-      '/src/assets/images/real/fez_things_to_do_image3.jpg',
-      '/src/assets/images/real/fez_things_to_do_image4.jpg',
-      '/src/assets/images/real/fez_things_to_do_image5.jpg',
-      '/src/assets/images/real/about_us_image3.jpg',
+      '/images/real/fez_things_to_do_image1.jpg',
+      '/images/real/fez_things_to_do_image2.jpg',
+      '/images/real/fez_things_to_do_image3.jpg',
+      '/images/real/fez_things_to_do_image4.jpg',
+      '/images/real/fez_things_to_do_image5.jpg',
+      '/images/real/about_us_image3.jpg',
     ],
     itinerary: [
       {
@@ -473,9 +473,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 4. DAY TRIP: CHEFCHAOUEN =====================
   'daytrip-chefchaouen': {
     galleryImages: [
-      '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
-      '/src/assets/images/real/about_us_image5.jpg',
-      '/src/assets/images/real/about_us_image8.jpg',
+      '/images/real/daytrip_chefchaouen_image1.jpg',
+      '/images/real/about_us_image5.jpg',
+      '/images/real/about_us_image8.jpg',
     ],
     itinerary: [
       {
@@ -601,11 +601,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 5. DAY TRIP: MEKNES & VOLUBILIS =====================
   'daytrip-meknes': {
     galleryImages: [
-      '/src/assets/images/real/daytrip_meknes_image1.jpg',
-      '/src/assets/images/real/daytrip_meknes_image2.jpg',
-      '/src/assets/images/real/daytrip_meknes_image3.jpg',
-      '/src/assets/images/real/daytrip_meknes_image4.jpg',
-      '/src/assets/images/real/daytrip_meknes_image5.jpg',
+      '/images/real/daytrip_meknes_image1.jpg',
+      '/images/real/daytrip_meknes_image2.jpg',
+      '/images/real/daytrip_meknes_image3.jpg',
+      '/images/real/daytrip_meknes_image4.jpg',
+      '/images/real/daytrip_meknes_image5.jpg',
     ],
     itinerary: [
       {
@@ -714,9 +714,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 6. DAY TRIP: IFRANE & MIDDLE ATLAS =====================
   'daytrip-ifrane': {
     galleryImages: [
-      '/src/assets/images/real/daytrip_ifrane_image1.jpg',
-      '/src/assets/images/real/daytrip_ifrane_image2.jpg',
-      '/src/assets/images/real/daytrip_ifrane_image3.jpg',
+      '/images/real/daytrip_ifrane_image1.jpg',
+      '/images/real/daytrip_ifrane_image2.jpg',
+      '/images/real/daytrip_ifrane_image3.jpg',
     ],
     itinerary: [
       {
@@ -825,8 +825,8 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 7. DAY TRIP: CUSTOM PRIVATE TRIP =====================
   'daytrip-custom': {
     galleryImages: [
-      '/src/assets/images/real/daytrip_custom_image1.jpg',
-      '/src/assets/images/real/about_us_image5.jpg',
+      '/images/real/daytrip_custom_image1.jpg',
+      '/images/real/about_us_image5.jpg',
     ],
     itinerary: [
       {
@@ -904,11 +904,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 8. FOOD TOURS: STREET FOOD TASTING WALK =====================
   'food-tasting-walk': {
     galleryImages: [
-      '/src/assets/images/real/food_medina_walk.jpg',
-      '/src/assets/images/real/food_tagine_table.jpg',
-      '/src/assets/images/real/food_feast_board.jpg',
-      '/src/assets/images/real/food_couscous_plate.jpg',
-      '/src/assets/images/real/food_spice_souk.jpg',
+      '/images/real/food_medina_walk.jpg',
+      '/images/real/food_tagine_table.jpg',
+      '/images/real/food_feast_board.jpg',
+      '/images/real/food_couscous_plate.jpg',
+      '/images/real/food_spice_souk.jpg',
     ],
     itinerary: [
       {
@@ -1048,11 +1048,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 9. FOOD TOURS: TRADITIONAL FASSI FEAST =====================
   'food-traditional-fassi': {
     galleryImages: [
-      '/src/assets/images/real/food_feast_board.jpg',
-      '/src/assets/images/real/food_tagine_table.jpg',
-      '/src/assets/images/real/food_couscous_plate.jpg',
-      '/src/assets/images/real/food_medina_walk.jpg',
-      '/src/assets/images/real/food_spice_souk.jpg',
+      '/images/real/food_feast_board.jpg',
+      '/images/real/food_tagine_table.jpg',
+      '/images/real/food_couscous_plate.jpg',
+      '/images/real/food_medina_walk.jpg',
+      '/images/real/food_spice_souk.jpg',
     ],
     itinerary: [
       {
@@ -1161,11 +1161,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 10. FOOD TOURS: FOOD CULTURE & LOCAL LIFE =====================
   'food-culture-life': {
     galleryImages: [
-      '/src/assets/images/real/food_couscous_plate.jpg',
-      '/src/assets/images/real/food_medina_walk.jpg',
-      '/src/assets/images/real/food_tagine_table.jpg',
-      '/src/assets/images/real/food_feast_board.jpg',
-      '/src/assets/images/real/food_spice_souk.jpg',
+      '/images/real/food_couscous_plate.jpg',
+      '/images/real/food_medina_walk.jpg',
+      '/images/real/food_tagine_table.jpg',
+      '/images/real/food_feast_board.jpg',
+      '/images/real/food_spice_souk.jpg',
     ],
     itinerary: [
       {

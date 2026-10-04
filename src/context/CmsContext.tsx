@@ -7,6 +7,7 @@ import {
   BookingRecord,
   SiteSettings,
   BookingInquiry,
+  FaqItem,
 } from '../types';
 import {
   FEZ_PILLARS,
@@ -17,13 +18,17 @@ import {
   DEFAULT_SITE_SETTINGS,
   DEFAULT_BLOG_POSTS,
   DEFAULT_CUSTOM_PAGES,
+  FAQ_ITEMS,
 } from '../data/translations';
+import { EXPERIENCE_EXTRAS } from '../data/experienceDetails';
+
 
 interface CmsData {
   tours: SectionPillar[];
   customPages: CustomPage[];
   blogPosts: BlogPost[];
   teamMembers: TeamMember[];
+  faqs: FaqItem[];
   bookings: BookingRecord[];
   siteSettings: SiteSettings;
 }
@@ -49,6 +54,12 @@ interface CmsContextType extends CmsData {
   updateTeamMember: (id: string, updated: Partial<TeamMember>) => void;
   deleteTeamMember: (id: string) => void;
 
+  // FAQ actions
+  addFaq: (faq: FaqItem) => void;
+  updateFaq: (id: string, updated: Partial<FaqItem>) => void;
+  deleteFaq: (id: string) => void;
+  reorderFaqs: (reordered: FaqItem[]) => void;
+
   // Booking actions
   addBooking: (inquiry: BookingInquiry) => string;
   updateBookingStatus: (id: string, status: BookingRecord['status'], notes?: string) => void;
@@ -63,15 +74,53 @@ interface CmsContextType extends CmsData {
   resetToDefaults: () => void;
 }
 
-const STORAGE_KEY = 'fezguidetours_cms_store_v6';
+const STORAGE_KEY = 'fezguidetours_cms_store_v7';
+const LEGACY_STORAGE_KEY = 'fezguidetours_cms_store_v6';
+
+const sanitizeImagePath = (url: string | undefined): string => {
+  if (!url) return '';
+  return url.replace('/src/assets/images/', '/images/');
+};
+
+const sanitizeObjectImages = (obj: any): any => {
+  if (!obj) return obj;
+  if (typeof obj === 'string') return sanitizeImagePath(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeObjectImages);
+  if (typeof obj === 'object') {
+    const updated: any = {};
+    for (const key of Object.keys(obj)) {
+      if (key === 'image' || key === 'coverImage' || key === 'avatarUrl' || key === 'heroImage') {
+        updated[key] = sanitizeImagePath(obj[key]);
+      } else if (key === 'galleryImages' && Array.isArray(obj[key])) {
+        updated[key] = obj[key].map(sanitizeImagePath);
+      } else {
+        updated[key] = sanitizeObjectImages(obj[key]);
+      }
+    }
+    return updated;
+  }
+  return obj;
+};
 
 const getInitialData = (): CmsData => {
   const initialTours: SectionPillar[] = [
-    ...FEZ_PILLARS.map((p) => ({ ...p, published: true })),
-    ...DAY_TRIPS_PILLARS.map((p) => ({ ...p, published: true })),
-    ...FOOD_TOURS_PILLARS.map((p) => ({ ...p, published: true })),
-    ...TRAVEL_TIPS_PILLARS.map((p) => ({ ...p, published: true })),
-  ];
+    ...FEZ_PILLARS,
+    ...DAY_TRIPS_PILLARS,
+    ...FOOD_TOURS_PILLARS,
+    ...TRAVEL_TIPS_PILLARS,
+  ].map((p) => {
+    const extra = EXPERIENCE_EXTRAS[p.id];
+    return {
+      ...p,
+      published: true,
+      galleryImages: extra?.galleryImages || [p.image],
+      itinerary: extra?.itinerary || [],
+      included: extra?.included || { en: [], fr: [], ar: [] },
+      excluded: extra?.excluded || { en: [], fr: [], ar: [] },
+      whatToBring: extra?.whatToBring || { en: [], fr: [], ar: [] },
+      meetingPointDetails: extra?.meetingPointDetails || { en: '', fr: '', ar: '' },
+    };
+  });
 
   const defaultToursMap = new Map(initialTours.map((t) => [t.id, t]));
 
@@ -80,6 +129,7 @@ const getInitialData = (): CmsData => {
     customPages: DEFAULT_CUSTOM_PAGES,
     blogPosts: DEFAULT_BLOG_POSTS,
     teamMembers: TEAM_MEMBERS,
+    faqs: FAQ_ITEMS,
     bookings: [
       {
         id: 'FGT-892415',
@@ -100,27 +150,34 @@ const getInitialData = (): CmsData => {
   };
 
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      // Synchronize canonical tour images so cached localStorage never serves outdated/inaccurate pictures
+      const parsed = sanitizeObjectImages(JSON.parse(saved));
+      // Merge saved tours while preserving user-customized details, images, and itineraries
       const syncedTours = (parsed.tours || defaultData.tours).map((t: SectionPillar) => {
         const canonical = defaultToursMap.get(t.id);
-        if (canonical) {
-          return {
-            ...t,
-            image: canonical.image,
-            imageAlt: canonical.imageAlt,
-          };
-        }
-        return t;
+        const cleanImg = sanitizeImagePath(t.image);
+        return {
+          ...(canonical || {}),
+          ...t,
+          image: cleanImg || canonical?.image || '',
+          galleryImages: (t.galleryImages || canonical?.galleryImages || []).map(sanitizeImagePath),
+          itinerary: t.itinerary || canonical?.itinerary || [],
+          included: t.included || canonical?.included || { en: [], fr: [], ar: [] },
+          excluded: t.excluded || canonical?.excluded || { en: [], fr: [], ar: [] },
+          whatToBring: t.whatToBring || canonical?.whatToBring || { en: [], fr: [], ar: [] },
+          meetingPointDetails: t.meetingPointDetails || canonical?.meetingPointDetails || { en: '', fr: '', ar: '' },
+        };
       });
+
+
 
       return {
         tours: syncedTours,
         customPages: parsed.customPages || defaultData.customPages,
         blogPosts: parsed.blogPosts || defaultData.blogPosts,
         teamMembers: parsed.teamMembers || defaultData.teamMembers,
+        faqs: parsed.faqs && parsed.faqs.length > 0 ? parsed.faqs : defaultData.faqs,
         bookings: parsed.bookings || defaultData.bookings,
         siteSettings: { ...defaultData.siteSettings, ...(parsed.siteSettings || {}) },
       };
@@ -234,6 +291,35 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
+  // FAQs
+  const addFaq = (faq: FaqItem) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: [faq, ...prev.faqs],
+    }));
+  };
+
+  const updateFaq = (id: string, updated: Partial<FaqItem>) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: prev.faqs.map((f) => (f.id === id ? { ...f, ...updated } : f)),
+    }));
+  };
+
+  const deleteFaq = (id: string) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: prev.faqs.filter((f) => f.id !== id),
+    }));
+  };
+
+  const reorderFaqs = (reordered: FaqItem[]) => {
+    setData((prev) => ({
+      ...prev,
+      faqs: reordered,
+    }));
+  };
+
   // Bookings
   const addBooking = (inquiry: BookingInquiry): string => {
     const bookingRef = 'FGT-' + Math.floor(100000 + Math.random() * 900000);
@@ -291,12 +377,13 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const importBackup = (jsonData: string): boolean => {
     try {
       const parsed = JSON.parse(jsonData);
-      if (parsed && (parsed.tours || parsed.customPages || parsed.siteSettings)) {
+      if (parsed && (parsed.tours || parsed.customPages || parsed.siteSettings || parsed.faqs)) {
         setData({
           tours: parsed.tours || data.tours,
           customPages: parsed.customPages || data.customPages,
           blogPosts: parsed.blogPosts || data.blogPosts,
           teamMembers: parsed.teamMembers || data.teamMembers,
+          faqs: parsed.faqs || data.faqs,
           bookings: parsed.bookings || data.bookings,
           siteSettings: parsed.siteSettings || data.siteSettings,
         });
@@ -321,6 +408,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       customPages: DEFAULT_CUSTOM_PAGES,
       blogPosts: DEFAULT_BLOG_POSTS,
       teamMembers: TEAM_MEMBERS,
+      faqs: FAQ_ITEMS,
       bookings: [],
       siteSettings: DEFAULT_SITE_SETTINGS,
     });
@@ -342,6 +430,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addTeamMember,
         updateTeamMember,
         deleteTeamMember,
+        addFaq,
+        updateFaq,
+        deleteFaq,
+        reorderFaqs,
         addBooking,
         updateBookingStatus,
         deleteBooking,

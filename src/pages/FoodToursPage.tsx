@@ -79,7 +79,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/src/assets/images/real/food_medina_walk.jpg"
+          src="/images/real/food_medina_walk.jpg"
           alt="Moroccan Food Tasting Walk"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -193,19 +193,19 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
-                src: '/src/assets/images/real/food_medina_walk.jpg',
+                src: '/images/real/food_medina_walk.jpg',
                 title: language === 'ar' ? 'دروب فاس ودكاكين التذوق' : 'Medina Food Walk Alleys',
               },
               {
-                src: '/src/assets/images/real/food_tagine_table.jpg',
+                src: '/images/real/food_tagine_table.jpg',
                 title: language === 'ar' ? 'مائدة طاجين وسلطات مغربية' : 'Tagine & Moroccan Mezze',
               },
               {
-                src: '/src/assets/images/real/food_feast_board.jpg',
+                src: '/images/real/food_feast_board.jpg',
                 title: language === 'ar' ? 'بسطيلة ملكية ومأكولات فاخرة' : 'Royal Pastilla & Skewers',
               },
               {
-                src: '/src/assets/images/real/food_couscous_plate.jpg',
+                src: '/images/real/food_couscous_plate.jpg',
                 title: language === 'ar' ? 'كسكس مغربي بالسبع خضار' : 'Seven-Vegetable Couscous',
               },
             ].map((img, idx) => (
@@ -227,16 +227,24 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
         {/* Bottom CTA Box */}
         <div className="bg-[#FAF8F5] rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 text-center space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-            {language === 'ar' ? 'تعال بشهية مفتوحة' : 'Come Hungry — Leave with a Taste of Fez'}
+            {language === 'ar'
+              ? 'تعال بشهية مفتوحة'
+              : language === 'fr'
+              ? 'Venez le ventre vide — repartez conquis par les saveurs de Fès'
+              : 'Come Hungry — Leave with a Taste of Fez'}
           </span>
           <h3 className="text-xl sm:text-2xl font-bold text-[#005F5A]">
             {language === 'ar'
               ? 'هل ترغب في جولة تذوق خاصة ومخصصة لمجموعتك؟'
+              : language === 'fr'
+              ? 'Réservez votre visite culinaire privée dans la médina'
               : 'Book Your Private Medina Food Tasting Walk'}
           </h3>
           <p className="text-xs sm:text-sm text-[#4E5B59] max-w-2xl mx-auto leading-relaxed">
             {language === 'ar'
               ? 'يمكننا تعديل مسار التذوق حسب رغباتك، وتوفير خيارات مناسبة للنباتيين ولمن يعانون من حساسية غذائية. جولة خاصة لك ولمجموعتك فقط.'
+              : language === 'fr'
+              ? 'Une expérience gastronomique privée rien que pour vous. Nous nous adaptons à votre rythme, à vos préférences végétariennes ou régimes spécifiques.'
               : 'This is a private food experience just for you and your group. We can take our time, talk with local sellers, and adapt tastings to your preferences.'}
           </p>
           <div className="pt-2">
@@ -244,10 +252,15 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
               onClick={() => onBookTour('Fez Medina Food Tasting Walk')}
               className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
             >
-              {language === 'ar' ? 'احجز جولة التذوق الآن' : 'Book Your Private Food Tasting Walk'}
+              {language === 'ar'
+                ? 'احجز جولة التذوق الآن'
+                : language === 'fr'
+                ? 'Réserver la visite culinaire'
+                : 'Book Your Private Food Tasting Walk'}
             </button>
           </div>
         </div>
+
       </div>
     </div>
   );

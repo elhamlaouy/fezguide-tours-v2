@@ -16,8 +16,9 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
   onExplore,
   onBookTour,
 }) => {
-  const { tours } = useCms();
+  const { tours, siteSettings } = useCms();
   const [eurAmount, setEurAmount] = useState<number>(50);
+
   const madAmount = Math.round(eurAmount * 10.8);
 
   const travelTipsPillars = tours.filter((t) => t.pageId === 'travel-tips' && t.published !== false);
@@ -75,7 +76,7 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/src/assets/images/real/tips_plan_trip_image1.jpg"
+          src="/images/real/tips_plan_trip_image1.jpg"
           alt="Panoramic Fez View"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
@@ -161,19 +162,19 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
-                src: '/src/assets/images/real/tips_getting_around_image1.jpg',
+                src: '/images/real/tips_getting_around_image1.jpg',
                 title: language === 'ar' ? 'التاكسي الصغير الأحمر' : 'Red Petit Taxis',
               },
               {
-                src: '/src/assets/images/real/tips_plan_trip_image1.jpg',
+                src: '/images/real/tips_plan_trip_image1.jpg',
                 title: language === 'ar' ? 'مطلات بانورامية' : 'Medina Viewpoints',
               },
               {
-                src: '/src/assets/images/real/tips_practical_image1.jpg',
+                src: '/images/real/tips_practical_image1.jpg',
                 title: language === 'ar' ? 'الضيافة والشاي المغربي' : 'Mint Tea Hospitality',
               },
               {
-                src: '/src/assets/images/real/fez_things_to_do_image1.jpg',
+                src: '/images/real/fez_things_to_do_image1.jpg',
                 title: language === 'ar' ? 'أسواق فاس وحرفها' : 'Crafts & Souks',
               },
             ].map((item, idx) => (
@@ -274,21 +275,35 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
         {/* Local Contact Banner */}
         <div className="bg-[#FAF8F5] rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 text-center space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-            {language === 'ar' ? 'نحن هنا لمساعدتكم' : 'Need More Local Advice?'}
+            {language === 'ar'
+              ? 'نحن هنا لمساعدتكم'
+              : language === 'fr'
+              ? 'Besoin de Conseils Locaux ?'
+              : 'Need More Local Advice?'}
           </span>
           <h3 className="text-xl sm:text-2xl font-bold text-[#1C2524]">
             {language === 'ar'
               ? 'تخطيط رحلتك أسهل بكثير مع نصائح من أهل فاس'
+              : language === 'fr'
+              ? 'Voyagez avec des informations fiables. Explorez en toute sérénité.'
               : 'Travel with Useful Information. Explore with Confidence.'}
           </h3>
           <p className="text-xs sm:text-sm text-[#4E5B59] max-w-2xl mx-auto leading-relaxed">
             {language === 'ar'
               ? 'إذا كان لديك أي استفسار حول عادات المدينة، أفضل المسارات، أو تنظيم وقتك، لا تتردد في مراسلتنا وسنجيبك بكل سرور.'
+              : language === 'fr'
+              ? 'Une question sur votre séjour, les coutumes locales ou l’organisation de vos journées à Fès ? Contactez directement nos guides.'
               : 'If you have a question about your visit, places to see, local customs, or how to organize your time in Fez, feel free to contact us.'}
           </p>
           <div className="pt-2">
             <a
-              href="https://wa.me/212661234567?text=Hello!%20I%20am%20planning%20a%20trip%20to%20Fez%20and%20would%20love%20some%20advice."
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+                language === 'ar'
+                  ? 'السلام عليكم ورحمة الله، أنا بصدد التخطيط لزيارة فاس وأود الحصول على بعض النصائح والتوصيات.'
+                  : language === 'fr'
+                  ? 'Bonjour ! Je prépare mon séjour à Fès et j’aimerais recevoir quelques conseils de vos guides locaux.'
+                  : 'Hello! I am planning a trip to Fez and would love some local advice.'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors"
@@ -297,6 +312,7 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
             </a>
           </div>
         </div>
+
       </div>
     </div>
   );

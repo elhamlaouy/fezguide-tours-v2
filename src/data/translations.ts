@@ -184,7 +184,7 @@ Accompagné d'un guide local, découvrez l'histoire vivante des édifices, le tr
       priceMAD: 450,
       priceEUR: 42,
     },
-    image: '/src/assets/images/real/fez_explore_medina_image1.jpg',
+    image: '/images/real/fez_explore_medina_image1.jpg',
     imageAlt: {
       en: 'Medina streets and historic Bab Boujloud gate',
       fr: 'Ruelles de la médina et porte Bab Boujloud',
@@ -250,7 +250,7 @@ From the world-famous University of Al-Qarawiyyin, founded in 859 AD, to the int
       priceMAD: 500,
       priceEUR: 46,
     },
-    image: '/src/assets/images/real/fez_history_culture_image1.jpg',
+    image: '/images/real/fez_history_culture_image1.jpg',
     imageAlt: {
       en: 'Historic madrasa architecture in Fez',
       fr: 'Architecture de médersa historique à Fès',
@@ -318,7 +318,7 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
       priceMAD: 400,
       priceEUR: 38,
     },
-    image: '/src/assets/images/real/fez_things_to_do_image1.jpg',
+    image: '/images/real/fez_things_to_do_image1.jpg',
     imageAlt: {
       en: 'Craftsmen and vibrant souks in Fez',
       fr: 'Artisans et souks vivants à Fès',
@@ -394,7 +394,7 @@ There is also time to explore the small streets, discover local handicrafts, sto
       priceMAD: 1400,
       priceEUR: 130,
     },
-    image: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
+    image: '/images/real/daytrip_chefchaouen_image1.jpg',
     imageAlt: {
       en: 'Blue streets of Chefchaouen in the Rif Mountains',
       fr: 'Ruelles bleues de Chefchaouen dans le Rif',
@@ -464,7 +464,7 @@ You can travel with a private driver only, or choose to have a local guide with 
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/src/assets/images/real/daytrip_meknes_image1.jpg',
+    image: '/images/real/daytrip_meknes_image1.jpg',
     imageAlt: {
       en: 'Ancient Roman mosaics at Volubilis and Bab Mansour in Meknes',
       fr: 'Mosaïques de Volubilis et Bab Mansour à Meknès',
@@ -534,7 +534,7 @@ The experience is not only about reaching a particular point. The road itself is
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/src/assets/images/real/daytrip_ifrane_image1.jpg',
+    image: '/images/real/daytrip_ifrane_image1.jpg',
     imageAlt: {
       en: 'Stone lion statue and Middle Atlas cedar forests in Ifrane',
       fr: 'Lion d’Ifrane et forêts de cèdres du Moyen Atlas',
@@ -602,7 +602,7 @@ The idea is simple: a comfortable vehicle, a flexible schedule and a day designe
       priceMAD: 1200,
       priceEUR: 110,
     },
-    image: '/src/assets/images/real/daytrip_custom_image1.jpg',
+    image: '/images/real/daytrip_custom_image1.jpg',
     imageAlt: {
       en: 'Scenic Moroccan roads and custom day trip journeys',
       fr: 'Routes panoramiques marocaines pour excursion privée',
@@ -676,7 +676,7 @@ This is a private, flexible food experience just for you and your group. Come hu
       priceMAD: 550,
       priceEUR: 50,
     },
-    image: '/src/assets/images/real/food_medina_walk.jpg',
+    image: '/images/real/food_medina_walk.jpg',
     imageAlt: {
       en: 'Authentic bustling Medina street and food walk in Fez',
       fr: 'Ruelle animée de la médina de Fès et balade gourmande',
@@ -742,7 +742,7 @@ From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to f
       priceMAD: 650,
       priceEUR: 60,
     },
-    image: '/src/assets/images/real/food_feast_board.jpg',
+    image: '/images/real/food_feast_board.jpg',
     imageAlt: {
       en: 'Lavish traditional Moroccan feast table with pastillas, brochettes, and artisanal dips',
       fr: 'Festin marocain d’exception avec pastillas, brochettes et trempettes',
@@ -808,7 +808,7 @@ During our cultural food discovery, we step inside these active neighborhood ove
       priceMAD: 350,
       priceEUR: 32,
     },
-    image: '/src/assets/images/real/food_couscous_plate.jpg',
+    image: '/images/real/food_couscous_plate.jpg',
     imageAlt: {
       en: 'Generous platter of authentic Moroccan seven-vegetable couscous and sacred Friday traditions',
       fr: 'Plat de couscous traditionnel aux sept légumes et traditions du vendredi',
@@ -874,7 +874,7 @@ Your local guide will help you understand local produce, compare quality, and in
       priceMAD: 400,
       priceEUR: 38,
     },
-    image: '/src/assets/images/real/food_spice_souk.jpg',
+    image: '/images/real/food_spice_souk.jpg',
     imageAlt: {
       en: 'Authentic Souk el-Attarine spices and olive barrels in Fez',
       fr: 'Épices parfumées et olives au Souk el-Attarine à Fès',
@@ -944,7 +944,7 @@ Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authen
       departure: { en: 'Fez Destination Guide', fr: 'Guide Destination Fès', ar: 'دليل فاس السياحي' },
       groupSize: { en: 'Free Local Knowledge', fr: 'Conseils Gratuits', ar: 'معلومات محلية مجانية' },
     },
-    image: '/src/assets/images/real/tips_plan_trip_image1.jpg',
+    image: '/images/real/tips_plan_trip_image1.jpg',
     imageAlt: {
       en: 'Panoramic view over the rooftops of Fez during sunset',
       fr: 'Vue panoramique sur les toits de Fès au coucher du soleil',
@@ -1014,7 +1014,7 @@ Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 
       departure: { en: 'Medina Gates & City', fr: 'Portes & Ville', ar: 'أبواب فاس والمدينة' },
       groupSize: { en: 'Practical Local Advice', fr: 'Conseils Utiles', ar: 'إرشادات عملية' },
     },
-    image: '/src/assets/images/real/tips_getting_around_image1.jpg',
+    image: '/images/real/tips_getting_around_image1.jpg',
     imageAlt: {
       en: 'Red Petit Taxis outside the historic gates of Fez',
       fr: 'Petits taxis rouges devant les portes historiques de Fès',
@@ -1087,7 +1087,7 @@ Photography Etiquette: Always ask with a warm smile before taking close-up photo
       departure: { en: 'Essential Preparation', fr: 'Préparation Voyage', ar: 'استعدادات هامة' },
       groupSize: { en: 'Visitor Etiquette', fr: 'Savoir-vivre Local', ar: 'آداب الزيارة' },
     },
-    image: '/src/assets/images/real/tips_practical_image1.jpg',
+    image: '/images/real/tips_practical_image1.jpg',
     imageAlt: {
       en: 'Traditional Moroccan tea, crafts, and relaxed Medina moments',
       fr: 'Moment de détente autour d’un thé marocain dans la médina',
@@ -1115,7 +1115,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['Arabic', 'English', 'French'],
     experience: { en: 'Native Fassi Host', fr: 'Hôte Natif de Fès', ar: 'ابن فاس الأصلي' },
-    avatarUrl: '/src/assets/images/real/about_us_image1.jpg',
+    avatarUrl: '/images/real/about_us_image1.jpg',
   },
   {
     id: 'team-guides',
@@ -1132,7 +1132,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['English', 'French', 'Spanish', 'Arabic'],
     experience: { en: '10+ Years in Medina', fr: '10+ ans d’expérience', ar: 'أكثر من 10 سنوات خبرة' },
-    avatarUrl: '/src/assets/images/real/about_us_image2.jpg',
+    avatarUrl: '/images/real/about_us_image2.jpg',
   },
   {
     id: 'team-drivers',
@@ -1149,7 +1149,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['Arabic', 'French', 'English'],
     experience: { en: 'Professional Fleet', fr: 'Flotte Confortable', ar: 'أسطول سياحي مريح' },
-    avatarUrl: '/src/assets/images/real/about_us_image5.jpg',
+    avatarUrl: '/images/real/about_us_image5.jpg',
   },
 ];
 
@@ -1398,7 +1398,7 @@ Taste warm Harcha, honeycomb Baghrir, spicy Sfenj, freshly pressed olive oil, an
       fr: `La gastronomie fassie se découvre dans les petites échoppes et les fours communaux. Rejoignez-nous pour une balade sensorielle à travers les saveurs authentiques de la médina.`,
       ar: `الطعام في فاس أسلوب حياة ونبض يومي؛ لا تكتمل زيارة المدينة دون تذوق أطباقها الشعبية في دكاكينها الأصلية المليئة برائحة الخبز الطازج وزيت الزيتون والشاي المعطر بالأعشاب.`
     },
-    coverImage: '/src/assets/images/real/food_medina_walk.jpg',
+    coverImage: '/images/real/food_medina_walk.jpg',
     category: { en: 'Food & Culinary', fr: 'Gastronomie', ar: 'المطبخ والتذوق' },
     author: 'Med — FezGuideTours',
     date: '2026-09-28',
@@ -1427,7 +1427,7 @@ Sit for a glass of Moroccan mint tea at Plaza Uta el-Hammam, visit the historic 
       fr: `Partez de Fès pour une échappée montagnarde inoubliable vers la féerique cité bleue de Chefchaouen.`,
       ar: `رحلة رائعة من فاس نحو جبال الريف لاكتشاف مدينة شفشاون الشهيرة بزرقتها الساحرة وأجوائها الجبلية الهادئة والمميزة.`
     },
-    coverImage: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
+    coverImage: '/images/real/daytrip_chefchaouen_image1.jpg',
     category: { en: 'Day Trips', fr: 'Excursions', ar: 'رحلات واستكشاف' },
     author: 'Med — FezGuideTours',
     date: '2026-09-29',
@@ -1454,7 +1454,7 @@ Remember key gate names like Bab Boujloud, Bab Rcif, and Batha to make your pick
       fr: `Comprenez les portes clés de la médina et le fonctionnement des petits taxis rouges pour vous déplacer comme un habitant.`,
       ar: `تعرف على أهم أبواب فاس العتيقة وطريقة التعامل مع سيارات الأجرة الحمراء لتتنقل في المدينة بكل ثقة وراحة.`
     },
-    coverImage: '/src/assets/images/real/tips_getting_around_image1.jpg',
+    coverImage: '/images/real/tips_getting_around_image1.jpg',
     category: { en: 'Travel Tips', fr: 'Conseils Voyage', ar: 'نصائح السفر' },
     author: 'Med — FezGuideTours',
     date: '2026-09-30',
@@ -1494,6 +1494,10 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     fr: 'Nous connaissons les ruelles de la Médina, les saveurs locales, les traditions vivantes et le quotidien. Balades guidées privées, dégustations et excursions.',
     ar: 'نعرف دروب فاس البالي، مأكولاتنا الشعبية الأصيلة، تقاليدنا وتفاصيل الحياة اليومية. جولات خاصة مشياً على الأقدام، رحلات تذوق، ورحلات يومية مريحة.',
   },
+  heroImage: '/images/real/about_us_image7.jpg',
+  socialInstagram: 'https://instagram.com/fezguidetours',
+  socialFacebook: 'https://facebook.com/fezguidetours',
+  socialTripadvisor: 'https://tripadvisor.com',
 };
 
 // 9. DEFAULT CUSTOM PAGES
@@ -1511,7 +1515,7 @@ export const DEFAULT_CUSTOM_PAGES: CustomPage[] = [
       fr: 'Circuits personnalisés de plusieurs jours et visites thématiques',
       ar: 'مسارات متعددة الأيام وبرامج ثقافية مخصصة حسب رغبتكم',
     },
-    heroImage: '/src/assets/images/real/daytrip_custom_image1.jpg',
+    heroImage: '/images/real/daytrip_custom_image1.jpg',
     content: {
       en: `Have a specific interest or need multi-day arrangements starting from Fez? We organize custom private experiences tailored around your travel style. Whether you wish to explore the Middle Atlas, visit artisan ceramics workshops, take part in an authentic cooking class in a Medina home, or journey south toward the desert, we coordinate every detail with trusted local partners.`,
       fr: `Vous avez un projet de voyage particulier ? Nous créons des circuits sur mesure au départ de Fès avec véhicules privés confortables et accompagnement local de confiance.`,
