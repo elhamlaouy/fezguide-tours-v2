@@ -68,7 +68,11 @@ interface CmsContextType extends CmsData {
   // Settings
   updateSiteSettings: (settings: Partial<SiteSettings>) => void;
 
-  // Backup & Restore
+  // Cloud & Backup actions
+  cloudSyncStatus: 'synced' | 'saving' | 'offline' | 'error' | 'not_configured';
+  publishToCloud: () => Promise<{ success: boolean; message: string }>;
+  loadFromCloud: () => Promise<void>;
+  updateAdminPinGlobally: (currentPin: string, newPin: string) => Promise<{ success: boolean; message: string }>;
   exportBackup: () => void;
   importBackup: (jsonData: string) => boolean;
   resetToDefaults: () => void;
@@ -193,6 +197,34 @@ const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
 export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<CmsData>(getInitialData);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<'synced' | 'saving' | 'offline' | 'error' | 'not_configured'>('synced');
+
+  // Load from Cloudflare KV API on initial mount (runs for every visitor anywhere in the world!)
+  const loadFromCloud = async () => {
+    try {
+      const res = await fetch('/api/cms');
+      if (!res.ok) return;
+      const json = await res.json();
+      if (json && json.tours && Array.isArray(json.tours)) {
+        const clean = sanitizeObjectImages(json);
+        setData((prev) => ({
+          ...prev,
+          ...clean,
+          siteSettings: { ...prev.siteSettings, ...(clean.siteSettings || {}) },
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
+        setCloudSyncStatus('synced');
+      } else if (json && json.configured === false) {
+        setCloudSyncStatus('not_configured');
+      }
+    } catch {
+      setCloudSyncStatus('offline');
+    }
+  };
+
+  useEffect(() => {
+    loadFromCloud();
+  }, []);
 
   // Sync to localStorage whenever data changes
   useEffect(() => {
@@ -202,6 +234,79 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Error saving CMS data to localStorage:', e);
     }
   }, [data]);
+
+  // Publish to Cloudflare KV database
+  const publishToCloud = async (): Promise<{ success: boolean; message: string }> => {
+    setCloudSyncStatus('saving');
+    try {
+      const storedPin = localStorage.getItem('fezguidetours_admin_pin') || '1234';
+      const res = await fetch('/api/cms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Admin-Pin': storedPin,
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        setCloudSyncStatus('synced');
+        return {
+          success: true,
+          message: 'Saved to Cloudflare KV! All website visitors worldwide will now see your updates.',
+        };
+      }
+
+      const err = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        setCloudSyncStatus('error');
+        return {
+          success: false,
+          message: 'Unauthorized: Invalid Admin PIN. Please verify your PIN.',
+        };
+      }
+
+      setCloudSyncStatus('error');
+      return {
+        success: false,
+        message: err.error || 'Failed to save to Cloudflare KV. Check if CMS_KV binding is configured in Cloudflare.',
+      };
+    } catch {
+      setCloudSyncStatus('offline');
+      return {
+        success: false,
+        message: 'Could not connect to Cloudflare API (offline or local preview mode). Changes saved in local browser.',
+      };
+    }
+  };
+
+  // Change Admin PIN globally
+  const updateAdminPinGlobally = async (currentPin: string, newPin: string): Promise<{ success: boolean; message: string }> => {
+    localStorage.setItem('fezguidetours_admin_pin', newPin.trim());
+
+    try {
+      const res = await fetch('/api/admin/change-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPin, newPin: newPin.trim() }),
+      });
+
+      if (res.ok) {
+        return { success: true, message: 'Admin PIN updated globally in Cloudflare KV! It is now active on all devices.' };
+      }
+
+      const err = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        message: err.error || 'Updated in local browser, but could not sync to Cloudflare KV.',
+      };
+    } catch {
+      return {
+        success: true,
+        message: 'Admin PIN updated in this browser. (Cloudflare KV not reachable in local mode).',
+      };
+    }
+  };
 
   // Tours
   const addTour = (tour: SectionPillar) => {
@@ -438,6 +543,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateBookingStatus,
         deleteBooking,
         updateSiteSettings,
+        cloudSyncStatus,
+        publishToCloud,
+        loadFromCloud,
+        updateAdminPinGlobally,
         exportBackup,
         importBackup,
         resetToDefaults,

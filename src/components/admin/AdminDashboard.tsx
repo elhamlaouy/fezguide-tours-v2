@@ -49,6 +49,10 @@ import {
   ShieldCheck,
   Image as ImageIcon,
   Sparkles,
+  Cloud,
+  Lock,
+  Key,
+  RefreshCw,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -101,6 +105,48 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // Admin PIN / Password Management
+  const [pinCurrent, setPinCurrent] = useState('');
+  const [pinNew, setPinNew] = useState('');
+  const [pinConfirm, setPinConfirm] = useState('');
+  const [pinFeedback, setPinFeedback] = useState<{ text: string; isError: boolean } | null>(null);
+  const [isUpdatingPin, setIsUpdatingPin] = useState(false);
+
+  const handleUpdatePin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPinFeedback(null);
+
+    const storedPin = localStorage.getItem('fezguidetours_admin_pin') || '1234';
+    if (pinCurrent !== storedPin && pinCurrent !== 'fez2026') {
+      setPinFeedback({ text: 'Current PIN is incorrect.', isError: true });
+      return;
+    }
+
+    if (pinNew.length < 4) {
+      setPinFeedback({ text: 'New PIN must be at least 4 digits.', isError: true });
+      return;
+    }
+
+    if (pinNew !== pinConfirm) {
+      setPinFeedback({ text: 'New PIN and Confirm PIN do not match.', isError: true });
+      return;
+    }
+
+    setIsUpdatingPin(true);
+    const res = await cms.updateAdminPinGlobally(pinCurrent, pinNew);
+    setIsUpdatingPin(false);
+
+    if (res.success) {
+      setPinFeedback({ text: res.message, isError: false });
+      setPinCurrent('');
+      setPinNew('');
+      setPinConfirm('');
+      showToast('Admin PIN updated successfully!');
+    } else {
+      setPinFeedback({ text: res.message, isError: true });
+    }
   };
 
   const askConfirm = (
@@ -169,6 +215,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Cloud Sync Status & Action */}
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 text-[11px] font-medium text-[#CCD8D6]">
+            {cms.cloudSyncStatus === 'synced' && <span className="text-[#00E5C9]">● Cloud Synced</span>}
+            {cms.cloudSyncStatus === 'saving' && <span className="text-amber-300 animate-pulse">● Saving to Cloud...</span>}
+            {cms.cloudSyncStatus === 'offline' && <span className="text-gray-400">● Local Mode</span>}
+            {cms.cloudSyncStatus === 'not_configured' && <span className="text-amber-400">● Cloud KV Setup Needed</span>}
+            {cms.cloudSyncStatus === 'error' && <span className="text-red-400">● Cloud Sync Error</span>}
+          </div>
+
+          <button
+            onClick={async () => {
+              const res = await cms.publishToCloud();
+              showToast(res.message);
+            }}
+            disabled={cms.cloudSyncStatus === 'saving'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all cursor-pointer shadow-xs ${
+              cms.cloudSyncStatus === 'saving'
+                ? 'bg-[#728280] cursor-not-allowed opacity-70'
+                : 'bg-[#00A896] hover:bg-[#008f80]'
+            }`}
+            title="Save all changes to Cloudflare KV for all visitors worldwide"
+          >
+            <Cloud className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{cms.cloudSyncStatus === 'saving' ? 'Saving...' : 'Publish to Cloud'}</span>
+            <span className="sm:hidden">Publish</span>
+          </button>
+
           <button
             onClick={() => cms.exportBackup()}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-[#CCD8D6] transition-colors cursor-pointer"
@@ -1512,20 +1585,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </span>
                 </div>
                 <div>
-                  <label className="block font-bold text-[#2A3735] mb-1">Admin Dashboard PIN:</label>
-                  <input
-                    type="text"
-                    defaultValue={localStorage.getItem('fezguidetours_admin_pin') || '1234'}
-                    onChange={(e) => {
-                      if (e.target.value.trim()) {
-                        localStorage.setItem('fezguidetours_admin_pin', e.target.value.trim());
-                      }
-                    }}
-                    placeholder="e.g. 1234"
-                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] text-xs font-mono tracking-wider text-[#1C2524] focus:outline-none focus:border-[#005F5A]"
-                  />
+                  <label className="block font-bold text-[#2A3735] mb-1">Admin Security PIN:</label>
+                  <div className="flex items-center justify-between px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]">
+                    <span className="text-xs font-mono tracking-widest text-[#728280]">••••••••</span>
+                    <span className="text-[10px] font-bold text-[#005F5A]">Managed in Security Card below ↓</span>
+                  </div>
                   <span className="text-[10px] text-[#728280] mt-0.5 block">
-                    Saved in browser memory. Fallback master PIN: fez2026
+                    Change and sync your password in the Security card below.
                   </span>
                 </div>
               </div>
@@ -1628,6 +1694,168 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     className="w-full px-3 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5]"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* CARD: ADMIN SECURITY & PASSWORD MANAGER */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E7E2DA] space-y-5 shadow-xs">
+              <div className="flex items-center gap-2.5 border-b border-[#E7E2DA] pb-4">
+                <div className="w-9 h-9 rounded-xl bg-[#005F5A]/10 text-[#005F5A] flex items-center justify-center">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-extrabold text-[#1C2524]">
+                    Admin Security & Dashboard Password
+                  </h3>
+                  <p className="text-[11px] text-[#728280]">
+                    Change your admin access PIN. When updated, it is saved both locally and in Cloudflare KV across all devices.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpdatePin} className="space-y-4 max-w-xl">
+                {pinFeedback && (
+                  <div
+                    className={`p-3 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+                      pinFeedback.isError
+                        ? 'bg-red-50 text-red-700 border border-red-200'
+                        : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                    }`}
+                  >
+                    <span>{pinFeedback.text}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <label className="block font-bold text-[#2A3735] mb-1">Current PIN:</label>
+                    <input
+                      type="password"
+                      value={pinCurrent}
+                      onChange={(e) => setPinCurrent(e.target.value)}
+                      placeholder="e.g. 1234"
+                      required
+                      className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] font-mono text-xs focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-[#2A3735] mb-1">New PIN (min 4):</label>
+                    <input
+                      type="password"
+                      value={pinNew}
+                      onChange={(e) => setPinNew(e.target.value)}
+                      placeholder="New PIN"
+                      required
+                      minLength={4}
+                      className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] font-mono text-xs focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-[#2A3735] mb-1">Confirm New PIN:</label>
+                    <input
+                      type="password"
+                      value={pinConfirm}
+                      onChange={(e) => setPinConfirm(e.target.value)}
+                      placeholder="Confirm PIN"
+                      required
+                      minLength={4}
+                      className="w-full px-3.5 py-2 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] font-mono text-xs focus:outline-none focus:border-[#005F5A]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  <button
+                    type="submit"
+                    disabled={isUpdatingPin}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#005F5A] hover:bg-[#004743] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs disabled:opacity-50"
+                  >
+                    <Key className="w-3.5 h-3.5" />
+                    <span>{isUpdatingPin ? 'Updating...' : 'Save New Password Globally'}</span>
+                  </button>
+                  <span className="text-[11px] text-[#728280]">
+                    Emergency master PIN: <strong className="font-mono text-[#1C2524]">fez2026</strong>
+                  </span>
+                </div>
+              </form>
+            </div>
+
+            {/* CARD: CLOUDFLARE KV REAL-TIME CLOUD STORAGE */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-[#E7E2DA] space-y-5 shadow-xs">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E7E2DA] pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#00A896]/10 text-[#00A896] flex items-center justify-center">
+                    <Cloud className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-[#1C2524]">
+                      Cloudflare KV Real-Time Cloud Storage
+                    </h3>
+                    <p className="text-[11px] text-[#728280]">
+                      Saves your website content globally in Cloudflare KV so all visitors worldwide see your latest tours and blogs.
+                    </p>
+                  </div>
+                </div>
+                <div>
+                  {cms.cloudSyncStatus === 'synced' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Cloud Synced & Live</span>
+                    </span>
+                  )}
+                  {cms.cloudSyncStatus === 'saving' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 animate-pulse">
+                      <span>Saving to Cloudflare...</span>
+                    </span>
+                  )}
+                  {cms.cloudSyncStatus === 'not_configured' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                      <span>KV Setup Needed</span>
+                    </span>
+                  )}
+                  {cms.cloudSyncStatus === 'offline' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-50 text-gray-700 border border-gray-200">
+                      <span>Local Browser Mode</span>
+                    </span>
+                  )}
+                  {cms.cloudSyncStatus === 'error' && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+                      <span>Sync Alert</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const res = await cms.publishToCloud();
+                    showToast(res.message);
+                  }}
+                  disabled={cms.cloudSyncStatus === 'saving'}
+                  className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#00A896] hover:bg-[#008f80] text-white text-xs font-bold transition-colors cursor-pointer shadow-xs disabled:opacity-50"
+                >
+                  <Cloud className="w-4 h-4" />
+                  <span>Publish All Changes to Cloudflare Now</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await cms.loadFromCloud();
+                    showToast('Data refreshed from Cloudflare KV!');
+                  }}
+                  className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#D5CEC4] bg-[#FAF8F5] hover:bg-[#F2ECE4] text-[#2A3735] text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-[#005F5A]" />
+                  <span>Fetch from Cloudflare</span>
+                </button>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-[#F6F4F0] border border-[#E7E2DA] text-[11px] text-[#52605E] space-y-1">
+                <p className="font-bold text-[#1C2524]">How Cloudflare KV works:</p>
+                <p>1. When you click <strong>Publish to Cloud</strong>, your tours, pages, blogs, and settings are uploaded to Cloudflare KV.</p>
+                <p>2. Any visitor who accesses the site immediately downloads the latest data from the closest Cloudflare edge location.</p>
               </div>
             </div>
 

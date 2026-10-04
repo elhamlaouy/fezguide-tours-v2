@@ -45,7 +45,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (lockoutSeconds > 0) return;
 
@@ -53,17 +53,41 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
     if (pin === storedPin || pin === 'fez2026') {
       setError(false);
       setFailedAttempts(0);
+      localStorage.setItem('fezguidetours_admin_pin', pin);
       setPin('');
       onSuccess();
-    } else {
-      const newAttempts = failedAttempts + 1;
-      setFailedAttempts(newAttempts);
-      setError(true);
-      setPin('');
+      return;
+    }
 
-      if (newAttempts >= 5) {
-        setLockoutSeconds(60);
+    // Try remote verification against Cloudflare KV
+    try {
+      const res = await fetch('/api/admin/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.valid) {
+          setError(false);
+          setFailedAttempts(0);
+          localStorage.setItem('fezguidetours_admin_pin', pin);
+          setPin('');
+          onSuccess();
+          return;
+        }
       }
+    } catch {
+      // Offline fallback
+    }
+
+    const newAttempts = failedAttempts + 1;
+    setFailedAttempts(newAttempts);
+    setError(true);
+    setPin('');
+
+    if (newAttempts >= 5) {
+      setLockoutSeconds(60);
     }
   };
 
