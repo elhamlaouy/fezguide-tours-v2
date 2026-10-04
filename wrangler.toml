@@ -1,4 +1,5 @@
 name = "fezguidetours"
+compatibility_date = "2026-10-01"
 
-[pages]
-build_output_dir = "dist"
+[assets]
+directory = "./dist"
