@@ -77,14 +77,14 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
   return (
     <div className="space-y-16 pb-20">
       {/* Header Banner */}
-      <section className="relative bg-[#FAF8F5] py-12 sm:py-20 overflow-hidden">
+      <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
           src="/images/real/food_medina_walk.jpg"
           alt="Moroccan Food Tasting Walk"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-black/15 to-black/20" />
+        <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">

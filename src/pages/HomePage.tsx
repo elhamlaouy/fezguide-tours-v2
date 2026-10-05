@@ -158,17 +158,16 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="space-y-20 pb-16">
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#FAF8F5] overflow-hidden py-12 sm:py-16">
-        {/* Background Image - Lighter, clearly shown without heavy dark veil */}
+      <section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#1C2524] overflow-hidden py-12 sm:py-16">
+        {/* Background Image - 100% sharp and clear across the entire above-the-fold section */}
         <img
           src={siteSettings?.heroImage || '/images/real/about_us_image7.jpg'}
           alt="Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"
           referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover opacity-85 object-center scale-[1.01]"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
-        {/* Soft edge gradients so the image blends into the page */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F5] via-black/15 to-black/25" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
+        {/* Subtle, uniform tint for contrast without any bottom blur or foggy fade */}
+        <div className="absolute inset-0 bg-black/20" />
 
         {/* Hero Card Container - Transparent light blur for photo visibility & crystal clear contrast */}
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
