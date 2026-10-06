@@ -10,8 +10,6 @@ import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { BookingModal } from './components/BookingModal';
 import { DetailModal } from './components/DetailModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 
 // Pages
@@ -34,8 +32,6 @@ function AppContent() {
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingTourTitle, setBookingTourTitle] = useState<string>('');
-  const [adminOpen, setAdminOpen] = useState(false);
-  const [adminLoginOpen, setAdminLoginOpen] = useState(false);
 
   // Synchronize HTML dir attribute for full RTL support when Arabic is selected
   useEffect(() => {
@@ -221,19 +217,6 @@ function AppContent() {
     }
   };
 
-  if (adminOpen) {
-    return (
-      <AdminDashboard
-        onClose={() => setAdminOpen(false)}
-        language={language}
-        onNavigate={(pageId) => {
-          setAdminOpen(false);
-          handleNavigatePage(pageId);
-        }}
-      />
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1C2524] transition-colors">
       {/* Top Bar Navigation */}
@@ -244,7 +227,6 @@ function AppContent() {
         onNavigate={handleNavigatePage}
         onLanguageChange={setLanguage}
         onOpenBooking={(id, title) => handleOpenBooking(id, title)}
-        onOpenAdmin={() => setAdminLoginOpen(true)}
       />
 
       {/* Main Page Viewport */}
@@ -256,7 +238,6 @@ function AppContent() {
       <Footer
         language={language}
         onNavigate={handleNavigatePage}
-        onOpenAdmin={() => setAdminLoginOpen(true)}
       />
 
       {/* Detail In-depth Modal */}
@@ -276,15 +257,6 @@ function AppContent() {
         initialTourTitle={bookingTourTitle}
       />
 
-      {/* Admin Login PIN Modal */}
-      <AdminLoginModal
-        isOpen={adminLoginOpen}
-        onClose={() => setAdminLoginOpen(false)}
-        onSuccess={() => {
-          setAdminLoginOpen(false);
-          setAdminOpen(true);
-        }}
-      />
 
       {/* Floating Real-Time Guide WhatsApp Inquiry Button */}
       <FloatingWhatsAppButton

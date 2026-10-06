@@ -162,9 +162,29 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#8EA19E]">
-          <p>{t.copyright[language]}</p>
-          <div className="flex items-center gap-4">
+        <div className="pt-8 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-[#8EA19E]">
+          <p className="text-center lg:text-start">{t.copyright[language]}</p>
+
+          <a
+            href="https://atlastactics.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Powered By Atlas Tactics"
+            className="inline-flex items-center gap-2 text-[#8EA19E] hover:text-white transition-colors"
+          >
+            <span>Powered By</span>
+            <img
+              src="/assets/brand/atlas-mark-white.webp"
+              alt=""
+              width="20"
+              height="22"
+              loading="lazy"
+              className="w-5 h-[22px] object-contain opacity-80"
+            />
+            <span className="font-semibold">Atlas Tactics</span>
+          </a>
+
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
             <div className="flex items-center gap-1">
               <span>Made with passion in Fez el-Bali</span>
               <Heart className="w-3.5 h-3.5 text-[#C84B31] fill-current" />

@@ -12,7 +12,7 @@ interface NavbarProps {
   onNavigate: (page: PageId) => void;
   onLanguageChange: (lang: Language) => void;
   onOpenBooking: (tourId?: string, tourTitle?: string) => void;
-  onOpenAdmin: () => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -151,15 +151,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span>{tNav.bookTour[language]}</span>
           </button>
 
-          {/* Discreet Admin Lock Button */}
-          <button
-            onClick={onOpenAdmin}
-            title="CMS Admin Dashboard"
-            className="p-2 text-[#728280] hover:text-[#005F5A] hover:bg-[#F2ECE4] rounded-lg transition-colors cursor-pointer"
-            aria-label="Open Admin CMS"
-          >
-            <Lock className="w-4 h-4" />
-          </button>
+          {onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              title="CMS Admin Dashboard"
+              className="p-2 text-[#728280] hover:text-[#005F5A] hover:bg-[#F2ECE4] rounded-lg transition-colors cursor-pointer"
+              aria-label="Open Admin CMS"
+            >
+              <Lock className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Mobile Menu Toggle Button */}
           <button

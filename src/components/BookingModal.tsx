@@ -19,7 +19,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   initialTourId,
   initialTourTitle,
 }) => {
-  const { tours, addBooking, siteSettings } = useCms();
+  const { tours, siteSettings } = useCms();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -151,17 +151,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     e.preventDefault();
     if (!validateForm()) return;
 
-    const ref = addBooking({
-      fullName: fullName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      tourId: initialTourId || 'custom',
-      tourTitle: selectedTour,
-      preferredDate: date,
-      guestCount: guests,
-      language: languagePreference,
-      specialRequests: specialRequests.trim(),
-    });
+    const ref = `FGT-${crypto.getRandomValues(new Uint32Array(1))[0]
+      .toString()
+      .padStart(10, '0')
+      .slice(-10)}`;
     setBookingRef(ref);
     setIsSubmitted(true);
   };
