@@ -1497,7 +1497,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   heroImage: '/images/real/about_us_image7.jpg',
   socialInstagram: 'https://instagram.com/fezguidetours',
   socialFacebook: 'https://facebook.com/fezguidetours',
-  socialTripadvisor: 'https://tripadvisor.com',
+  socialTripadvisor: 'https://www.tripadvisor.com/Attraction_Review-g293733-d33349838-Reviews-Fez_Guide_Tours-Fez_Fez_Meknes.html',
 };
 
 // 9. DEFAULT CUSTOM PAGES

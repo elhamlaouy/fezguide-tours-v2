@@ -19,3 +19,63 @@
     font-family: var(--font-arabic);
   }
 }
+
+#tripadvisor-reviews { scroll-margin-top: 6rem; }
+
+.tripadvisor-marquee {
+  overflow: hidden;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+.tripadvisor-track {
+  animation: tripadvisor-scroll 52s linear infinite;
+  direction: ltr;
+  display: flex;
+  gap: 1rem;
+  padding: .5rem 0 1rem;
+  width: max-content;
+}
+
+.tripadvisor-set { display: flex; gap: 1rem; }
+
+.tripadvisor-card {
+  background: #fff;
+  border: 1px solid #d9dedb;
+  border-radius: 1rem;
+  box-shadow: 0 .5rem 1.5rem rgb(28 37 36 / 8%);
+  color: #1c2524;
+  display: flex;
+  flex: 0 0 20rem;
+  flex-direction: column;
+  gap: .8rem;
+  min-height: 19rem;
+  padding: 1.25rem;
+  text-decoration: none;
+}
+
+.tripadvisor-card:hover { border-color: #00aa6c; transform: translateY(-2px); }
+.tripadvisor-card:focus-visible { outline: 3px solid #00aa6c; outline-offset: 3px; }
+.tripadvisor-card-head { align-items: center; display: flex; gap: .7rem; }
+.tripadvisor-avatar { align-items: center; background: #00aa6c; border-radius: 50%; color: #fff; display: flex; flex: 0 0 2.5rem; font-size: .9rem; font-weight: 800; height: 2.5rem; justify-content: center; }
+.tripadvisor-author { display: flex; flex: 1; flex-direction: column; font-size: .78rem; min-width: 0; }
+.tripadvisor-author small { color: #66736f; font-size: .66rem; margin-top: .12rem; }
+.tripadvisor-mark { fill: none; height: 1.6rem; stroke: #00aa6c; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2.2; width: 2.7rem; }
+.tripadvisor-bubbles { display: flex; gap: .25rem; }
+.tripadvisor-bubbles span { background: #00aa6c; border: 1px solid #00aa6c; border-radius: 50%; height: .9rem; width: .9rem; }
+.tripadvisor-card h3 { font-size: .92rem; font-weight: 800; line-height: 1.35; }
+.tripadvisor-card p { color: #384644; display: -webkit-box; font-size: .78rem; line-height: 1.65; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 6; }
+.tripadvisor-read { align-items: center; color: #007a4d; display: flex; font-size: .7rem; font-weight: 800; gap: .25rem; margin-top: auto; }
+.tripadvisor-read svg { height: .85rem; width: .85rem; }
+.tripadvisor-marquee:hover .tripadvisor-track,
+.tripadvisor-marquee:focus-within .tripadvisor-track { animation-play-state: paused; }
+
+@keyframes tripadvisor-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-50% - .5rem), 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tripadvisor-marquee { mask-image: none; overflow-x: auto; }
+  .tripadvisor-track { animation: none; }
+}

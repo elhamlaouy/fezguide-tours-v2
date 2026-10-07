@@ -11,3 +11,9 @@ run_worker_first = ["/api/*"]
 [[kv_namespaces]]
 binding = "CMS_KV"
 id = "49f69448fb834d4496a05e0d41b19b3c"
+
+# CMS content is public and this Worker exposes the binding read-only.
+# Reuse it for Cloudflare's branch preview so preview builds can start.
+[[previews.kv_namespaces]]
+binding = "CMS_KV"
+id = "49f69448fb834d4496a05e0d41b19b3c"
