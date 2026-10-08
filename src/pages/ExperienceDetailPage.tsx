@@ -57,7 +57,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   }, [pillar.id]);
 
   // Clean WhatsApp phone digits
-  const rawNumber = siteSettings.whatsappNumber || '212661234567';
+  const rawNumber = siteSettings.whatsappNumber || '212719603009';
   const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
 
   const openWhatsApp = () => {
@@ -571,7 +571,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   className="inline-flex items-center gap-1.5 text-xs font-bold text-[#005F5A] hover:underline"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  <span>{siteSettings.phoneNumber || '+212 661 234 567'}</span>
+                  <span>{siteSettings.phoneNumber || '+212 719-603009'}</span>
                 </a>
               </div>
             </div>

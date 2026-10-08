@@ -1466,9 +1466,9 @@ Remember key gate names like Bab Boujloud, Bab Rcif, and Batha to make your pick
 // 8. DEFAULT SITE SETTINGS
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   siteName: 'FezGuideTours',
-  phoneNumber: '+212 661-234567',
-  whatsappNumber: '212661234567',
-  email: 'contact@fezguidetours.com',
+  phoneNumber: '+212 719-603009',
+  whatsappNumber: '212719603009',
+  email: 'fezguidetours1@gmail.com',
   address: {
     en: 'Bab Boujloud, Medina of Fez, 30110 Morocco',
     fr: 'Bab Boujloud, Médina de Fès, 30110 Maroc',
@@ -1498,6 +1498,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   socialInstagram: 'https://instagram.com/fezguidetours',
   socialFacebook: 'https://facebook.com/fezguidetours',
   socialTripadvisor: 'https://www.tripadvisor.com/Attraction_Review-g293733-d33349838-Reviews-Fez_Guide_Tours-Fez_Fez_Meknes.html',
+  googleMaps: 'https://maps.app.goo.gl/5aXiAV7FjS1W3qBj6',
 };
 
 // 9. DEFAULT CUSTOM PAGES

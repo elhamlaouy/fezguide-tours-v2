@@ -297,7 +297,7 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
           </p>
           <div className="pt-2">
             <a
-              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
                 language === 'ar'
                   ? 'السلام عليكم ورحمة الله، أنا بصدد التخطيط لزيارة فاس وأود الحصول على بعض النصائح والتوصيات.'
                   : language === 'fr'

@@ -467,7 +467,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               {UI_TEXT.common.bookNow[language]}
             </button>
             <a
-              href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
+              href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
                 language === 'ar'
                   ? 'السلام عليكم ورحمة الله، أود التنسيق معكم لحجز جولة في فاس عبر FezGuideTours'
                   : language === 'fr'

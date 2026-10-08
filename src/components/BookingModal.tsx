@@ -66,7 +66,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   if (!isOpen) return null;
 
   // Clean WhatsApp number removing non-digits
-  const cleanNumber = (siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '');
+  const cleanNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
 
   const resetAndClose = () => {
     setIsSubmitted(false);

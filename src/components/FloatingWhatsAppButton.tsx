@@ -21,7 +21,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   const [customNote, setCustomNote] = useState('');
 
   // Clean WhatsApp phone digits
-  const rawNumber = siteSettings.whatsappNumber || '212661234567';
+  const rawNumber = siteSettings.whatsappNumber || '212719603009';
   const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
 
   // Determine current contextual title

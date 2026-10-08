@@ -100,7 +100,14 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           teamMembers: Array.isArray(payload.teamMembers) ? payload.teamMembers : current.teamMembers,
           faqs: Array.isArray(payload.faqs) ? payload.faqs : current.faqs,
           siteSettings: payload.siteSettings
-            ? { ...current.siteSettings, ...payload.siteSettings }
+            ? {
+                ...current.siteSettings,
+                ...payload.siteSettings,
+                phoneNumber: DEFAULT_SITE_SETTINGS.phoneNumber,
+                whatsappNumber: DEFAULT_SITE_SETTINGS.whatsappNumber,
+                email: DEFAULT_SITE_SETTINGS.email,
+                googleMaps: DEFAULT_SITE_SETTINGS.googleMaps,
+              }
             : current.siteSettings,
         }));
       } catch (error) {

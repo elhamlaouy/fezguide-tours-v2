@@ -101,12 +101,23 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
             <div className="space-y-2.5 text-xs text-[#B3C4C2]">
               <div className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#C84B31] shrink-0 mt-0.5" />
-                <span>{siteSettings.address[language] || t.address[language]}</span>
+                {siteSettings.googleMaps ? (
+                  <a
+                    href={siteSettings.googleMaps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors underline decoration-[#C84B31]/50"
+                  >
+                    {siteSettings.address[language] || t.address[language]}
+                  </a>
+                ) : (
+                  <span>{siteSettings.address[language] || t.address[language]}</span>
+                )}
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-[#00A896] shrink-0" />
                 <a
-                  href={`https://wa.me/${(siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '')}`}
+                  href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors underline decoration-[#00A896]/50"
@@ -117,7 +128,12 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#00A896] shrink-0" />
-                <span>{siteSettings.email}</span>
+                <a
+                  href={`mailto:${siteSettings.email}`}
+                  className="hover:text-white transition-colors underline decoration-[#00A896]/50"
+                >
+                  {siteSettings.email}
+                </a>
               </div>
               <div className="flex items-center gap-2.5 pt-1 text-[#8EA19E]">
                 <Award className="w-4 h-4 text-[#E07A5F] shrink-0" />

@@ -115,5 +115,6 @@ export interface SiteSettings {
   socialInstagram?: string;
   socialFacebook?: string;
   socialTripadvisor?: string;
+  googleMaps?: string;
 }
 

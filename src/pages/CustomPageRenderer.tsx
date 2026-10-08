@@ -19,7 +19,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
 }) => {
   const { siteSettings } = useCms();
   const pageTitle = page.title[language] || page.title.en;
-  const cleanNumber = (siteSettings.whatsappNumber || '212661234567').replace(/[^0-9]/g, '');
+  const cleanNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
 
 
   return (

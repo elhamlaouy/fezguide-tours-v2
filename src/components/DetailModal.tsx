@@ -33,7 +33,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
   if (!isOpen || !pillar) return null;
 
-  const rawNumber = siteSettings.whatsappNumber || '212661234567';
+  const rawNumber = siteSettings.whatsappNumber || '212719603009';
   const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
   const tourName = pillar.title[language] || pillar.title.en;
 
