@@ -128,3 +128,9 @@
   .editorial-story-page > header h1 { font-size: clamp(2.1rem, 9.5vw, 3.5rem); }
   .editorial-story-page .editorial-story-copy { line-height: 1.85; }
 }
+
+.fez-overview-card .fez-overview-card-copy { min-height: 9rem; }
+.fez-overview-card .fez-overview-card-eyebrow { line-height: 1.4; min-height: 1rem; }
+.fez-overview-card .fez-overview-card-title { min-height: 2.8rem; text-wrap: balance; }
+.fez-overview-card .fez-overview-card-description { line-height: 1.6; min-height: 3.6rem; }
+.fez-overview-card-highlights { min-height: 4rem; }

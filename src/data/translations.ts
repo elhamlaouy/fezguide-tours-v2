@@ -123,24 +123,28 @@ export const FEZ_PILLARS: SectionPillar[] = [
     title: {
       en: 'Explore the Medina',
       fr: 'Explorer la Médina',
-      ar: 'Explore the Medina',
+      ar: 'استكشف المدينة العتيقة',
     },
     subtitle: {
-      en: 'Discover Fez Through Local Eyes',
-      fr: 'Découvrez Fès à Travers des Yeux Locaux',
-      ar: 'Discover Fez Through Local Eyes',
+      en: 'Medina Guide',
+      fr: 'Guide de la Médina',
+      ar: 'دليل المدينة العتيقة',
     },
     shortDescription: {
-      en: 'Before exploring the Medina, it helps to understand Fez itself. Discover its history, traditions, families and everyday life.',
-      fr: 'Avant d’explorer la Médina, il est utile de comprendre Fès elle-même. Découvrez son histoire, ses traditions, ses familles et sa vie quotidienne.',
-      ar: 'Before exploring the Medina, it helps to understand Fez itself. Discover its history, traditions, families and everyday life.',
+      en: 'Understand the Medina through its historic lanes, artisan workshops, and everyday life.',
+      fr: 'Comprenez la Médina à travers ses ruelles historiques, ses ateliers d’artisans et la vie quotidienne.',
+      ar: 'تعرّف على المدينة من خلال أزقتها التاريخية وورش الحرفيين والحياة اليومية لأهل فاس.',
     },
     fullDescription: {
       en: 'Explore the Medina through the supplied story, photographs and local perspective.',
       fr: 'Explorez la Médina à travers le récit, les photographies et le regard local fournis.',
       ar: 'Explore the Medina through the supplied story, photographs and local perspective.',
     },
-    highlights: { en: [], fr: [], ar: [] },
+    highlights: {
+      en: ['Historic lanes, gates & souks', 'Workshops & everyday life'],
+      fr: ['Ruelles, portes historiques et souks', 'Ateliers d’artisans et vie quotidienne'],
+      ar: ['أزقة وأبواب وأسواق تاريخية', 'ورش حرفية وحياة يومية'],
+    },
     image: '/images/fez-medina/medina-01.jpg',
     imageAlt: {
       en: 'Traditional Fez Medina market lane with Moroccan flags',
@@ -159,14 +163,14 @@ export const FEZ_PILLARS: SectionPillar[] = [
       ar: 'تاريخ، ثقافة ومعالم فاس العريقة',
     },
     subtitle: {
-      en: 'A City Shaped by Learning, Craft and Daily Life',
-      fr: 'Une ville façonnée par le savoir, l’artisanat et la vie quotidienne',
-      ar: 'قرون من الإشعاع الحضاري والأندلسي المتجذر في تفاصيل المعمار',
+      en: 'History & Culture',
+      fr: 'Histoire & Culture',
+      ar: 'التاريخ والثقافة',
     },
     shortDescription: {
-      en: 'Discover how Fez’s history lives in its learning traditions, crafts, food, historic landmarks and everyday streets.',
-      fr: 'Découvrez comment l’histoire de Fès se vit dans ses traditions du savoir, son artisanat, sa cuisine, ses monuments et ses rues.',
-      ar: 'اكتشف جامعة القرويين التاريخية، المدارس المرينية البديعة، دار الدباغ شوارة، ومصنوعات الزليج والنحاس التي توارثها المعلمون جيلاً بعد جيل.',
+      en: 'Trace Fez’s history through its madrasas, landmarks, traditional crafts, and historic neighbourhoods.',
+      fr: 'Suivez l’histoire de Fès à travers ses médersas, monuments, métiers d’art et quartiers historiques.',
+      ar: 'اكتشف تاريخ فاس عبر المدارس العريقة والمعالم والحرف والأحياء التاريخية.',
     },
     fullDescription: {
       en: 'Fez’s history is part of everyday life. Discover the city’s learning traditions, historic gates and madrasas, crafts, food, Mellah and Fes Jdid, and Chouara Tanneries through local eyes.',
@@ -174,25 +178,9 @@ export const FEZ_PILLARS: SectionPillar[] = [
       ar: `تتميز فاس بأن معالمها الكبرى ليست صروحاً معزولة، بل جزء لا يتجزأ من النسيج اليومي للناس. من جامعة القرويين التي أُسست عام 859 م، إلى روائع العمارة المرينية في مدرستي العطارين والبوعنانية، ودار الدباغ شوارة التي ما زالت تعمل بالأساليب الطبيعية ذاتها منذ مئات السنين.`
     },
     highlights: {
-      en: [
-        'Fez’s tradition of learning and historic madrasas',
-        'Zellige, woodwork, leather, metalwork and weaving',
-        'Bab Boujloud, Bou Inania and Al-Attarine',
-        'The Mellah, Fes Jdid and Chouara Tanneries'
-      ],
-      fr: [
-        'La tradition du savoir et les médersas historiques de Fès',
-        'Zellige, bois, cuir, métal et tissage',
-        'Bab Boujloud, Bou Inania et Al-Attarine',
-        'Le Mellah, Fès Jdid et les tanneries Chouara'
-      ],
-      ar: [
-        'جامعة القرويين: أقدم مؤسسة جامعية مستمرة في العالم',
-        'المدارس المرينية: نقوش الجبس، خشب الأرز المعطر، وفسيفساء الزليج الفاسي',
-        'دار الدباغ شوارة: دباغة الجلود بالطرق التقليدية الطبيعية منذ قرون',
-        'الفنادق العتيقة ونقابات الحرفيين (النحاس، الخشب، والنسيج)',
-        'سقايات الماء المزخرفة والتراث المعماري الأندلسي الأصيل'
-      ]
+      en: ['Madrasas & historic landmarks', 'Mellah, Fes Jdid & traditional crafts'],
+      fr: ['Médersas et monuments historiques', 'Mellah, Fès Jdid et artisanat traditionnel'],
+      ar: ['مدارس عريقة ومعالم تاريخية', 'الملاح وفاس الجديد والحرف التقليدية']
     },
     image: '/images/fez-history/history-01.jpg',
     imageAlt: {
@@ -212,14 +200,14 @@ export const FEZ_PILLARS: SectionPillar[] = [
       ar: 'أنشطة وتجارب لا تفوت في فاس',
     },
     subtitle: {
-      en: 'Craftsmen Workshops, Souks, Mellah, Sunset Views & Nightlife',
-      fr: 'Artisanat d’art, souks animés, Mellah et panoramas au coucher du soleil',
-      ar: 'ورشات الصناع، الأسواق الشعبية، الحي اليهودي وإطلالات الغروب',
+      en: 'Fez City Guide',
+      fr: 'Guide de Fès',
+      ar: 'دليل فاس',
     },
     shortDescription: {
-      en: 'There is much more to do in Fez than simply visiting its famous monuments. Walk its streets, meet local people, discover traditional crafts and taste local food.',
-      fr: 'À Fès, les activités ne se limitent pas aux monuments célèbres. Parcourez ses rues, rencontrez les habitants, découvrez l’artisanat traditionnel et goûtez la cuisine locale.',
-      ar: 'تتجاوز زيارة فاس مجرد مشاهدة المباني، لتشمل لقاء المعلمين الحرفيين، استكشاف أسواق التوابل، وتذوق أكلات الشارع الشعبية وتأمل الغروب من المرتفعات.',
+      en: 'Plan a visit around the souks, craft workshops, local food, panoramic views, and evenings in Fez.',
+      fr: 'Organisez votre séjour entre souks, ateliers, cuisine locale, panoramas et soirées dans la Ville Nouvelle.',
+      ar: 'خطّط لزيارتك بين الأسواق والورشات والطعام المحلي والإطلالات والأمسيات في فاس.',
     },
     fullDescription: {
       en: `There is much more to do in Fez than simply visiting its famous monuments. The city is best experienced by walking through its streets, meeting local people, discovering traditional crafts, tasting local food and taking time to enjoy the different sides of the city.
@@ -233,27 +221,9 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
       ar: `استمتع بزيارة ورشات صناعة الفخار والزليج والنحاسيات، وتجول في أزقة الملاح ذات الشرفات الخشبية المميزة، واختم يومك بإطلالة ساحرة على أسوار فاس أثناء غروب الشمس.`
     },
     highlights: {
-      en: [
-        'Walk through the Old Medina and its traditional souks',
-        'Visit local workshops and watch traditional crafts',
-        'Taste Moroccan food and discover local ingredients',
-        'Explore the Mellah and Fes Jdid',
-        'See Fez from a panoramic viewpoint and after sunset'
-      ],
-      fr: [
-        'Parcourir l’ancienne médina et ses souks traditionnels',
-        'Visiter les ateliers locaux et observer l’artisanat traditionnel',
-        'Goûter la cuisine marocaine et découvrir les ingrédients locaux',
-        'Explorer le Mellah et Fès Jdid',
-        'Voir Fès depuis un point de vue panoramique et après le coucher du soleil'
-      ],
-      ar: [
-        'مشاهدة كبار الصناع في ورشات الزليج والنحاس والجلد الطبيعي',
-        'استكشاف سوق العطارين والأعشاب الطبية وفنادق النسيج',
-        'زيارة ملاح فاس والتعرف على هندسته المعمارية الفريدة',
-        'مشاهدة الغروب البانورامي الساحر من مطل القلاع المرينية',
-        'الاستمتاع بالمقاهي والمطاعم المغربية في المدينة الجديدة'
-      ]
+      en: ['Souks, workshops & Moroccan food', 'Panoramic views & Fez after dark'],
+      fr: ['Souks, ateliers et cuisine marocaine', 'Panoramas et Fès après le coucher du soleil'],
+      ar: ['أسواق وورش ومأكولات مغربية', 'إطلالات بانورامية وأجواء المساء']
     },
     image: '/images/fez-things-to-do/things-01.jpg',
     imageAlt: {
@@ -270,24 +240,28 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
     title: {
       en: 'Our Fez Tours',
       fr: 'Nos Visites de Fès',
-      ar: 'Our Fez Tours',
+      ar: 'جولاتنا في فاس',
     },
     subtitle: {
-      en: 'Discover Fez Through Local Eyes',
-      fr: 'Découvrez Fès à Travers des Yeux Locaux',
-      ar: 'Discover Fez Through Local Eyes',
+      en: 'Private Walking Tour',
+      fr: 'Visite privée à pied',
+      ar: 'جولة مشي خاصة',
     },
     shortDescription: {
-      en: 'Discover the Medina with someone who knows its streets, stories, traditions and hidden places.',
-      fr: 'Découvrez la Médina avec quelqu’un qui connaît ses rues, ses histoires, ses traditions et ses lieux cachés.',
-      ar: 'Discover the Medina with someone who knows its streets, stories, traditions and hidden places.',
+      en: 'Walk the Medina privately with a local guide and discover its stories, crafts, and hidden corners.',
+      fr: 'Parcourez la Médina avec un guide local et découvrez ses histoires, métiers d’art et passages cachés.',
+      ar: 'اكتشف المدينة في جولة مشي خاصة مع مرشد محلي، بين القصص والحرف والأزقة المخفية.',
     },
     fullDescription: {
       en: 'Explore our Fez tours and discover the city through local eyes.',
       fr: 'Explorez nos visites de Fès et découvrez la ville à travers des yeux locaux.',
       ar: 'Explore our Fez tours and discover the city through local eyes.',
     },
-    highlights: { en: [], fr: [], ar: [] },
+    highlights: {
+      en: ['Private walking tour · 4–5 hours', 'Local guide · English, French & Arabic'],
+      fr: ['Visite privée à pied · 4–5 heures', 'Guide local · anglais, français, arabe'],
+      ar: ['جولة مشي خاصة لمدة 4–5 ساعات', 'مرشد محلي · الإنجليزية والفرنسية والعربية'],
+    },
     practicalInfo: {
       priceEUR: 170,
       priceMAD: 1900,

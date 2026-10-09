@@ -1,7 +1,7 @@
 import React from 'react';
 import { SectionPillar, Language } from '../types';
 import { UI_TEXT } from '../data/translations';
-import { Clock, ArrowRight, Calendar, Compass, Eye } from 'lucide-react';
+import { Clock, Calendar, Compass } from 'lucide-react';
 
 interface SectionCardProps {
   pillar: SectionPillar;
@@ -17,9 +17,16 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   onBookTour,
 }) => {
   const isArticle = pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
+  const isFezOverviewCard = pillar.pageId === 'fez' && (
+    isArticle || pillar.id === 'our-fez-tours'
+  );
 
   const getActionConfig = () => {
-    const label = isArticle
+    const label = isFezOverviewCard
+      ? isArticle
+        ? language === 'fr' ? 'Lire le guide' : language === 'ar' ? 'اقرأ الدليل' : 'Read the Guide'
+        : language === 'fr' ? 'Voir les détails de la visite' : language === 'ar' ? 'عرض تفاصيل الجولة' : 'View Tour Details'
+      : isArticle
       ? pillar.id === 'fez-history-landmarks'
         ? (language === 'fr' ? 'Lire le récit' : 'Read the Story')
         : pillar.id === 'fez-things-to-do'
@@ -39,7 +46,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   const IconComponent = actionCfg.icon;
 
   return (
-    <div className="group bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full">
+    <div className={`group bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full ${isFezOverviewCard ? 'fez-overview-card' : ''}`}>
       {/* Visual Asset Container - Clickable */}
       <div
         onClick={() => onExplore(pillar)}
@@ -78,35 +85,35 @@ export const SectionCard: React.FC<SectionCardProps> = ({
       </div>
 
       {/* Card Body */}
-      <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
+      <div className={`p-5 sm:p-6 flex flex-col flex-1 gap-4 ${isFezOverviewCard ? '' : 'justify-between'}`}>
         <div
           onClick={() => onExplore(pillar)}
-          className="space-y-2 cursor-pointer"
+          className={`space-y-2 cursor-pointer ${isFezOverviewCard ? 'fez-overview-card-copy' : ''}`}
           role="button"
           tabIndex={0}
         >
           {/* Subtitle kicker (clean text, no pill) */}
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#C84B31] block">
+          <span className={`text-[11px] font-bold uppercase tracking-wider text-[#C84B31] block ${isFezOverviewCard ? 'fez-overview-card-eyebrow' : ''}`}>
             {pillar.subtitle[language]}
           </span>
 
-          <h3 className="text-lg font-bold text-[#1C2524] leading-snug group-hover:text-[#005F5A] transition-colors">
+          <h3 className={`text-lg font-bold text-[#1C2524] leading-snug group-hover:text-[#005F5A] transition-colors ${isFezOverviewCard ? 'fez-overview-card-title' : ''}`}>
             {pillar.title[language]}
           </h3>
 
-          <p className="text-xs text-[#52605E] leading-relaxed line-clamp-3">
+          <p className={`text-xs text-[#52605E] leading-relaxed ${isFezOverviewCard ? 'fez-overview-card-description' : 'line-clamp-3'}`}>
             {pillar.shortDescription[language]}
           </p>
         </div>
 
         {/* Highlights Preview */}
         {pillar.highlights[language].length > 0 && (
-          <div className="pt-2 border-t border-[#F2ECE4]">
+          <div className={`pt-2 border-t border-[#F2ECE4] ${isFezOverviewCard ? 'fez-overview-card-highlights' : ''}`}>
             <ul className="space-y-1">
               {pillar.highlights[language].slice(0, 2).map((h, i) => (
-                <li key={i} className="text-[11px] text-[#42504E] flex items-center gap-1.5 truncate">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#005F5A]/70 shrink-0" />
-                  <span className="truncate">{h}</span>
+                <li key={i} className={`text-[11px] text-[#42504E] flex items-center gap-1.5 ${isFezOverviewCard ? 'items-start' : 'truncate'}`}>
+                  <span className={`w-1.5 h-1.5 rounded-full bg-[#005F5A]/70 shrink-0 ${isFezOverviewCard ? 'mt-1' : ''}`} />
+                  <span className={isFezOverviewCard ? 'min-w-0 break-words leading-snug' : 'truncate'}>{h}</span>
                 </li>
               ))}
             </ul>
@@ -114,7 +121,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         )}
 
         {/* Clear Action Button (View More / Explore / Book a Tour) */}
-        <div className={`pt-2 ${isArticle ? 'grid grid-cols-1' : 'flex items-center gap-2'}`}>
+        <div className={`pt-2 ${isFezOverviewCard ? 'mt-auto grid grid-cols-1' : isArticle ? 'grid grid-cols-1' : 'flex items-center gap-2'}`}>
           <button
             onClick={actionCfg.action}
             className="w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#DCD5CB]"
