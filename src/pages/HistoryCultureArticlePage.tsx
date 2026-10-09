@@ -1,6 +1,7 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Language } from '../types';
+import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 
 interface HistoryCultureArticlePageProps {
@@ -157,14 +158,9 @@ export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps>
           );
         })}
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
 
-        <section className="rounded-3xl bg-[#005F5A] p-8 sm:p-12 text-white shadow-xl space-y-5">
-          <p className="text-xl sm:text-2xl font-extrabold leading-relaxed">{copy.closing}</p>
-          <button onClick={onExploreTours} className="w-full sm:w-fit inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] transition-colors cursor-pointer">
-            {copy.cta} <ArrowRight className="w-4 h-4" />
-          </button>
-        </section>
+        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
       </article>
     </div>
   );

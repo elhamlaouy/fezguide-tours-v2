@@ -63,6 +63,38 @@ test('Our Fez Tours is a fourth Fez card and a €170 per-person product page', 
   assert.match(context, /PROTECTED_FEZ_TOUR_IDS/);
 });
 
+test('Our Fez Tours shows matching product badges and quick specs with the requested 7 AM pickup', () => {
+  const product = read('src/pages/OurFezToursPage.tsx');
+
+  for (const detail of [
+    '100% Private Tour',
+    '5.0 (82 reviews)',
+    '4–5 Hours',
+    'Private Walking Tour',
+    '7:00 AM from Fez (Hotel / Riad)',
+    'English, Français, العربية',
+  ]) assert.ok(product.includes(detail), `missing product detail: ${detail}`);
+  assert.ok(!product.includes('8:00 AM'), 'old 8 AM pickup must not remain on Our Fez Tours');
+  assert.match(product, /Clock/);
+  assert.match(product, /MapPin/);
+});
+
+test('Our Fez Tours follows the reference order: tags, title, gallery, details, overview and booking', () => {
+  const product = read('src/pages/OurFezToursPage.tsx');
+  const tags = product.indexOf('id="our-fez-tour-tags"');
+  const title = product.indexOf('id="our-fez-tour-title"');
+  const gallery = product.indexOf('id="our-fez-tour-gallery"');
+  const details = product.indexOf('id="our-fez-tour-details"');
+  const overview = product.indexOf('id="our-fez-tour-overview"');
+  const booking = product.indexOf('id="our-fez-tour-booking"');
+
+  for (const [name, index] of Object.entries({ tags, title, gallery, details, overview, booking })) {
+    assert.ok(index >= 0, `missing ${name} section`);
+  }
+  assert.ok(tags < title && title < gallery && gallery < details, 'tags/title must precede images and details must follow the gallery');
+  assert.ok(details < overview && overview < booking, 'overview and booking must follow the details row');
+});
+
 test('the Medina article card does not expose a product quick-book action', () => {
   const card = read('src/components/SectionCard.tsx');
   assert.match(card, /pillar\.id === 'fez-explore-medina'[\s\S]*grid-cols-1/);
@@ -122,6 +154,30 @@ test('History, Culture & Landmarks uses the supplied Google Doc story and local 
   for (let index = 1; index <= 14; index += 1) {
     const file = `public/images/fez-history/history-${String(index).padStart(2, '0')}.jpg`;
     assert.ok(existsSync(resolve(root, file)), `missing supplied image: ${file}`);
+  }
+});
+
+test('the local-eyes tour card sits under Fez cards and before reviews on all three editorial pages', () => {
+  const cta = read('src/components/FezToursCtaSection.tsx');
+  const fezPage = read('src/pages/FezPage.tsx');
+  const articles = [
+    'src/pages/MedinaArticlePage.tsx',
+    'src/pages/HistoryCultureArticlePage.tsx',
+    'src/pages/ThingsToDoArticlePage.tsx',
+  ].map(read);
+
+  assert.match(cta, /medina-14\.jpg/);
+  assert.match(cta, /Explore Our Fez Tours/);
+  assert.match(cta, /onExploreTours/);
+  const cardGrid = fezPage.indexOf('{\/\* Experiences Grid \*\/}');
+  const gallery = fezPage.indexOf('{\/\* Authentic Medina Photo Gallery \*\/}');
+  const fezCta = fezPage.indexOf('<FezToursCtaSection');
+  assert.ok(cardGrid >= 0 && fezCta > cardGrid && fezCta < gallery, 'Fez CTA should follow the cards and precede the gallery');
+
+  for (const article of articles) {
+    const ctaIndex = article.indexOf('<FezToursCtaSection');
+    const reviewsIndex = article.indexOf('<TripadvisorReviewsSection');
+    assert.ok(ctaIndex >= 0 && reviewsIndex > ctaIndex, 'tour CTA must appear before Tripadvisor reviews');
   }
 });
 

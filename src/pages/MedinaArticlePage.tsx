@@ -1,6 +1,7 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Language } from '../types';
+import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 
 interface MedinaArticlePageProps {
@@ -112,18 +113,9 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
           </section>
         ))}
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-3xl bg-[#005F5A] text-white shadow-xl">
-          <img src="/images/fez-medina/medina-14.jpg" alt="Guide with visitors at a historic Fez monument" className="w-full h-full min-h-72 object-cover" />
-          <div className="p-8 sm:p-12 flex flex-col justify-center gap-5">
-            <p className="text-base sm:text-lg leading-relaxed text-[#E6F4F2]">{copy.closing}</p>
-            <p className="text-xl sm:text-2xl font-extrabold">{copy.lead}</p>
-            <button onClick={onExploreTours} className="w-full sm:w-fit inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] transition-colors cursor-pointer">
-              {copy.cta} <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </section>
+        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
       </article>
     </div>
   );

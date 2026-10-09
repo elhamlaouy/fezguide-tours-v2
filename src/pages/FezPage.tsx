@@ -3,7 +3,8 @@ import { Language, SectionPillar } from '../types';
 import { UI_TEXT } from '../data/translations';
 import { useCms } from '../context/CmsContext';
 import { SectionCard } from '../components/SectionCard';
-import { Compass, MapPin, Eye, ShieldCheck, Camera, Sparkles } from 'lucide-react';
+import { FezToursCtaSection } from '../components/FezToursCtaSection';
+import { Compass } from 'lucide-react';
 
 interface FezPageProps {
   language: Language;
@@ -147,6 +148,14 @@ export const FezPage: React.FC<FezPageProps> = ({
           ))}
         </div>
 
+        <FezToursCtaSection
+          language={language}
+          onExploreTours={() => {
+            const fezTours = fezPillars.find((pillar) => pillar.id === 'our-fez-tours');
+            if (fezTours) onExplore(fezTours);
+          }}
+        />
+
         {/* Authentic Medina Photo Gallery */}
         <div className="space-y-6 pt-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
@@ -204,41 +213,7 @@ export const FezPage: React.FC<FezPageProps> = ({
           </div>
         </div>
 
-        {/* Local Guiding Bottom Banner */}
-        <div className="bg-[#FAF8F5] rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 text-center space-y-6">
-          <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-[#005F5A]/10 text-[#005F5A] mx-auto">
-            <Eye className="w-8 h-8 text-[#005F5A]" />
-          </div>
-          <div className="max-w-2xl mx-auto space-y-3">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#1C2524]">
-              {language === 'ar'
-                ? 'استكشف فاس برفقة من يعرف أزقتها، قصصها وخفاياها'
-                : language === 'fr'
-                ? 'Découvrez la médina avec un guide qui en connaît chaque ruelle et secret'
-                : 'Discover the Medina with Someone Who Knows Its Streets and Stories'}
-            </h3>
-            <p className="text-xs sm:text-sm text-[#4E5B59] leading-relaxed">
-              {language === 'ar'
-                ? 'تجاوز المعالم المزدحمة المعتادة، التقي بأهل المدينة وتذوق مأكولاتها الشعبية واستمتع بنبض الحياة اليومية. مرحباً بكم في فاس.'
-                : language === 'fr'
-                ? 'Allez au-delà des sentiers battus, rencontrez les artisans locaux, dégustez les spécialités de Fès et vivez une immersion authentique.'
-                : 'Walk beyond the famous landmarks, meet local people, taste traditional food and experience everyday life. Our local guides ensure an effortless, memorable journey.'}
-            </p>
-          </div>
-          <div>
-            <button
-              onClick={() => onBookTour('Custom Medina Exploration')}
-              className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
-            >
-              {language === 'ar'
-                ? 'احجز جولتك في فاس العتيقة'
-                : language === 'fr'
-                ? 'Découvrir nos visites de Fès'
-                : 'Explore Our Fez Medina Tours'}
-            </button>
-          </div>
 
-        </div>
       </div>
     </div>
   );
