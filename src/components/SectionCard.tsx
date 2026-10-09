@@ -16,9 +16,20 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   onExplore,
   onBookTour,
 }) => {
+  const isArticle = pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
+
   const getActionConfig = () => {
+    const label = isArticle
+      ? pillar.id === 'fez-history-landmarks'
+        ? (language === 'fr' ? 'Lire le récit' : 'Read the Story')
+        : pillar.id === 'fez-things-to-do'
+          ? (language === 'fr' ? 'Lire le guide' : 'Read the Guide')
+        : (language === 'fr' ? 'Lire l’article' : 'Read the Article')
+      : pillar.id === 'our-fez-tours'
+      ? (language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
+      : (language === 'ar' ? 'عرض التفاصيل والبرنامج' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
     return {
-      label: language === 'ar' ? 'عرض التفاصيل والبرنامج' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary',
+      label,
       icon: Compass,
       action: () => onExplore(pillar),
     };
@@ -54,11 +65,15 @@ export const SectionCard: React.FC<SectionCardProps> = ({
               {pillar.practicalInfo.duration[language]}
             </span>
           )}
-          {pillar.practicalInfo?.priceMAD && (
+          {pillar.id === 'our-fez-tours' ? (
+            <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
+              €170 / {language === 'fr' ? 'personne' : 'person'}
+            </span>
+          ) : pillar.practicalInfo?.priceMAD ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
               {UI_TEXT.common.fromPrice[language]} {pillar.practicalInfo.priceMAD} MAD
             </span>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -99,7 +114,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         )}
 
         {/* Clear Action Button (View More / Explore / Book a Tour) */}
-        <div className="pt-2 flex items-center gap-2">
+        <div className={`pt-2 ${isArticle ? 'grid grid-cols-1' : 'flex items-center gap-2'}`}>
           <button
             onClick={actionCfg.action}
             className="w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#DCD5CB]"
@@ -109,7 +124,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
           </button>
 
           {/* Secondary Quick Action: If primary is explore, also allow quick booking */}
-          {pillar.actionType !== 'book_tour' && (
+          {pillar.actionType !== 'book_tour' && !isArticle && (
             <button
               onClick={() => onBookTour(pillar.title[language])}
               title={UI_TEXT.common.bookNow[language]}

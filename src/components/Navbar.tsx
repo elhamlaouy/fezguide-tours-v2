@@ -75,10 +75,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7E2DA] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
         {/* Zone 1: Brand Wordmark / Logo */}
         <div className="flex items-center">
-          <Logo onClick={() => handleLinkClick('home')} size="md" />
+          <Logo onClick={() => handleLinkClick('home')} size="md" className="max-[360px]:gap-1.5" />
         </div>
 
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
@@ -103,7 +103,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Zone 3: 1-2 Primary Actions + Language Selector + Admin Link */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3 max-[360px]:gap-2">
           {/* Language Switcher Dropdown */}
           <div className="relative">
             <button

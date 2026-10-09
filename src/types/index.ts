@@ -19,11 +19,12 @@ export interface SectionPillar {
   fullDescription: Record<Language, string>;
   highlights: Record<Language, string[]>;
   practicalInfo?: {
-    duration: Record<Language, string>;
+    duration?: Record<Language, string>;
     departure?: Record<Language, string>;
     groupSize?: Record<Language, string>;
     priceMAD?: number;
     priceEUR?: number;
+    priceUSD?: number;
   };
   image: string;
   imageAlt: Record<Language, string>;

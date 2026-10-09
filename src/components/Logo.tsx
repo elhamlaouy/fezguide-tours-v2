@@ -30,7 +30,7 @@ export const Logo: React.FC<LogoProps> = ({
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={`inline-flex items-center gap-2.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
+      className={`inline-flex items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
       aria-label="FezGuideTours Logo"
     >
       <div className="relative shrink-0 flex items-center justify-center">
@@ -40,7 +40,7 @@ export const Logo: React.FC<LogoProps> = ({
           viewBox="0 0 120 135"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="drop-shadow-xs"
+          className="drop-shadow-xs max-[360px]:w-[34px] max-[360px]:h-[38px]"
         >
           {/* Main Pin Teardrop Body */}
           <path
@@ -117,8 +117,8 @@ export const Logo: React.FC<LogoProps> = ({
 
       {showText && (
         <div className="flex items-center tracking-tight font-extrabold whitespace-nowrap">
-          <span className={`text-[#005F5A] font-bold ${textSizes}`}>FezGuide</span>
-          <span className={`text-[#C84B31] font-bold ${textSizes}`}>Tours</span>
+          <span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span>
+          <span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span>
         </div>
       )}
     </div>

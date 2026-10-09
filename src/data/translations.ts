@@ -122,75 +122,32 @@ export const FEZ_PILLARS: SectionPillar[] = [
     pageId: 'fez',
     title: {
       en: 'Explore the Medina',
-      fr: 'Explorer la Médina de Fès',
-      ar: 'استكشاف فاس البالي والمدينة العتيقة',
+      fr: 'Explorer la Médina',
+      ar: 'Explore the Medina',
     },
     subtitle: {
-      en: 'Walk Beyond the Usual Tourist Route & See the Living City',
-      fr: 'Allez au-delà des circuits touristiques habituels',
-      ar: 'جولة تتجاوز المسارات السياحية المعتادة لتكتشف نبض المدينة الحي',
+      en: 'Discover Fez Through Local Eyes',
+      fr: 'Découvrez Fès à Travers des Yeux Locaux',
+      ar: 'Discover Fez Through Local Eyes',
     },
     shortDescription: {
-      en: 'The Medina of Fez is not a museum — people still live and work here every day. Discover its historic gates, hidden workshops, traditional souks, and panoramic rooftop views with a local guide.',
-      fr: 'La Médina de Fès n’est pas un musée : les habitants y vivent et y travaillent chaque jour. Découvrez ses portes historiques, ses ateliers d’artisans et ses ruelles vivantes.',
-      ar: 'فاس البالي ليست مجرد متحف تاريخي بل مدينة تنبض بالحياة اليومية. اكتشف أبوابها التاريخية، ورشات الحرفيين، أسواقها العتيقة ومطلاتها البانورامية.',
+      en: 'Before exploring the Medina, it helps to understand Fez itself. Discover its history, traditions, families and everyday life.',
+      fr: 'Avant d’explorer la Médina, il est utile de comprendre Fès elle-même. Découvrez son histoire, ses traditions, ses familles et sa vie quotidienne.',
+      ar: 'Before exploring the Medina, it helps to understand Fez itself. Discover its history, traditions, families and everyday life.',
     },
     fullDescription: {
-      en: `Before exploring the Medina, it helps to understand Fez itself. For local people, the Medina is more than simply the old part of the city. It is a place connected to our history, traditions, families and everyday life. When we say "the Medina," we are talking about the historic and traditional heart of Fez — a place that has kept its character through generations.
-
-Fez has different areas, each with its own character. Fes el-Bali is the Old Medina, known for its narrow streets, traditional souks, historic buildings and local workshops. Fes Jdid and the Mellah form another important historic part of the city, connected to the Royal Palace and the Jewish heritage of Fez. The New City shows another side of Fez, with modern streets, cafés, restaurants and everyday city life.
-
-The Medina of Fez is not a museum. People still live and work here every day. Craftsmen work in traditional workshops, shopkeepers open their stores, local people buy food and bread, and traditional crafts continue to be part of everyday life. As you walk through the Medina, you are not only looking at history. You are watching a living part of Fez.
-
-A local guide can help you discover the history behind the buildings, understand traditional crafts, find less-known places and experience the Medina beyond the usual tourist route. After spending time inside the narrow streets, it is worth looking at Fez from above at a panoramic viewpoint, and discovering the lively atmosphere of the New City at night.`,
-      fr: `Pour les habitants de Fès, la Médina est bien plus que la vieille ville : elle est liée à notre histoire, nos familles et notre quotidien.
-
-Fès el-Bali regorge de ruelles médiévales piétonnes, de souks et d'ateliers séculaires. Fès Jdid et le Mellah racontent l'histoire du Palais Royal et du patrimoine juif. La Ville Nouvelle offre une ambiance contemporaine animée.
-
-Accompagné d'un guide local, découvrez l'histoire vivante des édifices, le travail des artisans et les panoramas exceptionnels sur les toits de la médina.`,
-      ar: `بالنسبة لأبناء فاس، المدينة العتيقة ليست مجرد معالم أثرية، بل هي ذاكرة عائلاتنا، وتقاليدنا ونبض حياتنا اليومية المستمرة منذ قرون.
-
-تضم فاس مناطق متميزة: "فاس البالي" بدروبها الضيقة وأسواقها التراثية وورشاتها الحرفية؛ و"فاس الجديد" والملاح بحمولتهما التاريخية العريقة المرتبطة بالقصر الملكي والتراث اليهودي المغربي؛ إضافة إلى المدينة الجديدة بمقاهيها وحيويتها العصرية.
-
-برفقة مرشد محلي، ستتعرف على التاريخ الحقيقي للأزقة، وأسرار العمارة الإسلامية، مع الاستمتاع بمطل بانورامي شامل يكشف سحر فاس من الأعلى.`
+      en: 'Explore the Medina through the supplied story, photographs and local perspective.',
+      fr: 'Explorez la Médina à travers le récit, les photographies et le regard local fournis.',
+      ar: 'Explore the Medina through the supplied story, photographs and local perspective.',
     },
-    highlights: {
-      en: [
-        'Fes el-Bali: medieval pedestrian alleys and living artisan workshops',
-        'Historic monumental gates (Bab Boujloud, Bab Rcif, Bab Guissa)',
-        'Fes Jdid & the Mellah Jewish heritage and royal history',
-        'Panoramic hillside viewpoint over the rooftops and minarets of Fez',
-        'Evening discovery of the New City cafés and local street life'
-      ],
-      fr: [
-        'Fès el-Bali : ruelles piétonnes et ateliers d’artisans vivants',
-        'Portes monumentales historiques (Bab Boujloud, Bab Rcif, Bab Guissa)',
-        'Fès Jdid et l’héritage juif du Mellah',
-        'Vue panoramique sur les toits et minarets de la médina',
-        'Découverte nocturne de la Ville Nouvelle et ses cafés'
-      ],
-      ar: [
-        'فاس البالي: دروب تاريخية خالية من السيارات وورشات حرفية نشطة',
-        'أبواب فاس التاريخية الشهيرة (باب بوجلود، باب الرصيف، باب الكيسة)',
-        'فاس الجديد والحي اليهودي التراثي (الملاح)',
-        'مطل بانورامي استثنائي يطل على مآذن وأسوار فاس العتيقة',
-        'أجواء المدينة الجديدة ومقاهيها الحيوية في المساء'
-      ]
-    },
-    practicalInfo: {
-      duration: { en: '3 to 4 Hours', fr: '3 à 4 Heures', ar: '3 إلى 4 ساعات' },
-      departure: { en: 'Bab Boujloud or Your Medina Riad', fr: 'Bab Boujloud ou votre Riad', ar: 'باب بوجلود أو مكان إقامتكم' },
-      groupSize: { en: 'Private Tour (Your Group Only)', fr: 'Visite Privée (Votre Groupe)', ar: 'جولة خاصة لمجموعتكم فقط' },
-      priceMAD: 450,
-      priceEUR: 42,
-    },
-    image: '/images/real/fez_explore_medina_image1.jpg',
+    highlights: { en: [], fr: [], ar: [] },
+    image: '/images/fez-medina/medina-01.jpg',
     imageAlt: {
-      en: 'Medina streets and historic Bab Boujloud gate',
-      fr: 'Ruelles de la médina et porte Bab Boujloud',
-      ar: 'دروب فاس العتيقة وباب بوجلود التاريخي',
+      en: 'Traditional Fez Medina market lane with Moroccan flags',
+      fr: 'Ruelle traditionnelle de la Médina de Fès avec des drapeaux marocains',
+      ar: 'Traditional Fez Medina market lane with Moroccan flags',
     },
-    actionType: 'book_tour',
+    actionType: 'explore',
     published: true,
   },
   {
@@ -202,38 +159,32 @@ Accompagné d'un guide local, découvrez l'histoire vivante des édifices, le tr
       ar: 'تاريخ، ثقافة ومعالم فاس العريقة',
     },
     subtitle: {
-      en: 'Centuries of Arab-Andalusian Heritage Where History Lives',
-      fr: 'Des siècles d’héritage arabo-andalou au quotidien',
+      en: 'A City Shaped by Learning, Craft and Daily Life',
+      fr: 'Une ville façonnée par le savoir, l’artisanat et la vie quotidienne',
       ar: 'قرون من الإشعاع الحضاري والأندلسي المتجذر في تفاصيل المعمار',
     },
     shortDescription: {
-      en: 'Fez is one of the oldest imperial cities in Morocco. Experience Al-Qarawiyyin, historic madrasas, Chouara Tannery, zellige workshops, and centuries-old architectural treasures.',
-      fr: 'Fès est l’une des plus anciennes cités impériales. Explorez Al-Qarawiyyin, les médersas mérinides, les tanneries Chouara et l’art du zellige.',
+      en: 'Discover how Fez’s history lives in its learning traditions, crafts, food, historic landmarks and everyday streets.',
+      fr: 'Découvrez comment l’histoire de Fès se vit dans ses traditions du savoir, son artisanat, sa cuisine, ses monuments et ses rues.',
       ar: 'اكتشف جامعة القرويين التاريخية، المدارس المرينية البديعة، دار الدباغ شوارة، ومصنوعات الزليج والنحاس التي توارثها المعلمون جيلاً بعد جيل.',
     },
     fullDescription: {
-      en: `Fez is one of the oldest and most important cities in Morocco, and its history is still part of everyday life. When you walk through the old streets, visit a traditional workshop, enter a madrasa or pass through one of the historic gates, you are not simply visiting an old place — you are seeing a city that has been living and changing for generations.
-
-What makes Fez different is that its landmarks are not isolated monuments. They are surrounded by streets, shops, homes, workshops, cafés and markets where people continue to live and work. History is not separated from everyday life here — it is part of it.
-
-From the world-famous University of Al-Qarawiyyin, founded in 859 AD, to the intricate woodwork and plaster carving of the Bou Inania and Al-Attarine madrasas, and the centuries-old traditional leather tanneries of Chouara, every corner tells a story. Knowing why it was built and how local people see it makes the experience far more meaningful.`,
-      fr: `Fès est une ville où l'histoire ne dort pas dans les musées : elle vit dans la rue. Les monuments majeurs tels que l'Université Al-Qarawiyyin, les médersas Bou Inania et Al-Attarine, ainsi que les célèbres tanneries de Chouara, sont intégrés au cœur même de la cité active.`,
+      en: 'Fez’s history is part of everyday life. Discover the city’s learning traditions, historic gates and madrasas, crafts, food, Mellah and Fes Jdid, and Chouara Tanneries through local eyes.',
+      fr: 'À Fès, l’histoire fait partie de la vie quotidienne. Découvrez ses traditions du savoir, ses portes et médersas historiques, son artisanat, sa cuisine, le Mellah et Fès Jdid, ainsi que les tanneries Chouara à travers des yeux locaux.',
       ar: `تتميز فاس بأن معالمها الكبرى ليست صروحاً معزولة، بل جزء لا يتجزأ من النسيج اليومي للناس. من جامعة القرويين التي أُسست عام 859 م، إلى روائع العمارة المرينية في مدرستي العطارين والبوعنانية، ودار الدباغ شوارة التي ما زالت تعمل بالأساليب الطبيعية ذاتها منذ مئات السنين.`
     },
     highlights: {
       en: [
-        'Al-Qarawiyyin: the world’s oldest continuously operating university',
-        'Historic Madrasas: intricate zellige mosaic, cedar carving, and calligraphy',
-        'Chouara Tannery: traditional leather craftsmanship unchanged for centuries',
-        'Funduqs and artisan guilds (wood, metal, brass, and textiles)',
-        'Historic fountains, mosques, and Andalusian architectural motifs'
+        'Fez’s tradition of learning and historic madrasas',
+        'Zellige, woodwork, leather, metalwork and weaving',
+        'Bab Boujloud, Bou Inania and Al-Attarine',
+        'The Mellah, Fes Jdid and Chouara Tanneries'
       ],
       fr: [
-        'Al-Qarawiyyin : la plus ancienne université au monde en activité',
-        'Médersas historiques : zellige raffiné, bois de cèdre et stucs ciselés',
-        'Tannerie Chouara : savoir-faire du cuir inchangé depuis des siècles',
-        'Fondouks et corporations artisanales (cuivre, bois, tissage)',
-        'Fontaines sculptées et motifs arabo-andalous'
+        'La tradition du savoir et les médersas historiques de Fès',
+        'Zellige, bois, cuir, métal et tissage',
+        'Bab Boujloud, Bou Inania et Al-Attarine',
+        'Le Mellah, Fès Jdid et les tanneries Chouara'
       ],
       ar: [
         'جامعة القرويين: أقدم مؤسسة جامعية مستمرة في العالم',
@@ -243,20 +194,13 @@ From the world-famous University of Al-Qarawiyyin, founded in 859 AD, to the int
         'سقايات الماء المزخرفة والتراث المعماري الأندلسي الأصيل'
       ]
     },
-    practicalInfo: {
-      duration: { en: '4 Hours', fr: '4 Heures', ar: '4 ساعات' },
-      departure: { en: 'Bab Boujloud or Hotel Pickup', fr: 'Bab Boujloud ou Hôtel', ar: 'باب بوجلود أو الفندق' },
-      groupSize: { en: 'Private Experience', fr: 'Expérience Privée', ar: 'تجربة خاصة' },
-      priceMAD: 500,
-      priceEUR: 46,
-    },
-    image: '/images/real/fez_history_culture_image1.jpg',
+    image: '/images/fez-history/history-01.jpg',
     imageAlt: {
-      en: 'Historic madrasa architecture in Fez',
-      fr: 'Architecture de médersa historique à Fès',
-      ar: 'العمارة الإسلامية في مدارس فاس التاريخية',
+      en: 'Narrow alley in the old Medina of Fez',
+      fr: 'Ruelle étroite dans l’ancienne Médina de Fès',
+      ar: 'Narrow alley in the old Medina of Fez',
     },
-    actionType: 'book_tour',
+    actionType: 'explore',
     published: true,
   },
   {
@@ -273,8 +217,8 @@ From the world-famous University of Al-Qarawiyyin, founded in 859 AD, to the int
       ar: 'ورشات الصناع، الأسواق الشعبية، الحي اليهودي وإطلالات الغروب',
     },
     shortDescription: {
-      en: 'There is much more to do in Fez than simply visiting famous monuments. Meet local master artisans, explore authentic souks, taste local street food, and see the city at sunset.',
-      fr: 'Fès se vit au fil de ses ruelles : rencontrez les maîtres artisans, explorez les souks vivants, goûtez aux saveurs locales et admirez le coucher de soleil.',
+      en: 'There is much more to do in Fez than simply visiting its famous monuments. Walk its streets, meet local people, discover traditional crafts and taste local food.',
+      fr: 'À Fès, les activités ne se limitent pas aux monuments célèbres. Parcourez ses rues, rencontrez les habitants, découvrez l’artisanat traditionnel et goûtez la cuisine locale.',
       ar: 'تتجاوز زيارة فاس مجرد مشاهدة المباني، لتشمل لقاء المعلمين الحرفيين، استكشاف أسواق التوابل، وتذوق أكلات الشارع الشعبية وتأمل الغروب من المرتفعات.',
     },
     fullDescription: {
@@ -290,18 +234,18 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
     },
     highlights: {
       en: [
-        'Watch master craftsmen carve zellige tilework, chisel brass, and bind leather',
-        'Explore the spice souks, herbalists, and traditional textile funduqs',
-        'Visit the historic Mellah Jewish quarter and its unique wooden balconies',
-        'Hike or drive to the Merenid Tombs for sweeping panoramic sunset views',
-        'Experience Fez café culture and modern dining in the Ville Nouvelle'
+        'Walk through the Old Medina and its traditional souks',
+        'Visit local workshops and watch traditional crafts',
+        'Taste Moroccan food and discover local ingredients',
+        'Explore the Mellah and Fes Jdid',
+        'See Fez from a panoramic viewpoint and after sunset'
       ],
       fr: [
-        'Rencontre avec les maîtres artisans (zellige, dinanderie, cuir)',
-        'Découverte des souks aux épices, herboristes et tissus',
-        'Visite du quartier juif du Mellah et ses balcons typiques',
-        'Coucher de soleil panoramique depuis les Tombeaux Mérinides',
-        'Détente dans les cafés et restaurants de la Ville Nouvelle'
+        'Parcourir l’ancienne médina et ses souks traditionnels',
+        'Visiter les ateliers locaux et observer l’artisanat traditionnel',
+        'Goûter la cuisine marocaine et découvrir les ingrédients locaux',
+        'Explorer le Mellah et Fès Jdid',
+        'Voir Fès depuis un point de vue panoramique et après le coucher du soleil'
       ],
       ar: [
         'مشاهدة كبار الصناع في ورشات الزليج والنحاس والجلد الطبيعي',
@@ -311,18 +255,49 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
         'الاستمتاع بالمقاهي والمطاعم المغربية في المدينة الجديدة'
       ]
     },
-    practicalInfo: {
-      duration: { en: 'Flexible (Half or Full Day)', fr: 'Flexible (Demi ou Journée)', ar: 'مرن (نصف يوم أو يوم كامل)' },
-      departure: { en: 'Hotel Pickup Available', fr: 'Prise en charge à l’hôtel', ar: 'إمكانية الانطلاق من الفندق' },
-      groupSize: { en: 'Private (1 to 6+ Guests)', fr: 'Privé (1 à 6+ personnes)', ar: 'خاص (من 1 إلى 6 أشخاص وأكثر)' },
-      priceMAD: 400,
-      priceEUR: 38,
-    },
-    image: '/images/real/fez_things_to_do_image1.jpg',
+    image: '/images/fez-things-to-do/things-01.jpg',
     imageAlt: {
-      en: 'Craftsmen and vibrant souks in Fez',
-      fr: 'Artisans et souks vivants à Fès',
-      ar: 'الصناع والأسواق الحرفية في فاس',
+      en: 'Busy souk lane in the old Medina of Fez',
+      fr: 'Allée animée d’un souk dans l’ancienne médina de Fès',
+      ar: 'Busy souk lane in the old Medina of Fez',
+    },
+    actionType: 'explore',
+    published: true,
+  },
+  {
+    id: 'our-fez-tours',
+    pageId: 'fez',
+    title: {
+      en: 'Our Fez Tours',
+      fr: 'Nos Visites de Fès',
+      ar: 'Our Fez Tours',
+    },
+    subtitle: {
+      en: 'Discover Fez Through Local Eyes',
+      fr: 'Découvrez Fès à Travers des Yeux Locaux',
+      ar: 'Discover Fez Through Local Eyes',
+    },
+    shortDescription: {
+      en: 'Discover the Medina with someone who knows its streets, stories, traditions and hidden places.',
+      fr: 'Découvrez la Médina avec quelqu’un qui connaît ses rues, ses histoires, ses traditions et ses lieux cachés.',
+      ar: 'Discover the Medina with someone who knows its streets, stories, traditions and hidden places.',
+    },
+    fullDescription: {
+      en: 'Explore our Fez tours and discover the city through local eyes.',
+      fr: 'Explorez nos visites de Fès et découvrez la ville à travers des yeux locaux.',
+      ar: 'Explore our Fez tours and discover the city through local eyes.',
+    },
+    highlights: { en: [], fr: [], ar: [] },
+    practicalInfo: {
+      priceEUR: 170,
+      priceMAD: 1900,
+      priceUSD: 191,
+    },
+    image: '/images/fez-medina/medina-14.jpg',
+    imageAlt: {
+      en: 'Guide with visitors at a historic Fez monument',
+      fr: 'Guide avec des visiteurs devant un monument historique de Fès',
+      ar: 'Guide with visitors at a historic Fez monument',
     },
     actionType: 'book_tour',
     published: true,
@@ -394,7 +369,7 @@ There is also time to explore the small streets, discover local handicrafts, sto
       priceMAD: 1400,
       priceEUR: 130,
     },
-    image: '/images/real/daytrip_chefchaouen_image1.jpg',
+    image: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
     imageAlt: {
       en: 'Blue streets of Chefchaouen in the Rif Mountains',
       fr: 'Ruelles bleues de Chefchaouen dans le Rif',
@@ -464,7 +439,7 @@ You can travel with a private driver only, or choose to have a local guide with 
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/images/real/daytrip_meknes_image1.jpg',
+    image: '/src/assets/images/real/daytrip_meknes_image1.jpg',
     imageAlt: {
       en: 'Ancient Roman mosaics at Volubilis and Bab Mansour in Meknes',
       fr: 'Mosaïques de Volubilis et Bab Mansour à Meknès',
@@ -534,7 +509,7 @@ The experience is not only about reaching a particular point. The road itself is
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/images/real/daytrip_ifrane_image1.jpg',
+    image: '/src/assets/images/real/daytrip_ifrane_image1.jpg',
     imageAlt: {
       en: 'Stone lion statue and Middle Atlas cedar forests in Ifrane',
       fr: 'Lion d’Ifrane et forêts de cèdres du Moyen Atlas',
@@ -602,7 +577,7 @@ The idea is simple: a comfortable vehicle, a flexible schedule and a day designe
       priceMAD: 1200,
       priceEUR: 110,
     },
-    image: '/images/real/daytrip_custom_image1.jpg',
+    image: '/src/assets/images/real/daytrip_custom_image1.jpg',
     imageAlt: {
       en: 'Scenic Moroccan roads and custom day trip journeys',
       fr: 'Routes panoramiques marocaines pour excursion privée',
@@ -676,11 +651,11 @@ This is a private, flexible food experience just for you and your group. Come hu
       priceMAD: 550,
       priceEUR: 50,
     },
-    image: '/images/real/food_medina_walk.jpg',
+    image: '/src/assets/images/real/food_tasting_walk_image1.jpg',
     imageAlt: {
-      en: 'Authentic bustling Medina street and food walk in Fez',
-      fr: 'Ruelle animée de la médina de Fès et balade gourmande',
-      ar: 'دروب وأسواق فاس العتيقة وأجواء جولة تذوق الأكلات الشعبية',
+      en: 'Fresh Moroccan pastries and street food tastings in Fez',
+      fr: 'Pâtisseries marocaines et dégustations culinaires à Fès',
+      ar: 'أكلات شعبية وحلويات فاسية طازجة في جولة التذوق',
     },
     actionType: 'book_tour',
     published: true,
@@ -742,11 +717,11 @@ From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to f
       priceMAD: 650,
       priceEUR: 60,
     },
-    image: '/images/real/food_feast_board.jpg',
+    image: '/src/assets/images/real/food_traditional_fassi_image1.jpg',
     imageAlt: {
-      en: 'Lavish traditional Moroccan feast table with pastillas, brochettes, and artisanal dips',
-      fr: 'Festin marocain d’exception avec pastillas, brochettes et trempettes',
-      ar: 'مائدة ضيافة فاسية فاخرة مع البسطيلة الملكية والمشويات والمقبلات',
+      en: 'Traditional Moroccan tagine with almonds and prunes',
+      fr: 'Tajine marocain traditionnel aux pruneaux et amandes',
+      ar: 'طاجين مغربي فاسي أصيل بالبرقوق المعسل واللوز',
     },
     actionType: 'book_tour',
     published: true,
@@ -808,11 +783,11 @@ During our cultural food discovery, we step inside these active neighborhood ove
       priceMAD: 350,
       priceEUR: 32,
     },
-    image: '/images/real/food_couscous_plate.jpg',
+    image: '/src/assets/images/real/food_culture_life_image1.jpg',
     imageAlt: {
-      en: 'Generous platter of authentic Moroccan seven-vegetable couscous and sacred Friday traditions',
-      fr: 'Plat de couscous traditionnel aux sept légumes et traditions du vendredi',
-      ar: 'قصعة كسكس مغربي أصيل بسبع خضار وتقاليد يوم الجمعة المباركة',
+      en: 'Communal bread oven and daily food life in Fez',
+      fr: 'Four à pain de quartier et vie quotidienne à Fès',
+      ar: 'فرن الحومة الشعبي والحياة اليومية في فاس البالي',
     },
     actionType: 'book_tour',
     published: true,
@@ -874,11 +849,11 @@ Your local guide will help you understand local produce, compare quality, and in
       priceMAD: 400,
       priceEUR: 38,
     },
-    image: '/images/real/food_spice_souk.jpg',
+    image: '/src/assets/images/real/food_markets_souks_image1.jpg',
     imageAlt: {
-      en: 'Authentic Souk el-Attarine spices and olive barrels in Fez',
-      fr: 'Épices parfumées et olives au Souk el-Attarine à Fès',
-      ar: 'سوق العطارين التراثي وتلال التوابل وبراميل الزيتون في فاس',
+      en: 'Vibrant spice souk and colorful produce in Fez',
+      fr: 'Souk des épices coloré et produits frais à Fès',
+      ar: 'سوق التوابل والأعشاب بألوانه وروائحه الزكية في فاس',
     },
     actionType: 'book_tour',
     published: true,
@@ -944,7 +919,7 @@ Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authen
       departure: { en: 'Fez Destination Guide', fr: 'Guide Destination Fès', ar: 'دليل فاس السياحي' },
       groupSize: { en: 'Free Local Knowledge', fr: 'Conseils Gratuits', ar: 'معلومات محلية مجانية' },
     },
-    image: '/images/real/tips_plan_trip_image1.jpg',
+    image: '/src/assets/images/real/tips_plan_trip_image1.jpg',
     imageAlt: {
       en: 'Panoramic view over the rooftops of Fez during sunset',
       fr: 'Vue panoramique sur les toits de Fès au coucher du soleil',
@@ -1014,7 +989,7 @@ Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 
       departure: { en: 'Medina Gates & City', fr: 'Portes & Ville', ar: 'أبواب فاس والمدينة' },
       groupSize: { en: 'Practical Local Advice', fr: 'Conseils Utiles', ar: 'إرشادات عملية' },
     },
-    image: '/images/real/tips_getting_around_image1.jpg',
+    image: '/src/assets/images/real/tips_getting_around_image1.jpg',
     imageAlt: {
       en: 'Red Petit Taxis outside the historic gates of Fez',
       fr: 'Petits taxis rouges devant les portes historiques de Fès',
@@ -1087,7 +1062,7 @@ Photography Etiquette: Always ask with a warm smile before taking close-up photo
       departure: { en: 'Essential Preparation', fr: 'Préparation Voyage', ar: 'استعدادات هامة' },
       groupSize: { en: 'Visitor Etiquette', fr: 'Savoir-vivre Local', ar: 'آداب الزيارة' },
     },
-    image: '/images/real/tips_practical_image1.jpg',
+    image: '/src/assets/images/real/tips_practical_image1.jpg',
     imageAlt: {
       en: 'Traditional Moroccan tea, crafts, and relaxed Medina moments',
       fr: 'Moment de détente autour d’un thé marocain dans la médina',
@@ -1115,7 +1090,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['Arabic', 'English', 'French'],
     experience: { en: 'Native Fassi Host', fr: 'Hôte Natif de Fès', ar: 'ابن فاس الأصلي' },
-    avatarUrl: '/images/real/about_us_image1.jpg',
+    avatarUrl: '/src/assets/images/real/about_us_image1.jpg',
   },
   {
     id: 'team-guides',
@@ -1132,7 +1107,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['English', 'French', 'Spanish', 'Arabic'],
     experience: { en: '10+ Years in Medina', fr: '10+ ans d’expérience', ar: 'أكثر من 10 سنوات خبرة' },
-    avatarUrl: '/images/real/about_us_image2.jpg',
+    avatarUrl: '/src/assets/images/real/about_us_image2.jpg',
   },
   {
     id: 'team-drivers',
@@ -1149,7 +1124,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     },
     languages: ['Arabic', 'French', 'English'],
     experience: { en: 'Professional Fleet', fr: 'Flotte Confortable', ar: 'أسطول سياحي مريح' },
-    avatarUrl: '/images/real/about_us_image5.jpg',
+    avatarUrl: '/src/assets/images/real/about_us_image5.jpg',
   },
 ];
 
@@ -1398,7 +1373,7 @@ Taste warm Harcha, honeycomb Baghrir, spicy Sfenj, freshly pressed olive oil, an
       fr: `La gastronomie fassie se découvre dans les petites échoppes et les fours communaux. Rejoignez-nous pour une balade sensorielle à travers les saveurs authentiques de la médina.`,
       ar: `الطعام في فاس أسلوب حياة ونبض يومي؛ لا تكتمل زيارة المدينة دون تذوق أطباقها الشعبية في دكاكينها الأصلية المليئة برائحة الخبز الطازج وزيت الزيتون والشاي المعطر بالأعشاب.`
     },
-    coverImage: '/images/real/food_medina_walk.jpg',
+    coverImage: '/src/assets/images/real/food_tasting_walk_image1.jpg',
     category: { en: 'Food & Culinary', fr: 'Gastronomie', ar: 'المطبخ والتذوق' },
     author: 'Med — FezGuideTours',
     date: '2026-09-28',
@@ -1427,7 +1402,7 @@ Sit for a glass of Moroccan mint tea at Plaza Uta el-Hammam, visit the historic 
       fr: `Partez de Fès pour une échappée montagnarde inoubliable vers la féerique cité bleue de Chefchaouen.`,
       ar: `رحلة رائعة من فاس نحو جبال الريف لاكتشاف مدينة شفشاون الشهيرة بزرقتها الساحرة وأجوائها الجبلية الهادئة والمميزة.`
     },
-    coverImage: '/images/real/daytrip_chefchaouen_image1.jpg',
+    coverImage: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
     category: { en: 'Day Trips', fr: 'Excursions', ar: 'رحلات واستكشاف' },
     author: 'Med — FezGuideTours',
     date: '2026-09-29',
@@ -1454,7 +1429,7 @@ Remember key gate names like Bab Boujloud, Bab Rcif, and Batha to make your pick
       fr: `Comprenez les portes clés de la médina et le fonctionnement des petits taxis rouges pour vous déplacer comme un habitant.`,
       ar: `تعرف على أهم أبواب فاس العتيقة وطريقة التعامل مع سيارات الأجرة الحمراء لتتنقل في المدينة بكل ثقة وراحة.`
     },
-    coverImage: '/images/real/tips_getting_around_image1.jpg',
+    coverImage: '/src/assets/images/real/tips_getting_around_image1.jpg',
     category: { en: 'Travel Tips', fr: 'Conseils Voyage', ar: 'نصائح السفر' },
     author: 'Med — FezGuideTours',
     date: '2026-09-30',
@@ -1516,7 +1491,7 @@ export const DEFAULT_CUSTOM_PAGES: CustomPage[] = [
       fr: 'Circuits personnalisés de plusieurs jours et visites thématiques',
       ar: 'مسارات متعددة الأيام وبرامج ثقافية مخصصة حسب رغبتكم',
     },
-    heroImage: '/images/real/daytrip_custom_image1.jpg',
+    heroImage: '/src/assets/images/real/daytrip_custom_image1.jpg',
     content: {
       en: `Have a specific interest or need multi-day arrangements starting from Fez? We organize custom private experiences tailored around your travel style. Whether you wish to explore the Middle Atlas, visit artisan ceramics workshops, take part in an authentic cooking class in a Medina home, or journey south toward the desert, we coordinate every detail with trusted local partners.`,
       fr: `Vous avez un projet de voyage particulier ? Nous créons des circuits sur mesure au départ de Fès avec véhicules privés confortables et accompagnement local de confiance.`,

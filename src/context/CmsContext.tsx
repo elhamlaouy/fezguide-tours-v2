@@ -67,6 +67,16 @@ const initialTours: SectionPillar[] = [
   };
 });
 
+const PROTECTED_FEZ_TOUR_IDS = new Set(['fez-explore-medina', 'fez-history-landmarks', 'fez-things-to-do', 'our-fez-tours']);
+const protectedFezTours = initialTours.filter((tour) => PROTECTED_FEZ_TOUR_IDS.has(tour.id));
+
+const mergeProtectedFezTours = (remoteTours: SectionPillar[]): SectionPillar[] => {
+  const protectedById = new Map(protectedFezTours.map((tour) => [tour.id, tour]));
+  const merged = remoteTours.map((tour) => protectedById.get(tour.id) || tour);
+  const remoteIds = new Set(remoteTours.map((tour) => tour.id));
+  return [...merged, ...protectedFezTours.filter((tour) => !remoteIds.has(tour.id))];
+};
+
 const defaultData: PublicCmsData = {
   tours: initialTours,
   customPages: DEFAULT_CUSTOM_PAGES,
@@ -94,7 +104,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         const payload = sanitizeObjectImages(await response.json()) as Partial<PublicCmsData>;
         setData((current) => ({
-          tours: Array.isArray(payload.tours) ? payload.tours : current.tours,
+          tours: Array.isArray(payload.tours) ? mergeProtectedFezTours(payload.tours) : current.tours,
           customPages: Array.isArray(payload.customPages) ? payload.customPages : current.customPages,
           blogPosts: Array.isArray(payload.blogPosts) ? payload.blogPosts : current.blogPosts,
           teamMembers: Array.isArray(payload.teamMembers) ? payload.teamMembers : current.teamMembers,

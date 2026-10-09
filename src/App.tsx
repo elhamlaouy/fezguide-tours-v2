@@ -22,6 +22,10 @@ import { AboutPage } from './pages/AboutPage';
 import { BlogPage } from './pages/BlogPage';
 import { CustomPageRenderer } from './pages/CustomPageRenderer';
 import { ExperienceDetailPage } from './pages/ExperienceDetailPage';
+import { MedinaArticlePage } from './pages/MedinaArticlePage';
+import { HistoryCultureArticlePage } from './pages/HistoryCultureArticlePage';
+import { ThingsToDoArticlePage } from './pages/ThingsToDoArticlePage';
+import { OurFezToursPage } from './pages/OurFezToursPage';
 
 function AppContent() {
   const { tours, customPages } = useCms();
@@ -124,6 +128,55 @@ function AppContent() {
   const renderCurrentPage = () => {
     // 0. Dedicated Product / Experience Detail Page
     if (currentPage === 'experience-detail' && selectedExperience) {
+      if (selectedExperience.id === 'fez-explore-medina') {
+        return (
+          <MedinaArticlePage
+            language={language}
+            onBack={() => handleNavigatePage('fez')}
+            onExploreTours={() => {
+              const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
+              if (fezTours) handleExplorePillar(fezTours);
+            }}
+          />
+        );
+      }
+
+      if (selectedExperience.id === 'fez-history-landmarks') {
+        return (
+          <HistoryCultureArticlePage
+            language={language}
+            onBack={() => handleNavigatePage('fez')}
+            onExploreTours={() => {
+              const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
+              if (fezTours) handleExplorePillar(fezTours);
+            }}
+          />
+        );
+      }
+
+      if (selectedExperience.id === 'fez-things-to-do') {
+        return (
+          <ThingsToDoArticlePage
+            language={language}
+            onBack={() => handleNavigatePage('fez')}
+            onExploreTours={() => {
+              const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
+              if (fezTours) handleExplorePillar(fezTours);
+            }}
+          />
+        );
+      }
+
+      if (selectedExperience.id === 'our-fez-tours') {
+        return (
+          <OurFezToursPage
+            language={language}
+            onBack={() => handleNavigatePage('fez')}
+            onBookTour={handleBookFromPillar}
+          />
+        );
+      }
+
       return (
         <ExperienceDetailPage
           pillar={selectedExperience}
