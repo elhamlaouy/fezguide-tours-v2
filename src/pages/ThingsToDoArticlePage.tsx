@@ -88,7 +88,7 @@ export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ la
         </div>
       </div>
 
-      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
+      <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{copy.title}</h1>
           <p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p>
@@ -98,7 +98,7 @@ export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ la
           const imageIndex = index;
           return (
             <section key={index} className="space-y-7">
-              <p className="max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p>
+              <p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p>
               <figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
                 <img
                   src={`/images/fez-things-to-do/things-${String(imageIndex + 1).padStart(2, '0')}.jpg`}

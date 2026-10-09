@@ -88,7 +88,7 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
         </div>
       </div>
 
-      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
+      <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{copy.title}</h1>
           <p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p>
@@ -109,7 +109,7 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
                 </div>
               ))}
             </div>
-            {index < copy.paragraphs.length - 1 && <p className="max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{copy.paragraphs[index + 1]}</p>}
+            {index < copy.paragraphs.length - 1 && <p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{copy.paragraphs[index + 1]}</p>}
           </section>
         ))}
 
