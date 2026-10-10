@@ -6,7 +6,6 @@ import {
   Clock,
   Users,
   MapPin,
-  ShieldCheck,
   Star,
   Check,
   X,
@@ -16,7 +15,6 @@ import {
   Phone,
   Sparkles,
   HelpCircle,
-  Compass,
 } from 'lucide-react';
 
 interface ExperienceDetailPageProps {
@@ -151,21 +149,6 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-10">
         {/* Title Header & Badges */}
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#C84B31] bg-[#FDF1EE] px-3 py-1 rounded-md border border-[#F6D5CD]">
-              <Compass className="w-3.5 h-3.5 text-[#C84B31]" />
-              {pillar.subtitle[language]}
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#005F5A] bg-[#E6F4F2] px-3 py-1 rounded-md border border-[#B3E0DA]">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#005F5A]" />
-              {language === 'ar' ? 'جولة خاصة 100%' : language === 'fr' ? 'Visite 100% Privée' : '100% Private Tour'}
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#8B6508] bg-[#FFF9E6] px-3 py-1 rounded-md border border-[#FBE39D]">
-              <Star className="w-3.5 h-3.5 fill-[#E07A5F] text-[#E07A5F]" />
-              5.0 (120+ {language === 'ar' ? 'تقييم موثق' : language === 'fr' ? 'avis' : 'reviews'})
-            </span>
-          </div>
-
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#005F5A] tracking-tight text-balance leading-tight">
             {pillar.title[language]}
           </h1>
@@ -270,7 +253,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 {language === 'ar' ? 'اللغات المتاحة' : language === 'fr' ? 'Langues' : 'Languages'}
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#1C2524]">
-                English, Français, العربية
+                English, Français and Español
               </span>
             </div>
           </div>

@@ -63,36 +63,41 @@ test('Our Fez Tours is a fourth Fez card and a €170 per-person product page', 
   assert.match(context, /PROTECTED_FEZ_TOUR_IDS/);
 });
 
-test('Our Fez Tours shows matching product badges and quick specs with the requested 7 AM pickup', () => {
+test('product pages drop the tag row and list English, Français and Español', () => {
   const product = read('src/pages/OurFezToursPage.tsx');
+  const shared = read('src/pages/ExperienceDetailPage.tsx');
+  const languages = 'English, Français and Español';
 
   for (const detail of [
-    '100% Private Tour',
-    '5.0 (82 reviews)',
-    '4–5 Hours',
+    '3–5 hours',
     'Private Walking Tour',
-    '7:00 AM from Fez (Hotel / Riad)',
-    'English, Français, العربية',
+    'Bab Boujloud, Batha or Rcif',
+    'Chouara Tannery',
+    '€2 per person',
+    '24 hours',
+    languages,
+    '/images/our-fez-tours/01.webp',
   ]) assert.ok(product.includes(detail), `missing product detail: ${detail}`);
+  assert.ok(!product.includes('7:00 AM') && !product.includes('7h00'), 'old 7 AM pickup must not remain');
+  for (const page of [product, shared]) {
+    assert.ok(page.includes(languages), 'info bar must list English, Français and Español');
+    for (const removed of ['100% Private Tour', '5.0 (82 reviews)', '5.0 (120+', 'our-fez-tour-tags', 'English, Français, العربية']) {
+      assert.ok(!page.includes(removed), `product tag remains: ${removed}`);
+    }
+  }
   assert.ok(!product.includes('8:00 AM'), 'old 8 AM pickup must not remain on Our Fez Tours');
   assert.match(product, /Clock/);
   assert.match(product, /MapPin/);
 });
 
-test('Our Fez Tours follows the reference order: tags, title, gallery, details, overview and booking', () => {
+test('Our Fez Tours follows the Viator section order', () => {
   const product = read('src/pages/OurFezToursPage.tsx');
-  const tags = product.indexOf('id="our-fez-tour-tags"');
-  const title = product.indexOf('id="our-fez-tour-title"');
-  const gallery = product.indexOf('id="our-fez-tour-gallery"');
-  const details = product.indexOf('id="our-fez-tour-details"');
-  const overview = product.indexOf('id="our-fez-tour-overview"');
-  const booking = product.indexOf('id="our-fez-tour-booking"');
-
-  for (const [name, index] of Object.entries({ tags, title, gallery, details, overview, booking })) {
-    assert.ok(index >= 0, `missing ${name} section`);
+  const order = ['title', 'gallery', 'details', 'overview', 'included', 'meeting', 'itinerary', 'booking'];
+  const indexes = order.map((name) => product.indexOf(`id="our-fez-tour-${name}"`));
+  indexes.forEach((index, i) => assert.ok(index >= 0, `missing ${order[i]} section`));
+  for (let i = 1; i < indexes.length; i += 1) {
+    assert.ok(indexes[i] > indexes[i - 1], `${order[i]} must follow ${order[i - 1]}`);
   }
-  assert.ok(tags < title && title < gallery && gallery < details, 'tags/title must precede images and details must follow the gallery');
-  assert.ok(details < overview && overview < booking, 'overview and booking must follow the details row');
 });
 
 test('the Medina article card does not expose a product quick-book action', () => {

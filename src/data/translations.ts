@@ -258,9 +258,9 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
       ar: 'Explore our Fez tours and discover the city through local eyes.',
     },
     highlights: {
-      en: ['Private walking tour · 4–5 hours', 'Local guide · English, French & Arabic'],
-      fr: ['Visite privée à pied · 4–5 heures', 'Guide local · anglais, français, arabe'],
-      ar: ['جولة مشي خاصة لمدة 4–5 ساعات', 'مرشد محلي · الإنجليزية والفرنسية والعربية'],
+      en: ['Private walking tour · 3–5 hours', 'English, Français and Español'],
+      fr: ['Visite privée à pied · 3–5 heures', 'Anglais, français et espagnol'],
+      ar: ['جولة مشي خاصة لمدة 3–5 ساعات', 'الإنجليزية والفرنسية والإسبانية'],
     },
     practicalInfo: {
       priceEUR: 170,
