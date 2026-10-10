@@ -100,6 +100,20 @@ test('Our Fez Tours follows the Viator section order', () => {
   }
 });
 
+test('day-trip pages use the Tripadvisor strip and Fez pages keep the shared crumb bar', () => {
+  const detail = read('src/pages/ExperienceDetailPage.tsx');
+  const fezPages = [
+    'src/pages/MedinaArticlePage.tsx',
+    'src/pages/HistoryCultureArticlePage.tsx',
+    'src/pages/ThingsToDoArticlePage.tsx',
+    'src/pages/OurFezToursPage.tsx',
+  ].map(read);
+  assert.match(detail, /pillar\.pageId !== 'day-trips'/);
+  assert.match(detail, /pillar\.pageId === 'day-trips'[\s\S]*TripadvisorReviewsSection/);
+  for (const page of fezPages) assert.match(page, /PageCrumbBar/);
+  assert.match(read('src/components/PageCrumbBar.tsx'), /Back to list/);
+});
+
 test('the Medina article card does not expose a product quick-book action', () => {
   const card = read('src/components/SectionCard.tsx');
   assert.match(card, /pillar\.id === 'fez-explore-medina'[\s\S]*grid-cols-1/);

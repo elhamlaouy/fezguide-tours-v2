@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Language, PageId, SectionPillar } from '../types';
 import { useCms } from '../context/CmsContext';
 import { EXPERIENCE_EXTRAS, ExperienceExtraDetails } from '../data/experienceDetails';
+import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 import {
   Clock,
   Users,
@@ -431,7 +432,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
 
             {/* Verified Traveler Testimonials */}
-            {extra?.reviews && extra.reviews.length > 0 && (
+            {pillar.pageId !== 'day-trips' && extra?.reviews && extra.reviews.length > 0 && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -623,6 +624,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               ))}
             </div>
           </div>
+        )}
+        {pillar.pageId === 'day-trips' && (
+          <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
         )}
       </div>
 

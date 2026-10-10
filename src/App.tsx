@@ -133,6 +133,7 @@ function AppContent() {
           <MedinaArticlePage
             language={language}
             onBack={() => handleNavigatePage('fez')}
+            onNavigate={handleNavigatePage}
             onExploreTours={() => {
               const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
               if (fezTours) handleExplorePillar(fezTours);
@@ -146,6 +147,7 @@ function AppContent() {
           <HistoryCultureArticlePage
             language={language}
             onBack={() => handleNavigatePage('fez')}
+            onNavigate={handleNavigatePage}
             onExploreTours={() => {
               const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
               if (fezTours) handleExplorePillar(fezTours);
@@ -159,6 +161,7 @@ function AppContent() {
           <ThingsToDoArticlePage
             language={language}
             onBack={() => handleNavigatePage('fez')}
+            onNavigate={handleNavigatePage}
             onExploreTours={() => {
               const fezTours = tours.find((tour) => tour.id === 'our-fez-tours');
               if (fezTours) handleExplorePillar(fezTours);
@@ -172,6 +175,7 @@ function AppContent() {
           <OurFezToursPage
             language={language}
             onBack={() => handleNavigatePage('fez')}
+            onNavigate={handleNavigatePage}
             onBookTour={handleBookFromPillar}
           />
         );

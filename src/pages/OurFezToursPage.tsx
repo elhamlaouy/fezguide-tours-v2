@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ArrowLeft,
   Calendar,
   Check,
   Clock,
@@ -10,13 +9,15 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { Language } from '../types';
+import { Language, PageId } from '../types';
 import { useCms } from '../context/CmsContext';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
+import { PageCrumbBar } from '../components/PageCrumbBar';
 
 interface OurFezToursPageProps {
   language: Language;
   onBack: () => void;
+  onNavigate: (page: PageId) => void;
   onBookTour: (tourTitle: string) => void;
 }
 
@@ -190,7 +191,7 @@ const itinerary = [
   { title: 'Zaouia of Moulay Idriss II', en: 'A sacred place for locals. Non-Muslims view it from outside.', fr: 'Lieu sacré pour les habitants. Les non-musulmans le voient de l’extérieur.', time: '5 min', ticket: 'free' },
 ];
 
-export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, onBookTour }) => {
+export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, onNavigate, onBookTour }) => {
   const { siteSettings } = useCms();
   const text = language === 'fr' ? copy.fr : copy.en;
   const contentLanguage = language === 'fr' ? 'fr' : 'en';
@@ -205,16 +206,13 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen pb-24" dir={fallbackEnglish ? 'ltr' : undefined}>
-      <div className="border-b border-[#E7E2DA] bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 text-xs font-bold text-[#005F5A] hover:text-[#C84B31] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#005F5A] focus-visible:ring-offset-2 cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" /> {text.back}
-          </button>
-        </div>
-      </div>
+      <PageCrumbBar
+        language={language}
+        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        currentTitle={text.title}
+        onHome={() => onNavigate('home')}
+        onParent={onBack}
+      />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-8 sm:space-y-10">
         <header className="space-y-3">

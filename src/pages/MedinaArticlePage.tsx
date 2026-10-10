@@ -1,12 +1,13 @@
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { Language } from '../types';
+import { Language, PageId } from '../types';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
+import { PageCrumbBar } from '../components/PageCrumbBar';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 
 interface MedinaArticlePageProps {
   language: Language;
   onBack: () => void;
+  onNavigate: (page: PageId) => void;
   onExploreTours: () => void;
 }
 
@@ -74,19 +75,19 @@ const imageAlts = [
   'Fountain and city lights in the New City of Fez at night',
 ];
 
-export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, onExploreTours }) => {
+export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
   const copy = language === 'fr' ? content.fr : content.en;
   const fallbackEnglish = language === 'ar';
 
   return (
     <div className="bg-[#FAF8F5] pb-20" dir={fallbackEnglish ? 'ltr' : undefined}>
-      <div className="border-b border-[#E7E2DA] bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button onClick={onBack} className="inline-flex items-center gap-2 text-xs font-bold text-[#005F5A] hover:text-[#C84B31] cursor-pointer">
-            <ArrowLeft className="w-4 h-4" /> {copy.back}
-          </button>
-        </div>
-      </div>
+      <PageCrumbBar
+        language={language}
+        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        currentTitle={copy.title}
+        onHome={() => onNavigate('home')}
+        onParent={onBack}
+      />
 
       <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
