@@ -1058,7 +1058,8 @@ Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authen
       departure: { en: 'Fez Destination Guide', fr: 'Guide Destination Fès', ar: 'دليل فاس السياحي' },
       groupSize: { en: 'Free Local Knowledge', fr: 'Conseils Gratuits', ar: 'معلومات محلية مجانية' },
     },
-    image: '/src/assets/images/real/tips_plan_trip_image1.jpg',
+    image: '/images/tips-plan-trip/medina-view.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Panoramic view over the rooftops of Fez during sunset',
       fr: 'Vue panoramique sur les toits de Fès au coucher du soleil',
@@ -1128,7 +1129,8 @@ Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 
       departure: { en: 'Medina Gates & City', fr: 'Portes & Ville', ar: 'أبواب فاس والمدينة' },
       groupSize: { en: 'Practical Local Advice', fr: 'Conseils Utiles', ar: 'إرشادات عملية' },
     },
-    image: '/src/assets/images/real/tips_getting_around_image1.jpg',
+    image: '/images/tips-getting-around/medina-walker.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Red Petit Taxis outside the historic gates of Fez',
       fr: 'Petits taxis rouges devant les portes historiques de Fès',
@@ -1201,7 +1203,8 @@ Photography Etiquette: Always ask with a warm smile before taking close-up photo
       departure: { en: 'Essential Preparation', fr: 'Préparation Voyage', ar: 'استعدادات هامة' },
       groupSize: { en: 'Visitor Etiquette', fr: 'Savoir-vivre Local', ar: 'آداب الزيارة' },
     },
-    image: '/src/assets/images/real/tips_practical_image1.jpg',
+    image: '/images/tips-practical/medina-steps.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Traditional Moroccan tea, crafts, and relaxed Medina moments',
       fr: 'Moment de détente autour d’un thé marocain dans la médina',

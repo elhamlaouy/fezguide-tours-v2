@@ -76,8 +76,8 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/images/real/tips_plan_trip_image1.jpg"
-          alt="Panoramic Fez View"
+          src="/images/tips-getting-around/bab-boujloud-night.webp"
+          alt="Bab Boujloud at night"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -162,20 +162,20 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
-                src: '/images/real/tips_getting_around_image1.jpg',
-                title: language === 'ar' ? 'التاكسي الصغير الأحمر' : 'Red Petit Taxis',
+                src: '/images/tips-getting-around/city-gate.webp',
+                title: language === 'ar' ? 'باب المدينة' : 'A city gate',
               },
               {
-                src: '/images/real/tips_plan_trip_image1.jpg',
-                title: language === 'ar' ? 'مطلات بانورامية' : 'Medina Viewpoints',
+                src: '/images/tips-plan-trip/medina-view.webp',
+                title: language === 'ar' ? 'إطلالة على المدينة' : 'A view over the Medina',
               },
               {
-                src: '/images/real/tips_practical_image1.jpg',
-                title: language === 'ar' ? 'الضيافة والشاي المغربي' : 'Mint Tea Hospitality',
+                src: '/images/tips-practical/spice-shop.webp',
+                title: language === 'ar' ? 'دكان توابل' : 'A spice shop',
               },
               {
-                src: '/images/real/fez_things_to_do_image1.jpg',
-                title: language === 'ar' ? 'أسواق فاس وحرفها' : 'Crafts & Souks',
+                src: '/images/tips-getting-around/hexagonal-sign.webp',
+                title: language === 'ar' ? 'لافتة الزقاق' : 'A Medina street sign',
               },
             ].map((item, idx) => (
               <div key={idx} className="relative aspect-4/3 rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group bg-[#1C2524]">

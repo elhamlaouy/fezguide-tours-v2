@@ -203,6 +203,38 @@ test('food guides use the editorial template and the tasting walk is the product
   }
 });
 
+test('travel tips are content pages from the Docs and do not link to a product', () => {
+  const tips = read('src/data/tipArticles.ts');
+  const page = read('src/pages/TravelTipsPage.tsx');
+  assert.match(tips, /id: 'tips-getting-around'/);
+  assert.match(tips, /id: 'tips-plan-trip'/);
+  assert.match(tips, /id: 'tips-practical'/);
+  assert.match(tips, /hexagonal sign means the alley has an entrance but does not continue/);
+  assert.match(tips, /at least 2 to 3 days/);
+  assert.match(tips, /covering the shoulders and knees/);
+  assert.match(tips, /wa\.me\/212719603009/);
+  assert.ok(!tips.includes('productId'));
+  assert.ok(!tips.includes('our-fez-tours') && !tips.includes('our-food-tours'));
+  assert.ok(!page.includes('/images/real/tips_'));
+  assert.ok(existsSync(resolve(root, 'public/images/tips-getting-around/hexagonal-sign.webp')));
+  assert.ok(existsSync(resolve(root, 'public/images/tips-plan-trip/medina-view.webp')));
+  assert.ok(existsSync(resolve(root, 'public/images/tips-practical/spice-shop.webp')));
+});
+
+test('the About page is a Doc content page and not a product page', () => {
+  const about = read('src/pages/AboutPage.tsx');
+  const app = read('src/App.tsx');
+  assert.match(about, /We are a small local team based in Fez/);
+  assert.match(about, /Founder & Local Host/);
+  assert.match(about, /\/images\/about\/med\.webp/);
+  assert.ok(!about.includes('onBookTour') && !about.includes('Frequently Asked Questions'));
+  assert.ok(!about.includes('/images/real/about_us_'));
+  assert.match(app, /<AboutPage/);
+  assert.ok(existsSync(resolve(root, 'public/images/about/med.webp')));
+  assert.ok(existsSync(resolve(root, 'public/images/about/guides-01.webp')));
+  assert.ok(existsSync(resolve(root, 'public/images/about/drivers-05.webp')));
+});
+
 test('the Medina article card does not expose a product quick-book action', () => {
   const card = read('src/components/SectionCard.tsx');
   assert.match(card, /pillar\.id === 'fez-explore-medina'[\s\S]*grid-cols-1/);

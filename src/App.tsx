@@ -257,7 +257,7 @@ function AppContent() {
         return (
           <AboutPage
             language={language}
-            onBookTour={handleBookFromPillar}
+            onNavigate={handleNavigatePage}
           />
         );
       case 'blog':

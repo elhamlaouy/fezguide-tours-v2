@@ -24,7 +24,9 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
   onOpenProduct,
 }) => {
   const bodyLanguage: Language = language === 'ar' ? 'en' : language;
-  const parentLabel = language === 'ar' ? 'جولات الأكل' : language === 'fr' ? 'Tours culinaires' : 'Food Tours';
+  const parentLabel = article.parentLabel
+    ? text(article.parentLabel, language)
+    : language === 'ar' ? 'جولات الأكل' : language === 'fr' ? 'Tours culinaires' : 'Food Tours';
 
   return (
     <div className="bg-[#FAF8F5] pb-20" dir={language === 'ar' ? 'ltr' : undefined}>
@@ -83,6 +85,7 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
           );
         })}
 
+        {article.cta && (
         <section className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-3xl bg-[#005F5A] text-white shadow-xl">
           <img
             src={article.cta.image}
@@ -103,6 +106,18 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
             </button>
           </div>
         </section>
+        )}
+
+        {article.contact && (
+          <p className="max-w-3xl">
+            <a
+              href={article.contact.href}
+              className="inline-flex items-center justify-center rounded-xl bg-[#005F5A] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#004A46]"
+            >
+              {text(article.contact.label, language)}
+            </a>
+          </p>
+        )}
 
         <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
       </article>

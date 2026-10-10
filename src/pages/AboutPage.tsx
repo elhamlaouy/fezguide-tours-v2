@@ -1,359 +1,160 @@
-import React, { useState } from 'react';
-import { Language } from '../types';
-import { ABOUT_STORY, UI_TEXT } from '../data/translations';
-import { useCms } from '../context/CmsContext';
-import { Users, Award, ShieldCheck, Calendar, Heart, HelpCircle, ChevronDown, ChevronUp, MapPin, Compass, Filter } from 'lucide-react';
+import React from 'react';
+import { Language, PageId } from '../types';
+import { PageCrumbBar } from '../components/PageCrumbBar';
 
 interface AboutPageProps {
   language: Language;
-  onBookTour: (guideName?: string) => void;
+  onNavigate: (page: PageId) => void;
 }
 
-export const AboutPage: React.FC<AboutPageProps> = ({
-  language,
-  onBookTour,
-}) => {
-  const { teamMembers, siteSettings, faqs } = useCms();
-  const story = ABOUT_STORY;
+type Copy = Record<Language, string>;
 
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [selectedFaqCategory, setSelectedFaqCategory] = useState<string>('all');
+const line = (value: Copy, language: Language) => (language === 'ar' ? value.en : value[language]);
 
-  const toggleFaq = (idx: number) => {
-    setOpenFaqIndex(openFaqIndex === idx ? null : idx);
-  };
+const Photo = ({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) => {
+  const portrait = height > width;
+  return (
+    <div className={`overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm flex items-center justify-center ${portrait ? 'max-h-[620px]' : 'aspect-4/3'}`}>
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        className={portrait ? 'max-h-[620px] w-auto max-w-full object-contain' : 'w-full h-full object-cover'}
+      />
+    </div>
+  );
+};
+
+export const AboutPage: React.FC<AboutPageProps> = ({ language, onNavigate }) => {
+  const title = language === 'ar' ? 'من نحن وفريقنا' : language === 'fr' ? 'À propos et notre équipe' : 'About Us & Our Team';
 
   return (
-    <div className="space-y-16 pb-20">
-      {/* Header Banner */}
-      <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
-        <img
-          src="/images/real/fez_explore_medina_image1.jpg"
-          alt="Medina of Fez"
-          referrerPolicy="no-referrer"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/20" />
+    <div className="bg-[#FAF8F5] pb-20" dir={language === 'ar' ? 'ltr' : undefined}>
+      <PageCrumbBar
+        language={language}
+        parentLabel={title}
+        currentTitle={title}
+        onHome={() => onNavigate('home')}
+        onParent={() => onNavigate('home')}
+      />
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
-              <Compass className="w-4 h-4 text-[#005F5A]" />
-              <span>Fez Guide Tours — Local Guiding Team</span>
-            </div>
+      <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
+        <header className="max-w-3xl space-y-5">
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{title}</h1>
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#005F5A]">
+            {language === 'ar' ? 'من نحن' : language === 'fr' ? 'À propos' : 'About Us'}
+          </h2>
+          {[
+            line({ en: 'We are a small local team based in Fez.', fr: 'Nous sommes une petite équipe locale basée à Fès.', ar: '' }, language),
+            line({
+              en: 'We created Fez Guide Tours to share our city with travellers and help them discover Fez in a simple, comfortable and personal way.',
+              fr: 'Nous avons créé Fez Guide Tours pour partager notre ville avec les voyageurs et les aider à découvrir Fès de façon simple, confortable et personnelle.',
+              ar: '',
+            }, language),
+            line({
+              en: 'We know the streets of the Medina, the different areas of the city, the local food, traditions and everyday life.',
+              fr: 'Nous connaissons les rues de la médina, les différents quartiers, la cuisine locale, les traditions et la vie quotidienne.',
+              ar: '',
+            }, language),
+            line({
+              en: 'Our goal is simple: to help you enjoy Fez and discover the city through local eyes.',
+              fr: 'Notre but est simple : vous aider à profiter de Fès et à découvrir la ville à travers des yeux locaux.',
+              ar: '',
+            }, language),
+          ].map((paragraph) => (
+            <p key={paragraph} className="editorial-story-copy text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p>
+          ))}
+        </header>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
-              {story.title[language]}
-            </h1>
-
-            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {story.subtitle[language]}
-            </p>
+        <section className="space-y-7">
+          <h2 className="max-w-3xl text-2xl sm:text-3xl font-extrabold tracking-tight text-[#005F5A]">
+            {language === 'ar' ? 'تعرّفوا على فريقنا' : language === 'fr' ? 'Notre équipe' : 'Meet Our Team'}
+          </h2>
+          <h3 className="text-xl font-bold text-[#1C2524]">Med</h3>
+          <p className="text-sm font-bold uppercase tracking-wider text-[#C84B31]">
+            {language === 'ar' ? 'المؤسس والمضيف المحلي' : language === 'fr' ? 'Fondateur et hôte local' : 'Founder & Local Host'}
+          </p>
+          <p className="editorial-story-copy max-w-3xl text-sm sm:text-base leading-8 text-[#445250]">
+            {line({
+              en: 'Med is based in Fez and works closely with travellers, local guides and partners to organize tours and experiences around the city.',
+              fr: 'Med est basé à Fès. Il travaille avec les voyageurs, les guides locaux et les partenaires pour organiser les visites et les expériences dans la ville.',
+              ar: '',
+            }, language)}
+          </p>
+          <div className="max-w-xl">
+            <Photo src="/images/about/med.webp" alt="Med with a visitor in a Fez workshop" width={1440} height={1440} />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-        {/* Story Section */}
-        <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 shadow-xs space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-7 space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-                {language === 'ar' ? 'من نحن' : language === 'fr' ? 'À Propos de Nous' : 'About Us'}
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
-                {language === 'ar'
-                  ? 'اكتشف فاس بطريقة بسيطة، مريحة وتجربة خاصة بك'
-                  : language === 'fr'
-                  ? 'Découvrir Fès de manière simple, confortable et personnelle'
-                  : 'Discover Fez in a Simple, Comfortable and Personal Way'}
-              </h2>
-              <p className="text-sm text-[#4E5B59] leading-relaxed">
-                {story.storyParagraph1[language]}
-              </p>
-              <p className="text-sm text-[#4E5B59] leading-relaxed">
-                {story.storyParagraph2[language]}
-              </p>
-
-              {/* Slogan highlight */}
-              <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-[#C84B31] shrink-0" />
-                <p className="text-xs sm:text-sm font-bold text-[#005F5A]">
-                  {language === 'ar'
-                    ? 'مرحباً بكم في فاس. اكتشفوا المدينة بعيون أهلها.'
-                    : language === 'fr'
-                    ? 'Bienvenue à Fès. Découvrez la ville à travers des yeux locaux.'
-                    : 'Welcome to Fez. See the city through local eyes.'}
-                </p>
-              </div>
-            </div>
-
-            {/* Team in Fez Photo */}
-            <div className="lg:col-span-5">
-              <div className="rounded-3xl overflow-hidden border border-[#E7E2DA] shadow-md bg-[#1C2524] relative aspect-4/3 group">
-                <img
-                  src="/images/real/about_us_image1.jpg"
-                  alt="Our team in Fez"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 text-white text-xs">
-                  <span className="font-bold block">
-                    {language === 'ar' ? 'فريقنا في دروب فاس العتيقة' : 'Our Team in the Medina of Fez'}
-                  </span>
-                  <span className="text-[11px] text-[#CCD8D6]">
-                    {language === 'ar' ? 'أبناء فاس في خدمتكم' : 'Native hosts & licensed guides'}
-                  </span>
-                </div>
-              </div>
-            </div>
+        <section className="space-y-7">
+          <h3 className="text-xl font-bold text-[#1C2524]">
+            {language === 'ar' ? 'مرشدونا المحليون' : language === 'fr' ? 'Nos guides locaux' : 'Our Local Guides'}
+          </h3>
+          <p className="editorial-story-copy max-w-3xl text-sm sm:text-base leading-8 text-[#445250]">
+            {line({
+              en: 'We work with local guides who know Fez, its history, culture and Medina. They are here to share their knowledge, answer your questions and help you enjoy your time in the city.',
+              fr: 'Nous travaillons avec des guides locaux qui connaissent Fès, son histoire, sa culture et sa médina. Ils partagent ce qu’ils savent, répondent à vos questions et vous aident à profiter de la ville.',
+              ar: '',
+            }, language)}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Photo src="/images/about/guides-01.webp" alt="A group with a local guide at a Fez gate" width={1600} height={1200} />
+            <Photo src="/images/about/guides-02.webp" alt="A guide walking with visitors in a Medina lane" width={1536} height={2048} />
+            <Photo src="/images/about/guides-03.webp" alt="A guide with a group at a historic doorway" width={2048} height={1536} />
+            <Photo src="/images/about/guides-04.webp" alt="A guide explaining a map to visitors" width={975} height={1300} />
           </div>
+        </section>
 
-          {/* Pillars of Integrity */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-[#F2ECE4]">
-            {story.pillars.map((pillar, idx) => (
-              <div key={idx} className="space-y-2 p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA]">
-                <div className="w-9 h-9 rounded-xl bg-[#005F5A] text-white flex items-center justify-center font-bold text-xs">
-                  0{idx + 1}
-                </div>
-                <h4 className="text-sm font-bold text-[#1C2524]">
-                  {pillar.title[language]}
-                </h4>
-                <p className="text-xs text-[#52605E] leading-relaxed">
-                  {pillar.desc[language]}
-                </p>
-              </div>
-            ))}
+        <section className="space-y-7">
+          <h3 className="text-xl font-bold text-[#1C2524]">
+            {language === 'ar' ? 'سائقونا وشركاؤنا المحليون' : language === 'fr' ? 'Nos chauffeurs et partenaires locaux' : 'Our Drivers & Local Partners'}
+          </h3>
+          <p className="editorial-story-copy max-w-3xl text-sm sm:text-base leading-8 text-[#445250]">
+            {line({
+              en: 'For day trips, transfers and other experiences, we work with trusted local drivers and partners. They help us make your experience comfortable, organized and enjoyable.',
+              fr: 'Pour les excursions, les transferts et les autres expériences, nous travaillons avec des chauffeurs et des partenaires locaux de confiance. Ils aident à rendre l’expérience confortable, organisée et agréable.',
+              ar: '',
+            }, language)}
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Photo src="/images/about/drivers-01.webp" alt="A local partner at a mountain viewpoint" width={800} height={600} />
+            <Photo src="/images/about/drivers-02.webp" alt="Three men from the local team outdoors" width={800} height={600} />
+            <Photo src="/images/about/drivers-03.webp" alt="A group with a local partner in the mountains" width={800} height={600} />
+            <Photo src="/images/about/drivers-04.webp" alt="Travellers with a local partner in a vehicle" width={750} height={421} />
+            <Photo src="/images/about/drivers-05.webp" alt="Local partners seated together in Fez" width={800} height={593} />
           </div>
-        </div>
+        </section>
 
-        {/* Meet Our Team */}
-        <div className="space-y-8">
-          <div className="text-center max-w-xl mx-auto space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              {language === 'ar' ? 'فريق العمل' : 'Our Dedicated Team'}
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
-              {language === 'ar' ? 'تعرف على فريق فاس جايد تورز' : 'Meet Our Team'}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#52605E]">
-              {language === 'ar'
-                ? 'فريق متكامل يجمع بين المؤسس والمرشدين المعتمدين والسائقين المحترفين لخدمتكم'
-                : 'Working closely with travellers, local guides, and trusted partners.'}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {teamMembers.map((member) => (
-              <div
-                key={member.id}
-                className="bg-white rounded-3xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-              >
-                {/* Photo */}
-                <div className="relative aspect-4/3 w-full bg-[#1C2524] overflow-hidden">
-                  <img
-                    src={member.avatarUrl}
-                    alt={member.name}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                  <div className="absolute bottom-3 left-4 right-4 text-white">
-                    <h3 className="text-base font-bold drop-shadow-xs">{member.name}</h3>
-                    <p className="text-[11px] text-[#E07A5F] font-semibold">{member.role[language]}</p>
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-6 flex-1 flex flex-col justify-between gap-4">
-                  <div className="space-y-3">
-                    <p className="text-xs text-[#52605E] leading-relaxed">
-                      {member.bio[language]}
-                    </p>
-
-                    <div className="pt-2 text-[11px] text-[#42504E] space-y-1.5 border-t border-[#F2ECE4]">
-                      <div className="flex items-center gap-1.5 font-semibold text-[#005F5A]">
-                        <Award className="w-3.5 h-3.5" />
-                        <span>{member.experience[language]}</span>
-                      </div>
-                      <div className="text-[#728280]">
-                        {language === 'ar' ? 'اللغات:' : 'Languages:'} {member.languages.join(' · ')}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Booking CTA Button */}
-                  <div className="pt-3 border-t border-[#F2ECE4]">
-                    <button
-                      onClick={() => onBookTour(`Inquiry with ${member.name}`)}
-                      className="w-full py-2.5 px-3 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{UI_TEXT.common.bookNow[language]}</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Real Photo Gallery from Google Drive */}
-        <div className="space-y-4">
-          <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-              {language === 'ar' ? 'لقطات حقيقية من فاس' : 'Through Local Eyes'}
-            </span>
-            <h3 className="text-xl font-bold text-[#1C2524]">
-              {language === 'ar' ? 'مشاهد من جولاتنا ودروب مدينتنا' : 'Moments from Our Experiences'}
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { src: '/images/real/about_us_image3.jpg', title: 'Medina Alleys' },
-              { src: '/images/real/about_us_image5.jpg', title: 'Scenic Day Trips' },
-              { src: '/images/real/about_us_image7.jpg', title: 'Local Crafts' },
-              { src: '/images/real/about_us_image8.jpg', title: 'Authentic Moments' },
-            ].map((img, idx) => (
-              <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group">
-                <img
-                  src={img.src}
-                  alt={img.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Complete Frequently Asked Questions (FAQ) Accordion */}
-        <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 shadow-xs space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              <HelpCircle className="w-4 h-4 text-[#005F5A]" />
-              <span>{language === 'ar' ? 'الأسئلة الشائعة' : 'Frequently Asked Questions'}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
-              {language === 'ar'
-                ? 'إجابات واضحة لكل ما قد يشغل بالك قبل الحجز'
-                : 'Everything You Need to Know Before Booking'}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#52605E]">
-              {language === 'ar'
-                ? 'تخطط لرحلتك إلى فاس؟ إليك إجابات عن أبرز الأسئلة التي يطرحها المسافرون.'
-                : 'Planning a trip to Fez? Here are answers to questions travellers often ask before booking with us.'}
-            </p>
-          </div>
-
-          {/* Category Filter Pills */}
-          {(() => {
-            const allFaqs = faqs && faqs.length > 0 ? faqs : [];
-            const categories = [
-              { id: 'all', label: { en: 'All Topics', fr: 'Tous les sujets', ar: 'جميع الأسئلة' } },
-              { id: 'tours', label: { en: 'Tours & Medina', fr: 'Visites & Médina', ar: 'الجولات والمدينة' } },
-              { id: 'booking', label: { en: 'Booking & Payments', fr: 'Réservations', ar: 'الحجز والدفع' } },
-              { id: 'guides', label: { en: 'Guides', fr: 'Guides', ar: 'المرشدون' } },
-              { id: 'daytrips', label: { en: 'Day Trips', fr: 'Excursions', ar: 'الرحلات اليومية' } },
-              { id: 'food', label: { en: 'Food & Tasting', fr: 'Gastronomie', ar: 'الطعام والتذوق' } },
-            ];
-
-            const filteredFaqs = selectedFaqCategory === 'all'
-              ? allFaqs
-              : allFaqs.filter((item) => item.category === selectedFaqCategory);
-
-            return (
-              <div className="space-y-6 max-w-4xl mx-auto">
-                <div className="flex items-center justify-center flex-wrap gap-2">
-                  {categories.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => {
-                        setSelectedFaqCategory(cat.id);
-                        setOpenFaqIndex(null);
-                      }}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                        selectedFaqCategory === cat.id
-                          ? 'bg-[#005F5A] text-white shadow-xs'
-                          : 'bg-[#FAF8F5] text-[#52605E] hover:bg-[#EFEAE2] border border-[#E7E2DA]'
-                      }`}
-                    >
-                      {cat.label[language] || cat.label.en}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="space-y-3">
-                  {filteredFaqs.map((item, index) => {
-                    const isOpen = openFaqIndex === index;
-                    return (
-                      <div
-                        key={item.id}
-                        className="border border-[#E7E2DA] rounded-2xl overflow-hidden transition-all bg-[#FAF8F5]/60 hover:bg-[#FAF8F5]"
-                      >
-                        <button
-                          onClick={() => toggleFaq(index)}
-                          className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 font-bold text-xs sm:text-sm text-[#1C2524] cursor-pointer"
-                        >
-                          <span dir={language === 'ar' ? 'rtl' : 'ltr'}>
-                            {item.question[language] || item.question.en}
-                          </span>
-                          {isOpen ? (
-                            <ChevronUp className="w-4 h-4 text-[#005F5A] shrink-0" />
-                          ) : (
-                            <ChevronDown className="w-4 h-4 text-[#728280] shrink-0" />
-                          )}
-                        </button>
-                        {isOpen && (
-                          <div
-                            dir={language === 'ar' ? 'rtl' : 'ltr'}
-                            className="px-4 sm:px-5 pb-5 pt-1 text-xs text-[#4E5B59] leading-relaxed border-t border-[#F2ECE4] bg-white"
-                          >
-                            <p>{item.answer[language] || item.answer.en}</p>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                  {filteredFaqs.length === 0 && (
-                    <div className="text-center py-8 text-xs text-[#728280]">
-                      No questions found in this category.
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Contact / Question CTA */}
-          <div className="text-center pt-4 border-t border-[#F2ECE4]">
-            <p className="text-xs text-[#52605E] mb-3">
-              {language === 'ar'
-                ? 'هل لديك سؤال آخر؟ يسعدنا دائماً التحدث معك وتقديم المساعدة.'
-                : language === 'fr'
-                ? 'Vous avez une autre question ? Nos guides à Fès sont à votre disposition.'
-                : 'Still have a question? Talk to someone who knows Fez.'}
-            </p>
-            <a
-              href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                language === 'ar'
-                  ? 'السلام عليكم ورحمة الله، لدي استفسار حول زيارة فاس مع FezGuideTours.'
-                  : language === 'fr'
-                  ? 'Bonjour ! J’ai une question concernant une visite de Fès avec FezGuideTours.'
-                  : 'Hello! I have a question about visiting Fez with FezGuideTours.'
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#005F5A] hover:bg-[#004A46] text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
-            >
-              <span>{UI_TEXT.common.whatsappChat[language]}</span>
-            </a>
-          </div>
-
-        </div>
-      </div>
+        <section className="max-w-3xl space-y-5">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#005F5A]">
+            {language === 'ar' ? 'لماذا نفعل ذلك' : language === 'fr' ? 'Pourquoi nous le faisons' : 'Why We Do It'}
+          </h2>
+          <p className="editorial-story-copy text-sm sm:text-base leading-8 text-[#445250]">
+            {line({
+              en: 'We believe that the best way to discover Fez is not only by visiting its famous places, but also by seeing how the city really lives.',
+              fr: 'Nous pensons que la meilleure façon de découvrir Fès n’est pas seulement de visiter ses lieux célèbres, mais aussi de voir comment la ville vit vraiment.',
+              ar: '',
+            }, language)}
+          </p>
+          <p className="editorial-story-copy text-sm sm:text-base leading-8 text-[#445250]">
+            {line({
+              en: 'We want to welcome you to our city, share what we know and help you create good memories in Fez.',
+              fr: 'Nous voulons vous accueillir dans notre ville, partager ce que nous savons et vous aider à garder de bons souvenirs à Fès.',
+              ar: '',
+            }, language)}
+          </p>
+          <p className="text-xl font-extrabold text-[#005F5A]">
+            {line({
+              en: 'Welcome to Fez. See the city through local eyes.',
+              fr: 'Bienvenue à Fès. Voyez la ville à travers des yeux locaux.',
+              ar: '',
+            }, language)}
+          </p>
+        </section>
+      </article>
     </div>
   );
 };

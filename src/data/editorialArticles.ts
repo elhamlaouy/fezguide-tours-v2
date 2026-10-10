@@ -1,4 +1,5 @@
 import { Language } from '../types';
+import { TIP_ARTICLES } from './tipArticles';
 import { PageTemplateId } from './pageTemplates';
 
 type Copy = Record<Language, string>;
@@ -19,15 +20,20 @@ export interface EditorialSection {
 export interface EditorialArticle {
   id: string;
   template: PageTemplateId;
-  productId: string;
+  productId?: string;
+  parentLabel?: Copy;
   title: Copy;
   sections: EditorialSection[];
-  cta: {
+  cta?: {
     intro: Copy;
     lead: Copy;
     button: Copy;
     image: string;
     imageAlt: Copy;
+  };
+  contact?: {
+    href: string;
+    label: Copy;
   };
 }
 
@@ -57,7 +63,7 @@ const productCta = {
   imageAlt: copy('A baker working at a wood-fired oven', 'Un boulanger devant un four à bois', 'خبّاز يعمل في فرن حطبي'),
 };
 
-export const EDITORIAL_ARTICLES: EditorialArticle[] = [
+const FOOD_EDITORIAL_ARTICLES: EditorialArticle[] = [
   {
     id: 'food-tasting-walk',
     template: 'editorial-guide',
@@ -404,6 +410,11 @@ export const EDITORIAL_ARTICLES: EditorialArticle[] = [
     ],
     cta: productCta,
   },
+];
+
+export const EDITORIAL_ARTICLES: EditorialArticle[] = [
+  ...FOOD_EDITORIAL_ARTICLES,
+  ...(TIP_ARTICLES as EditorialArticle[]),
 ];
 
 export const editorialArticleById = (id: string) => EDITORIAL_ARTICLES.find((article) => article.id === id);
