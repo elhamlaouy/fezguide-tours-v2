@@ -79,8 +79,8 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/images/real/food_medina_walk.jpg"
-          alt="Moroccan Food Tasting Walk"
+          src="/images/food-tasting-walk/wood-oven.webp"
+          alt="A baker working at a wood-fired oven"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -193,20 +193,20 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
-                src: '/images/real/food_medina_walk.jpg',
-                title: language === 'ar' ? 'دروب فاس ودكاكين التذوق' : 'Medina Food Walk Alleys',
+                src: '/images/food-tasting-walk/pastries-tea.webp',
+                title: language === 'ar' ? 'حلويات وشاي من جولة التذوق' : 'Pastries and tea from the tasting walk',
               },
               {
-                src: '/images/real/food_tagine_table.jpg',
-                title: language === 'ar' ? 'مائدة طاجين وسلطات مغربية' : 'Tagine & Moroccan Mezze',
+                src: '/images/food-culture-life/tea-tray.webp',
+                title: language === 'ar' ? 'صينية الشاي والضيافة' : 'Tea and hospitality',
               },
               {
-                src: '/images/real/food_feast_board.jpg',
-                title: language === 'ar' ? 'بسطيلة ملكية ومأكولات فاخرة' : 'Royal Pastilla & Skewers',
+                src: '/images/food-markets-souks/spice-tins.webp',
+                title: language === 'ar' ? 'توابل السوق' : 'Market spices',
               },
               {
-                src: '/images/real/food_couscous_plate.jpg',
-                title: language === 'ar' ? 'كسكس مغربي بالسبع خضار' : 'Seven-Vegetable Couscous',
+                src: '/images/food-traditional-fassi/pastilla.webp',
+                title: language === 'ar' ? 'بسطيلة على المائدة' : 'Pastilla at the table',
               },
             ].map((img, idx) => (
               <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group bg-[#1C2524]">
@@ -242,14 +242,17 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
           </h3>
           <p className="text-xs sm:text-sm text-[#4E5B59] max-w-2xl mx-auto leading-relaxed">
             {language === 'ar'
-              ? 'يمكننا تعديل مسار التذوق حسب رغباتك، وتوفير خيارات مناسبة للنباتيين ولمن يعانون من حساسية غذائية. جولة خاصة لك ولمجموعتك فقط.'
+              ? 'جولة خاصة لكم ولمجموعتكم. التذوق يتبع ما تحضّره الدكاكين في ذلك اليوم.'
               : language === 'fr'
-              ? 'Une expérience gastronomique privée rien que pour vous. Nous nous adaptons à votre rythme, à vos préférences végétariennes ou régimes spécifiques.'
-              : 'This is a private food experience just for you and your group. We can take our time, talk with local sellers, and adapt tastings to your preferences.'}
+              ? 'Une balade privée pour vous et votre groupe. Les dégustations suivent ce que les boutiques préparent ce jour-là.'
+              : 'This is a private food walk for you and your group. The tastings follow what local shops are preparing that day.'}
           </p>
           <div className="pt-2">
             <button
-              onClick={() => onBookTour('Fez Medina Food Tasting Walk')}
+              onClick={() => {
+                const product = foodPillars.find((pillar) => pillar.id === 'our-food-tours');
+                if (product) onExplore(product);
+              }}
               className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
             >
               {language === 'ar'

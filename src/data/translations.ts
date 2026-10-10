@@ -656,9 +656,9 @@ export const FOOD_TOURS_PILLARS: SectionPillar[] = [
     id: 'food-tasting-walk',
     pageId: 'food-tours',
     title: {
-      en: 'Fez Medina Food Tasting Walk',
-      fr: 'Balade Dégustation Gourmande dans la Médina',
-      ar: 'جولة تذوق الأكلات الشعبية في دروب فاس',
+      en: 'Taste Fez Through Local Eyes',
+      fr: 'Goûter Fès à travers des yeux locaux',
+      ar: 'تذوّقوا فاس بعيون أهلها',
     },
     subtitle: {
       en: 'Taste Fez Through Local Eyes — Not a Sit-Down Dinner, but an Alley Safari',
@@ -666,7 +666,7 @@ export const FOOD_TOURS_PILLARS: SectionPillar[] = [
       ar: 'تذوق أكلات فاس الشعبية في محلاتها الأصلية وأفرانها العتيقة',
     },
     shortDescription: {
-      en: 'To understand Fez, you should taste it. Walk through the Medina and stop at traditional bakeries, small stalls, and local spots to sample Harcha, Baghrir, Chebakia, Sfenj, Bissara, local cheeses, and mint tea.',
+      en: 'Walk the old Medina and taste what local shops are preparing that day. This is not one large sit-down meal.',
       fr: 'Pour comprendre Fès, il faut la goûter ! Goûtez Harcha, Baghrir, Chebakia, Sfenj, Bissara, fromages locaux et thé à la menthe dans les adresses secrètes des Fassis.',
       ar: 'لفهم فاس الحقيقية، يجب أن تتذوق طعامها الشعبي. مسار ممتع لتذوق الحرشة، البغرير، الشباكية، السفنج المقرمش، البيصارة الساخنة، أجبان الجبل والشاي بالنعناع.',
     },
@@ -710,16 +710,15 @@ This is a private, flexible food experience just for you and your group. Come hu
       duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', ar: '3 إلى 3.5 ساعات' },
       departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', ar: 'باب بوجلود أو باب الرصيف' },
       groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (Dégustations incluses)', ar: 'خاص (التذوق متضمن بالكامل)' },
-      priceMAD: 550,
-      priceEUR: 50,
     },
-    image: '/src/assets/images/real/food_tasting_walk_image1.jpg',
+    image: '/images/food-tasting-walk/street-sandwich.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Fresh Moroccan pastries and street food tastings in Fez',
       fr: 'Pâtisseries marocaines et dégustations culinaires à Fès',
       ar: 'أكلات شعبية وحلويات فاسية طازجة في جولة التذوق',
     },
-    actionType: 'book_tour',
+    actionType: 'explore',
     published: true,
   },
   {
@@ -776,16 +775,15 @@ From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to f
       duration: { en: 'Culinary Masterclass & Lunch', fr: 'Masterclass & Déjeuner', ar: 'درس طهي وغداء فاسي' },
       departure: { en: 'Medina Riad Kitchen', fr: 'Cuisine de Riad', ar: 'مطبخ رياض تقليدي' },
       groupSize: { en: 'Private Session (2 to 8 Guests)', fr: 'Session Privée (2 à 8 pers.)', ar: 'جلسة خاصة (2 إلى 8 أفراد)' },
-      priceMAD: 650,
-      priceEUR: 60,
     },
-    image: '/src/assets/images/real/food_traditional_fassi_image1.jpg',
+    image: '/images/food-traditional-fassi/pastilla.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Traditional Moroccan tagine with almonds and prunes',
       fr: 'Tajine marocain traditionnel aux pruneaux et amandes',
       ar: 'طاجين مغربي فاسي أصيل بالبرقوق المعسل واللوز',
     },
-    actionType: 'book_tour',
+    actionType: 'explore',
     published: true,
   },
   {
@@ -842,16 +840,15 @@ During our cultural food discovery, we step inside these active neighborhood ove
       duration: { en: '2.5 Hours', fr: '2h30', ar: 'ساعتان ونصف' },
       departure: { en: 'Bab Rcif Medina Entrance', fr: 'Entrée Bab Rcif', ar: 'باب الرصيف' },
       groupSize: { en: 'Small Private Group', fr: 'Petit groupe privé', ar: 'مجموعة خاصة صغيرة' },
-      priceMAD: 350,
-      priceEUR: 32,
     },
-    image: '/src/assets/images/real/food_culture_life_image1.jpg',
+    image: '/images/food-culture-life/tea-tray.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Communal bread oven and daily food life in Fez',
       fr: 'Four à pain de quartier et vie quotidienne à Fès',
       ar: 'فرن الحومة الشعبي والحياة اليومية في فاس البالي',
     },
-    actionType: 'book_tour',
+    actionType: 'explore',
     published: true,
   },
   {
@@ -908,14 +905,94 @@ Your local guide will help you understand local produce, compare quality, and in
       duration: { en: '2.5 to 3 Hours', fr: '2h30 à 3h', ar: 'ساعتان ونصف إلى 3 ساعات' },
       departure: { en: 'Bab Boujloud Gate', fr: 'Porte Bab Boujloud', ar: 'باب بوجلود' },
       groupSize: { en: 'Private Market Walk', fr: 'Balade Privée au Marché', ar: 'جولة خاصة في الأسواق' },
-      priceMAD: 400,
-      priceEUR: 38,
     },
-    image: '/src/assets/images/real/food_markets_souks_image1.jpg',
+    image: '/images/food-markets-souks/spice-tins.webp',
+    kind: 'article',
     imageAlt: {
       en: 'Vibrant spice souk and colorful produce in Fez',
       fr: 'Souk des épices coloré et produits frais à Fès',
       ar: 'سوق التوابل والأعشاب بألوانه وروائحه الزكية في فاس',
+    },
+    actionType: 'explore',
+    published: true,
+  },
+  {
+    id: 'our-food-tours',
+    pageId: 'food-tours',
+    kind: 'product',
+    title: {
+      en: 'Private Food Tasting Walk',
+      fr: 'Balade privée de dégustation',
+      ar: 'جولة تذوق خاصة',
+    },
+    subtitle: {
+      en: 'Taste Fez through local eyes',
+      fr: 'Goûter Fès à travers des yeux locaux',
+      ar: 'تذوّقوا فاس بعيون أهلها',
+    },
+    shortDescription: {
+      en: 'A private walk through the old Medina, with tastings of what local shops are preparing that day.',
+      fr: 'Une balade privée dans la vieille médina, avec les dégustations de ce que les boutiques préparent ce jour-là.',
+      ar: 'جولة خاصة في المدينة العتيقة، مع تذوق ما تحضّره الدكاكين في ذلك اليوم.',
+    },
+    fullDescription: {
+      en: `To understand Fez, you should not only walk through its streets. You should taste them.
+
+Our food tasting walk takes you into the everyday side of the Medina. This is not a tour where you sit down for one large Moroccan meal. We walk through the old Medina and stop along the way to taste foods, snacks, sweets and local products, and to learn how they are connected to life in Fez.
+
+The exact selection is not fixed. Food is seasonal, and local shops do not always prepare the same things every day. That is part of the experience.
+
+This is a private walk for you and your group. We can take our time, stop for photographs, talk with local sellers and stay longer where you are interested. There is no need to rush from one tasting to another.`,
+      fr: `Pour comprendre Fès, il ne suffit pas d’en parcourir les rues. Il faut la goûter.
+
+La balade vous emmène dans le quotidien de la médina. Ce n’est pas une visite où l’on s’assoit pour un grand repas. On marche dans la vieille médina et l’on s’arrête pour goûter des en-cas, des douceurs et des produits locaux, et pour comprendre leur place dans la vie de Fès.
+
+La sélection n’est pas fixe. La cuisine est de saison, et les boutiques ne préparent pas toujours la même chose. C’est une partie de l’expérience.
+
+La balade est privée, pour vous et votre groupe. On peut prendre le temps, photographier, parler avec les vendeurs et rester plus longtemps là où cela vous intéresse.`,
+      ar: `لفهم فاس، لا يكفي المشي في أزقتها. يجب تذوّقها.
+
+تأخذكم الجولة إلى الجانب اليومي من المدينة العتيقة. ليست جلسة لوجبة كبيرة واحدة. نمشي في المدينة ونتوقف لتذوّق الأكلات والحلويات والمنتجات المحلية، ولفهم صلتها بحياة فاس.
+
+الاختيار ليس ثابتاً. الطعام موسمي، والدكاكين لا تحضّر الشيء نفسه كل يوم. هذا جزء من التجربة.
+
+الجولة خاصة بكم وبمجموعتكم. يمكن أخذ الوقت والتقاط الصور والحديث مع البائعين والبقاء أطول حيث يهمكم.`
+    },
+    highlights: {
+      en: [
+        'Private walk for your group',
+        'Tastings depend on the day, the season and what local shops are preparing',
+        'Sweet and savoury foods, tea and everyday specialities',
+        'Time to ask, photograph and talk with sellers',
+        'No rush from one tasting to another'
+      ],
+      fr: [
+        'Balade privée pour votre groupe',
+        'Les dégustations dépendent du jour, de la saison et des boutiques',
+        'Sucré, salé, thé et spécialités du quotidien',
+        'Le temps de poser des questions, photographier et parler avec les vendeurs',
+        'Pas de course d’une dégustation à l’autre'
+      ],
+      ar: [
+        'جولة خاصة بمجموعتكم',
+        'التذوق يعتمد على اليوم والموسم وما تحضّره الدكاكين',
+        'حلو ومالح وشاي وتخصصات يومية',
+        'وقت للسؤال والصور والحديث مع البائعين',
+        'من دون استعجال بين التذوّقات'
+      ]
+    },
+    practicalInfo: {
+      duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', ar: '3 إلى 3.5 ساعات' },
+      departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', ar: 'باب بوجلود أو باب الرصيف' },
+      groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (dégustations incluses)', ar: 'خاص (التذوق متضمن)' },
+      priceMAD: 550,
+      priceEUR: 50,
+    },
+    image: '/images/food-tasting-walk/medina-lane.webp',
+    imageAlt: {
+      en: 'A covered lane in the Fez Medina',
+      fr: 'Une ruelle couverte de la médina de Fès',
+      ar: 'زقاق مسقوف في مدينة فاس',
     },
     actionType: 'book_tour',
     published: true,

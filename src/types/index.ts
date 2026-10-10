@@ -29,6 +29,7 @@ export interface SectionPillar {
   image: string;
   imageAlt: Record<Language, string>;
   actionType: 'view_more' | 'explore' | 'book_tour';
+  kind?: 'article' | 'product';
   published?: boolean;
   galleryImages?: string[];
   itinerary?: ItineraryStop[];

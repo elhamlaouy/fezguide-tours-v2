@@ -1253,4 +1253,102 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
       },
     ],
   },
+
+  'our-food-tours': {
+    galleryImages: [
+      '/images/food-tasting-walk/street-sandwich.webp',
+      '/images/food-tasting-walk/medina-lane.webp',
+      '/images/food-tasting-walk/wood-oven.webp',
+      '/images/food-tasting-walk/pastries-tea.webp',
+      '/images/food-tasting-walk/mint-tea.webp',
+      '/images/food-tasting-walk/tasting-table.webp',
+    ],
+    itinerary: [
+      {
+        time: '',
+        title: {
+          en: 'Walk the food streets of the Medina',
+          fr: 'Marcher dans les rues alimentaires de la médina',
+          ar: 'المشي في أزقة الأكل بالمدينة',
+        },
+        description: {
+          en: 'Bakeries, food shops, spice sellers and small stalls. The Medina is part of the tasting, not a backdrop.',
+          fr: 'Fours, boutiques, vendeurs d’épices et petits étals. La médina fait partie de la dégustation.',
+          ar: 'أفران ودكاكين وبائعو توابل وبسطات صغيرة. المدينة جزء من التذوق.',
+        },
+        badge: { en: 'Medina', fr: 'Médina', ar: 'المدينة' },
+      },
+      {
+        time: '',
+        title: {
+          en: 'Taste what is available that day',
+          fr: 'Goûter ce qui est disponible ce jour-là',
+          ar: 'تذوّق ما هو متاح في ذلك اليوم',
+        },
+        description: {
+          en: 'Sweet and savoury foods, tea and everyday specialities. The list is not fixed. Shops do not prepare the same things every day.',
+          fr: 'Sucré, salé, thé et spécialités du quotidien. La liste n’est pas fixe. Les boutiques ne préparent pas la même chose chaque jour.',
+          ar: 'حلو ومالح وشاي وتخصصات يومية. القائمة ليست ثابتة. الدكاكين لا تحضّر الشيء نفسه كل يوم.',
+        },
+        badge: { en: 'Tastings', fr: 'Dégustations', ar: 'تذوّق' },
+      },
+      {
+        time: '',
+        title: {
+          en: 'Ask, photograph, and stay longer',
+          fr: 'Demander, photographier, rester plus longtemps',
+          ar: 'اسألوا وصوّروا وابقوا أطول',
+        },
+        description: {
+          en: 'The walk is private. There is time to talk with sellers and to understand how the food fits into everyday life in Fez.',
+          fr: 'La balade est privée. Il y a le temps de parler avec les vendeurs et de comprendre la place de la cuisine dans la vie de Fès.',
+          ar: 'الجولة خاصة. هناك وقت للحديث مع البائعين وفهم مكان الطعام في حياة فاس.',
+        },
+        badge: { en: 'Flexible', fr: 'Flexible', ar: 'مرن' },
+      },
+    ],
+    included: {
+      en: [
+        'Private walk for your group',
+        'Tastings of foods available that day',
+        'Explanations of what you are eating and how it fits into life in Fez',
+      ],
+      fr: [
+        'Balade privée pour votre groupe',
+        'Dégustations de ce qui est disponible ce jour-là',
+        'Explications sur ce que vous mangez et sa place dans la vie de Fès',
+      ],
+      ar: [
+        'جولة خاصة بمجموعتكم',
+        'تذوّق ما هو متاح في ذلك اليوم',
+        'شرح لما تأكلونه ومكانه في حياة فاس',
+      ],
+    },
+    excluded: {
+      en: ['Personal shopping', 'Tips'],
+      fr: ['Achats personnels', 'Pourboires'],
+      ar: ['مشتريات شخصية', 'إكراميات'],
+    },
+    whatToBring: {
+      en: ['An appetite', 'Comfortable walking shoes'],
+      fr: ['De l’appétit', 'Chaussures de marche confortables'],
+      ar: ['شهية', 'حذاء مريح للمشي'],
+    },
+    meetingPointDetails: {
+      en: 'Bab Boujloud or Bab Rcif.',
+      fr: 'Bab Boujloud ou Bab Rcif.',
+      ar: 'باب بوجلود أو باب الرصيف.',
+    },
+    cancellationPolicy: {
+      en: 'Free cancellation up to 24 hours before the walk.',
+      fr: 'Annulation gratuite jusqu’à 24 heures avant la balade.',
+      ar: 'إلغاء مجاني حتى 24 ساعة قبل الجولة.',
+    },
+    suitableFor: {
+      en: ['Curious eaters', 'Couples', 'Families', 'Private groups'],
+      fr: ['Curieux de cuisine', 'Couples', 'Familles', 'Groupes privés'],
+      ar: ['محبو الطعام', 'الأزواج', 'العائلات', 'المجموعات الخاصة'],
+    },
+    reviews: [],
+  },
 };

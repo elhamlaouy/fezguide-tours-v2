@@ -16,7 +16,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   onExplore,
   onBookTour,
 }) => {
-  const isArticle = pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
+  const isArticle = pillar.kind === 'article' || pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
   const isFezOverviewCard = pillar.pageId === 'fez' && (
     isArticle || pillar.id === 'our-fez-tours'
   );

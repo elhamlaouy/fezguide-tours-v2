@@ -162,7 +162,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
         {/* 3. Hero Visual Asset & Interactive Gallery */}
         <div className="space-y-3">
           {(() => {
-            const fullFrame = /\/images\/daytrip-(chefchaouen|custom|meknes|ifrane)\//.test(galleryList[activeImageIndex] || '');
+            const fullFrame = /\/images\/(daytrip-(chefchaouen|custom|meknes|ifrane)|food-tasting-walk)\//.test(galleryList[activeImageIndex] || '');
             return (
           <div className={fullFrame
             ? 'relative w-full rounded-3xl overflow-hidden bg-[#15201F] shadow-md border border-[#E7E2DA] flex items-center justify-center'
@@ -438,7 +438,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
 
             {/* Verified Traveler Testimonials */}
-            {pillar.pageId !== 'day-trips' && extra?.reviews && extra.reviews.length > 0 && (
+            {pillar.pageId !== 'day-trips' && pillar.pageId !== 'food-tours' && extra?.reviews && extra.reviews.length > 0 && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -631,7 +631,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </div>
           </div>
         )}
-        {pillar.pageId === 'day-trips' && (
+        {(pillar.pageId === 'day-trips' || pillar.id === 'our-food-tours') && (
           <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
         )}
       </div>

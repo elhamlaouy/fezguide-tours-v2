@@ -26,6 +26,8 @@ import { MedinaArticlePage } from './pages/MedinaArticlePage';
 import { HistoryCultureArticlePage } from './pages/HistoryCultureArticlePage';
 import { ThingsToDoArticlePage } from './pages/ThingsToDoArticlePage';
 import { OurFezToursPage } from './pages/OurFezToursPage';
+import { EditorialArticlePage } from './components/EditorialArticlePage';
+import { editorialArticleById } from './data/editorialArticles';
 
 function AppContent() {
   const { tours, customPages } = useCms();
@@ -177,6 +179,22 @@ function AppContent() {
             onBack={() => handleNavigatePage('fez')}
             onNavigate={handleNavigatePage}
             onBookTour={handleBookFromPillar}
+          />
+        );
+      }
+
+      const editorialArticle = editorialArticleById(selectedExperience.id);
+      if (editorialArticle?.template === 'editorial-guide') {
+        return (
+          <EditorialArticlePage
+            article={editorialArticle}
+            language={language}
+            onBack={() => handleNavigatePage(selectedExperience.pageId)}
+            onNavigate={handleNavigatePage}
+            onOpenProduct={() => {
+              const product = tours.find((tour) => tour.id === editorialArticle.productId);
+              if (product) handleExplorePillar(product);
+            }}
           />
         );
       }

@@ -179,6 +179,30 @@ test('the Ifrane day trip uses the Doc story and the three Doc photos', () => {
   assert.match(generated, /road conditions/);
 });
 
+test('food guides use the editorial template and the tasting walk is the product', () => {
+  const app = read('src/App.tsx');
+  const articles = read('src/data/editorialArticles.ts');
+  const details = read('src/data/experienceDetails.ts');
+  const translations = read('src/data/translations.ts');
+  const card = read('src/components/SectionCard.tsx');
+  assert.match(app, /editorial-guide/);
+  assert.match(card, /pillar\.kind === 'article'/);
+  for (const id of ['food-tasting-walk', 'food-culture-life', 'food-markets-souks', 'food-traditional-fassi']) {
+    assert.match(articles, new RegExp(`id: '${id}'`));
+    assert.match(articles, /productId: 'our-food-tours'/);
+  }
+  assert.match(articles, /The exact selection is not fixed/);
+  assert.ok(!articles.includes('/images/real/food_'));
+  assert.match(details, /'our-food-tours'/);
+  assert.match(details, /\/images\/food-tasting-walk\/street-sandwich\.webp/);
+  assert.match(translations, /id: 'our-food-tours'/);
+  assert.match(translations, /priceMAD: 550/);
+  assert.match(translations, /Bab Boujloud or Bab Rcif/);
+  for (const photo of ['street-sandwich', 'medina-lane', 'wood-oven', 'pastries-tea', 'mint-tea', 'tasting-table']) {
+    assert.ok(existsSync(resolve(root, `public/images/food-tasting-walk/${photo}.webp`)));
+  }
+});
+
 test('the Medina article card does not expose a product quick-book action', () => {
   const card = read('src/components/SectionCard.tsx');
   assert.match(card, /pillar\.id === 'fez-explore-medina'[\s\S]*grid-cols-1/);
