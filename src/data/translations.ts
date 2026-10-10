@@ -294,9 +294,9 @@ export const DAY_TRIPS_PILLARS: SectionPillar[] = [
       ar: 'جوهرة الشمال الزرقاء وسط أحضان جبال الريف الشامخة',
     },
     shortDescription: {
-      en: 'Spend a relaxing day discovering Chefchaouen. Walk through blue-painted streets, visit Plaza Uta el-Hammam, see the historic Kasbah, and enjoy the mountain spring of Ras El Maa.',
-      fr: 'Passez une journée inoubliable à Chefchaouen. Ruelles bleues, Plaza Uta el-Hammam, Kasbah historique et source naturelle de Ras El Maa.',
-      ar: 'قضِ يوماً ساحراً في شفشاون. تجول بين الأزقة الزرقاء الهادئة، ساحة وطاء الحمام، القصبة الأثرية، وشلالات رأس الماء العذبة.',
+      en: 'Spend a day discovering Chefchaouen, the famous Blue City of northern Morocco, surrounded by the Rif Mountains.',
+      fr: 'Passez une journée à découvrir Chefchaouen, la célèbre ville bleue du nord du Maroc, au cœur des montagnes du Rif.',
+      ar: 'اقضِ يوماً في اكتشاف شفشاون، المدينة الزرقاء الشهيرة في شمال المغرب، وسط جبال الريف.',
     },
     fullDescription: {
       en: `Spend a day discovering Chefchaouen, the famous Blue City of northern Morocco, surrounded by the Rif Mountains.
@@ -309,31 +309,57 @@ From there, continue through the narrow blue streets towards the Kasbah of Chefc
 
 You can also walk towards Ras El Maa, the natural spring at the edge of the old town. This is one of the pleasant places to slow down, see the water flowing from the mountains and observe a more local side of Chefchaouen.
 
-There is also time to explore the small streets, discover local handicrafts, stop for photographs and enjoy lunch in the old town. We do not want you to feel rushed, so the driver remains flexible throughout the day. You can make the trip with a private driver only, or choose to have a local guide with you.`,
-      fr: `Profitez d'un trajet confortable à travers les paysages du Rif jusqu'à la magnifique cité bleue de Chefchaouen. Détendez-vous à la Plaza Uta el-Hammam, visitez la Kasbah, marchez jusqu'à la source de Ras El Maa et profitez d'un temps libre pour la photographie et la gastronomie locale.`,
-      ar: `انطلق في رحلة مريحة عبر جبال الريف الخضراء نحو مدينة شفشاون الزرقاء. استمتع بشاي بالنعناع في ساحة وطاء الحمام، وتجول في دروب القصبة وأزقة المدينة العتيقة الهادئة وصولاً إلى منبع رأس الماء الجبلي العذب.`
+There is also time to explore the small streets, discover local handicrafts, stop for photographs and enjoy lunch in the old town. We do not want you to feel rushed from one attraction to another, so the driver remains flexible and we take the time available to enjoy the destination.
+
+You can make the trip with a private driver only, or choose to have a local guide with you to explain the history, culture and places you visit.`,
+      fr: `Passez une journée à découvrir Chefchaouen, la célèbre ville bleue du nord du Maroc, entourée par les montagnes du Rif.
+
+Après le départ de Fès, le trajet traverse la campagne marocaine et les paysages de montagne avant d’arriver à Chefchaouen. Là, la visite commence par une marche dans la vieille ville, où les murs bleus, les petites rues et les maisons traditionnelles créent l’atmosphère pour laquelle Chefchaouen est connue.
+
+Selon le parcours et le temps disponible, vous pouvez découvrir quelques lieux principaux, dont la Plaza Uta el-Hammam, le cœur de la vieille ville, où l’on peut prendre un thé, observer la vie locale et profiter de l’ambiance autour de la Kasbah historique.
+
+De là, continuez par les ruelles bleues vers la Kasbah de Chefchaouen, l’un des monuments de la ville, puis les vieux quartiers, les petites boutiques et les maisons traditionnelles.
+
+Vous pouvez aussi marcher jusqu’à Ras El Maa, la source naturelle au bord de la vieille ville. C’est un endroit agréable pour ralentir, voir l’eau qui descend de la montagne et observer un côté plus local de Chefchaouen.
+
+Il reste aussi du temps pour les petites rues, l’artisanat, les photos et le déjeuner dans la vieille ville. Nous ne voulons pas vous presser d’une attraction à l’autre : le chauffeur reste flexible et nous prenons le temps disponible pour profiter de la destination.
+
+Vous pouvez faire le trajet avec un chauffeur privé seulement, ou choisir un guide local pour expliquer l’histoire, la culture et les lieux visités.`,
+      ar: `اقضِ يوماً في اكتشاف شفشاون، المدينة الزرقاء الشهيرة في شمال المغرب، وسط جبال الريف.
+
+بعد مغادرة فاس، يعبر الطريق الريف المغربي والمناظر الجبلية قبل الوصول إلى شفشاون. هناك تبدأ التجربة بجولة في المدينة العتيقة، حيث الجدران الزرقاء والأزقة الضيقة والبيوت التقليدية تصنع أجواء شفشاون المعروفة.
+
+بحسب المسار والوقت المتاح، يمكن زيارة بعض معالمها، ومنها ساحة وطاء الحمام في قلب المدينة العتيقة، للجلوس على شاي ومشاهدة الحياة المحلية والأجواء حول القصبة التاريخية.
+
+ومن هناك، نواصل عبر الأزقة الزرقاء نحو قصبة شفشاون، أحد معالم المدينة، ثم الأحياء القديمة والدكاكين الصغيرة والبيوت التقليدية.
+
+يمكن أيضاً المشي نحو رأس الماء، المنبع الطبيعي على طرف المدينة العتيقة. مكان مناسب للتمهل، ورؤية الماء المنحدر من الجبل، وملاحظة جانب أكثر محلية من شفشاون.
+
+ويبقى وقت لاستكشاف الأزقة الصغيرة والحرف التقليدية والتقاط الصور وتناول الغداء في المدينة العتيقة. لا نريد أن تشعروا بالاستعجال من معلم إلى آخر، لذلك يبقى السائق مرناً ونأخذ الوقت المتاح للاستمتاع بالوجهة.
+
+يمكن القيام بالرحلة مع سائق خاص فقط، أو مع مرشد محلي يشرح التاريخ والثقافة والأماكن التي تزورونها.`
     },
     highlights: {
       en: [
-        'Comfortable scenic drive through the Rif Mountains landscapes',
-        'Stroll through the iconic blue-painted lanes and whitewashed doorways',
-        'Relax at Plaza Uta el-Hammam and visit the 15th-century Kasbah',
-        'Visit the mountain spring of Ras El Maa and traditional watermills',
-        'Flexible pacing with private vehicle: driver only or driver + guide'
+        'Private day trip · Comfortable vehicle · Flexible timing',
+        'Driver only, or driver plus a local guide',
+        'Blue streets, Plaza Uta el-Hammam, and the historic Kasbah',
+        'Ras El Maa, the mountain spring at the edge of town',
+        'Explore Chefchaouen at your own pace'
       ],
       fr: [
-        'Trajet panoramique confortable à travers le massif du Rif',
-        'Balade dans les célèbres ruelles et maisons peintes en bleu',
-        'Pause thé à la Plaza Uta el-Hammam et visite de la Kasbah',
-        'Découverte de la source naturelle d’eau de Ras El Maa',
-        'Rythme flexible avec véhicule privé climatisé'
+        'Journée privée · véhicule confortable · rythme flexible',
+        'Chauffeur seul, ou chauffeur et guide local',
+        'Ruelles bleues, Plaza Uta el-Hammam et la Kasbah historique',
+        'Ras El Maa, la source au bord de la vieille ville',
+        'Découvrir Chefchaouen à votre rythme'
       ],
       ar: [
-        'رحلة طريق مريحة ومناظر طبيعية خلابة عبر جبال الريف',
-        'التجول والتصوير في الأزقة والبيوت الزرقاء الشهيرة عالمياً',
-        'جلسة شاي في ساحة وطاء الحمام وزيارة قصبة شفشاون التاريخية',
-        'زيارة منبع رأس الماء والاستمتاع بخرير المياه الجبلية العذبة',
-        'حرية كاملة في الوقت مع سيارة سياحية خاصة وسائق مخصص'
+        'رحلة خاصة · سيارة مريحة · وقت مرن',
+        'سائق فقط، أو سائق مع مرشد محلي',
+        'أزقة زرقاء وساحة وطاء الحمام والقصبة التاريخية',
+        'رأس الماء، المنبع على طرف المدينة العتيقة',
+        'اكتشفوا شفشاون على وتيرتكم'
       ]
     },
     practicalInfo: {
@@ -343,11 +369,11 @@ There is also time to explore the small streets, discover local handicrafts, sto
       priceMAD: 1400,
       priceEUR: 130,
     },
-    image: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
+    image: '/images/daytrip-chefchaouen/blue-alley.webp',
     imageAlt: {
-      en: 'Blue streets of Chefchaouen in the Rif Mountains',
-      fr: 'Ruelles bleues de Chefchaouen dans le Rif',
-      ar: 'أزقة شفشاون الزرقاء في جبال الريف',
+      en: 'Blue alley in Chefchaouen with a studded door and a person walking under an umbrella',
+      fr: 'Ruelle bleue de Chefchaouen, porte cloutée et personne marchant sous un parapluie',
+      ar: 'زقاق أزرق في شفشاون، باب مرصع وشخص يمشي تحت مظلة',
     },
     actionType: 'book_tour',
     published: true,
@@ -356,54 +382,82 @@ There is also time to explore the small streets, discover local handicrafts, sto
     id: 'daytrip-meknes',
     pageId: 'day-trips',
     title: {
-      en: 'Meknes, Volubilis & Moulay Idriss Day Trip',
-      fr: 'Excursion Meknès, Volubilis & Moulay Idriss',
-      ar: 'رحلة مكناس، آثار وليلي ومولاي إدريس زرهون',
+      en: 'Meknes, Volubilis & Moulay Idriss Day Trip from Fez',
+      fr: 'Excursion Meknès, Volubilis et Moulay Idriss au départ de Fès',
+      ar: 'رحلة مكناس ووليلي ومولاي إدريس انطلاقاً من فاس',
     },
     subtitle: {
-      en: 'Roman Mosaics, Holy Hilltop Town & Sultan Moulay Ismail’s Capital',
-      fr: 'Mosaïques romaines, cité sainte et capitale impériale',
-      ar: 'فسيفساء روما القديمة، روحانية زرهون وعظمة العاصمة الإسماعيلية',
+      en: 'Discover Roman history, Moroccan heritage and an imperial city in one day.',
+      fr: 'Découvrir l’histoire romaine, le patrimoine marocain et une ville impériale en une journée.',
+      ar: 'اكتشفوا التاريخ الروماني والتراث المغربي ومدينة إمبراطورية في يوم واحد.',
     },
     shortDescription: {
-      en: 'Discover three distinct chapters of Moroccan history in one private day trip: the ancient Roman UNESCO ruins of Volubilis, the holy town of Moulay Idriss, and the imperial city of Meknes with Bab Mansour.',
-      fr: 'Trois facettes de l’histoire marocaine : la cité romaine antique de Volubilis, la ville sainte de Moulay Idriss et l’impériale Meknès avec Bab Mansour.',
-      ar: 'ثلاث محطات تاريخية كبرى في يوم واحد: آثار وليلي الرومانية المصنفة عالمياً، مدينة مولاي إدريس زرهون الجبلية، وعاصمة السلطان إسماعيل مكناس وباب المنصور.',
+      en: 'Discover three different sides of Morocco’s history in one private day trip from Fez, combining the ancient Roman ruins of Volubilis, the holy town of Moulay Idriss and the historic imperial city of Meknes.',
+      fr: 'Découvrez trois facettes de l’histoire du Maroc en une excursion privée au départ de Fès : les ruines romaines de Volubilis, la ville sainte de Moulay Idriss et la cité impériale de Meknès.',
+      ar: 'اكتشفوا ثلاثة جوانب مختلفة من تاريخ المغرب في رحلة يومية خاصة انطلاقاً من فاس، تجمع بين آثار وليلي الرومانية ومدينة مولاي إدريس ومدينة مكناس الإمبراطورية.',
     },
     fullDescription: {
       en: `Discover three different sides of Morocco's history in one private day trip from Fez, combining the ancient Roman ruins of Volubilis, the holy town of Moulay Idriss and the historic imperial city of Meknes.
 
 Your first stop can be Volubilis, one of Morocco's most important archaeological sites. Walk among the remains of the ancient Roman city, discover its old streets and buildings, and take time to admire the famous mosaics that have survived for centuries. The site gives you a different perspective on Morocco's history, long before the cities and monuments we know today.
 
-From Volubilis, continue towards Moulay Idriss Zerhoun, a small town built across the hills and known as an important pilgrimage destination in Morocco. Its white houses, narrow streets and hillside setting give it a very different atmosphere from larger Moroccan cities.
+From Volubilis, continue towards Moulay Idriss Zerhoun, a small town built across the hills and known as an important pilgrimage destination in Morocco. Its white houses, narrow streets and hillside setting give it a very different atmosphere from the larger Moroccan cities. Depending on the time available, you can walk through part of the town, enjoy the views and discover its connection to the early history of Morocco.
 
-The journey then continues to Meknes, one of Morocco's four imperial cities. Here you can explore the historic heart of the city, walk around Bab Mansour, one of its best-known monumental gates, and discover the old medina, historic royal granaries (Heri es-Souani), and traditional markets.
+The journey then continues to Meknes, one of Morocco's four imperial cities. Here you can explore the historic heart of the city, walk around Bab Mansour, one of its best-known monumental gates, and discover the old medina, historic walls and traditional streets.
 
-You can travel with a private driver only, or choose to have a local guide with you for a deeper explanation of the history and architecture.`,
-      fr: `Explorez les remarquables mosaïques et ruines romaines de Volubilis, le village perché de Moulay Idriss Zerhoun, puis la majestueuse cité impériale de Meknès avec Bab Mansour et ses greniers historiques.`,
-      ar: `استكشف أطلال وليلي الرومانية وبقايا قصورها ولوحات الفسيفساء البديعة، ثم بلدة مولاي إدريس زرهون ببيوتها البيضاء المتربعة على التلال، وانتقل بعدها إلى مكناس لتأمل بوابة باب المنصور الضخمة وأسوارها الشامخة.`
+Depending on the opening hours and your interests, you can also visit some of Meknes' historic sites and learn more about the period when the city became an important royal capital under Sultan Moulay Ismail.
+
+The order and timing of the visits can remain flexible during the day. You can spend more time at a place that interests you, stop for lunch or photographs, and enjoy the journey without feeling rushed.
+
+You can travel with a private driver only, or choose to have a local guide with you for a deeper explanation of the history, architecture and culture of the places you visit.`,
+      fr: `Découvrez trois facettes de l’histoire du Maroc en une excursion privée au départ de Fès : les ruines romaines de Volubilis, la ville sainte de Moulay Idriss et la cité impériale de Meknès.
+
+Le premier arrêt peut être Volubilis, l’un des sites archéologiques les plus importants du Maroc. Marchez parmi les vestiges de la cité romaine, découvrez ses anciennes rues et ses bâtiments, et prenez le temps d’admirer les mosaïques célèbres qui ont traversé les siècles. Le site donne un autre regard sur l’histoire du Maroc, bien avant les villes et les monuments que nous connaissons aujourd’hui.
+
+Depuis Volubilis, continuez vers Moulay Idriss Zerhoun, une petite ville bâtie sur les collines et connue comme un important lieu de pèlerinage au Maroc. Ses maisons blanches, ses ruelles et son cadre en pente lui donnent une atmosphère très différente des plus grandes villes marocaines. Selon le temps disponible, vous pouvez parcourir une partie de la ville, profiter des vues et découvrir son lien avec les débuts de l’histoire du Maroc.
+
+Le voyage se poursuit ensuite vers Meknès, l’une des quatre villes impériales du Maroc. Vous pouvez explorer le cœur historique de la ville, faire le tour de Bab Mansour, l’une de ses portes monumentales les plus connues, et découvrir l’ancienne médina, les remparts et les rues traditionnelles.
+
+Selon les horaires d’ouverture et vos intérêts, vous pouvez aussi visiter certains sites historiques de Meknès et en apprendre davantage sur la période où la ville est devenue une importante capitale royale sous le sultan Moulay Ismaïl.
+
+L’ordre et le rythme des visites peuvent rester souples pendant la journée. Vous pouvez rester plus longtemps là où cela vous intéresse, vous arrêter pour le déjeuner ou des photos, et profiter du trajet sans vous sentir pressé.
+
+Vous pouvez voyager avec un chauffeur privé seulement, ou choisir un guide local pour une explication plus approfondie de l’histoire, de l’architecture et de la culture des lieux visités.`,
+      ar: `اكتشفوا ثلاثة جوانب مختلفة من تاريخ المغرب في رحلة يومية خاصة انطلاقاً من فاس، تجمع بين آثار وليلي الرومانية، ومدينة مولاي إدريس، ومدينة مكناس الإمبراطورية.
+
+يمكن أن تكون المحطة الأولى وليلي، أحد أهم المواقع الأثرية في المغرب. تجولوا بين بقايا المدينة الرومانية، واكتشفوا شوارعها ومبانيها القديمة، وخذوا وقتكم لتأمل الفسيفساء الشهيرة التي صمدت لقرون. يمنحكم الموقع نظرة مختلفة إلى تاريخ المغرب، قبل المدن والمعالم التي نعرفها اليوم.
+
+من وليلي، تواصلون نحو مولاي إدريس زرهون، بلدة صغيرة مبنية على التلال ومعروفة كوجهة حج مهمة في المغرب. بيوتها البيضاء وأزقتها الضيقة وموقعها على السفح يمنحها أجواء مختلفة جداً عن المدن المغربية الأكبر. حسب الوقت المتاح، يمكنكم المشي في جزء من البلدة، والاستمتاع بالإطلالات، واكتشاف صلتها ببدايات تاريخ المغرب.
+
+ثم تتواصل الرحلة إلى مكناس، إحدى المدن الإمبراطورية الأربع في المغرب. هنا يمكنكم استكشاف قلب المدينة التاريخي، والتجول حول باب المنصور، إحدى أشهر بواباتها الضخمة، واكتشاف المدينة العتيقة والأسوار التاريخية والشوارع التقليدية.
+
+حسب أوقات الفتح واهتماماتكم، يمكنكم أيضاً زيارة بعض المواقع التاريخية في مكناس ومعرفة المزيد عن الفترة التي أصبحت فيها المدينة عاصمة ملكية مهمة في عهد السلطان مولاي إسماعيل.
+
+يمكن أن يبقى ترتيب الزيارات وتوقيتها مرناً خلال اليوم. يمكنكم قضاء وقت أطول في المكان الذي يهمكم، والتوقف للغداء أو للصور، والاستمتاع بالطريق من دون استعجال.
+
+يمكنكم السفر مع سائق خاص فقط، أو اختيار مرشد محلي لشرح أعمق لتاريخ الأماكن وعمارتها وثقافتها.`
     },
     highlights: {
       en: [
-        'Volubilis: UNESCO World Heritage Roman site and ancient preserved mosaics',
-        'Moulay Idriss Zerhoun: scenic hillside pilgrimage town with panoramic views',
-        'Meknes Imperial City: monumental Bab Mansour gate and Place el-Hedim',
-        'Royal Granaries and stables of Sultan Moulay Ismail (Heri es-Souani)',
-        'Private flexible journey with driver or driver + local guide'
+        'Private day trip',
+        'Comfortable vehicle',
+        'Flexible timing',
+        'Driver only, or driver plus a local guide',
+        'Discover Roman history, Moroccan heritage and an imperial city in one day'
       ],
       fr: [
-        'Volubilis : site romain UNESCO et mosaïques antiques exceptionnelles',
-        'Moulay Idriss Zerhoun : village saint perché sur les collines',
-        'Meknès : porte monumentale Bab Mansour et place el-Hedim',
-        'Greniers royaux et écuries historiques de Moulay Ismaïl',
-        'Excursion privée à votre rythme avec véhicule climatisé'
+        'Excursion privée',
+        'Véhicule confortable',
+        'Horaire flexible',
+        'Chauffeur seul, ou chauffeur et guide local',
+        'Découvrir l’histoire romaine, le patrimoine marocain et une ville impériale en une journée'
       ],
       ar: [
-        'موقع وليلي الأثري: آثار رومانية مسجلة في اليونسكو ولوحات فسيفساء نادرة',
-        'مولاي إدريس زرهون: إطلالات بانورامية وطابع روحي وتاريخي عريق',
-        'مدينة مكناس الإسماعيلية: باب المنصور الشهير وساحة الهديم',
-        'الهري والسواني واسطبلات السلطان مولاي إسماعيل التاريخية',
-        'رحلة خاصة مريحة ومرنة بالكامل مع خيار إضافة مرشد محلي'
+        'رحلة يومية خاصة',
+        'سيارة مريحة',
+        'توقيت مرن',
+        'سائق فقط، أو سائق مع مرشد محلي',
+        'اكتشفوا التاريخ الروماني والتراث المغربي ومدينة إمبراطورية في يوم واحد'
       ]
     },
     practicalInfo: {
@@ -413,11 +467,11 @@ You can travel with a private driver only, or choose to have a local guide with 
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/src/assets/images/real/daytrip_meknes_image1.jpg',
+    image: '/images/daytrip-meknes/bab-mansour.webp',
     imageAlt: {
-      en: 'Ancient Roman mosaics at Volubilis and Bab Mansour in Meknes',
-      fr: 'Mosaïques de Volubilis et Bab Mansour à Meknès',
-      ar: 'آثار وليلي الرومانية وباب المنصور بمكناس',
+      en: 'Volubilis, Moulay Idriss and Meknes',
+      fr: 'Volubilis, Moulay Idriss et Meknès',
+      ar: 'وليلي ومولاي إدريس ومكناس',
     },
     actionType: 'book_tour',
     published: true,
@@ -426,19 +480,19 @@ You can travel with a private driver only, or choose to have a local guide with 
     id: 'daytrip-ifrane',
     pageId: 'day-trips',
     title: {
-      en: 'Ifrane & Middle Atlas Day Trip',
-      fr: 'Excursion à Ifrane & le Moyen Atlas',
-      ar: 'رحلة إفران، جبال الأطلس المتوسط وغابات الأرز',
+      en: 'Ifrane & Middle Atlas Day Trip from Fez',
+      fr: 'Excursion Ifrane et Moyen Atlas au départ de Fès',
+      ar: 'رحلة إفران والأطلس المتوسط انطلاقاً من فاس',
     },
     subtitle: {
-      en: 'Alpine Architecture, Cedar Forests & Mountain Landscapes Beyond Fez',
-      fr: 'Architecture alpine, forêts de cèdres et paysages montagnards',
-      ar: 'العمارة الجبلية الأنيقة، غابات الأرز الأطلسي وقرود الماكاك',
+      en: 'Discover the mountains and landscapes beyond Fez.',
+      fr: 'Découvrir les montagnes et les paysages au-delà de Fès.',
+      ar: 'اكتشفوا الجبال والمناظر خارج فاس.',
     },
     shortDescription: {
-      en: 'Leave the historic streets of Fez behind and spend a day discovering a completely different side of Morocco in Ifrane, known for its green parks, stone lion statue, and cool cedar forests.',
-      fr: 'Découvrez une autre facette du Maroc à Ifrane : architecture alpine, espaces verts, célèbre lion en pierre et forêts de cèdres centenaires du Moyen Atlas.',
-      ar: 'اترك صخب المدينة واستمتع بأجواء جبلية منعشة في "سويسرا المغرب" إفران، بحدائقها الغناء، تمثال الأسد الحجري، وغابات الأرز والبرك المائية.',
+      en: 'Leave the historic streets of Fez behind and spend a day discovering a completely different side of Morocco in Ifrane and the Middle Atlas.',
+      fr: 'Laissez les rues historiques de Fès et passez une journée à découvrir une autre facette du Maroc, à Ifrane et dans le Moyen Atlas.',
+      ar: 'اتركوا شوارع فاس التاريخية واقضوا يوماً في اكتشاف جانب مختلف من المغرب، في إفران والأطلس المتوسط.',
     },
     fullDescription: {
       en: `Leave the historic streets of Fez behind and spend a day discovering a completely different side of Morocco in Ifrane and the Middle Atlas.
@@ -447,33 +501,55 @@ The journey takes you gradually from the city towards the mountains, where the l
 
 During your time in Ifrane, you can explore the town, walk around its central areas and see some of its best-known features, including the famous stone lion statue, which has become one of the symbols associated with the city.
 
-From Ifrane, the journey continues towards the Middle Atlas, where forests, mountains and countryside create a completely different landscape. Depending on the season and weather, you can visit the cedar forest where wild Barbary macaques live, and stop in traditional Berber mountain towns like Azrou.
+From Ifrane, the journey continues towards the Middle Atlas, where forests, mountains and countryside create a completely different landscape. Depending on the season, weather and road conditions, there may be opportunities for scenic stops, photographs and short walks along the way.
 
-The experience is not only about reaching a particular point. The road itself is part of the day, giving you the chance to see another side of Morocco.`,
-      fr: `Montez vers la fraîcheur des montagnes du Moyen Atlas. Découvrez la propreté et l'architecture singulière d'Ifrane, admirez la sculpture du lion en pierre, et parcourez la forêt de cèdres d'Azrou à la rencontre des singes magots.`,
-      ar: `اصعد نحو مرتفعات الأطلس المتوسط حيث الهواء النقي والمناظر الخضراء. تجول في شوارع إفران الهادئة وحدائقها، والتقط صوراً مع تمثال الأسد الشهير، ثم اكتشف غابة أرز أزرو المعمرة والقرود البرية الأليفة.`
+The experience is not only about reaching a particular point. The road itself is part of the day, giving you the chance to see another side of Morocco and enjoy landscapes that are very different from those around Fez.
+
+Your private driver remains flexible throughout the trip, allowing you to take your time at the places you visit and make suitable stops along the way. If you would like to learn more about the region, its landscapes and local life, you can also choose to travel with a local guide.`,
+      fr: `Laissez les rues historiques de Fès et passez une journée à découvrir une autre facette du Maroc, à Ifrane et dans le Moyen Atlas.
+
+Le trajet vous mène peu à peu de la ville vers les montagnes, où le paysage devient plus vert et plus frais. L’un des premiers endroits à découvrir est Ifrane, connue pour son architecture particulière, ses rues propres, ses espaces verts et son atmosphère de montagne. La ville est très différente des rues traditionnelles de Fès, ce qui fait du trajet un vrai changement de décor.
+
+À Ifrane, vous pouvez explorer la ville, vous promener dans ses quartiers centraux et voir certains de ses repères, dont la célèbre statue du lion de pierre, devenue l’un des symboles associés à la ville.
+
+Depuis Ifrane, le voyage continue vers le Moyen Atlas, où forêts, montagnes et campagne créent un paysage complètement différent. Selon la saison, le temps et l’état des routes, il peut y avoir des arrêts pour les vues, des photos et de courtes marches.
+
+L’expérience ne consiste pas seulement à atteindre un point précis. La route fait partie de la journée. Elle vous permet de voir une autre face du Maroc et des paysages très différents de ceux autour de Fès.
+
+Votre chauffeur privé reste flexible tout au long du trajet, pour que vous preniez votre temps et fassiez les arrêts qui conviennent. Si vous voulez en savoir plus sur la région, ses paysages et la vie locale, vous pouvez aussi voyager avec un guide local.`,
+      ar: `اتركوا شوارع فاس التاريخية واقضوا يوماً في اكتشاف جانب مختلف من المغرب، في إفران والأطلس المتوسط.
+
+يأخذكم الطريق تدريجياً من المدينة نحو الجبال، حيث تصبح المناظر أكثر خضرة وبرودة. من أول الأماكن إفران، المعروفة بعمارتها المميزة وشوارعها النظيفة ومساحاتها الخضراء وأجوائها الجبلية. تختلف المدينة كثيراً عن شوارع فاس التقليدية، فيكون الطريق تغييراً حقيقياً في المشهد.
+
+في إفران يمكنكم التجول في البلدة والسير في مناطقها الوسطى ورؤية بعض معالمها، ومنها تمثال الأسد الحجري الشهير الذي أصبح أحد رموز المدينة.
+
+من إفران تتواصل الرحلة نحو الأطلس المتوسط، حيث تصنع الغابات والجبال والريف مشهداً مختلفاً تماماً. حسب الموسم والطقس وحالة الطريق، قد تتاح توقفات للمناظر والصور ومشاوير قصيرة.
+
+التجربة ليست الوصول إلى نقطة بعينها فقط. الطريق نفسه جزء من اليوم، ويمنحكم رؤية جانب آخر من المغرب ومناظر مختلفة جداً عن تلك المحيطة بفاس.
+
+يبقى السائق الخاص مرناً طوال الرحلة، لتأخذوا وقتكم وتتوقفوا حيث يناسبكم. وإذا أردتم معرفة المزيد عن المنطقة ومناظرها والحياة المحلية، يمكنكم أيضاً السفر مع مرشد محلي.`
     },
     highlights: {
       en: [
-        'Explore Ifrane’s alpine chalet architecture, clean gardens, and fresh air',
-        'See the iconic 1930s Stone Lion statue sculpted into local rock',
-        'Drive through scenic Middle Atlas cedar forests (Cèdre Gouraud forest)',
-        'Observe indigenous Barbary macaque monkeys in their natural woodland habitat',
-        'Visit the Berber artisan market and traditional carpet workshops in Azrou'
+        'Private day trip',
+        'Comfortable vehicle',
+        'Flexible stops',
+        'Driver only, or driver plus a local guide',
+        'Discover the mountains and landscapes beyond Fez'
       ],
       fr: [
-        'Visite d’Ifrane : chalets alpins, parcs verdoyants et air pur montagnard',
-        'Photo avec le célèbre Lion de pierre sculpté dans la roche',
-        'Traversée des forêts de cèdres majestueuses du Moyen Atlas',
-        'Observation des singes magots en liberté dans leur milieu naturel',
-        'Halte artisanale à Azrou (sculpture sur bois de cèdre et tapis berbères)'
+        'Excursion privée',
+        'Véhicule confortable',
+        'Arrêts flexibles',
+        'Chauffeur seul, ou chauffeur et guide local',
+        'Découvrir les montagnes et les paysages au-delà de Fès'
       ],
       ar: [
-        'جولة في إفران: بيوت ذات أسقف قرميدية مائلة، ساحات نظيفة وهواء نقي',
-        'تمثال الأسد الحجري المنحوت في الصخر رمز مدينة إفران',
-        'عبور غابات الأرز الأطلسي الشامخة ومناظر طبيعية ساحرة',
-        'مشاهدة قرود الأطلس (الماكاك) في بيئتها الطبيعية بحرية وأمان',
-        'زيارة بلدة أزرو الأمازيغية الشهيرة بالصناعات الخشبية العطرة والزرابي'
+        'رحلة يومية خاصة',
+        'سيارة مريحة',
+        'توقفات مرنة',
+        'سائق فقط، أو سائق مع مرشد محلي',
+        'اكتشفوا الجبال والمناظر خارج فاس'
       ]
     },
     practicalInfo: {
@@ -483,11 +559,11 @@ The experience is not only about reaching a particular point. The road itself is
       priceMAD: 1100,
       priceEUR: 100,
     },
-    image: '/src/assets/images/real/daytrip_ifrane_image1.jpg',
+    image: '/images/daytrip-ifrane/mountain-countryside.webp',
     imageAlt: {
-      en: 'Stone lion statue and Middle Atlas cedar forests in Ifrane',
-      fr: 'Lion d’Ifrane et forêts de cèdres du Moyen Atlas',
-      ar: 'تمثال أسد إفران وغابات الأرز في الأطلس المتوسط',
+      en: 'Ifrane and the Middle Atlas',
+      fr: 'Ifrane et le Moyen Atlas',
+      ar: 'إفران والأطلس المتوسط',
     },
     actionType: 'book_tour',
     published: true,
@@ -506,9 +582,9 @@ The experience is not only about reaching a particular point. The road itself is
       ar: 'هل تود زيارة وجهة معينة؟ صمم برنامجك الخاص بكامل المرونة',
     },
     shortDescription: {
-      en: 'Tell us what you would like to see and we can help you create a comfortable itinerary from Fez. Private vehicle, flexible schedule, and travel with driver only or driver + local guide.',
-      fr: 'Partagez vos envies et nous concevons un itinéraire confortable sur mesure. Véhicule privé, horaires souples, chauffeur seul ou chauffeur + guide.',
-      ar: 'أخبرنا بما تود استكشافه وسنساعدك في تخطيط مسار مريح انطلاقاً من فاس. سيارة خاصة، مواعيد مرنة، وسائق أو سائق مع مرشد محلي.',
+      en: 'Have somewhere specific in mind? We can also organize a private day trip around your own interests.',
+      fr: 'Vous avez une idée précise ? Nous pouvons aussi organiser une excursion privée autour de ce qui vous intéresse.',
+      ar: 'هل لديكم وجهة بعينها؟ يمكننا أيضاً تنظيم رحلة يومية خاصة حسب اهتماماتكم.',
     },
     fullDescription: {
       en: `Have somewhere specific in mind? We can also organize a private day trip around your own interests.
@@ -518,30 +594,42 @@ Tell us what you would like to see and we can help you create a comfortable itin
 Our driver remains flexible throughout the day, so the experience does not feel like a fixed group excursion. If you prefer more independence, you can travel with the driver only. If you would like explanations and local insights during your visit, we can arrange a driver together with a local guide.
 
 The idea is simple: a comfortable vehicle, a flexible schedule and a day designed around the way you want to discover Morocco.`,
-      fr: `Voyagez en toute liberté : composez votre itinéraire selon vos préférences vers le Rif, l'Atlas ou les villes impériales avec un chauffeur privé dédié.`,
-      ar: `سافر بأسلوبك الخاص وبحرية مطلقة: اختر الوجهات والمحطات وساعات الانطلاق مع سيارة سياحية خاصة وسائق تحت تصرفكم طوال اليوم.`
+      fr: `Vous avez une idée précise ? Nous pouvons aussi organiser une excursion privée autour de ce qui vous intéresse.
+
+Dites-nous ce que vous souhaitez voir et nous vous aidons à composer un itinéraire confortable au départ de Fès. Vous choisissez les lieux, l’heure de départ et le temps à passer à chaque arrêt.
+
+Le chauffeur reste flexible toute la journée, pour que l’expérience ne ressemble pas à une excursion de groupe figée. Si vous préférez plus d’indépendance, vous pouvez voyager avec le chauffeur seulement. Si vous voulez des explications et un regard local, nous pouvons prévoir un chauffeur avec un guide.
+
+L’idée est simple : un véhicule confortable, un horaire souple et une journée conçue comme vous voulez découvrir le Maroc.`,
+      ar: `هل لديكم وجهة بعينها؟ يمكننا أيضاً تنظيم رحلة يومية خاصة حسب اهتماماتكم.
+
+أخبرونا بما تودون رؤيته وسنساعدكم على إعداد مسار مريح انطلاقاً من فاس. تختارون الأماكن ووقت الانطلاق والمدة في كل محطة.
+
+يبقى السائق مرناً طوال اليوم، حتى لا تشبه التجربة جولة جماعية ثابتة. إذا فضلتم استقلالية أكبر، يمكن السفر مع السائق فقط. وإذا أردتم شروحات وانطباعاً محلياً، نرتب سائقاً مع مرشد.
+
+الفكرة بسيطة: سيارة مريحة، وبرنامج مرن، ويوم مصمم بالطريقة التي تريدون بها اكتشاف المغرب.`
     },
     highlights: {
       en: [
-        'Complete flexibility: choose your destinations, stops, and schedule',
-        'Comfortable air-conditioned private vehicle with experienced local driver',
-        'Option to add a licensed local guide for in-depth historical commentary',
-        'No rigid group schedules — spend as much time as you wish at each site',
-        'Personal assistance with route planning and scenic recommendations'
+        'Private trip',
+        'Flexible itinerary',
+        'Comfortable vehicle',
+        'Driver only, or driver plus a local guide',
+        'Tell us what you would like to discover'
       ],
       fr: [
-        'Flexibilité totale : choisissez vos arrêts, destinations et horaires',
-        'Véhicule privé climatisé avec chauffeur local professionnel',
-        'Possibilité d’ajouter un guide local agréé',
-        'Aucune contrainte de groupe touristique',
-        'Conseils personnalisés pour concevoir votre parcours'
+        'Excursion privée',
+        'Itinéraire flexible',
+        'Véhicule confortable',
+        'Chauffeur seul, ou chauffeur et guide local',
+        'Dites-nous ce que vous voulez découvrir'
       ],
       ar: [
-        'مرونة مطلقة: اختيار الوجهات والمحطات وتوقيت الانطلاق والعودة',
-        'سيارة سياحية حديثة ومكيفة مع سائق محلي محترف وموثوق',
-        'إمكانية مرافقة مرشد سياحي معتمد لتقديم الشروحات التاريخية',
-        'حرية تامة في قضاء الوقت في كل محطة دون قيود المجموعات السياحية',
-        'مساعدة واستشارة مجانية لاقتراح أفضل المسارات والمناظر الطبيعية'
+        'رحلة خاصة',
+        'مسار مرن',
+        'سيارة مريحة',
+        'سائق فقط، أو سائق مع مرشد محلي',
+        'أخبرونا بما تودون اكتشافه'
       ]
     },
     practicalInfo: {
@@ -551,11 +639,11 @@ The idea is simple: a comfortable vehicle, a flexible schedule and a day designe
       priceMAD: 1200,
       priceEUR: 110,
     },
-    image: '/src/assets/images/real/daytrip_custom_image1.jpg',
+    image: '/images/daytrip-custom/group-viewpoint.webp',
     imageAlt: {
-      en: 'Scenic Moroccan roads and custom day trip journeys',
-      fr: 'Routes panoramiques marocaines pour excursion privée',
-      ar: 'طرقات ومناظر المغرب الخلابة في رحلة خاصة مخصصة',
+      en: 'Travelers taking a photo above a mountain town in Morocco',
+      fr: 'Voyageurs photographiés au-dessus d’une ville de montagne au Maroc',
+      ar: 'مسافرون يلتقطون صورة فوق مدينة جبلية في المغرب',
     },
     actionType: 'book_tour',
     published: true,
@@ -1302,9 +1390,9 @@ export const FAQ_ITEMS: FaqItem[] = [
       ar: 'ما هي الوجهات التي يمكن زيارتها في رحلة يوم واحد من فاس؟',
     },
     answer: {
-      en: 'Our popular day trips include Chefchaouen (The Blue Pearl), Meknes, Volubilis Roman Ruins and Moulay Idriss, and Ifrane with the Middle Atlas cedar forests. We can also create custom private itineraries based on your wishes.',
-      fr: 'Nos excursions phares sont Chefchaouen la cité bleue, Meknès/Volubilis/Moulay Idriss, et Ifrane avec la forêt de cèdres du Moyen Atlas.',
-      ar: 'أشهر رحلاتنا اليومية هي: شفشاون (المدينة الزرقاء)، مكناس وآثار وليلي الرومانية ومولاي إدريس، ورحلة إفران وغابات الأرز بالأطلس المتوسط، بالإضافة إلى أي مسار مخصص.',
+      en: 'Our popular day trips include Chefchaouen, Meknes with Volubilis and Moulay Idriss, and Ifrane in the Middle Atlas. We can also create custom private itineraries based on your wishes.',
+      fr: 'Nos excursions phares sont Chefchaouen, Meknès avec Volubilis et Moulay Idriss, et Ifrane dans le Moyen Atlas.',
+      ar: 'أشهر رحلاتنا اليومية هي شفشاون، ومكناس مع وليلي ومولاي إدريس، وإفران في الأطلس المتوسط، بالإضافة إلى أي مسار مخصص.',
     },
   },
   {

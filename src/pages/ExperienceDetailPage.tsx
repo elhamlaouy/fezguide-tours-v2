@@ -161,12 +161,16 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
         {/* 3. Hero Visual Asset & Interactive Gallery */}
         <div className="space-y-3">
-          {/* Main Active Image Showcase */}
-          <div className="relative aspect-16/9 sm:aspect-21/9 w-full rounded-3xl overflow-hidden bg-[#15201F] shadow-md border border-[#E7E2DA]">
+          {(() => {
+            const fullFrame = /\/images\/daytrip-(chefchaouen|custom|meknes|ifrane)\//.test(galleryList[activeImageIndex] || '');
+            return (
+          <div className={fullFrame
+            ? 'relative w-full rounded-3xl overflow-hidden bg-[#15201F] shadow-md border border-[#E7E2DA] flex items-center justify-center'
+            : 'relative aspect-16/9 sm:aspect-21/9 w-full rounded-3xl overflow-hidden bg-[#15201F] shadow-md border border-[#E7E2DA]'}>
             <img
               src={galleryList[activeImageIndex]}
               alt={pillar.imageAlt[language]}
-              className="w-full h-full object-cover transition-opacity duration-300"
+              className={fullFrame ? 'max-h-[72vh] w-auto max-w-full object-contain' : 'w-full h-full object-cover transition-opacity duration-300'}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
@@ -179,6 +183,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               </span>
             </div>
           </div>
+            );
+          })()}
 
           {/* Thumbnails Strip */}
           {galleryList.length > 1 && (

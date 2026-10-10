@@ -26,9 +26,9 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
       ar: 'رحلات يومية واستكشافية خاصة انطلاقاً من فاس',
     },
     subtitle: {
-      en: 'Discover the Blue City of Chefchaouen, ancient Roman ruins of Volubilis & Meknes, and the cool cedar forests of Ifrane and the Middle Atlas.',
-      fr: 'Découvrez la cité bleue de Chefchaouen, les ruines romaines de Volubilis et Meknès, et les forêts de cèdres d’Ifrane dans le Moyen Atlas.',
-      ar: 'اكتشف زرقة شفشاون الساحرة في جبال الريف، آثار وليلي الرومانية ومكناس الإسماعيلية، وهواء وغابات إفران في الأطلس المتوسط.',
+      en: 'Discover Chefchaouen, Meknes with Volubilis and Moulay Idriss, and the mountains beyond Fez.',
+      fr: 'Découvrez Chefchaouen, Meknès avec Volubilis et Moulay Idriss, et les montagnes au-delà de Fès.',
+      ar: 'اكتشفوا شفشاون، ومكناس مع وليلي ومولاي إدريس، والجبال خارج فاس.',
     },
   };
 
@@ -44,7 +44,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
       {/* Header Banner */}
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
-          src="/images/real/daytrip_chefchaouen_image1.jpg"
+          src="/images/daytrip-chefchaouen/blue-alley.webp"
           alt="Chefchaouen Blue City"
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
@@ -187,7 +187,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
             <div className="bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs">
               <div className="aspect-4/3 relative bg-[#1C2524]">
                 <img
-                  src="/images/real/daytrip_chefchaouen_image1.jpg"
+                  src="/images/daytrip-chefchaouen/blue-alley.webp"
                   alt="Chefchaouen alleys"
                   className="w-full h-full object-cover"
                 />
@@ -197,7 +197,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
                   {language === 'ar' ? 'شفشاون وجبال الريف' : 'Chefchaouen & Rif Mountains'}
                 </h4>
                 <p className="text-xs text-[#52605E]">
-                  {language === 'ar' ? 'ساحة وطاء الحمام، القصبة، ومنبع رأس الماء الطبيعي' : 'Plaza Uta el-Hammam, 15th-century Kasbah & Ras El Maa spring.'}
+                  {language === 'ar' ? 'ساحة وطاء الحمام، القصبة، ومنبع رأس الماء' : 'Plaza Uta el-Hammam, the historic Kasbah, and Ras El Maa.'}
                 </p>
               </div>
             </div>
@@ -205,8 +205,8 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
             <div className="bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs">
               <div className="aspect-4/3 relative bg-[#1C2524]">
                 <img
-                  src="/images/real/daytrip_meknes_image1.jpg"
-                  alt="Volubilis ruins and Meknes"
+                  src="/images/daytrip-meknes/bab-mansour.webp"
+                  alt="Bab Mansour in Meknes"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -223,17 +223,17 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
             <div className="bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs">
               <div className="aspect-4/3 relative bg-[#1C2524]">
                 <img
-                  src="/images/real/daytrip_ifrane_image1.jpg"
-                  alt="Ifrane and cedar forests"
+                  src="/images/daytrip-ifrane/mountain-countryside.webp"
+                  alt="Middle Atlas mountains beyond Fez"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-4 space-y-1">
                 <h4 className="font-bold text-sm text-[#1C2524]">
-                  {language === 'ar' ? 'إفران وغابات الأرز الأطلسي' : 'Ifrane & Middle Atlas'}
+                  {language === 'ar' ? 'إفران والأطلس المتوسط' : 'Ifrane & Middle Atlas'}
                 </h4>
                 <p className="text-xs text-[#52605E]">
-                  {language === 'ar' ? 'العمارة الجبلية، تمثال الأسد الحجري، وقرود الماكاك في غابات الأرز' : 'Alpine chalet streets, stone lion statue, and wild Barbary macaques.'}
+                  {language === 'ar' ? 'حدائق خضراء، تمثال الأسد الحجري، ومناظر جبلية خارج فاس' : 'Green spaces, the stone lion, and mountain landscapes beyond Fez.'}
                 </p>
               </div>
             </div>

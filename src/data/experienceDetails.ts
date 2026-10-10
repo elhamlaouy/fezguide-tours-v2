@@ -473,9 +473,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 4. DAY TRIP: CHEFCHAOUEN =====================
   'daytrip-chefchaouen': {
     galleryImages: [
-      '/images/real/daytrip_chefchaouen_image1.jpg',
-      '/images/real/about_us_image5.jpg',
-      '/images/real/about_us_image8.jpg',
+      '/images/daytrip-chefchaouen/blue-alley.webp',
     ],
     itinerary: [
       {
@@ -509,9 +507,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
       {
         time: '01:00 PM',
         title: {
-          en: 'Exploring the Blue Alleys & Ras el-Maa Waterfall',
+          en: 'Exploring the Blue Alleys & Ras El Maa',
           fr: 'Balade dans les Ruelles Bleues & Source Ras el-Maa',
-          ar: 'التجول بين الدروب الزرقاء وشلالات رأس الماء',
+          ar: 'التجول بين الدروب الزرقاء ومنبع رأس الماء',
         },
         description: {
           en: 'Stroll the famous cobalt-washed stairways, discover Berber wool blankets, and walk to the fresh mountain spring of Ras el-Maa where locals gather.',
@@ -601,52 +599,52 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 5. DAY TRIP: MEKNES & VOLUBILIS =====================
   'daytrip-meknes': {
     galleryImages: [
-      '/images/real/daytrip_meknes_image1.jpg',
-      '/images/real/daytrip_meknes_image2.jpg',
-      '/images/real/daytrip_meknes_image3.jpg',
-      '/images/real/daytrip_meknes_image4.jpg',
-      '/images/real/daytrip_meknes_image5.jpg',
+      '/images/daytrip-meknes/volubilis-mosaic.webp',
+      '/images/daytrip-meknes/moulay-idriss.webp',
+      '/images/daytrip-meknes/bab-mansour.webp',
+      '/images/daytrip-meknes/historic-doorway.webp',
+      '/images/daytrip-meknes/city-walls.webp',
     ],
     itinerary: [
       {
-        time: '08:30 AM',
+        time: '',
         title: {
-          en: 'Volubilis: UNESCO Roman Archaeological Site',
-          fr: 'Volubilis : Cité Antique Romaine classée UNESCO',
-          ar: 'مدينة وليلي الرومانية الأثرية (تراث عالمي لليونسكو)',
+          en: 'Volubilis',
+          fr: 'Volubilis',
+          ar: 'وليلي',
         },
         description: {
-          en: 'Walk among remarkably preserved Roman mosaics depicting Diana bathing and the labors of Hercules, the Basilica, Triumphal Arch of Caracalla, and ancient olive presses.',
-          fr: 'Explorez les mosaïques romaines intactes, la basilique, l’arc de triomphe de Caracalla et les pressoirs à huile d’olive antiques.',
-          ar: 'التجول بين لوحات الفسيفساء الرومانية النادرة المحفوظة، وتأمل قوس النصر لكاراكلا، ومبنى الكابيتول، ومعاصر الزيتون العتيقة.',
+          en: 'Walk among the remains of the ancient Roman city, its old streets and buildings, and the mosaics that have survived for centuries.',
+          fr: 'Marchez parmi les vestiges de la cité romaine, ses anciennes rues, ses bâtiments et les mosaïques qui ont traversé les siècles.',
+          ar: 'تجولوا بين بقايا المدينة الرومانية وشوارعها ومبانيها القديمة والفسيفساء التي صمدت لقرون.',
         },
         badge: { en: 'Roman Heritage', fr: 'Antiquité Romaine', ar: 'تراث روماني' },
       },
       {
-        time: '11:15 AM',
+        time: '',
         title: {
-          en: 'Moulay Idriss Zerhoun: The Holy Hillside Town',
-          fr: 'Moulay Idriss Zerhoun : La Cité Sainte Perché',
-          ar: 'مولاي إدريس زرهون: المدينة الجبلية التاريخية',
+          en: 'Moulay Idriss Zerhoun',
+          fr: 'Moulay Idriss Zerhoun',
+          ar: 'مولاي إدريس زرهون',
         },
         description: {
-          en: 'Climb the scenic slopes overlooking the tomb of Moulay Idriss I, founder of the Moroccan state, and sample the town’s famous grilled kefta.',
-          fr: 'Admirez le panorama sur le mausolée du fondateur du Maroc et dégustez les réputées grillades locales.',
-          ar: 'مشاهدة المدينة البيضاء المتكئة على قمم الجبال، ومسجد وضريح مؤسس الدولة المغربية، وتذوق الكفتة المشوية الشهيرة.',
+          en: 'A small hillside pilgrimage town. Walk part of it, look at the views, and see its link to the early history of Morocco.',
+          fr: 'Une petite ville sainte sur les collines. Parcourez-en une partie, profitez des vues et découvrez son lien avec les débuts de l’histoire du Maroc.',
+          ar: 'بلدة حج صغيرة على التلال. امشوا في جزء منها، شاهدوا الإطلالات، واكتشفوا صلتها ببدايات تاريخ المغرب.',
         },
         badge: { en: 'Holy Town', fr: 'Cité Sainte', ar: 'بلدة تاريخية' },
       },
       {
-        time: '01:00 PM',
+        time: '',
         title: {
-          en: 'Meknes Imperial City: Bab el-Mansour & Royal Granaries',
-          fr: 'Meknès Impériale : Bab el-Mansour & Greniers Royaux',
-          ar: 'مكناس الإسماعيلية: باب المنصور وصهريج السواني',
+          en: 'Meknes: Bab Mansour and the old medina',
+          fr: 'Meknès : Bab Mansour et l’ancienne médina',
+          ar: 'مكناس: باب المنصور والمدينة العتيقة',
         },
         description: {
-          en: 'Gaze up at Bab el-Mansour, North Africa’s most monumental imperial gate, then visit the massive Heri es-Souani granaries built for Moulay Ismail’s 12,000 royal horses.',
-          fr: 'Contemplez la porte monumentale Bab el-Mansour et visitez les colossaux greniers royaux d’Heri es-Souani.',
-          ar: 'الوقوف أمام باب المنصور التاريخي، أضخم بوابات شمال أفريقيا، وزيارة صهريج السواني ومخازن الحبوب والخيول للمولى إسماعيل.',
+          en: 'Walk around Bab Mansour, the old medina, historic walls and traditional streets. If the sites are open, there is also time for more of Meknes from the period of Sultan Moulay Ismail.',
+          fr: 'Faites le tour de Bab Mansour, de l’ancienne médina, des remparts et des rues traditionnelles. Si les sites sont ouverts, il reste aussi du temps pour d’autres lieux de Meknès liés à l’époque du sultan Moulay Ismaïl.',
+          ar: 'تجولوا حول باب المنصور والمدينة العتيقة والأسوار التاريخية والشوارع التقليدية. إذا كانت المواقع مفتوحة، هناك أيضاً وقت لمزيد من مكناس في فترة السلطان مولاي إسماعيل.',
         },
         badge: { en: 'Imperial Capital', fr: 'Capitale Impériale', ar: 'عاصمة إسماعيلية' },
       },
@@ -682,9 +680,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
       ar: ['قبعة ونظارات شمسية (موقع أثري مفتوح)', 'حذاء رياضي مريح للمشي بين الآثار', 'كاميرا', 'مبلغ نقدي'],
     },
     meetingPointDetails: {
-      en: 'Doorstep pickup at your Fez accommodation at 08:30 AM.',
-      fr: 'Prise en charge à votre hôtel ou riad à 08h30.',
-      ar: 'التوصيل من باب مقر إقامتك في فاس عند الساعة 08:30 صباحاً.',
+      en: 'Doorstep pickup at your Fez accommodation at 9:00 AM.',
+      fr: 'Prise en charge à votre hôtel ou riad à 9h00.',
+      ar: 'التوصيل من باب مقر إقامتك في فاس عند الساعة 9:00 صباحاً.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours prior to departure.',
@@ -714,78 +712,78 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 6. DAY TRIP: IFRANE & MIDDLE ATLAS =====================
   'daytrip-ifrane': {
     galleryImages: [
-      '/images/real/daytrip_ifrane_image1.jpg',
-      '/images/real/daytrip_ifrane_image2.jpg',
-      '/images/real/daytrip_ifrane_image3.jpg',
+      '/images/daytrip-ifrane/stone-lion.webp',
+      '/images/daytrip-ifrane/mountain-countryside.webp',
+      '/images/daytrip-ifrane/macaques.webp',
     ],
     itinerary: [
       {
-        time: '09:00 AM',
+        time: '',
         title: {
-          en: 'Immouzer du Kandar & Fruit Orchards',
-          fr: 'Immouzer du Kandar & Vergers de Montagne',
-          ar: 'إيموزار كندر وبساتين التفاح والكرز',
+          en: 'From Fez into the mountains',
+          fr: 'De Fès vers les montagnes',
+          ar: 'من فاس نحو الجبال',
         },
         description: {
-          en: 'Ascend into the cool foothills of the Middle Atlas, passing Berber villages and apple orchards.',
-          fr: 'Montée vers la fraîcheur du Moyen Atlas à travers les villages berbères et les vergers fruitiers.',
-          ar: 'الصعود نحو مرتفعات الأطلس المتوسط وقرى الأمازيغ وبساتين التفاح الفواحة.',
+          en: 'The road leaves the city for a greener, cooler landscape, then reaches Ifrane, with its distinctive architecture, clean streets and green spaces.',
+          fr: 'La route quitte la ville pour un paysage plus vert et plus frais, puis arrive à Ifrane, avec son architecture particulière, ses rues propres et ses espaces verts.',
+          ar: 'يغادر الطريق المدينة نحو منظر أكثر خضرة وبرودة، ثم يصل إلى إفران بعمارتها المميزة وشوارعها النظيفة ومساحاتها الخضراء.',
         },
-        badge: { en: 'Atlas Foothills', fr: 'Pied de l’Atlas', ar: 'مرتفعات الأطلس' },
+        badge: { en: 'Mountain Road', fr: 'Route de montagne', ar: 'طريق جبلي' },
       },
       {
-        time: '10:30 AM',
+        time: '',
         title: {
-          en: 'Ifrane: Little Switzerland & Stone Lion',
-          fr: 'Ifrane : La Petite Suisse Marocaine & Lion de Pierre',
-          ar: 'إفران: سويسرا المغرب وتمثال الأسد الحجري',
+          en: 'Ifrane and the stone lion',
+          fr: 'Ifrane et le lion de pierre',
+          ar: 'إفران والأسد الحجري',
         },
         description: {
-          en: 'Discover one of the cleanest towns in the world, famous for its alpine chalets, immaculate parks, and the famous stone lion statue.',
-          fr: 'Découvrez les chalets alpins toits en pente, les parcs impeccables et la célèbre statue du lion sculpté.',
-          ar: 'استكشاف إفران بهوائها النقي وحدائقها المنظمة وعمارتها الجبلية الأوروبية وتمثال الأسد الصخري الشهير.',
+          en: 'Walk the central areas and see the stone lion statue, one of the symbols associated with the city.',
+          fr: 'Promenez-vous dans les quartiers centraux et voyez la statue du lion de pierre, l’un des symboles associés à la ville.',
+          ar: 'تجولوا في المناطق الوسطى وشاهدوا تمثال الأسد الحجري، أحد الرموز المرتبطة بالمدينة.',
         },
-        badge: { en: 'Alpine Town', fr: 'Ville Alpine', ar: 'مدينة جبلية' },
+        badge: { en: 'Ifrane', fr: 'Ifrane', ar: 'إفران' },
       },
       {
-        time: '12:30 PM',
+        time: '',
         title: {
-          en: 'Cedre Gouraud Forest & Wild Barbary Macaques',
-          fr: 'Forêt de Cèdres d’Azrou & Macaques de Barbarie',
-          ar: 'غابات الأرز الأطلسي بآزرو وقرود الماكاك البرية',
+          en: 'Scenic stops along the way',
+          fr: 'Arrêts selon la route',
+          ar: 'توقفات على الطريق',
         },
         description: {
-          en: 'Walk beneath gigantic 800-year-old Atlantic cedar trees in the Azrou forest and encounter gentle wild Barbary macaque monkeys.',
-          fr: 'Baladez-vous sous les cèdres centenaires de la forêt d’Azrou à la rencontre des singes macaques en liberté.',
-          ar: 'المشي تحت أشجار الأرز الأطلسي العملاقة المعمرة في غابات آزرو، والتقاط الصور مع قرود الماكاك البرية في بيئتها الطبيعية.',
+          en: 'Forests, mountains and countryside. Stops, photographs and short walks depend on the season, the weather and the road. The driver stays flexible, and a local guide can join you if you want one.',
+          fr: 'Forêts, montagnes et campagne. Les arrêts, les photos et les courtes marches dépendent de la saison, du temps et de la route. Le chauffeur reste flexible, et un guide local peut vous accompagner si vous le souhaitez.',
+          ar: 'غابات وجبال وريف. التوقفات والصور والمشاوير القصيرة تعتمد على الموسم والطقس والطريق. يبقى السائق مرناً، ويمكن أن يرافقكم مرشد محلي إذا أردتم.',
         },
-        badge: { en: 'Ancient Cedars', fr: 'Cèdres Anciens', ar: 'أرز أطلسي عتيق' },
+        badge: { en: 'Flexible', fr: 'Flexible', ar: 'مرن' },
       },
     ],
     included: {
       en: [
         'Private vehicle with air-conditioning and professional driver',
         'Riad/hotel pickup & drop-off in Fez',
-        'Scenic stops at Ifrane, Azrou cedar forest, and panoramic mountain passes',
+        'Scenic stops along the way, when the season and the road allow',
         'All vehicle operating expenses, fuel, and tolls',
       ],
       fr: [
         'Véhicule privé climatisé avec chauffeur professionnel',
         'Prise en charge et retour à votre hébergement à Fès',
-        'Arrêts à Ifrane, forêt de cèdres d’Azrou et belvédères',
+        'Arrêts sur la route, selon la saison et l’état des routes',
         'Carburant, péages et parkings inclus',
       ],
       ar: [
         'سيارة سياحية خاصة ومريحة مع سائق خبير بأمان الطرق الجبلية',
         'توصيل من باب الفندق أو الرياض والعودة إليه',
-        'توقفات مريحة في إفران، غابة آزرو، والمطلات الجبلية العالية',
+        'توقفات على الطريق حسب الموسم وحالة الطريق',
         'شامل جميع مصاريف الوقود والرسوم والمواقف',
       ],
     },
     excluded: {
-      en: ['Lunch at local mountain restaurant', 'Personal shopping (Berber rugs/cedar souvenirs)', 'Driver tip'],
+      en: ['Lunch at local mountain restaurant', 'Personal shopping', 'Driver tip'],
       fr: ['Déjeuner en auberge de montagne', 'Achats personnels', 'Pourboire chauffeur'],
-      ar: ['وجبة الغداء في مطعم جبلي', 'المشتريات التذكارية (صناعات خشب الأرز أو الزرابي الأمازيغية)', 'إكرامية السائق'],
+      ar: ['وجبة الغداء في مطعم جبلي', 'المشتريات الشخصية', 'إكرامية السائق'],
     },
     whatToBring: {
       en: ['Comfortable walking shoes', 'Light sweater or jacket (cooler mountain air)', 'Camera'],
@@ -814,9 +812,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         rating: 5,
         date: 'September 2026',
         comment: {
-          en: 'Our kids were thrilled feeding peanuts to the Barbary macaques under the massive cedar trees! Ifrane was so clean and picturesque. Wonderful family day trip from Fez.',
-          fr: 'Les enfants étaient enchantés de voir les singes dans les cèdres ! Ifrane est superbe. Une journée en famille parfaite.',
-          ar: 'أطفالي كانوا في قمة السعادة برؤية قرود الماكاك في غابة الأرز العملاقة! إفران بلدة غاية في النظافة والجمال. رحلة عائلية مثالية.',
+          en: 'A relaxed day in the mountains, with time to stop where we wanted. Ifrane felt very different from Fez.',
+          fr: 'Une journée détendue dans les montagnes, avec le temps de s’arrêter où nous voulions. Ifrane est très différente de Fès.',
+          ar: 'يوم هادئ في الجبال، مع وقت للتوقف حيث نريد. بدت إفران مختلفة جداً عن فاس.',
         },
       },
     ],
@@ -825,8 +823,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
   // ===================== 7. DAY TRIP: CUSTOM PRIVATE TRIP =====================
   'daytrip-custom': {
     galleryImages: [
-      '/images/real/daytrip_custom_image1.jpg',
-      '/images/real/about_us_image5.jpg',
+      '/images/daytrip-custom/group-viewpoint.webp',
     ],
     itinerary: [
       {
@@ -837,9 +834,9 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
           ar: 'برنامج خاص ومصمم وفق رغبتك بالكامل',
         },
         description: {
-          en: 'Whether you wish to visit ancient Kasbahs, Middle Atlas hidden valleys, Sefrou waterfalls, or craft an extended route, we coordinate every detail.',
-          fr: 'Que vous souhaitiez découvrir les cascades de Séfrou, des vallées secrètes ou un circuit personnalisé, nous organisons tout à votre convenance.',
-          ar: 'سواء كنت ترغب في زيارة شلالات صفرو، قرى الأطلس الهادئة، أو تصميم مسار يجمع عدة مدن، نرتب لك كل التفاصيل باحترافية.',
+          en: 'Tell us the places you want to see, when to leave, and how long to stay at each stop. We arrange the day from Fez around that.',
+          fr: 'Dites-nous les lieux, l’heure de départ et le temps à chaque arrêt. Nous organisons la journée au départ de Fès autour de cela.',
+          ar: 'أخبرونا بالأماكن ووقت الانطلاق والمدة في كل محطة. نرتب اليوم انطلاقاً من فاس وفق ذلك.',
         },
         badge: { en: 'Bespoke', fr: 'Sur Mesure', ar: 'حسب الطلب' },
       },

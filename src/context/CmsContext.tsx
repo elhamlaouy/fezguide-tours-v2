@@ -68,7 +68,8 @@ const initialTours: SectionPillar[] = [
 });
 
 const PROTECTED_FEZ_TOUR_IDS = new Set(['fez-explore-medina', 'fez-history-landmarks', 'fez-things-to-do', 'our-fez-tours']);
-const protectedFezTours = initialTours.filter((tour) => PROTECTED_FEZ_TOUR_IDS.has(tour.id));
+const PROTECTED_SOURCE_TOUR_IDS = new Set([...PROTECTED_FEZ_TOUR_IDS, 'daytrip-chefchaouen', 'daytrip-custom', 'daytrip-meknes', 'daytrip-ifrane']);
+const protectedFezTours = initialTours.filter((tour) => PROTECTED_SOURCE_TOUR_IDS.has(tour.id));
 
 const mergeProtectedFezTours = (remoteTours: SectionPillar[]): SectionPillar[] => {
   const protectedById = new Map(protectedFezTours.map((tour) => [tour.id, tour]));

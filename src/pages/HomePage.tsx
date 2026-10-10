@@ -57,12 +57,12 @@ export const HomePage: React.FC<HomePageProps> = ({
       id: 'day-trips' as PageId,
       title: { en: 'Private Day Trips', fr: 'Excursions Privées', ar: 'رحلات يومية خاصة' },
       desc: {
-        en: 'Chefchaouen Blue City, ancient Roman Volubilis & Meknes, and Ifrane Middle Atlas cedar forests.',
-        fr: 'Chefchaouen la bleue, ruines romaines de Volubilis & Meknès, et forêts de cèdres d’Ifrane.',
-        ar: 'شفشاون الزرقاء في جبال الريف، آثار وليلي ومكناس، وإفران وغابات الأرز الأطلسي.',
+        en: 'Chefchaouen, Meknes and Volubilis, and the mountains of the Middle Atlas.',
+        fr: 'Chefchaouen, Meknès et Volubilis, et les montagnes du Moyen Atlas.',
+        ar: 'شفشاون، ومكناس ووليلي، وجبال الأطلس المتوسط.',
       },
       icon: MapPin,
-      image: '/images/real/daytrip_chefchaouen_image1.jpg',
+      image: '/images/daytrip-chefchaouen/blue-alley.webp',
       badge: { en: 'Private Transport', fr: 'Transport Privé', ar: 'نقل خاص مريح' },
     },
     {

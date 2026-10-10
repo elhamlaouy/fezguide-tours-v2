@@ -114,6 +114,71 @@ test('day-trip pages use the Tripadvisor strip and Fez pages keep the shared cru
   assert.match(read('src/components/PageCrumbBar.tsx'), /Back to list/);
 });
 
+test('Chefchaouen uses the Doc story and drops the unrelated gallery photos', () => {
+  const details = read('src/data/experienceDetails.ts');
+  const translations = read('src/data/translations.ts');
+  const start = details.indexOf("'daytrip-chefchaouen'");
+  const block = details.slice(start, details.indexOf("'daytrip-meknes'", start));
+  assert.match(block, /\/images\/daytrip-chefchaouen\/blue-alley\.webp/);
+  assert.ok(!block.includes('about_us_image5.jpg') && !block.includes('about_us_image8.jpg'));
+  assert.match(translations, /rushed from one attraction to another/);
+  assert.ok(!translations.includes('traditional watermills'));
+  assert.ok(!translations.includes('15th-century Kasbah'));
+});
+
+test('the custom day trip uses the Doc story and drops the unrelated gallery photo', () => {
+  const details = read('src/data/experienceDetails.ts');
+  const translations = read('src/data/translations.ts');
+  const start = details.indexOf("'daytrip-custom'");
+  const block = details.slice(start, details.indexOf('reviews:', start));
+  assert.match(block, /\/images\/daytrip-custom\/group-viewpoint\.webp/);
+  assert.ok(!block.includes('about_us_image5.jpg') && !block.includes('daytrip_custom_image1.jpg'));
+  assert.match(translations, /a day designed around the way you want to discover Morocco/);
+  assert.ok(!translations.includes('Sefrou waterfalls'));
+});
+
+test('the Meknes day trip uses the Doc story and the five Doc photos', () => {
+  const details = read('src/data/experienceDetails.ts');
+  const translations = read('src/data/translations.ts');
+  const generator = read('scripts/generate_translations.py');
+  const start = details.indexOf("'daytrip-meknes'");
+  const block = details.slice(start, details.indexOf("'daytrip-ifrane'", start));
+  const copyStart = translations.indexOf("id: 'daytrip-meknes'");
+  const copy = translations.slice(copyStart, translations.indexOf("id: 'daytrip-ifrane'", copyStart));
+  const generated = generator.slice(generator.indexOf("id: 'daytrip-meknes'"), generator.indexOf("id: 'daytrip-ifrane'"));
+  for (const photo of ['volubilis-mosaic', 'moulay-idriss', 'bab-mansour', 'historic-doorway', 'city-walls']) {
+    assert.match(block, new RegExp(`/images/daytrip-meknes/${photo}\\.webp`));
+    assert.ok(existsSync(resolve(root, `public/images/daytrip-meknes/${photo}.webp`)));
+  }
+  assert.ok(!block.includes('daytrip_meknes_image') && !block.includes('Heri es-Souani') && !block.includes('grilled kefta'));
+  assert.match(copy, /historic walls and traditional streets/);
+  assert.match(copy, /without feeling rushed/);
+  assert.ok(!copy.includes('Heri es-Souani') && !copy.includes('Place el-Hedim'));
+  assert.ok(copy.includes('priceMAD: 1100'));
+  assert.match(generated, /historic walls and traditional streets/);
+});
+
+test('the Ifrane day trip uses the Doc story and the three Doc photos', () => {
+  const details = read('src/data/experienceDetails.ts');
+  const translations = read('src/data/translations.ts');
+  const generator = read('scripts/generate_translations.py');
+  const start = details.indexOf("'daytrip-ifrane'");
+  const block = details.slice(start, details.indexOf("'daytrip-custom'", start));
+  const copyStart = translations.indexOf("id: 'daytrip-ifrane'");
+  const copy = translations.slice(copyStart, translations.indexOf("id: 'daytrip-custom'", copyStart));
+  const generated = generator.slice(generator.indexOf("id: 'daytrip-ifrane'"), generator.indexOf("id: 'daytrip-custom'"));
+  for (const photo of ['stone-lion', 'mountain-countryside', 'macaques']) {
+    assert.match(block, new RegExp(`/images/daytrip-ifrane/${photo}\\.webp`));
+    assert.ok(existsSync(resolve(root, `public/images/daytrip-ifrane/${photo}.webp`)));
+  }
+  assert.ok(!block.includes('daytrip_ifrane_image') && !block.includes('Azrou') && !block.includes('Immouzer'));
+  assert.match(copy, /road conditions/);
+  assert.match(copy, /landscapes that are very different from those around Fez/);
+  assert.ok(!copy.includes('Azrou') && !copy.includes('Barbary') && !copy.includes('Immouzer'));
+  assert.ok(copy.includes('priceMAD: 1100'));
+  assert.match(generated, /road conditions/);
+});
+
 test('the Medina article card does not expose a product quick-book action', () => {
   const card = read('src/components/SectionCard.tsx');
   assert.match(card, /pillar\.id === 'fez-explore-medina'[\s\S]*grid-cols-1/);
