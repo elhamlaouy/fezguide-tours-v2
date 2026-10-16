@@ -1,6 +1,5 @@
 import { validateCmsDocument } from '../src/cms/schema';
 import { createCmsHandler, isCmsAdminPath, type CmsRoutesEnv } from './cms-routes';
-import type { PlatformAccess } from './cms-auth';
 import { publicSeoResponse } from './seo';
 
 interface KVNamespaceReader {
@@ -10,7 +9,6 @@ interface KVNamespaceReader {
 export interface Env extends CmsRoutesEnv {
   CANONICAL_ORIGIN?: string;
   CMS_SLUG_REDIRECTS?: string;
-  CMS_AUTH_DIAGNOSTICS?: string;
   CMS_PUBLIC_RATE_LIMIT_REQUIRED?: string;
   CMS_PUBLIC_RATE_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
   CMS_KV?: KVNamespaceReader;
@@ -52,19 +50,8 @@ function publicCmsData(raw: string): JsonRecord {
   return publicData;
 }
 
-function authProbeClaims(request: Request, env: Env) {
-  try {
-    const token = request.headers.get('Cf-Access-Jwt-Assertion');
-    if (!token || token.length > 16384) return null;
-    const parts = token.split('.');
-    const decode = (part: string) => JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
-    const header = decode(parts[0]), claims = decode(parts[1]), now = Math.floor(Date.now() / 1000);
-    return { algorithm: header.alg === 'RS256', issuer: claims.iss === `https://${env.ACCESS_TEAM_DOMAIN}`, audience: (Array.isArray(claims.aud) ? claims.aud : [claims.aud]).includes(env.ACCESS_AUD), time: Number.isSafeInteger(claims.exp) && claims.exp > now && (claims.nbf === undefined || claims.nbf <= now), subject: typeof claims.sub === 'string' && claims.sub.length > 0 && claims.sub.length <= 256, emailApproved: typeof claims.email === 'string' && (env.ACCESS_ALLOWED_EMAILS ?? '').toLowerCase().split(',').map(value => value.trim()).includes(claims.email.toLowerCase()) };
-  } catch { return null; }
-}
-
 export default {
-  async fetch(request: Request, env: Env, context?: { access?: PlatformAccess }): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
     // Admin is always gated, including when D1 is absent, so writes and /admin
@@ -88,10 +75,7 @@ export default {
     }
     const publicCms = path === '/api/cms' || path === '/api/cms/document';
     if (admin || path.startsWith('/media/upload-') || (env.CMS_DB && publicCms)) {
-      let authFailure = 'pre_signature_validation';
-      const cmsResponse = await cms(request, env, context?.access, env.CMS_AUTH_DIAGNOSTICS === 'true' ? reason => { authFailure = reason; } : undefined);
-      // Temporary isolated-preview probe: booleans only, never tokens, cookies, IDs or claims.
-      if (cmsResponse?.status === 401 && env.CMS_AUTH_DIAGNOSTICS === 'true') return jsonResponse({error:'unauthorized',probe:{failure:authFailure,claimChecks:authProbeClaims(request,env),platform:Boolean(context?.access),platformAudienceMatches:context?.access?.aud === env.ACCESS_AUD,assertion:request.headers.has('Cf-Access-Jwt-Assertion'),signedCookie:/(?:^|;\s*)CF_Authorization=/.test(request.headers.get('Cookie') ?? '')}},401);
+      const cmsResponse = await cms(request, env);
       if (cmsResponse) return cmsResponse;
     }
 

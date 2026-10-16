@@ -10,8 +10,7 @@ export interface AccessVerifierOptions {
   fetch?: typeof globalThis.fetch;
   now?: () => number;
 }
-export interface PlatformAccess { aud: string; getIdentity(): Promise<unknown> }
-export type AccessVerifier = (request: Request, env: CmsAccessEnv, platformAccess?: PlatformAccess, onReject?: (reason: string) => void) => Promise<CmsIdentity | null>;
+export type AccessVerifier = (request: Request, env: CmsAccessEnv) => Promise<CmsIdentity | null>;
 const MAX_TOKEN_BYTES = 16_384;
 const MAX_JWKS_BYTES = 65_536;
 const CACHE_MS = 300_000;
@@ -80,7 +79,7 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
       try {
         const operation = (async () => {
           const response = await fetcher(`${issuer}/cdn-cgi/access/certs`, {
-            redirect: 'error', signal: controller.signal, headers: { Accept: 'application/json' },
+            redirect: 'manual', signal: controller.signal, headers: { Accept: 'application/json' },
           });
           const body = await jwksBody(response) as { keys?: unknown };
           if (!body || !Array.isArray(body.keys) || body.keys.length < 1 || body.keys.length > 16) throw new Error();
@@ -110,25 +109,13 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
     return entry.keys;
   }
 
-  return async (request, env, platformAccess, onReject) => {
+  return async (request, env) => {
     try {
       const issuer = issuerFor(env.ACCESS_TEAM_DOMAIN);
       const audience = env.ACCESS_AUD;
       const subjects = allowlist(env.ACCESS_ALLOWED_SUBJECTS);
       const emails = new Set([...allowlist(env.ACCESS_ALLOWED_EMAILS)].map(email => email.toLowerCase()));
       if (!issuer || !audience || audience.length > 256 || (!subjects.size && !emails.size)) return null;
-      if (platformAccess) {
-        // Only the runtime's third fetch argument supplies this capability. Never trust a request/env field.
-        if (platformAccess.aud !== audience || typeof platformAccess.getIdentity !== 'function') return null;
-        const identity = await platformAccess.getIdentity();
-        if (!identity || typeof identity !== 'object' || Array.isArray(identity)) return null;
-        const value = identity as Record<string, unknown>;
-        const subject = value.user_uuid ?? value.id;
-        const email = typeof value.email === 'string' && value.email.length <= 256 ? value.email : undefined;
-        if (typeof subject !== 'string' || !subject.length || subject.length > 256 ||
-          (!subjects.has(subject) && !(email && emails.has(email.toLowerCase())))) return null;
-        return { subject, ...(email ? { email } : {}) };
-      }
       const token = request.headers.get('Cf-Access-Jwt-Assertion');
       if (!token || token.length > MAX_TOKEN_BYTES) return null;
       const segments = token.split('.');
@@ -147,16 +134,14 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
       if (!subjects.has(claims.sub) && !(email && emails.has(email.toLowerCase()))) return null;
       const signature = decode(segments[2]);
       const keys = await keysFor(issuer);
-      if (!keys) { onReject?.('jwks_unavailable'); return null; }
-      const key = keys.get(header.kid);
-      if (!key) { onReject?.('signing_key_not_found'); return null; }
-      if (!await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature,
-        new TextEncoder().encode(`${segments[0]}.${segments[1]}`))) { onReject?.('signature_rejected'); return null; }
+      const key = keys?.get(header.kid);
+      if (!key || !await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature,
+        new TextEncoder().encode(`${segments[0]}.${segments[1]}`))) return null;
       // Key retrieval and crypto are asynchronous: initial validity is not completion validity.
       const verifiedTime = Math.floor(now() / 1000);
       if ((claims.exp as number) <= verifiedTime || (claims.nbf !== undefined && (claims.nbf as number) > verifiedTime)) return null;
       return { subject: claims.sub, ...(email ? { email } : {}) };
-    } catch { onReject?.('verification_exception'); return null; }
+    } catch { return null; }
   };
 }
 

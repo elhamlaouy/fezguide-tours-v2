@@ -51,7 +51,7 @@ test('Access verifies RS256 header assertions and configured allowed identity', 
   const verify = createAccessVerifier({ now: () => NOW * 1000, fetch: async (url, init) => {
     fetches++;
     assert.equal(url, 'https://fixture.cloudflareaccess.com/cdn-cgi/access/certs');
-    assert.equal(init.redirect, 'error');
+    assert.equal(init.redirect, 'manual');
     return Response.json({ keys: [jwk] });
   } });
   const token = await signedToken();
@@ -60,6 +60,23 @@ test('Access verifies RS256 header assertions and configured allowed identity', 
   assert.equal(fetches, 1);
   assert.equal(await verify(accessRequest(token), {}), null);
   assert.equal(await verify(accessRequest(), accessEnv), null);
+});
+
+test('Access rejects redirecting JWKS responses without following Location or retry storms', async () => {
+  const { createAccessVerifier } = await import('../worker/cms-auth.ts');
+  const token = await signedToken();
+  for (const status of [301, 302, 303, 307, 308]) {
+    let fetches = 0;
+    const verify = createAccessVerifier({ now: () => NOW * 1000, fetch: async (url, init) => {
+      fetches++;
+      assert.equal(url, 'https://fixture.cloudflareaccess.com/cdn-cgi/access/certs');
+      assert.equal(init.redirect, 'manual');
+      return new Response(null, { status, headers: { Location: 'https://untrusted.example.test/keys' } });
+    } });
+    assert.equal(await verify(accessRequest(token), accessEnv), null);
+    assert.equal(await verify(accessRequest(token), accessEnv), null);
+    assert.equal(fetches, 1, 'redirect failures must be cached, never followed');
+  }
 });
 
 test('CMS API denies anonymous writes and publishes only allowlisted content', async () => {
