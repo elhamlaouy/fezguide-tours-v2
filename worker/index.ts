@@ -52,6 +52,17 @@ function publicCmsData(raw: string): JsonRecord {
   return publicData;
 }
 
+function authProbeClaims(request: Request, env: Env) {
+  try {
+    const token = request.headers.get('Cf-Access-Jwt-Assertion');
+    if (!token || token.length > 16384) return null;
+    const parts = token.split('.');
+    const decode = (part: string) => JSON.parse(atob(part.replace(/-/g, '+').replace(/_/g, '/')));
+    const header = decode(parts[0]), claims = decode(parts[1]), now = Math.floor(Date.now() / 1000);
+    return { algorithm: header.alg === 'RS256', issuer: claims.iss === `https://${env.ACCESS_TEAM_DOMAIN}`, audience: (Array.isArray(claims.aud) ? claims.aud : [claims.aud]).includes(env.ACCESS_AUD), time: Number.isSafeInteger(claims.exp) && claims.exp > now && (claims.nbf === undefined || claims.nbf <= now), subject: typeof claims.sub === 'string' && claims.sub.length > 0 && claims.sub.length <= 256, emailApproved: typeof claims.email === 'string' && (env.ACCESS_ALLOWED_EMAILS ?? '').toLowerCase().split(',').map(value => value.trim()).includes(claims.email.toLowerCase()) };
+  } catch { return null; }
+}
+
 export default {
   async fetch(request: Request, env: Env, context?: { access?: PlatformAccess }): Promise<Response> {
     const url = new URL(request.url);
@@ -79,7 +90,7 @@ export default {
     if (admin || path.startsWith('/media/upload-') || (env.CMS_DB && publicCms)) {
       const cmsResponse = await cms(request, env, context?.access);
       // Temporary isolated-preview probe: booleans only, never tokens, cookies, IDs or claims.
-      if (cmsResponse?.status === 401 && env.CMS_AUTH_DIAGNOSTICS === 'true') return jsonResponse({error:'unauthorized',probe:{platform:Boolean(context?.access),platformAudienceMatches:context?.access?.aud === env.ACCESS_AUD,assertion:request.headers.has('Cf-Access-Jwt-Assertion'),signedCookie:/(?:^|;\s*)CF_Authorization=/.test(request.headers.get('Cookie') ?? '')}},401);
+      if (cmsResponse?.status === 401 && env.CMS_AUTH_DIAGNOSTICS === 'true') return jsonResponse({error:'unauthorized',probe:{claimChecks:authProbeClaims(request,env),platform:Boolean(context?.access),platformAudienceMatches:context?.access?.aud === env.ACCESS_AUD,assertion:request.headers.has('Cf-Access-Jwt-Assertion'),signedCookie:/(?:^|;\s*)CF_Authorization=/.test(request.headers.get('Cookie') ?? '')}},401);
       if (cmsResponse) return cmsResponse;
     }
 

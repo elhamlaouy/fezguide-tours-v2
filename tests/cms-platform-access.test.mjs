@@ -38,3 +38,13 @@ test('platform owner identity preserves case-insensitive email and explicit stab
   assert.equal((await worker.fetch(request(),env,{access})).status,200);
   assert.equal((await worker.fetch(request(),{...env,ACCESS_ALLOWED_EMAILS:undefined,ACCESS_ALLOWED_SUBJECTS:'verified-owner'},{access})).status,200);
 });
+
+test('temporary preview diagnostics expose booleans only and never authorize a forged token',async()=>{
+  const encode=value=>Buffer.from(JSON.stringify(value)).toString('base64url');
+  const token=`${encode({alg:'HS256',kid:'fake-key',typ:'JWT'})}.${encode({iss:'https://owner.cloudflareaccess.com',aud:['preview-audience'],exp:Math.floor(Date.now()/1000)+600,sub:'private-subject-marker',email:'owner@example.test'})}.AA`;
+  const input=new Request('https://preview.example.test/admin',{headers:{'Cf-Access-Jwt-Assertion':token}});
+  const response=await worker.fetch(input,{...env,CMS_AUTH_DIAGNOSTICS:'true'});
+  assert.equal(response.status,401);
+  const payload=await response.json();assert.equal(payload.probe.claimChecks.audience,true);assert.equal(payload.probe.claimChecks.emailApproved,true);
+  assert.doesNotMatch(JSON.stringify(payload),/owner@example|private-subject|fake-key/);
+});
