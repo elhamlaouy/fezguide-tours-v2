@@ -10,7 +10,8 @@ export interface AccessVerifierOptions {
   fetch?: typeof globalThis.fetch;
   now?: () => number;
 }
-export type AccessVerifier = (request: Request, env: CmsAccessEnv) => Promise<CmsIdentity | null>;
+export interface PlatformAccess { aud: string; getIdentity(): Promise<unknown> }
+export type AccessVerifier = (request: Request, env: CmsAccessEnv, platformAccess?: PlatformAccess) => Promise<CmsIdentity | null>;
 const MAX_TOKEN_BYTES = 16_384;
 const MAX_JWKS_BYTES = 65_536;
 const CACHE_MS = 300_000;
@@ -109,13 +110,25 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
     return entry.keys;
   }
 
-  return async (request, env) => {
+  return async (request, env, platformAccess) => {
     try {
       const issuer = issuerFor(env.ACCESS_TEAM_DOMAIN);
       const audience = env.ACCESS_AUD;
       const subjects = allowlist(env.ACCESS_ALLOWED_SUBJECTS);
       const emails = new Set([...allowlist(env.ACCESS_ALLOWED_EMAILS)].map(email => email.toLowerCase()));
       if (!issuer || !audience || audience.length > 256 || (!subjects.size && !emails.size)) return null;
+      if (platformAccess) {
+        // Only the runtime's third fetch argument supplies this capability. Never trust a request/env field.
+        if (platformAccess.aud !== audience || typeof platformAccess.getIdentity !== 'function') return null;
+        const identity = await platformAccess.getIdentity();
+        if (!identity || typeof identity !== 'object' || Array.isArray(identity)) return null;
+        const value = identity as Record<string, unknown>;
+        const subject = value.user_uuid ?? value.id;
+        const email = typeof value.email === 'string' && value.email.length <= 256 ? value.email : undefined;
+        if (typeof subject !== 'string' || !subject.length || subject.length > 256 ||
+          (!subjects.has(subject) && !(email && emails.has(email.toLowerCase())))) return null;
+        return { subject, ...(email ? { email } : {}) };
+      }
       const token = request.headers.get('Cf-Access-Jwt-Assertion');
       if (!token || token.length > MAX_TOKEN_BYTES) return null;
       const segments = token.split('.');

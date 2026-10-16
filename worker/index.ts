@@ -1,5 +1,6 @@
 import { validateCmsDocument } from '../src/cms/schema';
 import { createCmsHandler, isCmsAdminPath, type CmsRoutesEnv } from './cms-routes';
+import type { PlatformAccess } from './cms-auth';
 import { publicSeoResponse } from './seo';
 
 interface KVNamespaceReader {
@@ -51,7 +52,7 @@ function publicCmsData(raw: string): JsonRecord {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, context?: { access?: PlatformAccess }): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
     // Admin is always gated, including when D1 is absent, so writes and /admin
@@ -75,7 +76,7 @@ export default {
     }
     const publicCms = path === '/api/cms' || path === '/api/cms/document';
     if (admin || path.startsWith('/media/upload-') || (env.CMS_DB && publicCms)) {
-      const cmsResponse = await cms(request, env);
+      const cmsResponse = await cms(request, env, context?.access);
       if (cmsResponse) return cmsResponse;
     }
 
