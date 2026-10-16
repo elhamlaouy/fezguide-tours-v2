@@ -11,7 +11,7 @@ export interface AccessVerifierOptions {
   now?: () => number;
 }
 export interface PlatformAccess { aud: string; getIdentity(): Promise<unknown> }
-export type AccessVerifier = (request: Request, env: CmsAccessEnv, platformAccess?: PlatformAccess) => Promise<CmsIdentity | null>;
+export type AccessVerifier = (request: Request, env: CmsAccessEnv, platformAccess?: PlatformAccess, onReject?: (reason: string) => void) => Promise<CmsIdentity | null>;
 const MAX_TOKEN_BYTES = 16_384;
 const MAX_JWKS_BYTES = 65_536;
 const CACHE_MS = 300_000;
@@ -110,7 +110,7 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
     return entry.keys;
   }
 
-  return async (request, env, platformAccess) => {
+  return async (request, env, platformAccess, onReject) => {
     try {
       const issuer = issuerFor(env.ACCESS_TEAM_DOMAIN);
       const audience = env.ACCESS_AUD;
@@ -147,14 +147,16 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
       if (!subjects.has(claims.sub) && !(email && emails.has(email.toLowerCase()))) return null;
       const signature = decode(segments[2]);
       const keys = await keysFor(issuer);
-      const key = keys?.get(header.kid);
-      if (!key || !await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature,
-        new TextEncoder().encode(`${segments[0]}.${segments[1]}`))) return null;
+      if (!keys) { onReject?.('jwks_unavailable'); return null; }
+      const key = keys.get(header.kid);
+      if (!key) { onReject?.('signing_key_not_found'); return null; }
+      if (!await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, signature,
+        new TextEncoder().encode(`${segments[0]}.${segments[1]}`))) { onReject?.('signature_rejected'); return null; }
       // Key retrieval and crypto are asynchronous: initial validity is not completion validity.
       const verifiedTime = Math.floor(now() / 1000);
       if ((claims.exp as number) <= verifiedTime || (claims.nbf !== undefined && (claims.nbf as number) > verifiedTime)) return null;
       return { subject: claims.sub, ...(email ? { email } : {}) };
-    } catch { return null; }
+    } catch { onReject?.('verification_exception'); return null; }
   };
 }
 

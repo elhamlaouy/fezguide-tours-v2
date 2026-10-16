@@ -149,14 +149,14 @@ export function isCmsAdminPath(path: string) {
  */
 export function createCmsHandler(options: CmsHandlerOptions) {
   const verify = createAccessVerifier(options.access);
-  return async (request: Request, env: CmsRoutesEnv, platformAccess?: PlatformAccess): Promise<Response | null> => {
+  return async (request: Request, env: CmsRoutesEnv, platformAccess?: PlatformAccess, onReject?: (reason: string) => void): Promise<Response | null> => {
     const url = new URL(request.url);
     const path = url.pathname;
     const admin = isCmsAdminPath(path);
     const publicMedia = path.startsWith('/media/upload-');
     const publicRoute = path === '/api/cms' || path === '/api/cms/document';
     if (!admin && !publicRoute && !publicMedia) return null;
-    const identity = admin ? await verify(request, env, platformAccess) : null;
+    const identity = admin ? await verify(request, env, platformAccess, onReject) : null;
     if (admin && !identity) return json({ error: 'unauthorized' }, 401);
     // JWTs are not readable by another origin; reject cookie-assisted cross-origin writes too.
     if (admin && !['GET', 'HEAD'].includes(request.method) && request.headers.has('origin') && request.headers.get('origin') !== url.origin) {

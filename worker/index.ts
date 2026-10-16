@@ -88,9 +88,10 @@ export default {
     }
     const publicCms = path === '/api/cms' || path === '/api/cms/document';
     if (admin || path.startsWith('/media/upload-') || (env.CMS_DB && publicCms)) {
-      const cmsResponse = await cms(request, env, context?.access);
+      let authFailure = 'pre_signature_validation';
+      const cmsResponse = await cms(request, env, context?.access, env.CMS_AUTH_DIAGNOSTICS === 'true' ? reason => { authFailure = reason; } : undefined);
       // Temporary isolated-preview probe: booleans only, never tokens, cookies, IDs or claims.
-      if (cmsResponse?.status === 401 && env.CMS_AUTH_DIAGNOSTICS === 'true') return jsonResponse({error:'unauthorized',probe:{claimChecks:authProbeClaims(request,env),platform:Boolean(context?.access),platformAudienceMatches:context?.access?.aud === env.ACCESS_AUD,assertion:request.headers.has('Cf-Access-Jwt-Assertion'),signedCookie:/(?:^|;\s*)CF_Authorization=/.test(request.headers.get('Cookie') ?? '')}},401);
+      if (cmsResponse?.status === 401 && env.CMS_AUTH_DIAGNOSTICS === 'true') return jsonResponse({error:'unauthorized',probe:{failure:authFailure,claimChecks:authProbeClaims(request,env),platform:Boolean(context?.access),platformAudienceMatches:context?.access?.aud === env.ACCESS_AUD,assertion:request.headers.has('Cf-Access-Jwt-Assertion'),signedCookie:/(?:^|;\s*)CF_Authorization=/.test(request.headers.get('Cookie') ?? '')}},401);
       if (cmsResponse) return cmsResponse;
     }
 
