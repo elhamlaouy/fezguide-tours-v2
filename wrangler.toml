@@ -36,6 +36,7 @@ ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
 CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
 
 [previews.vars]
+CMS_AUTH_DIAGNOSTICS = "true"
 CANONICAL_ORIGIN = "https://fezguidetours.elhamlaouy.workers.dev"
 ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
 ACCESS_AUD = "3c29685d1185a4db5ca7576805bf832884148910a7c0d4cb97fecc464898e4d8"
