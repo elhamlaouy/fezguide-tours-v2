@@ -160,13 +160,14 @@ const pillarFields: Record<string, Check> = {
 const pillar = obj(pillarFields);
 const date: Check = (v, p, e) => {
   if (typeof v !== 'string' || v.length > 50 || !/^(?:\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z)?|[A-Z][a-z]+ \d{1,2}, \d{4})$/.test(v)) { fail(e, p, 'invalid date'); return; }
-  const parsed = new Date(v);
   const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(v);
   const named = /^([A-Z][a-z]+) (\d{1,2}), (\d{4})$/.exec(v);
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const year = Number(iso?.[1] ?? named?.[3]);
   const month = iso ? Number(iso[2]) - 1 : months.indexOf(named![1]);
   const day = Number(iso?.[3] ?? named?.[2]);
+  // Calendar-only dates must not inherit the editor browser's timezone.
+  const parsed = new Date(iso ? v : `${named![3]}-${String(month + 1).padStart(2, '0')}-${named![2].padStart(2, '0')}T00:00:00.000Z`);
   if (!Number.isFinite(parsed.getTime()) || parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month || parsed.getUTCDate() !== day) fail(e, p, 'invalid calendar date');
 };
 const customPage = obj({ id, slug: id, title, subtitle: title, heroImage: url(true), content: copy, highlights: list, showInNav: bool, published: bool, createdAt: date });

@@ -25,10 +25,20 @@ try{
  const executablePath=process.arch==='arm64'?'/home/ubuntu/.cache/ms-playwright/chromium-1248/chrome-linux-arm64/chrome':'/home/ubuntu/.cache/ms-playwright/chromium-1234/chrome-linux/chrome';
  browser=await puppeteer.launch({executablePath,headless:true,timeout:90000,userDataDir:path.join(temporary,'browser'),protocolTimeout:90000,args:['--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--renderer-process-limit=2']});
  const editor=await browser.newPage(),publicPage=await browser.newPage(),errors=[],writes=[],cspViolations=[];
- for(const page of [editor,publicPage]){await page.setViewport({width:1440,height:1000});page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error'&&/Content Security Policy|Refused to (?:execute|load|apply|connect|frame)/i.test(message.text()))cspViolations.push(message.text());});}
+ for(const page of [editor,publicPage]){await page.emulateTimezone('Europe/Madrid');await page.setViewport({width:1440,height:1000});page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error'&&/Content Security Policy|Refused to (?:execute|load|apply|connect|frame)/i.test(message.text()))cspViolations.push(message.text());});}
  editor.on('request',request=>{if(!['GET','HEAD'].includes(request.method()))writes.push({method:request.method(),path:new URL(request.url()).pathname});});
  const loadEditor=async()=>{await editor.bringToFront();await editor.goto(preview.url+'/admin',{waitUntil:'domcontentloaded',timeout:90000});await editor.waitForSelector('[data-admin-status=ready]');};
- const visiblePublic=async(locale)=>{await publicPage.bringToFront();await publicPage.goto(preview.url+(locale==='en'?'/':`/${locale}`),{waitUntil:'domcontentloaded',timeout:90000});await publicPage.waitForSelector('.cms-page');return publicPage.$eval('.cms-page',node=>node.innerText);};
+ const visiblePublic=async(locale)=>{
+  await publicPage.bringToFront();
+  const response=await publicPage.goto(preview.url+(locale==='en'?'/':`/${locale}`),{waitUntil:'domcontentloaded',timeout:90000});
+  assert.equal(response.status(),200,`public ${locale} navigation failed`);
+  try {await publicPage.waitForSelector('.cms-page');}
+  catch(error){
+   console.error(JSON.stringify({stage,locale,status:response.status(),errors,cspViolations,publicPage:await publicPage.evaluate(()=>({text:document.body.innerText.slice(0,1200),snapshot:Boolean(document.getElementById('cms-published-document')),scripts:[...document.scripts].map(script=>script.getAttribute('src')).filter(Boolean)}))}));
+   throw error;
+  }
+  return publicPage.$eval('.cms-page',node=>node.innerText);
+ };
  const replace=async(selector,value)=>{await editor.click(selector);await editor.keyboard.down('Control');await editor.keyboard.press('A');await editor.keyboard.up('Control');await editor.keyboard.type(value);};
  mark('load editor');await loadEditor();await editor.select('[name=current-section]',hero.id);
  for(const locale of ['en','fr','es']){
@@ -47,7 +57,11 @@ try{
  assert.equal(await editor.$eval(`[data-path="pages.home.sections.${hero.id}.title.en"]`,node=>node.value),markers.en);
  mark('publish');const publication=editor.waitForResponse(response=>response.request().method()==='POST'&&response.url().endsWith('/content/publish'));
  await editor.click('[name=publish]');assert.equal((await publication).status(),200);
- for(const locale of ['en','fr','es'])assert.ok((await visiblePublic(locale)).includes(markers[locale]),'published changes must render in an independent public browser');
+ const publishedState=await read('/api/admin/content');
+ assert.equal(publishedState.publishedRevision,publishedState.version,'publish must move the durable public pointer');
+ const publishedDocument=(await read('/api/cms/document')).document;
+ assert.deepEqual(publishedDocument.pages.find(page=>page.id==='home').sections.find(section=>section.id===hero.id).title,markers,'the public API must expose exactly the saved multilingual headings');
+ for(const locale of ['en','fr','es']){mark(`check published ${locale}`);assert.ok((await visiblePublic(locale)).includes(markers[locale]),'published changes must render in an independent public browser');}
  mark('restart durable state');const beforeRestart=await read('/api/admin/content');
  await preview.close();preview=null;preview=await startPreview(options);
  const afterRestart=await read('/api/admin/content');assert.deepEqual(afterRestart,beforeRestart,'saved content and published pointer survive a Worker restart');
