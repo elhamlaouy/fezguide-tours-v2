@@ -44,6 +44,7 @@ const imageAlts = {
     'Visiteurs traversant une galerie historique à Fès',
     'Scène de vie quotidienne dans une rue de la Médina de Fès',
   ],
+  es: ["Callejón estrecho de la medina antigua de Fez", "Vista panorámica de la ciudad de Fez", "Zellige y detalles tallados en un patio histórico de Fez", "Productos tradicionales expuestos en un puesto de la medina de Fez", "Calle comercial cubierta dentro de la medina de Fez", "Edificios históricos en una calle de Fez", "Bab Boujloud, la Puerta Azul de Fez, iluminada por la noche", "Patio con azulejos y arcos tallados en una madrasa de Fez", "Pasaje abovedado y ornamentado en la medina histórica de Fez", "Cubas tradicionales de teñido en las curtidurías Chouara", "Plaza histórica y arquitectura de la zona de Nejjarine", "Entrada histórica y torre en la medina de Fez", "Visitantes recorriendo una galería histórica de Fez", "Escena cotidiana en una calle de la medina de Fez"]
 };
 
 const imageDimensions = [
@@ -102,18 +103,42 @@ const content = {
     closing: 'Découvrez l’histoire, la culture et les monuments de Fès à travers des yeux locaux.',
     cta: 'Explorer nos visites de Fès',
   },
+  es: {
+    title: 'Historia, cultura y monumentos',
+    paragraphs: [
+      'Fez es una de las ciudades más antiguas e importantes de Marruecos, y su historia sigue formando parte de la vida cotidiana. Cuando recorres sus calles antiguas, visitas un taller tradicional, entras en una madrasa o cruzas una de sus puertas históricas, no estás simplemente visitando un lugar del pasado: estás descubriendo una ciudad que lleva generaciones viviendo y transformándose.',
+      'Fez se fundó en el siglo IX y, con el paso de los siglos, se convirtió en un importante centro religioso, educativo, comercial y artesanal. También fue una de las antiguas capitales de Marruecos, de ahí que se conozca como una de las cuatro ciudades imperiales del país.',
+      'Uno de los aspectos más importantes de la historia de Fez es su tradición de conocimiento. La ciudad alcanzó gran prestigio por la enseñanza religiosa y académica: sus mezquitas, madrasas y centros de estudio atraían a estudiantes y eruditos de distintas regiones de Marruecos y de otros lugares.',
+      'Pero la cultura de Fez no se encuentra solo en los libros y los monumentos. También se ve en el trabajo de los artesanos locales. El zellige, la carpintería tradicional, el cuero, la metalistería, el tejido y otros oficios forman parte de la vida de Fez desde hace generaciones. Al pasear por la medina todavía puedes observar a los artesanos trabajando en pequeños talleres con técnicas tradicionales.',
+      'La gastronomía es otra parte esencial de la cultura de Fez. Las recetas tradicionales, las especias, el pan, los dulces y las costumbres culinarias familiares están profundamente vinculados al día a día. Por eso, visitar la ciudad no consiste únicamente en admirar su arquitectura: también implica probar y conocer su cultura local.',
+      'En Fez se pueden contemplar distintas etapas de su historia unas junto a otras. El Mellah y Fez Jdid conservan una parte importante del patrimonio judío de la ciudad, con sus sinagogas históricas, su cementerio y su arquitectura judía tradicional. La zona también refleja la relación entre la ciudad antigua, la historia de la monarquía en Fez y las comunidades que han dado forma a la ciudad con el tiempo.',
+      'Los monumentos históricos de Fez ayudan a comprender mejor ese relato. Bab Boujloud, conocida como la Puerta Azul, es una de las entradas más reconocibles de la medina antigua y un punto de partida natural para descubrir la ciudad histórica.',
+      'Dentro de la medina, la madrasa Bou Inania muestra la belleza de la arquitectura tradicional marroquí, con sus delicados mosaicos de zellige, su madera tallada, sus trabajos de yesería y un diseño que refleja la importancia de la educación y la religión en la ciudad.',
+      'Al Quaraouiyine ocupa también un lugar fundamental en la historia de Fez y en su larga tradición de conocimiento. A su alrededor puedes descubrir calles y barrios que siguen vinculados a la vida intelectual y religiosa de la ciudad.',
+      'La madrasa Al-Attarine es otro ejemplo del cuidado arquitectónico que se encuentra por toda la medina. Su decoración permite apreciar de cerca la destreza de los artesanos que hicieron famosa a Fez.',
+      'Las curtidurías Chouara muestran otra faceta de los oficios tradicionales de la ciudad. La producción de cuero forma parte de la identidad de Fez desde hace siglos, y las curtidurías siguen siendo uno de los lugares donde los visitantes pueden observar este trabajo tradicional.',
+      'La zona de Nejjarine y su tradición de trabajo de la madera ofrecen otra mirada al patrimonio artesanal de la medina. Al recorrer estas calles, empiezas a comprender que los edificios históricos y los oficios tradicionales están estrechamente relacionados.',
+      'Lo que distingue a Fez es que estos monumentos no están aislados. Los rodean calles, tiendas, viviendas, talleres, cafeterías y mercados donde la gente sigue viviendo y trabajando. Aquí, la historia no está separada de la vida cotidiana: forma parte de ella.',
+      'Por eso, explorar Fez con un guía local puede ofrecerte una experiencia diferente. Un monumento puede resultar hermoso desde fuera, pero saber por qué se construyó, qué ocurrió a su alrededor y cómo lo perciben los vecinos hace que el lugar cobre mucho más sentido.',
+      'Cuando visites Fez, tómate tu tiempo. Mira más allá de los monumentos famosos, fíjate en los detalles de la arquitectura, escucha los sonidos de los talleres, prueba la comida local y observa cómo continúa la vida cotidiana a tu alrededor.',
+      'Fez no es una ciudad donde la historia se encuentre únicamente en los museos. Se percibe en las calles, los edificios, los oficios, la gastronomía y las personas.',
+    ],
+    imageAfter: [1, 2, 3, 4, 5, 6, 7, 8, 9, null, 10, 11, 12, 13, null, 14] as Array<number | null>,
+    back: 'Volver a Fez',
+    closing: 'Descubre la historia, la cultura y los monumentos de Fez de la mano de quienes viven aquí.',
+    cta: 'Descubre nuestras visitas de Fez',
+  },
 };
 
 export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = language === 'fr' ? content.fr : content.en;
-  const fallbackEnglish = language === 'ar';
-  const altCopy = language === 'fr' ? imageAlts.fr : imageAlts.en;
+  const copy = content[language];
+  const altCopy = imageAlts[language];
 
   return (
-    <div className="bg-[#FAF8F5] pb-20" dir={fallbackEnglish ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] pb-20">
       <PageCrumbBar
         language={language}
-        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
         onParent={onBack}
@@ -159,9 +184,9 @@ export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps>
           );
         })}
 
-        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} />
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </article>
     </div>
   );

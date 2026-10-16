@@ -35,11 +35,11 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
   const rawNumber = siteSettings.whatsappNumber || '212719603009';
   const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
-  const tourName = pillar.title[language] || pillar.title.en;
+  const tourName = pillar.title[language] || (language === 'es' ? '' : pillar.title.en);
 
   const getWhatsAppMessage = () => {
-    if (language === 'ar') {
-      return `السلام عليكم ورحمة الله، أنا مهتم بجولة "${tourName}" عبر موقع FezGuideTours. هل يمكن تزويدي بالتواريخ المتاحة؟`;
+    if (language === 'es') {
+      return `Hola, me interesa la visita "${tourName}" de FezGuideTours. ¿Podéis indicarme las fechas disponibles?`;
     }
     if (language === 'fr') {
       return `Bonjour ! Je suis intéressé(e) par la visite "${tourName}" via FezGuideTours. Pourriez-vous me donner les disponibilités ?`;
@@ -62,7 +62,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors cursor-pointer"
-          aria-label="Close modal"
+          aria-label={language === 'es' ? "Cerrar ventana" : "Close modal"}
         >
           <X className="w-5 h-5" />
         </button>

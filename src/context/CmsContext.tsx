@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { BlogPost, CustomPage, FaqItem, SectionPillar, SiteSettings, TeamMember } from '../types';
+import type { CmsDocument } from '../cms/schema';
+import { fetchPublishedDocument, readPublishedSnapshot } from '../cms/public-document';
 import {
   DAY_TRIPS_PILLARS,
   DEFAULT_BLOG_POSTS,
@@ -20,6 +22,10 @@ interface PublicCmsData {
   teamMembers: TeamMember[];
   faqs: FaqItem[];
   siteSettings: SiteSettings;
+}
+
+interface CmsContextValue extends PublicCmsData {
+  publishedDocument: CmsDocument | null;
 }
 
 const sanitizeImagePath = (url: string | undefined): string => {
@@ -60,10 +66,10 @@ const initialTours: SectionPillar[] = [
     published: true,
     galleryImages: extra?.galleryImages || [pillar.image],
     itinerary: extra?.itinerary || [],
-    included: extra?.included || { en: [], fr: [], ar: [] },
-    excluded: extra?.excluded || { en: [], fr: [], ar: [] },
-    whatToBring: extra?.whatToBring || { en: [], fr: [], ar: [] },
-    meetingPointDetails: extra?.meetingPointDetails || { en: '', fr: '', ar: '' },
+    included: extra?.included || { en: [], fr: [], es: [] },
+    excluded: extra?.excluded || { en: [], fr: [], es: [] },
+    whatToBring: extra?.whatToBring || { en: [], fr: [], es: [] },
+    meetingPointDetails: extra?.meetingPointDetails || { en: '', fr: '', es: '' },
   };
 });
 
@@ -87,13 +93,16 @@ const defaultData: PublicCmsData = {
   siteSettings: DEFAULT_SITE_SETTINGS,
 };
 
-const CmsContext = createContext<PublicCmsData | undefined>(undefined);
+const CmsContext = createContext<CmsContextValue | undefined>(undefined);
 
 export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [data, setData] = useState<PublicCmsData>(defaultData);
+  const [publishedDocument, setPublishedDocument] = useState<CmsDocument | null>(readPublishedSnapshot);
 
   useEffect(() => {
     const controller = new AbortController();
+    // ponytail: a published snapshot is authoritative; do not paint/fetch the legacy site first.
+    if (publishedDocument) return () => controller.abort();
 
     const loadPublicContent = async () => {
       try {
@@ -126,14 +135,24 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
     };
 
-    void loadPublicContent();
+    // ponytail: source protections above stay on /api/cms; PageRenderer uses this document as validated.
+    void fetchPublishedDocument({ signal: controller.signal }).then((document) => {
+      if (controller.signal.aborted) return;
+      if (document) setPublishedDocument(document);
+      else void loadPublicContent();
+    });
     return () => controller.abort();
   }, []);
 
-  return <CmsContext.Provider value={data}>{children}</CmsContext.Provider>;
+  return <CmsContext.Provider value={{ ...data, publishedDocument }}>{children}</CmsContext.Provider>;
 };
 
-export const useCms = (): PublicCmsData => {
+/** Local editor projection only: no fetching and no mutation of the published context. */
+export const CmsPreviewProvider: React.FC<{ document: CmsDocument; children: React.ReactNode }> = ({ document, children }) => (
+  <CmsContext.Provider value={{ ...defaultData, ...document.legacy, siteSettings: document.siteSettings, publishedDocument: document }}>{children}</CmsContext.Provider>
+);
+
+export const useCms = (): CmsContextValue => {
   const context = useContext(CmsContext);
   if (!context) {
     throw new Error('useCms must be used within a CmsProvider');

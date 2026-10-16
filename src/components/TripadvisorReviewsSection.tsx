@@ -65,7 +65,7 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
       </p>
     </div>
 
-    <div className="tripadvisor-marquee" tabIndex={0} aria-label="Tripadvisor traveler reviews">
+    <div className="tripadvisor-marquee" tabIndex={0} aria-label={language === 'es' ? "Opiniones de viajeros en Tripadvisor" : "Tripadvisor traveler reviews"}>
       <div className="tripadvisor-track">
         {[tripadvisorReviews, tripadvisorReviews].map((reviews, copyIndex) => (
           <div className="tripadvisor-set" key={copyIndex}>
@@ -81,7 +81,7 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
                   <div className="tripadvisor-bubbles" aria-label="5 out of 5 bubbles" role="img">{[0, 1, 2, 3, 4].map((bubble) => <span key={bubble} />)}</div>
                   <h3>{review.title}</h3>
                   <p>“{review.quote}”</p>
-                  <span className="tripadvisor-read">{language === 'fr' ? 'Lire sur Tripadvisor' : 'Read on Tripadvisor'} <ArrowRight aria-hidden="true" /></span>
+                  <span className="tripadvisor-read">{language === 'es' ? 'Leer en Tripadvisor' : language === 'fr' ? 'Lire sur Tripadvisor' : 'Read on Tripadvisor'} <ArrowRight aria-hidden="true" /></span>
                 </a>
               );
             })}

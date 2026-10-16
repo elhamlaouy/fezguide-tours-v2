@@ -23,12 +23,12 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
     title: {
       en: 'Taste Fez Through Local Eyes — Food & Tasting Walks',
       fr: 'Goûtez Fès à Travers des Yeux Locaux — Balades Gourmandes',
-      ar: 'تذوق فاس بعيون أهلها — جولات الأكل والتذوق الشعبي',
+      es: 'Saborea Fez de la mano de sus vecinos — Paseos gastronómicos',
     },
     subtitle: {
       en: 'To understand Fez, you should not only walk through its streets. You should taste them. Discover the smells, flavours, bakeries, and street foods of the Old Medina.',
       fr: 'Pour comprendre Fès, il faut la goûter ! Découvrez les arômes, les saveurs, les fours communaux et la street food authentique de la médina.',
-      ar: 'لفهم فاس الحقيقية، لا تكتفِ بالمشي في دروبها بل تذوق طعامها الشعبي! استكشف نكهات الأفران العتيقة، الشباكية، البيصارة، والشاي بالنعناع.',
+      es: 'Para comprender Fez, no basta con recorrer sus calles: también hay que saborearlas. Descubre los aromas, los sabores, las panaderías y la comida callejera de la medina antigua.',
     },
   };
 
@@ -41,35 +41,35 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
 
   const whatYouTaste = [
     {
-      name: { en: 'Harcha & Baghrir', fr: 'Harcha & Baghrir', ar: 'الحرشة والبغرير الفاسي' },
+      name: { en: 'Harcha & Baghrir', fr: 'Harcha & Baghrir', es: 'Harcha y baghrir' },
       desc: {
         en: 'Warm semolina pan-bread and honeycomb thousand-hole pancakes served with wild honey and farm butter.',
         fr: 'Galette de semoule tiède et crêpes mille trous alvéolées au miel et beurre fondu.',
-        ar: 'حرشة السميد الذهبية الساخنة وبغرير العسل والزبدة البلدية الطازجة.',
+        es: 'Pan de sémola caliente y tortitas de mil agujeros, servidos con miel silvestre y mantequilla de granja.',
       },
     },
     {
-      name: { en: 'Piping-Hot Bissara', fr: 'Bissara Fumante', ar: 'حساء البيصارة بالكمون وزيت الزيتون' },
+      name: { en: 'Piping-Hot Bissara', fr: 'Bissara Fumante', es: 'Bissara bien caliente' },
       desc: {
         en: 'Velvety dried fava bean soup served in clay bowls with cold-pressed olive oil, cumin, and crusty bread.',
         fr: 'Onctueuse soupe de fèves au cumin, généreux filet d’huile d’olive vierge et pain frais.',
-        ar: 'حساء الفول المطهو على نار هادئة بزيت الزيتون البكر والكمون والخبز الساخن.',
+        es: 'Crema de habas secas en cuencos de barro, con aceite de oliva prensado en frío, comino y pan crujiente.',
       },
     },
     {
-      name: { en: 'Fresh Crispy Sfenj', fr: 'Sfenj Chaud et Croustillant', ar: 'السفنج البلدي المقرمش' },
+      name: { en: 'Fresh Crispy Sfenj', fr: 'Sfenj Chaud et Croustillant', es: 'Sfenj recién hechos y crujientes' },
       desc: {
         en: 'Traditional Moroccan doughnuts fried in bubbling oil right before your eyes and eaten piping hot.',
         fr: 'Beignets marocains traditionnels dorés à la minute sous vos yeux.',
-        ar: 'فطائر السفنج المقرمشة المقلية طازجة في دكاكين الحومة الشعبية.',
+        es: 'Buñuelos tradicionales marroquíes, fritos delante de ti y servidos bien calientes.',
       },
     },
     {
-      name: { en: 'Local Cheeses & Sweets', fr: 'Fromages Locaux & Douceurs', ar: 'أجبان الجبل والحلويات الفاسية' },
+      name: { en: 'Local Cheeses & Sweets', fr: 'Fromages Locaux & Douceurs', es: 'Quesos locales y dulces' },
       desc: {
         en: 'Sweet and salty fresh goat cheeses, spiced walnuts, fresh juices, and delicate Chebakia pastries.',
         fr: 'Fromages de chèvre frais, noix épicées, jus de saison et douceurs artisanales (Chebakia).',
-        ar: 'أجبان جبلية طازجة، جوز، عصائر فواكه موسمية، وحلويات الشباكية الفاسية بالعسل.',
+        es: 'Quesos frescos de cabra dulces y salados, nueces especiadas, zumos recién hechos y delicadas chebakias.',
       },
     },
   ];
@@ -80,7 +80,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
           src="/images/food-tasting-walk/wood-oven.webp"
-          alt="A baker working at a wood-fired oven"
+          alt={language === 'es' ? "Un panadero trabajando ante un horno de leña" : "A baker working at a wood-fired oven"}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -90,7 +90,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <UtensilsCrossed className="w-4 h-4 text-[#005F5A]" />
-              <span>Medina Food Tasting Walks · Fassi Gastronomy · Souks & Bakeries</span>
+              <span>{language === 'es' ? "Paseos gastronómicos por la medina · Cocina de Fez · Zocos y panaderías" : "Medina Food Tasting Walks \u00b7 Fassi Gastronomy \u00b7 Souks & Bakeries"}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
@@ -110,16 +110,16 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
         <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-10 shadow-xs space-y-6">
           <div className="max-w-3xl space-y-3">
             <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-              {language === 'ar' ? 'فلسفة جولة التذوق' : 'Not a Sit-Down Dinner — An Alley Safari'}
+              {language === 'es' ? "No es una cena de restaurante: es una ruta por los callejones" : 'Not a Sit-Down Dinner — An Alley Safari'}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1C2524] tracking-tight">
-              {language === 'ar'
-                ? 'رحلة ميدانية بين روائح ونكهات دروب فاس'
+              {language === 'es'
+                ? "Disfrutad de la comida en su entorno: las calles y la gente de Fez"
                 : 'Experience Food Where It Belongs: Among the Streets & People of Fez'}
             </h2>
             <p className="text-xs sm:text-sm text-[#4E5B59] leading-relaxed">
-              {language === 'ar'
-                ? 'هذه ليست مجرد جولة تجلس فيها في مطعم كبير لتناول وجبة سياحية؛ بل هي مشي ممتع في فاس البالي، نتوقف خلاله في دكاكين الحومة والمخابز الشعبية ومحلات التوابل لنتذوق الأكلات الطازجة ونفهم ارتباطها بحياة أهل فاس اليومية.'
+              {language === 'es'
+                ? "No es una visita en la que simplemente os sentáis a disfrutar de una gran comida en un restaurante. En su lugar, recorremos la medina antigua y hacemos paradas para descubrir y probar diferentes platos, aperitivos, dulces y especialidades locales, mientras aprendemos cómo se relacionan con la vida en Fez."
                 : 'This is not simply a tour where you sit down for one large restaurant meal. Instead, we walk through the Old Medina and stop along the way to discover and taste different foods, snacks, sweets, and local specialities while learning how they are connected to life in Fez.'}
             </p>
           </div>
@@ -149,7 +149,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
                 : 'text-[#445250] hover:text-[#005F5A]'
             }`}
           >
-            {language === 'ar' ? 'جميع تجارب الطعام' : `All Food Experiences (${foodPillars.length})`}
+            {language === 'es' ? 'Todas las experiencias gastronómicas' : `All Food Experiences (${foodPillars.length})`}
           </button>
           {foodPillars.map((p) => (
             <button
@@ -183,10 +183,10 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
         <div className="space-y-6 pt-4">
           <div className="text-center max-w-xl mx-auto space-y-1">
             <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              {language === 'ar' ? 'صور حقيقية للتذوق' : 'Authentic Food Gallery'}
+              {language === 'es' ? "Galería de gastronomía auténtica" : 'Authentic Food Gallery'}
             </span>
             <h3 className="text-2xl font-bold text-[#005F5A]">
-              {language === 'ar' ? 'نكهات أصيلة من مطبخ فاس' : 'Real Flavours of Fassi Culinary Life'}
+              {language === 'es' ? "Sabores auténticos de la vida culinaria de Fez" : 'Real Flavours of Fassi Culinary Life'}
             </h3>
           </div>
 
@@ -194,19 +194,19 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
             {[
               {
                 src: '/images/food-tasting-walk/pastries-tea.webp',
-                title: language === 'ar' ? 'حلويات وشاي من جولة التذوق' : 'Pastries and tea from the tasting walk',
+                title: language === 'es' ? "Dulces y té de la ruta de degustación" : 'Pastries and tea from the tasting walk',
               },
               {
                 src: '/images/food-culture-life/tea-tray.webp',
-                title: language === 'ar' ? 'صينية الشاي والضيافة' : 'Tea and hospitality',
+                title: language === 'es' ? "Té y hospitalidad" : 'Tea and hospitality',
               },
               {
                 src: '/images/food-markets-souks/spice-tins.webp',
-                title: language === 'ar' ? 'توابل السوق' : 'Market spices',
+                title: language === 'es' ? "Especias del mercado" : 'Market spices',
               },
               {
                 src: '/images/food-traditional-fassi/pastilla.webp',
-                title: language === 'ar' ? 'بسطيلة على المائدة' : 'Pastilla at the table',
+                title: language === 'es' ? "Pastela en la mesa" : 'Pastilla at the table',
               },
             ].map((img, idx) => (
               <div key={idx} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs group bg-[#1C2524]">
@@ -227,22 +227,22 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
         {/* Bottom CTA Box */}
         <div className="bg-[#FAF8F5] rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 text-center space-y-4">
           <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-            {language === 'ar'
-              ? 'تعال بشهية مفتوحة'
+            {language === 'es'
+              ? "Venid con hambre y llevaos el sabor de Fez"
               : language === 'fr'
               ? 'Venez le ventre vide — repartez conquis par les saveurs de Fès'
               : 'Come Hungry — Leave with a Taste of Fez'}
           </span>
           <h3 className="text-xl sm:text-2xl font-bold text-[#005F5A]">
-            {language === 'ar'
-              ? 'هل ترغب في جولة تذوق خاصة ومخصصة لمجموعتك؟'
+            {language === 'es'
+              ? "Reservad vuestra ruta gastronómica privada por la medina"
               : language === 'fr'
               ? 'Réservez votre visite culinaire privée dans la médina'
               : 'Book Your Private Medina Food Tasting Walk'}
           </h3>
           <p className="text-xs sm:text-sm text-[#4E5B59] max-w-2xl mx-auto leading-relaxed">
-            {language === 'ar'
-              ? 'جولة خاصة لكم ولمجموعتكم. التذوق يتبع ما تحضّره الدكاكين في ذلك اليوم.'
+            {language === 'es'
+              ? "Una ruta gastronómica privada para vosotros y vuestro grupo. Las degustaciones dependen de lo que preparen las tiendas locales ese día."
               : language === 'fr'
               ? 'Une balade privée pour vous et votre groupe. Les dégustations suivent ce que les boutiques préparent ce jour-là.'
               : 'This is a private food walk for you and your group. The tastings follow what local shops are preparing that day.'}
@@ -255,8 +255,8 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
               }}
               className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
             >
-              {language === 'ar'
-                ? 'احجز جولة التذوق الآن'
+              {language === 'es'
+                ? "Reservad vuestra ruta privada de degustación"
                 : language === 'fr'
                 ? 'Réserver la visite culinaire'
                 : 'Book Your Private Food Tasting Walk'}

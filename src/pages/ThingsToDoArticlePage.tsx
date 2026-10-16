@@ -32,6 +32,7 @@ const imageAlts = {
     'Terrasse de café en plein air éclairée la nuit à Fès',
     'Visiteurs posant devant une entrée décorée à Fès',
   ],
+  es: ["Calle animada de un zoco en la medina antigua de Fez", "Artesano trabajando en un taller tradicional de Fez", "Mercancías de colores colgadas sobre una calle comercial estrecha de Fez", "Vasos con bebidas sobre una mesa en Fez", "Calle y puerta tradicionales con ropa tendida en Fez", "Vista de los tejados apiñados de Fez", "Terraza de una cafetería al aire libre iluminada por la noche en Fez", "Visitantes posando ante una entrada decorada en Fez"]
 };
 
 const imageDimensions = [
@@ -72,18 +73,33 @@ const content = {
     back: 'Retour à Fès',
     cta: 'Explorez nos expériences à Fès',
   },
+  es: {
+    title: 'Qué hacer en Fez',
+    paragraphs: [
+      'En Fez hay mucho más que hacer que visitar sus monumentos famosos. La mejor manera de conocer la ciudad es recorrer sus calles, hablar con los vecinos, descubrir los oficios tradicionales, probar la comida local y tomarse el tiempo necesario para disfrutar de sus distintas facetas.',
+      'Empieza por explorar la medina antigua de Fez. Recorre sus callejuelas, descubre los zocos tradicionales, visita lugares históricos y detente a observar los detalles que te rodean. Cada zona de la medina tiene su propio ambiente, y a veces las mejores experiencias se encuentran lejos de las calles más turísticas.',
+      'Descubre los oficios tradicionales de Fez visitando talleres locales y observando a los artesanos mientras trabajan. Podrás conocer técnicas como el zellige, el trabajo del cuero, la carpintería, la metalistería y otros oficios que forman parte de la identidad de la ciudad desde hace generaciones.',
+      'Dedica tiempo a recorrer los zocos y mercados locales. Encontrarás especias, productos tradicionales marroquíes, piezas hechas a mano, alimentos y artículos de uso diario. Los zocos no son solo lugares donde comprar: también forman parte de la vida cotidiana de la medina.',
+      'La gastronomía es otra parte importante de la experiencia de Fez. Prueba platos tradicionales marroquíes, descubre los ingredientes locales y explora los sabores de la medina. Si quieres profundizar, un paseo de degustación con un guía local es una buena manera de conocer Fez a través de su cocina y de su cultura cotidiana.',
+      'Reserva un momento para descubrir el Mellah histórico y Fez Jdid. Recorre las calles del barrio judío, observa su arquitectura característica y conoce mejor el patrimonio judío, que constituye una parte importante de la historia de Fez.',
+      'Para cambiar de perspectiva, busca uno de los miradores panorámicos que rodean Fez. Contemplar la medina desde arriba te permite apreciar sus tejados, minaretes, murallas y el paisaje que la rodea de una manera completamente distinta.',
+      'Y, al terminar el día, descubre Fez de noche. Acércate a la ciudad nueva, disfruta de una cafetería o un restaurante, pasea por sus calles modernas y conoce el ambiente de la ciudad después de la puesta de sol.',
+      'Tanto si dispones de un día como de varios, la mejor forma de conocer Fez es combinar su historia con su vida cotidiana. Camina, prueba, explora, conoce a los vecinos y date tiempo para descubrir los lugares que hacen que Fez sea diferente.',
+    ],
+    back: 'Volver a Fez',
+    cta: 'Descubre nuestras experiencias en Fez',
+  },
 };
 
 export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = language === 'fr' ? content.fr : content.en;
-  const fallbackEnglish = language === 'ar';
-  const altCopy = language === 'fr' ? imageAlts.fr : imageAlts.en;
+  const copy = content[language];
+  const altCopy = imageAlts[language];
 
   return (
-    <div className="bg-[#FAF8F5] pb-20" dir={fallbackEnglish ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] pb-20">
       <PageCrumbBar
         language={language}
-        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
         onParent={onBack}
@@ -115,9 +131,9 @@ export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ la
           );
         })}
 
-        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} />
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </article>
     </div>
   );

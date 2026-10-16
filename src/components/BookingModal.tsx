@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
 import { UI_TEXT } from '../data/translations';
 import { useCms } from '../context/CmsContext';
+import { localizedText, publicProduct, uiText } from '../cms/render-utils';
+import { BOOKING_COPY } from '../cms/booking-copy';
 import { X, Calendar, Users, Phone, Mail, CheckCircle2, MessageCircle, AlertCircle } from 'lucide-react';
 
 interface BookingModalProps {
@@ -19,7 +21,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   initialTourId,
   initialTourTitle,
 }) => {
-  const { tours, siteSettings } = useCms();
+  const { tours, siteSettings, publishedDocument } = useCms();
+  const contact = publishedDocument?.siteSettings ?? siteSettings;
+  const bookingText = (key: keyof typeof BOOKING_COPY): string => publishedDocument ? uiText(publishedDocument, `ui.booking.${key}`, language, BOOKING_COPY[key]) : localizedText(BOOKING_COPY[key], language);
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -36,17 +40,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const today = new Date().toISOString().split('T')[0];
 
   // Collect all available tours dynamically from CMS store
-  const allTours = tours
-    .filter((t) => t.published !== false)
-    .map((p) => p.title[language] || p.title.en);
+  const availableTours = publishedDocument ? publishedDocument.products.filter(product => publicProduct(publishedDocument, product.id)) : tours.filter(tour => tour.published !== false);
+  const allTours = availableTours.map(product => localizedText(product.title, language)).filter(Boolean);
 
   useEffect(() => {
-    if (initialTourTitle) {
-      setSelectedTour(initialTourTitle);
-    } else if (allTours.length > 0 && !selectedTour) {
-      setSelectedTour(allTours[0]);
+    const initialProduct = publishedDocument && initialTourId ? publicProduct(publishedDocument, initialTourId) : undefined;
+    const requestedTitle = initialProduct ? localizedText(initialProduct.title, language) : initialTourTitle;
+    if (requestedTitle && (!publishedDocument || allTours.includes(requestedTitle))) {
+      setSelectedTour(requestedTitle);
+    } else if (!allTours.includes(selectedTour)) {
+      setSelectedTour(allTours[0] ?? '');
     }
-  }, [initialTourTitle, language, tours]);
+  }, [initialTourId, initialTourTitle, language, tours, publishedDocument]);
 
   useEffect(() => {
     setLanguagePreference(language);
@@ -66,7 +71,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   if (!isOpen) return null;
 
   // Clean WhatsApp number removing non-digits
-  const cleanNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
+  const cleanNumber = (contact.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
 
   const resetAndClose = () => {
     setIsSubmitted(false);
@@ -76,70 +81,34 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const validateForm = (): boolean => {
     if (!fullName.trim()) {
-      setValidationError(
-        language === 'ar'
-          ? 'يرجى إدخال اسمكم الكامل'
-          : language === 'fr'
-          ? 'Veuillez saisir votre nom complet'
-          : 'Please enter your full name'
-      );
+      setValidationError(bookingText('errorName'));
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setValidationError(
-        language === 'ar'
-          ? 'يرجى إدخال بريد إلكتروني صحيح'
-          : language === 'fr'
-          ? 'Veuillez saisir une adresse e-mail valide'
-          : 'Please enter a valid email address'
-      );
+      setValidationError(bookingText('errorEmail'));
       return false;
     }
 
     const phoneDigits = phone.replace(/[^0-9]/g, '');
     if (phoneDigits.length < 6) {
-      setValidationError(
-        language === 'ar'
-          ? 'يرجى إدخال رقم هاتف أو واتساب صحيح مع الرمز الدولي'
-          : language === 'fr'
-          ? 'Veuillez saisir un numéro de téléphone/WhatsApp valide avec indicatif'
-          : 'Please enter a valid WhatsApp or phone number with country code'
-      );
+      setValidationError(bookingText('errorPhone'));
       return false;
     }
 
     if (!date) {
-      setValidationError(
-        language === 'ar'
-          ? 'يرجى اختيار التاريخ المفضل للجولة'
-          : language === 'fr'
-          ? 'Veuillez sélectionner une date'
-          : 'Please select a preferred date'
-      );
+      setValidationError(bookingText('errorDate'));
       return false;
     }
 
     if (date < today) {
-      setValidationError(
-        language === 'ar'
-          ? 'لا يمكن اختيار تاريخ في الماضي. يرجى اختيار تاريخ اليوم أو تاريخ لاحق.'
-          : language === 'fr'
-          ? 'La date ne peut pas être dans le passé. Veuillez choisir aujourd’hui ou une date ultérieure.'
-          : 'Date cannot be in the past. Please choose today or a future date.'
-      );
+      setValidationError(bookingText('errorPastDate'));
       return false;
     }
 
     if (guests < 1 || guests > 50) {
-      setValidationError(
-        language === 'ar'
-          ? 'عدد المشاركين يجب أن يكون بين 1 و 50'
-          : language === 'fr'
-          ? 'Le nombre de participants doit être compris entre 1 et 50'
-          : 'Guest count must be between 1 and 50'
-      );
+      setValidationError(bookingText('errorGuests'));
       return false;
     }
 
@@ -161,19 +130,19 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   const getWhatsAppMessage = () => {
     let text = '';
-    if (languagePreference === 'ar') {
+    if (languagePreference === 'es') {
       text =
-        `السلام عليكم ورحمة الله، أود تأكيد حجز جولة عبر FezGuideTours:\n` +
-        `• الجولة: ${selectedTour}\n` +
-        `• الاسم: ${fullName || 'ضيف'}\n` +
-        `• التاريخ: ${date || 'مرن'}\n` +
-        `• عدد الأشخاص: ${guests}\n` +
-        `• لغة المرشد: العربية\n` +
-        `• ملاحظات: ${specialRequests || 'لا توجد'}\n` +
-        (bookingRef ? `• رقم المرجع: ${bookingRef}` : '');
+        `Hola, me gustaría confirmar una solicitud de reserva a través de ${contact.siteName}:\n` +
+        `• Visita: ${selectedTour}\n` +
+        `• Nombre: ${fullName || 'Invitado'}\n` +
+        `• Fecha: ${date || 'Flexible'}\n` +
+        `• Número de personas: ${guests}\n` +
+        `• Idioma del guía: español\n` +
+        `• Notas: ${specialRequests || 'Ninguna'}\n` +
+        (bookingRef ? `• Referencia: ${bookingRef}` : '');
     } else if (languagePreference === 'fr') {
       text =
-        `Bonjour FezGuideTours ! Je souhaite réserver une visite :\n` +
+        `Bonjour ${contact.siteName} ! Je souhaite réserver une visite :\n` +
         `• Visite : ${selectedTour}\n` +
         `• Nom : ${fullName || 'Client'}\n` +
         `• Date : ${date || 'Flexible'}\n` +
@@ -183,7 +152,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         (bookingRef ? `• Réf dossier : ${bookingRef}` : '');
     } else {
       text =
-        `Hello FezGuideTours! I would like to confirm a tour booking:\n` +
+        `Hello ${contact.siteName}! I would like to confirm a tour booking:\n` +
         `• Tour: ${selectedTour}\n` +
         `• Name: ${fullName || 'Guest'}\n` +
         `• Date: ${date || 'Flexible'}\n` +
@@ -196,31 +165,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(text)}`;
   };
 
-  const labels = {
-    title: { en: 'Reserve Your Experience', fr: 'Réserver Votre Expérience', ar: 'احجز تجربتك السياحية' },
-    subtitle: {
-      en: 'No upfront payment required. Certified local guide confirmation within 2 hours.',
-      fr: 'Aucun paiement immédiat requis. Confirmation par un guide officiel en moins de 2h.',
-      ar: 'لا يلزم أي دفع مسبق. تأكيد الحجز بواسطة مرشد سياحي رسمي خلال ساعتين.',
-    },
-    fullName: { en: 'Full Name', fr: 'Nom Complet', ar: 'الاسم الكامل' },
-    email: { en: 'Email Address', fr: 'Adresse Email', ar: 'البريد الإلكتروني' },
-    phone: { en: 'WhatsApp / Phone (with country code)', fr: 'WhatsApp / Téléphone (avec indicatif)', ar: 'رقم الواتساب أو الهاتف (مع الرمز الدولي)' },
-    tour: { en: 'Select Tour / Experience', fr: 'Choisir la Visite / Excursion', ar: 'اختر الجولة أو الرحلة' },
-    date: { en: 'Preferred Date', fr: 'Date Souhaitée', ar: 'التاريخ المفضل' },
-    guests: { en: 'Number of Guests', fr: 'Nombre de Personnes', ar: 'عدد المشاركين' },
-    guideLang: { en: 'Guide Language', fr: 'Langue du Guide', ar: 'لغة المرشد المفضلة' },
-    notes: { en: 'Special Requests or Hotel/Riad Name', fr: 'Demandes Spéciales ou Nom du Riad', ar: 'ملاحظات خاصة أو اسم الفندق/الرياض' },
-    submitBtn: { en: 'Confirm Reservation Request', fr: 'Confirmer la Demande de Réservation', ar: 'تأكيد طلب الحجز' },
-    instantWhatsApp: { en: 'Or Inquire Directly via WhatsApp', fr: 'Ou Réservez Directement sur WhatsApp', ar: 'أو تواصل فوراً عبر تطبيق واتساب' },
-    successTitle: { en: 'Booking Request Received!', fr: 'Demande de Réservation Reçue !', ar: 'تم استلام طلب حجزك بنجاح!' },
-    successMsg: {
-      en: 'Our senior certified guide will contact you via WhatsApp and Email shortly with pickup details.',
-      fr: 'Notre guide officiel vous contactera rapidement par WhatsApp et e-mail avec les détails de prise en charge.',
-      ar: 'سيتواصل معك مرشدنا السياحي المعتمد عبر الواتساب والبريد الإلكتروني قريباً للتنسيق وموعد الانطلاق.',
-    },
-    bookingRefLabel: { en: 'Booking Reference', fr: 'Référence du dossier', ar: 'رقم مرجع الحجز' },
-  };
 
   return (
     <div
@@ -237,7 +181,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         <button
           onClick={resetAndClose}
           className="absolute top-4 right-4 p-2 text-[#728280] hover:text-[#1C2524] rounded-full hover:bg-[#F2ECE4] transition-colors cursor-pointer"
-          aria-label="Close modal"
+          aria-label={bookingText('closeModal')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -248,13 +192,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <CheckCircle2 className="w-10 h-10" />
             </div>
             <h3 id="booking-modal-title" className="text-xl font-bold text-[#1C2524]">
-              {labels.successTitle[language]}
+              {bookingText('successTitle')}
             </h3>
             <p className="text-sm text-[#4A5755] leading-relaxed">
-              {labels.successMsg[language]}
+              {bookingText('successMsg')}
             </p>
             <div className="p-3 bg-[#FAF8F5] rounded-xl border border-[#E7E2DA] inline-block">
-              <span className="text-xs text-[#728280] block">{labels.bookingRefLabel[language]}</span>
+              <span className="text-xs text-[#728280] block">{bookingText('bookingRefLabel')}</span>
               <span className="text-lg font-mono font-bold text-[#005F5A]">{bookingRef}</span>
             </div>
             <div className="pt-4 flex flex-col sm:flex-row gap-3">
@@ -265,13 +209,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 className="flex-1 inline-flex items-center justify-center gap-2 py-3 px-4 bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
               >
                 <MessageCircle className="w-4 h-4" />
-                <span>Open in WhatsApp</span>
+                <span>{bookingText('openWhatsApp')}</span>
               </a>
               <button
                 onClick={resetAndClose}
                 className="flex-1 py-3 px-4 border border-[#E7E2DA] hover:bg-[#FAF8F5] text-xs font-bold rounded-xl transition-colors cursor-pointer"
               >
-                {UI_TEXT.common.close[language]}
+                {publishedDocument ? uiText(publishedDocument, 'ui.common.close', language, UI_TEXT.common.close) : UI_TEXT.common.close[language]}
               </button>
             </div>
           </div>
@@ -279,10 +223,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div>
             <div className="mb-6">
               <h3 id="booking-modal-title" className="text-xl font-extrabold text-[#1C2524]">
-                {labels.title[language]}
+                {bookingText('title')}
               </h3>
               <p className="text-xs text-[#5D6B69] mt-1">
-                {labels.subtitle[language]}
+                {bookingText('subtitle')}
               </p>
             </div>
 
@@ -297,7 +241,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Tour Selection */}
               <div>
                 <label className="block font-bold text-[#2A3735] mb-1">
-                  {labels.tour[language]}
+                  {bookingText('tour')}
                 </label>
                 <select
                   value={selectedTour}
@@ -317,7 +261,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.fullName[language]} *
+                    {bookingText('fullName')} *
                   </label>
                   <input
                     type="text"
@@ -327,13 +271,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       setFullName(e.target.value);
                       if (validationError) setValidationError(null);
                     }}
-                    placeholder="e.g. Sarah Jenkins"
+                    placeholder={bookingText('namePlaceholder')}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
                 </div>
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.phone[language]} *
+                    {bookingText('phone')} *
                   </label>
                   <input
                     type="tel"
@@ -343,7 +287,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       setPhone(e.target.value);
                       if (validationError) setValidationError(null);
                     }}
-                    placeholder="+1 555 019 2834"
+                    placeholder={bookingText('phonePlaceholder')}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
                 </div>
@@ -353,7 +297,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.email[language]} *
+                    {bookingText('email')} *
                   </label>
                   <input
                     type="email"
@@ -363,13 +307,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       setEmail(e.target.value);
                       if (validationError) setValidationError(null);
                     }}
-                    placeholder="sarah@example.com"
+                    placeholder={bookingText('emailPlaceholder')}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   />
                 </div>
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.date[language]} *
+                    {bookingText('date')} *
                   </label>
                   <input
                     type="date"
@@ -389,7 +333,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.guests[language]}
+                    {bookingText('guests')}
                   </label>
                   <input
                     type="number"
@@ -402,16 +346,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 </div>
                 <div>
                   <label className="block font-bold text-[#2A3735] mb-1">
-                    {labels.guideLang[language]}
+                    {bookingText('guideLang')}
                   </label>
                   <select
                     value={languagePreference}
                     onChange={(e) => setLanguagePreference(e.target.value as Language)}
                     className="w-full px-3 py-2.5 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A]"
                   >
-                    <option value="en">English Guide</option>
-                    <option value="fr">Guide Francophone</option>
-                    <option value="ar">مرشد باللغة العربية</option>
+                    <option value="en">{bookingText('guideEnglish')}</option>
+                    <option value="fr">{bookingText('guideFrench')}</option>
+                    <option value="es">{bookingText('guideSpanish')}</option>
                   </select>
                 </div>
               </div>
@@ -419,13 +363,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               {/* Special Requests */}
               <div>
                 <label className="block font-bold text-[#2A3735] mb-1">
-                  {labels.notes[language]}
+                  {bookingText('notes')}
                 </label>
                 <textarea
                   rows={2}
                   value={specialRequests}
                   onChange={(e) => setSpecialRequests(e.target.value)}
-                  placeholder="Dietary requirements, Riad name for morning pickup..."
+                  placeholder={bookingText('notesPlaceholder')}
                   className="w-full px-3 py-2 rounded-lg border border-[#D5CEC4] bg-[#FAF8F5] focus:outline-hidden focus:ring-2 focus:ring-[#005F5A] resize-none"
                 />
               </div>
@@ -436,7 +380,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   type="submit"
                   className="w-full py-3 px-4 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold rounded-xl shadow-xs transition-colors cursor-pointer text-xs uppercase tracking-wide"
                 >
-                  {labels.submitBtn[language]}
+                  {bookingText('submitBtn')}
                 </button>
 
                 <div className="text-center">
@@ -447,7 +391,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     className="inline-flex items-center gap-2 text-xs font-semibold text-[#005F5A] hover:underline"
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
-                    <span>{labels.instantWhatsApp[language]}</span>
+                    <span>{bookingText('instantWhatsApp')}</span>
                   </a>
                 </div>
               </div>

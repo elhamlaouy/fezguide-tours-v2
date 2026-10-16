@@ -1,23 +1,23 @@
 import { Language } from '../types';
 
 type Copy = Record<Language, string>;
-const copy = (en: string, fr: string, ar: string): Copy => ({ en, fr, ar });
-const paras = (en: string[], fr: string[]): Record<Language, string[]> => ({ en, fr, ar: en });
-const img = (src: string, width: number, height: number, en: string, fr: string, ar: string) => ({
-  src, width, height, alt: copy(en, fr, ar),
+const copy = (en: string, fr: string, es: string): Copy => ({ en, fr, es });
+const paras = (en: string[], fr: string[], es: string[]): Record<Language, string[]> => ({ en, fr, es });
+const img = (src: string, width: number, height: number, en: string, fr: string, es: string) => ({
+  src, width, height, alt: copy(en, fr, es),
 });
 
-const parent = copy('Travel Tips', 'Conseils voyage', 'نصائح السفر');
+const parent = copy('Travel Tips', 'Conseils voyage', "Consejos de viaje");
 
 export const TIP_ARTICLES = [
   {
     id: 'tips-getting-around',
     template: 'editorial-guide',
     parentLabel: parent,
-    title: copy('Getting Around Fez', 'Se déplacer à Fès', 'التنقل في فاس'),
+    title: copy('Getting Around Fez', 'Se déplacer à Fès', "Cómo moverse por Fez"),
     sections: [
       {
-        images: [img('/images/tips-getting-around/medina-walker.webp', 800, 1422, 'A man walking a narrow Medina lane', 'Un homme marche dans une ruelle de la médina', 'رجل يمشي في زقاق ضيق بالمدينة')],
+        images: [img('/images/tips-getting-around/medina-walker.webp', 800, 1422, 'A man walking a narrow Medina lane', 'Un homme marche dans une ruelle de la médina', "Un hombre caminando por una callejuela estrecha de la medina")],
         paragraphs: paras(
           [
             'Getting around Fez is different from moving around a modern city. The Old Medina was built around walking, with narrow streets, small passages and many pedestrian areas. Outside the Medina, taxis and cars are much more practical.',
@@ -26,11 +26,11 @@ export const TIP_ARTICLES = [
           [
             'Se déplacer à Fès n’est pas comme dans une ville moderne. La vieille médina a été faite pour la marche : rues étroites, petits passages et beaucoup de zones piétonnes. En dehors, les taxis et les voitures sont plus pratiques.',
             'Vous pouvez découvrir la vieille médina avec un guide local, ou seul. Les deux sont possibles, mais l’expérience n’est pas la même.',
-          ],
+          ], ["Moverse por Fez es distinto de desplazarse por una ciudad moderna. La medina antigua se construyó para recorrerla a pie, con calles estrechas, pequeños pasadizos y muchas zonas peatonales. Fuera de la medina, los taxis y coches resultan mucho más prácticos.","Como visitante, tienes dos formas principales de descubrir la medina antigua: con un guía local o por tu cuenta. Ambas son posibles, pero ofrecen experiencias distintas."],
         ),
       },
       {
-        heading: copy('Walking in the Old Medina', 'Marcher dans la vieille médina', 'المشي في المدينة العتيقة'),
+        heading: copy('Walking in the Old Medina', 'Marcher dans la vieille médina', "Caminar por la medina antigua"),
         paragraphs: paras(
           [
             'Walking is the main way people move around the Old Medina. Many streets are narrow and made for pedestrians. As you walk, you pass homes, shops, workshops, food stalls, souks and residential neighbourhoods.',
@@ -39,25 +39,25 @@ export const TIP_ARTICLES = [
           [
             'La marche est le moyen principal de se déplacer dans la vieille médina. Beaucoup de rues sont étroites et faites pour les piétons. On passe devant des maisons, des boutiques, des ateliers, des étals et des souks.',
             'Pour les habitants, c’est le quotidien. Pour un visiteur, cela peut sembler un autre monde. La médina est grande : inutile de courir. Les rues font partie de l’expérience.',
-          ],
+          ], ["Caminar es la principal forma de desplazarse por la medina antigua. Muchas calles son estrechas y están pensadas para peatones. Al pasear, pasas por viviendas, tiendas, talleres, puestos de comida, zocos y barrios residenciales.","Para los vecinos es la vida diaria; para los visitantes puede parecer otro mundo. La medina es grande y no hace falta ir deprisa. Las propias calles forman parte de la experiencia."],
         ),
         images: [],
       },
       {
-        heading: copy('How heavy goods move through the Medina', 'Comment les charges lourdes circulent', 'كيف تتنقل البضائع الثقيلة'),
-        images: [img('/images/tips-getting-around/mule-load.webp', 800, 600, 'A mule carrying goods through a Medina lane', 'Une mule transporte une charge dans une ruelle', 'بغل يحمل بضاعة في زقاق')],
+        heading: copy('How heavy goods move through the Medina', 'Comment les charges lourdes circulent', "Cómo se transportan las mercancías pesadas por la medina"),
+        images: [img('/images/tips-getting-around/mule-load.webp', 800, 600, 'A mule carrying goods through a Medina lane', 'Une mule transporte une charge dans une ruelle', "Una mula transportando mercancías por una calle de la medina")],
         paragraphs: paras(
           [
             'The narrow streets are not only used by people. When heavy goods need to move through the small streets, people traditionally use carts, donkeys or mules. Many alleys are too narrow for normal vehicles, so transport has adapted to the Medina. You may see this as part of everyday life.',
           ],
           [
             'Les rues étroites ne servent pas qu’aux passants. Pour les charges lourdes, on utilise encore des charrettes, des ânes ou des mulets. Beaucoup de ruelles sont trop étroites pour une voiture. Vous pouvez voir cela dans la vie quotidienne.',
-          ],
+          ], ["Las calles estrechas no las utilizan solo las personas. Para mover mercancías pesadas por ellas se emplean tradicionalmente carros, burros o mulas. Muchas callejuelas son demasiado estrechas para los vehículos normales, por lo que el transporte se ha adaptado a la medina. Puedes verlo como parte de su vida cotidiana."],
         ),
       },
       {
-        heading: copy('When is the Medina active?', 'Quand la médina est-elle active ?', 'متى تنشط المدينة؟'),
-        images: [img('/images/tips-getting-around/bab-boujloud-night.webp', 1364, 908, 'Bab Boujloud lit at night', 'Bab Boujloud éclairée le soir', 'باب بوجلود مضاء ليلاً')],
+        heading: copy('When is the Medina active?', 'Quand la médina est-elle active ?', "¿Cuándo hay actividad en la medina?"),
+        images: [img('/images/tips-getting-around/bab-boujloud-night.webp', 1364, 908, 'Bab Boujloud lit at night', 'Bab Boujloud éclairée le soir', "Bab Boujloud iluminada de noche")],
         paragraphs: paras(
           [
             'The main commercial areas generally become active from around 10:00 in the morning and start becoming quieter from around 20:00. Around Bab Boujloud, restaurants and other places can stay active much later, sometimes until around midnight.',
@@ -66,14 +66,14 @@ export const TIP_ARTICLES = [
           [
             'Les zones commerciales s’animent en général vers 10 h et se calment vers 20 h. Autour de Bab Boujloud, restaurants et autres lieux peuvent rester ouverts bien plus tard, parfois jusqu’à minuit.',
             'Le jour, les rues suivent les boutiques, les ateliers et les marchés. Bab Boujloud peut rester animée le soir. Les horaires changent selon le commerce, le jour et la saison : c’est un rythme, pas un horaire fixe.',
-          ],
+          ], ["Las principales zonas comerciales suelen animarse hacia las 10:00 y empiezan a estar más tranquilas alrededor de las 20:00. Cerca de Bab Boujloud, los restaurantes y otros establecimientos pueden seguir activos hasta más tarde, en ocasiones hasta medianoche.","Durante el día las calles siguen el ritmo de las tiendas, talleres, mercados y vecinos. La zona de Bab Boujloud puede seguir animada por la noche. Los horarios varían según el negocio, el día y la temporada: toma estas horas como una orientación, no como un horario fijo."],
         ),
       },
       {
-        heading: copy('Two ways to explore, and how to read the signs', 'Deux façons de visiter, et les panneaux', 'طريقتان للاستكشاف، وكيف تقرأ اللافتات'),
+        heading: copy('Two ways to explore, and how to read the signs', 'Deux façons de visiter, et les panneaux', "Dos formas de explorar y cómo interpretar las señales"),
         images: [
-          img('/images/tips-getting-around/hexagonal-sign.webp', 1542, 2048, 'A hexagonal street sign in the Medina', 'Un panneau hexagonal dans la médina', 'لافتة سداسية في المدينة'),
-          img('/images/tips-getting-around/square-sign.webp', 2048, 1542, 'A square street sign in the Medina', 'Un panneau carré dans la médina', 'لافتة مربعة في المدينة'),
+          img('/images/tips-getting-around/hexagonal-sign.webp', 1542, 2048, 'A hexagonal street sign in the Medina', 'Un panneau hexagonal dans la médina', "Una señal hexagonal en una calle de la medina"),
+          img('/images/tips-getting-around/square-sign.webp', 2048, 1542, 'A square street sign in the Medina', 'Un panneau carré dans la médina', "Una señal cuadrada en una calle de la medina"),
         ],
         paragraphs: paras(
           [
@@ -83,12 +83,12 @@ export const TIP_ARTICLES = [
           [
             'Vous pouvez visiter avec un guide local ou seul. Un guide aide à comprendre ce que vous voyez, à gagner du temps et à choisir un chemin pratique. Seul, c’est possible, mais la vieille médina peut dérouter une première visite.',
             'Un panneau carré indique une ruelle qui a une entrée et une sortie, ou qui mène à un espace public ouvert. Un panneau hexagonal indique une ruelle qui a une entrée mais ne traverse pas. C’est une impasse. Regardez le panneau avant d’entrer.',
-          ],
+          ], ["Puedes explorar con un guía local o por tu cuenta. Un guía te ayuda a comprender lo que ves, ahorrar tiempo, escoger rutas prácticas y orientarte. Ir por tu cuenta es posible, pero la medina antigua puede resultar confusa en una primera visita. Es fácil pasar más tiempo del previsto tomando el camino equivocado.","Una señal cuadrada indica que la callejuela tiene entrada y salida o conduce a un espacio público abierto. Una señal hexagonal indica que tiene entrada, pero no continúa: es un callejón sin salida. Comprueba la señal antes de entrar para no descubrir después que tienes que volver atrás."],
         ),
       },
       {
-        heading: copy('A simple route on your own', 'Un parcours simple sans guide', 'مسار بسيط من دون مرشد'),
-        images: [img('/images/tips-getting-around/talaa-souk.webp', 978, 1300, 'A busy covered souk lane in the Medina', 'Une ruelle couverte et animée du souk', 'زقاق سوق مسقوف ومزدحم')],
+        heading: copy('A simple route on your own', 'Un parcours simple sans guide', "Una ruta sencilla por tu cuenta"),
+        images: [img('/images/tips-getting-around/talaa-souk.webp', 978, 1300, 'A busy covered souk lane in the Medina', 'Une ruelle couverte et animée du souk', "Una calle cubierta y concurrida del zoco de la medina")],
         paragraphs: paras(
           [
             'Start around the Mellah, the Jewish Quarter and the area around the Royal Palace. From there, visit Jnan Sbil and follow the main road towards Bab Boujloud. Once you reach Bab Boujloud, enter the Old Medina.',
@@ -97,14 +97,14 @@ export const TIP_ARTICLES = [
           [
             'Commencez vers le Mellah, le quartier juif et le Palais royal. De là, visitez Jnan Sbil puis suivez la route principale vers Bab Boujloud. Entrez ensuite dans la vieille médina.',
             'Depuis Bab Boujloud, Tala\'a Sghira (la petite montée) est à droite et Tala\'a Kebira (la grande montée) à gauche. Pour une première visite, suivez Tala\'a Kebira. Une grande part des monuments, musées, souks et lieux intéressants se trouve sur ce parcours ou autour. Les panneaux indiquent si une ruelle continue ou s’arrête.',
-          ],
+          ], ["Empieza por el Mellah, el barrio judío y la zona del Palacio Real. Desde allí, visita Jnan Sbil y sigue la vía principal hacia Bab Boujloud. Una vez allí, entra en la medina antigua.","Desde Bab Boujloud, Tala'a Sghira (la pequeña subida) queda a la derecha y Tala'a Kebira (la gran subida) a la izquierda. Para una primera visita, sigue Tala'a Kebira. Gran parte de los monumentos, museos, zocos y lugares de interés de la medina están en esta ruta o cerca de ella. También puedes entrar en callejuelas laterales. Las señales indican si la calle continúa o termina."],
         ),
       },
       {
-        heading: copy('Continue towards Bab Rcif, then leave by taxi', 'Continuer vers Bab Rcif, puis sortir en taxi', 'نحو باب الرصيف، ثم الخروج بالتاكسي'),
+        heading: copy('Continue towards Bab Rcif, then leave by taxi', 'Continuer vers Bab Rcif, puis sortir en taxi', "Continúa hacia Bab Rcif y sal en taxi"),
         images: [
-          img('/images/tips-getting-around/bab-rcif.webp', 800, 1646, 'A gate and market square at the edge of the Medina', 'Une porte et une place au bord de la médina', 'باب وساحة سوق على طرف المدينة'),
-          img('/images/tips-getting-around/city-gate.webp', 800, 1423, 'A monumental city gate with a red taxi nearby', 'Une porte monumentale, avec un taxi rouge', 'باب ضخم وتاكسي أحمر قريب'),
+          img('/images/tips-getting-around/bab-rcif.webp', 800, 1646, 'A gate and market square at the edge of the Medina', 'Une porte et une place au bord de la médina', "Una puerta y una plaza de mercado al borde de la medina"),
+          img('/images/tips-getting-around/city-gate.webp', 800, 1423, 'A monumental city gate with a red taxi nearby', 'Une porte monumentale, avec un taxi rouge', "Una puerta monumental con un taxi rojo cerca"),
         ],
         paragraphs: paras(
           [
@@ -114,12 +114,12 @@ export const TIP_ARTICLES = [
           [
             'En continuant, vous traversez le sud de la vieille médina et pouvez arriver à Bab Rcif. Vous aurez vu une grande partie de la ville historique, pas tout. Depuis Bab Rcif, rejoignez la route accessible et prenez un petit taxi.',
             'Pour aller vers la ville nouvelle, sortez des zones piétonnes par une porte ou une route où les voitures peuvent vous prendre. Des points pratiques : Bab Boujloud, Bab Rcif, Bab Mahrouk, Bab Ziat, Aïn Azliten, Bab Guissa et Batha.',
-          ],
+          ], ["Al continuar, recorrerás el sur de la medina antigua y podrás llegar a Bab Rcif. Habrás visto una parte importante de la ciudad histórica, pero no toda: la medina es demasiado grande para una sola visita. Desde Bab Rcif, llega hasta la carretera accesible más cercana y toma un petit taxi hacia tu hotel o siguiente parada.","Para llegar a la ciudad nueva, sal de las zonas peatonales por una puerta o carretera donde puedan recogerte los vehículos. Algunos puntos prácticos para tomar taxi son Bab Boujloud, Bab Rcif, Bab Mahrouk, Bab Ziat, Ain Azliten, Bab Guissa y Batha."],
         ),
       },
       {
-        heading: copy('Petit taxis, and the two sides of Fez', 'Les petits taxis, et les deux visages de Fès', 'التاكسي الصغير، ووجها فاس'),
-        images: [img('/images/tips-getting-around/new-city-road.webp', 941, 1671, 'A road with cars outside the old streets', 'Une route avec des voitures hors des vieilles rues', 'طريق وسيارات خارج الأزقة القديمة')],
+        heading: copy('Petit taxis, and the two sides of Fez', 'Les petits taxis, et les deux visages de Fès', "Los petit taxis y las dos caras de Fez"),
+        images: [img('/images/tips-getting-around/new-city-road.webp', 941, 1671, 'A road with cars outside the old streets', 'Une route avec des voitures hors des vieilles rues', "Una carretera con coches fuera de las calles antiguas")],
         paragraphs: paras(
           [
             'The petit taxi is one of the easiest ways to move around Fez outside the pedestrian areas. Fez\'s petit taxis are red. For a short journey from the Old Medina towards the New City, the fare is often around 10–20 MAD, depending on distance. That is a local estimate, not a fixed price for every trip. A petit taxi normally carries up to 3 passengers plus the driver. With more than three people, you usually need two taxis or another vehicle. The taxi takes you as close as the road allows. After that, you walk.',
@@ -132,7 +132,7 @@ export const TIP_ARTICLES = [
             'Dans la vieille médina, la marche est indispensable. En dehors, taxis et voitures sont plus pratiques. Se déplacer à Fès, c’est souvent les deux.',
             'Un guide local rend la vieille médina plus simple. Vous passez moins de temps sur le téléphone ou à chercher la direction. Vous pouvez profiter de la médina au lieu de penser au chemin.',
             'Seul ou avec un guide, le but reste le même. Marchez dans la médina. Découvrez ses rues. Voyez Fès à travers des yeux locaux.',
-          ],
+          ], ["El petit taxi es una de las formas más sencillas de desplazarse por Fez fuera de las zonas peatonales. En Fez son rojos. Un trayecto corto desde la medina hacia la ciudad nueva suele costar unos 10–20 MAD, según la distancia. Es una estimación local, no una tarifa fija para todos los viajes. Un petit taxi suele llevar hasta 3 pasajeros más el conductor. Si sois más de tres, normalmente necesitaréis dos taxis u otro vehículo. El taxi os deja tan cerca como permite la carretera; después hay que caminar.","Dentro de la medina antigua es imprescindible caminar. Fuera, los taxis y coches son más prácticos. Moverse por Fez suele combinar ambas cosas: paseos por los barrios históricos y taxis o coches privados entre distintas zonas de la ciudad.","Un guía local facilita la visita a la medina antigua. Dedicas menos tiempo a mirar el móvil o preocuparte por la dirección. También puede ayudarte con los horarios, rutas, historia, artesanía, comida y vida cotidiana. Así puedes centrarte en la medina y no en orientarte.","Tanto si vas por tu cuenta como con un guía, el objetivo es el mismo: recorrer la medina, descubrir sus calles y conocer Fez con la mirada de sus vecinos."],
         ),
       },
     ],
@@ -141,14 +141,14 @@ export const TIP_ARTICLES = [
     id: 'tips-plan-trip',
     template: 'editorial-guide',
     parentLabel: parent,
-    title: copy('Planning Your Visit to Fez', 'Planifier votre visite à Fès', 'التخطيط لزيارة فاس'),
+    title: copy('Planning Your Visit to Fez', 'Planifier votre visite à Fès', "Planifica tu visita a Fez"),
     contact: {
       href: 'https://wa.me/212719603009',
-      label: copy('Contact us on WhatsApp', 'Nous écrire sur WhatsApp', 'راسلونا على واتساب'),
+      label: copy('Contact us on WhatsApp', 'Nous écrire sur WhatsApp', "Contacta con nosotros por WhatsApp"),
     },
     sections: [
       {
-        images: [img('/images/tips-plan-trip/medina-view.webp', 800, 533, 'A wide view over the Fez Medina', 'Une vue large sur la médina de Fès', 'إطلالة واسعة على مدينة فاس')],
+        images: [img('/images/tips-plan-trip/medina-view.webp', 800, 533, 'A wide view over the Fez Medina', 'Une vue large sur la médina de Fès', "Una vista amplia de la medina de Fez")],
         paragraphs: paras(
           [
             'Planning a trip to Fez does not have to be complicated. The city has a lot to offer, from the historic Medina and its traditional crafts to the Mellah, local food, viewpoints and day trips into the surrounding countryside.',
@@ -157,12 +157,12 @@ export const TIP_ARTICLES = [
           [
             'Préparer un voyage à Fès n’a pas besoin d’être compliqué. La ville offre beaucoup : la médina historique, les métiers, le Mellah, la cuisine, les points de vue et des excursions dans les environs.',
             'Le mieux est de se laisser assez de temps, sans vouloir tout voir en une journée.',
-          ],
+          ], ["Planificar un viaje a Fez no tiene por qué ser complicado. La ciudad ofrece mucho: la medina histórica y sus oficios tradicionales, el Mellah, la gastronomía local, los miradores y las excursiones al entorno rural.","La mejor forma de disfrutarla es reservar tiempo suficiente para explorar sin intentar verlo todo en un solo día."],
         ),
       },
       {
-        heading: copy('How many days do you need?', 'Combien de jours faut-il ?', 'كم يوماً تحتاجون؟'),
-        images: [img('/images/tips-plan-trip/souk-lane.webp', 800, 1200, 'Visitors walking a covered souk lane', 'Des visiteurs dans une ruelle couverte du souk', 'زوار في زقاق سوق مسقوف')],
+        heading: copy('How many days do you need?', 'Combien de jours faut-il ?', "¿Cuántos días necesitas?"),
+        images: [img('/images/tips-plan-trip/souk-lane.webp', 800, 1200, 'Visitors walking a covered souk lane', 'Des visiteurs dans une ruelle couverte du souk', "Visitantes recorriendo una calle cubierta del zoco")],
         paragraphs: paras(
           [
             'For a first visit, we recommend at least 2 to 3 days in Fez. That gives time for the Old Medina, historical landmarks, local food, and another side of the city.',
@@ -171,12 +171,12 @@ export const TIP_ARTICLES = [
           [
             'Pour une première visite, nous recommandons au moins 2 à 3 jours. Cela laisse le temps pour la vieille médina, les lieux historiques, la cuisine locale et un autre visage de la ville.',
             'Avec 4 jours ou plus, vous pouvez ralentir et ajouter une excursion, par exemple Chefchaouen, Meknès et Volubilis, ou le Moyen Atlas. La bonne durée dépend de ce que vous voulez vivre.',
-          ],
+          ], ["Para una primera visita recomendamos al menos 2 o 3 días en Fez. Así tendrás tiempo para la medina antigua, los monumentos históricos, la gastronomía local y otra cara de la ciudad.","Con 4 días o más puedes viajar sin prisas y añadir una excursión, por ejemplo a Chefchaouen, Meknes y Volubilis, o al Atlas Medio. La duración adecuada depende de lo que quieras vivir."],
         ),
       },
       {
-        heading: copy('When is the best time to visit?', 'Quelle est la meilleure période ?', 'ما أفضل وقت للزيارة؟'),
-        images: [img('/images/tips-plan-trip/bab-boujloud.webp', 800, 800, 'Visitors at Bab Boujloud', 'Des visiteurs à Bab Boujloud', 'زوار عند باب بوجلود')],
+        heading: copy('When is the best time to visit?', 'Quelle est la meilleure période ?', "¿Cuál es la mejor época para visitar Fez?"),
+        images: [img('/images/tips-plan-trip/bab-boujloud.webp', 800, 800, 'Visitors at Bab Boujloud', 'Des visiteurs à Bab Boujloud', "Visitantes en Bab Boujloud")],
         paragraphs: paras(
           [
             'Fez can be visited all year. Spring and autumn are particularly comfortable for long walks in the Medina. The weather is generally milder.',
@@ -185,14 +185,14 @@ export const TIP_ARTICLES = [
           [
             'Fès se visite toute l’année. Le printemps et l’automne sont particulièrement agréables pour de longues marches dans la médina. Le temps est en général plus doux.',
             'L’été peut être chaud, surtout en milieu de journée. L’hiver peut être plus frais le matin et le soir. Si vous marchez beaucoup, une saison confortable change vraiment la visite.',
-          ],
+          ], ["Fez se puede visitar todo el año. La primavera y el otoño son especialmente agradables para largos paseos por la medina, con temperaturas generalmente más suaves.","El verano puede ser caluroso, sobre todo al mediodía. En invierno, las mañanas y noches pueden ser más frescas. Si vas a caminar y visitar monumentos, elegir una época con temperaturas agradables marca la diferencia."],
         ),
       },
       {
-        heading: copy('Plan the Medina, and choose where you stay', 'Prévoir la médina, et choisir où dormir', 'خطّطوا للمدينة، واختاروا مكان الإقامة'),
+        heading: copy('Plan the Medina, and choose where you stay', 'Prévoir la médina, et choisir où dormir', "Planifica la medina y elige dónde alojarte"),
         images: [
-          img('/images/tips-plan-trip/medina-alley.webp', 800, 1067, 'A narrow alley in the Old Medina', 'Une ruelle étroite de la vieille médina', 'زقاق ضيق في المدينة العتيقة'),
-          img('/images/tips-plan-trip/riad-courtyard.webp', 800, 1067, 'A riad courtyard with a pool', 'Une cour de riad avec un bassin', 'فناء رياض بحوض'),
+          img('/images/tips-plan-trip/medina-alley.webp', 800, 1067, 'A narrow alley in the Old Medina', 'Une ruelle étroite de la vieille médina', "Una callejuela estrecha de la medina antigua"),
+          img('/images/tips-plan-trip/riad-courtyard.webp', 800, 1067, 'A riad courtyard with a pool', 'Une cour de riad avec un bassin', "Un patio de riad con piscina"),
         ],
         paragraphs: paras(
           [
@@ -204,12 +204,12 @@ export const TIP_ARTICLES = [
             'La vieille médina demande du temps. Ne prévoyez pas plusieurs grands sites en quelques heures en espérant comprendre la ville. Laissez-vous marcher, vous arrêter aux souks, voir des ateliers et observer la vie. Un guide local privé peut aussi organiser les lieux qui vous intéressent le plus.',
             'Dormir dans la vieille médina ou tout près donne un accès simple aux rues historiques. La ville nouvelle peut être plus pratique si vous préférez des rues modernes et un accès plus facile en voiture. Aucun choix n’est automatiquement meilleur.',
             'Les voitures n’entrent en général pas dans les rues étroites. Si votre logement est dans la médina, vous devrez peut-être marcher depuis le point accessible le plus proche avec vos bagages.',
-          ],
+          ], ["La medina antigua merece tiempo. No planifiques varios grandes monumentos en unas horas esperando comprender la ciudad. Date tiempo para pasear, detenerte en los zocos, visitar lugares históricos, ver talleres y observar la vida diaria. Un guía local privado también puede ayudarte a organizar los lugares que más te interesen.","Alojarte dentro o cerca de la medina facilita el acceso a sus calles históricas. La ciudad nueva puede ser más cómoda si prefieres calles modernas y mejor acceso en coche. Ninguna opción es necesariamente mejor: depende de la experiencia que busques.","Normalmente los coches no pueden entrar en las calles estrechas de la medina. Si tu alojamiento está dentro, quizá tengas que caminar con el equipaje desde el punto accesible más cercano."],
         ),
       },
       {
-        heading: copy('What do you want to experience?', 'Que voulez-vous vivre ?', 'ماذا تريدون أن تعيشوا؟'),
-        images: [img('/images/tips-plan-trip/rooftops.webp', 800, 533, 'Rooftops of Fez from a viewpoint', 'Les toits de Fès depuis un point de vue', 'أسطح فاس من مطل')],
+        heading: copy('What do you want to experience?', 'Que voulez-vous vivre ?', "¿Qué te gustaría vivir?"),
+        images: [img('/images/tips-plan-trip/rooftops.webp', 800, 533, 'Rooftops of Fez from a viewpoint', 'Les toits de Fès depuis un point de vue', "Los tejados de Fez vistos desde un mirador")],
         paragraphs: paras(
           [
             'Before you arrive, think about what interests you most: history and monuments, traditional crafts and souks, Moroccan and Fassi food, local life and culture, photography and viewpoints, a relaxed private walk, or day trips outside Fez. Knowing that helps you build a better plan than a list of attractions.',
@@ -218,14 +218,14 @@ export const TIP_ARTICLES = [
           [
             'Avant d’arriver, pensez à ce qui vous intéresse le plus : histoire et monuments, métiers et souks, cuisine marocaine et fassie, vie locale, photos et points de vue, une marche privée tranquille, ou des excursions. Cela vaut mieux qu’une simple liste d’attractions.',
             'Laissez du temps libre. Vous pouvez trouver une petite boutique, un atelier, un thé ou un point de vue que vous ne connaissiez pas. Ces détails se perdent quand on se presse.',
-          ],
+          ], ["Antes de llegar, piensa en lo que más te interesa: historia y monumentos, oficios y zocos, gastronomía marroquí y de Fez, vida y cultura local, fotografía y miradores, un paseo privado tranquilo o excursiones fuera de la ciudad. Saberlo te ayudará a crear un plan mejor que una simple lista de atracciones.","Deja algo de tiempo libre. Quizá encuentres una pequeña tienda de comida, un taller, una parada para tomar té o un mirador que no conocías. Es fácil perderse esos detalles si vas deprisa."],
         ),
       },
       {
-        heading: copy('A day trip from Fez, without overplanning', 'Une excursion, sans trop planifier', 'رحلة يومية، من دون إفراط في التخطيط'),
+        heading: copy('A day trip from Fez, without overplanning', 'Une excursion, sans trop planifier', "Una excursión desde Fez sin planificar en exceso"),
         images: [
-          img('/images/tips-plan-trip/new-city-road.webp', 941, 1671, 'A road leaving the old streets of Fez', 'Une route qui quitte les vieilles rues de Fès', 'طريق يغادر أزقة فاس القديمة'),
-          img('/images/tips-plan-trip/night-view.webp', 1080, 810, 'Fez lit at night from a viewpoint', 'Fès éclairée la nuit depuis un point de vue', 'فاس مضاءة ليلاً من مطل'),
+          img('/images/tips-plan-trip/new-city-road.webp', 941, 1671, 'A road leaving the old streets of Fez', 'Une route qui quitte les vieilles rues de Fès', "Una carretera que sale de las calles antiguas de Fez"),
+          img('/images/tips-plan-trip/night-view.webp', 1080, 810, 'Fez lit at night from a viewpoint', 'Fès éclairée la nuit depuis un point de vue', "Fez iluminada de noche vista desde un mirador"),
         ],
         paragraphs: paras(
           [
@@ -237,7 +237,7 @@ export const TIP_ARTICLES = [
             'Fès est une bonne base pour le nord et le centre du Maroc. Une excursion privée peut aller à Chefchaouen, connue pour ses rues bleues, sa vieille ville et son cadre de montagne ; à Meknès, Volubilis et Moulay Idriss, pour l’histoire impériale, les ruines romaines et une ville de pèlerinage ; ou à Ifrane et au Moyen Atlas, pour les forêts, les montagnes et la campagne. En privé, vous restez plus longtemps là où cela vous intéresse.',
             'Un bon voyage a un plan, et aussi de l’espace. Réservez l’essentiel à l’avance, surtout le logement et les expériences que vous voulez vraiment. Puis laissez de la place pour découvrir la ville. Fès ne se comprend pas en cochant une liste. On la vit en marchant, en goûtant, en observant et en prenant le temps.',
             'Si vous hésitez sur le nombre de jours, le quartier, la première visite ou l’excursion, contactez-nous. Nous pouvons vous conseiller selon vos intérêts et votre voyage.',
-          ],
+          ], ["Fez es una buena base para descubrir el norte y el centro de Marruecos. Una excursión privada puede llevarte a Chefchaouen, conocida por sus calles azules, casco antiguo y entorno montañoso; a Meknes, Volubilis y Moulay Idriss, para conocer historia imperial, ruinas romanas y una ciudad de peregrinación; o a Ifrane y el Atlas Medio, entre bosques, montañas y paisajes rurales. Una excursión privada permite quedarse más tiempo donde te interese, en lugar de seguir un programa apresurado.","Un buen viaje necesita planificación, pero también espacio. Reserva lo importante con antelación, especialmente el alojamiento y las experiencias que realmente quieras. Después deja margen para descubrir la ciudad. Fez no se comprende tachando lugares de una lista: se vive caminando, probando, observando y tomándose tiempo.","Si no sabes cuántos días dedicar, dónde alojarte, qué visitar primero o qué excursión elegir, contacta con nosotros. Podemos compartir consejos locales según tus intereses y planes."],
         ),
       },
     ],
@@ -246,21 +246,21 @@ export const TIP_ARTICLES = [
     id: 'tips-practical',
     template: 'editorial-guide',
     parentLabel: parent,
-    title: copy('Practical Tips for Visitors', 'Conseils pratiques pour les visiteurs', 'نصائح عملية للزوار'),
+    title: copy('Practical Tips for Visitors', 'Conseils pratiques pour les visiteurs', "Consejos prácticos para visitantes"),
     sections: [
       {
-        images: [img('/images/tips-practical/medina-steps.webp', 975, 1300, 'A sloping lane in the Fez Medina', 'Une ruelle en pente dans la médina de Fès', 'زقاق منحدر في مدينة فاس')],
+        images: [img('/images/tips-practical/medina-steps.webp', 975, 1300, 'A sloping lane in the Fez Medina', 'Une ruelle en pente dans la médina de Fès', "Una calle en pendiente de la medina de Fez")],
         paragraphs: paras(
           [
             'A few simple things can make your stay in Fez much easier and more comfortable. Fez has its own rhythm and customs. You do not need to know everything before you arrive. A few practical details can help you feel more comfortable, avoid common misunderstandings and enjoy the city.',
           ],
           [
             'Quelques choses simples rendent un séjour à Fès plus facile et plus confortable. La ville a son rythme et ses usages. Vous n’avez pas besoin de tout savoir avant d’arriver. Quelques détails pratiques suffisent pour vous sentir plus à l’aise.',
-          ],
+          ], ["Unas cuantas cosas sencillas pueden hacer tu estancia en Fez mucho más fácil y cómoda. La ciudad tiene su propio ritmo y costumbres. No necesitas saberlo todo antes de llegar: algunos detalles prácticos te ayudarán a sentirte más cómodo, evitar malentendidos habituales y disfrutar de la ciudad."],
         ),
       },
       {
-        heading: copy('Cash, shoes and clothing', 'Espèces, chaussures et tenue', 'النقد والأحذية واللباس'),
+        heading: copy('Cash, shoes and clothing', 'Espèces, chaussures et tenue', "Efectivo, calzado y ropa"),
         paragraphs: paras(
           [
             'Carry some Moroccan dirhams. Cards are accepted in many hotels, restaurants and modern shops, but cash still matters for small purchases, local food, taxis, small shops and traditional markets. Keep some smaller notes and coins, especially in the Medina.',
@@ -271,12 +271,12 @@ export const TIP_ARTICLES = [
             'Ayez des dirhams sur vous. Les cartes passent dans beaucoup d’hôtels, de restaurants et de boutiques modernes, mais le cash reste utile pour les petites dépenses, la cuisine locale, les taxis, les petites boutiques et les marchés. Gardez des petites coupures, surtout dans la médina.',
             'Vous marcherez probablement plus que prévu. Les rues peuvent être irrégulières, avec des marches, des pentes et des passages étroits. Choisissez des chaussures confortables pour plusieurs heures.',
             'Fès est une ville traditionnelle. Une tenue simple et pudique est le choix le plus facile. Couvrir les épaules et les genoux est une bonne façon de respecter les lieux, surtout les lieux religieux ou traditionnels.',
-          ],
+          ], ["Lleva algunos dírhams marroquíes. Muchos hoteles, restaurantes y tiendas modernas aceptan tarjetas, pero el efectivo sigue siendo importante para pequeñas compras, comida local, taxis, pequeñas tiendas y mercados tradicionales. Guarda billetes pequeños y monedas, especialmente en la medina.","Probablemente caminarás más de lo esperado. Las calles pueden ser irregulares, con escalones, pendientes y pasadizos estrechos. Elige un calzado con el que puedas caminar varias horas.","Fez es una ciudad tradicional. La ropa discreta y cómoda es la opción más sencilla. No necesitas prendas especiales, pero cubrir hombros y rodillas es una buena forma de respetar el entorno local, especialmente en lugares religiosos o tradicionales."],
         ),
         images: [],
       },
       {
-        heading: copy('Belongings, a SIM card, and opening hours', 'Affaires, carte SIM et horaires', 'المقتنيات وشريحة الهاتف وأوقات الفتح'),
+        heading: copy('Belongings, a SIM card, and opening hours', 'Affaires, carte SIM et horaires', "Pertenencias, tarjeta SIM y horarios"),
         paragraphs: paras(
           [
             'As in any busy tourist place, keep an eye on your belongings, especially in crowded markets. Keep your phone, wallet and important items secure, and do not leave them unattended.',
@@ -289,15 +289,15 @@ export const TIP_ARTICLES = [
             'Les données mobiles sont utiles si vous explorez seul. Elles aident à joindre le logement, utiliser les cartes et contacter un chauffeur ou un guide. Les cartes SIM se trouvent chez différents opérateurs. Demandez à votre logement ou à un contact local où en acheter une.',
             'Les horaires varient. Musées, monuments, boutiques, restaurants et marchés ne suivent pas tous le même rythme, et cela change selon le jour ou la saison. Si un lieu compte pour vous, vérifiez avant d’y aller.',
             'Le vendredi a un autre rythme. Certains commerces changent d’horaires, et certains sites ferment ou fonctionnent autrement. Si vous prévoyez des monuments ou des musées le vendredi, vérifiez à l’avance.',
-          ],
+          ], ["Como en cualquier lugar turístico concurrido, vigila tus pertenencias, sobre todo en mercados llenos de gente. Guarda el móvil, la cartera y los objetos importantes de forma segura y no los dejes desatendidos.","Los datos móviles son útiles si exploras por tu cuenta. Te permiten contactar con el alojamiento, utilizar mapas y llamar a un conductor o guía. Hay tarjetas SIM de distintos operadores. Si necesitas una, pregunta en tu alojamiento o a un contacto local dónde comprarla.","Los horarios varían. Museos, monumentos, tiendas, restaurantes y mercados no siguen todos el mismo horario y este puede cambiar según el día o la temporada. Si un lugar es importante para ti, compruébalo antes de ir.","Los viernes tienen un ritmo diferente. Algunos negocios cambian sus horarios y algunos lugares de interés cierran o funcionan de otra manera. Si planeas visitar monumentos, museos o lugares tradicionales un viernes, compruébalo con antelación."],
         ),
         images: [],
       },
       {
-        heading: copy('Shopping, food and photos', 'Achats, cuisine et photos', 'التسوق والطعام والصور'),
+        heading: copy('Shopping, food and photos', 'Achats, cuisine et photos', "Compras, gastronomía y fotografías"),
         images: [
-          img('/images/tips-practical/spice-shop.webp', 800, 600, 'Visitors at a spice shop in the Medina', 'Des visiteurs dans une boutique d’épices', 'زوار في دكان توابل'),
-          img('/images/tips-practical/craftsman.webp', 800, 600, 'A craftsman working at a small stall', 'Un artisan au travail sur un petit étal', 'حرفي يعمل على بسطة صغيرة'),
+          img('/images/tips-practical/spice-shop.webp', 800, 600, 'Visitors at a spice shop in the Medina', 'Des visiteurs dans une boutique d’épices', "Visitantes en una tienda de especias de la medina"),
+          img('/images/tips-practical/craftsman.webp', 800, 600, 'A craftsman working at a small stall', 'Un artisan au travail sur un petit étal', "Un artesano trabajando en un pequeño puesto"),
         ],
         paragraphs: paras(
           [
@@ -309,11 +309,11 @@ export const TIP_ARTICLES = [
             'Les achats font partie de Fès. Vous trouverez de l’artisanat, du cuir, des textiles, de la céramique, du zellige, du métal, des épices et d’autres produits locaux. Prenez le temps. Comparez, posez des questions, et comprenez ce que vous achetez. Si cela ne vous intéresse pas, un « non, merci » suffit en général.',
             'Goûter la cuisine locale est une des meilleures façons de vivre la ville. Choisissez des endroits fréquentés par les habitants, avec un bon renouvellement des plats. L’eau en bouteille est une option simple. Si vous avez l’estomac sensible, commencez doucement.',
             'Fès offre beaucoup à photographier. Les gens font partie de cette vie. Avant un gros plan, surtout d’un commerçant, d’un artisan ou d’un habitant, demandez d’abord. S’ils refusent, respectez la réponse.',
-          ],
+          ], ["Las compras forman parte de Fez. Encontrarás artesanía, cuero, tejidos, cerámica, zellige, metalistería, especias y otros productos locales. Tómate tu tiempo: compara productos y precios, pregunta y entiende lo que compras. Si no te interesa, un amable «no, gracias» suele bastar.","Probar la comida local es una de las mejores formas de conocer la ciudad. Busca lugares con muchos clientes locales y donde la comida tenga buena rotación. El agua embotellada es una opción sencilla para los visitantes. Si tienes el estómago sensible, empieza poco a poco.","Fez está llena de motivos para fotografiar y las personas forman parte de esa vida. Antes de hacer un primer plano de alguien, especialmente un comerciante, artesano o vecino, pide permiso. Si no quiere que le fotografíen, respétalo."],
         ),
       },
       {
-        heading: copy('Take breaks, and stay flexible', 'Faites des pauses, et restez souple', 'خذوا استراحة، وابقوا مرنين'),
+        heading: copy('Take breaks, and stay flexible', 'Faites des pauses, et restez souple', "Haz pausas y mantén la flexibilidad"),
         paragraphs: paras(
           [
             'Do not try to see everything in one day. The Old Medina is large, and several hours of walking can be tiring, especially in warmer months. Stop for tea, sit in a small café, enjoy a quiet courtyard, or watch the city. Some of the best moments happen when you are not rushing.',
@@ -324,7 +324,7 @@ export const TIP_ARTICLES = [
             'N’essayez pas de tout voir en un jour. La vieille médina est grande, et plusieurs heures de marche fatiguent, surtout quand il fait chaud. Arrêtez-vous pour un thé, asseyez-vous dans un café, profitez d’une cour calme. Certains des meilleurs moments arrivent quand on ne court pas.',
             'Une boutique peut être fermée, une rue plus animée que prévu, ou vos plans peuvent changer. Laissez de la place. Un peu de patience, de respect et de curiosité suffit. En cas de doute, demandez à votre hôtel, à votre guide ou à un contact local de confiance.',
             'Si vous avez une question sur la visite, les lieux, les usages ou l’organisation de votre temps, contactez-nous. Voyagez avec des informations utiles. Explorez avec confiance. Découvrez Fès à travers des yeux locaux.',
-          ],
+          ], ["No intentes verlo todo en un día. La medina antigua es grande y varias horas caminando pueden cansar, especialmente en los meses cálidos. Para a tomar té, siéntate en una pequeña cafetería, disfruta de un patio tranquilo u observa la ciudad. Algunos de los mejores momentos surgen cuando no vas deprisa.","Una tienda puede estar cerrada, una calle más concurrida de lo esperado o tus planes pueden cambiar. Deja margen en el programa. Un poco de paciencia, respeto y curiosidad ayudan mucho. Si tienes dudas, pregunta en el hotel, a tu guía o a un contacto local de confianza.","Si tienes preguntas sobre tu visita, lugares que ver, costumbres locales o cómo organizar tu tiempo, contacta con nosotros. Viaja con información útil, explora con confianza y descubre Fez con la mirada de sus vecinos."],
         ),
         images: [],
       },

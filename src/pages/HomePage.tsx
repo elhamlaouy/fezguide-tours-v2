@@ -38,96 +38,95 @@ export const HomePage: React.FC<HomePageProps> = ({
   const publishedTours = tours.filter((t) => t.published !== false);
   const featuredPillars: SectionPillar[] = publishedTours.filter((tour) => tour.id !== 'our-fez-tours').slice(0, 6);
 
-  // The 5 quick links to other sections as requested in the user prompt:
-  // "ومنها الزائر يقدر يوصل بسهولة لـ Fez و Day Trips و Food Tours و Travel Tips و About Us"
+  // Quick links to the five core sections.
   const quickSections = [
     {
       id: 'fez' as PageId,
-      title: { en: 'Explore the Medina', fr: 'Explorer la Médina', ar: 'استكشاف فاس البالي والمدينة' },
+      title: { en: 'Explore the Medina', fr: 'Explorer la Médina', es: 'Explora la medina' },
       desc: {
         en: 'Fes el-Bali walking tours, living artisan workshops, historic madrasas, and panoramic rooftop views.',
         fr: 'Ruelles piétonnes, ateliers d’artisans vivants, médersas historiques et panoramas sur les toits.',
-        ar: 'جولات مشي في فاس البالي، ورشات الحرفيين، المدارس التاريخية، والمطلات البانورامية الساحرة.',
+        es: 'Paseos por Fez el-Bali, talleres artesanos en activo, madrasas históricas y vistas panorámicas de los tejados.',
       },
       icon: Compass,
       image: '/images/real/fez_explore_medina_image1.jpg',
-      badge: { en: 'Living City', fr: 'Cité Vivante', ar: 'مدينة حية' },
+      badge: { en: 'Living City', fr: 'Cité Vivante', es: 'Ciudad viva' },
     },
     {
       id: 'day-trips' as PageId,
-      title: { en: 'Private Day Trips', fr: 'Excursions Privées', ar: 'رحلات يومية خاصة' },
+      title: { en: 'Private Day Trips', fr: 'Excursions Privées', es: 'Excursiones privadas' },
       desc: {
         en: 'Chefchaouen, Meknes and Volubilis, and the mountains of the Middle Atlas.',
         fr: 'Chefchaouen, Meknès et Volubilis, et les montagnes du Moyen Atlas.',
-        ar: 'شفشاون، ومكناس ووليلي، وجبال الأطلس المتوسط.',
+        es: 'Chefchaouen, Mequinez y Volubilis, y las montañas del Atlas Medio.',
       },
       icon: MapPin,
       image: '/images/daytrip-chefchaouen/blue-alley.webp',
-      badge: { en: 'Private Transport', fr: 'Transport Privé', ar: 'نقل خاص مريح' },
+      badge: { en: 'Private Transport', fr: 'Transport Privé', es: 'Transporte privado' },
     },
     {
       id: 'food-tours' as PageId,
-      title: { en: 'Food & Tasting Walks', fr: 'Tours Culinaires', ar: 'جولات الأكل والتذوق الشعبي' },
+      title: { en: 'Food & Tasting Walks', fr: 'Tours Culinaires', es: 'Paseos gastronómicos' },
       desc: {
         en: 'An alley safari: warm Harcha, Baghrir, piping-hot Bissara soup, local cheeses, and mint tea.',
         fr: 'Safari gourmand : Harcha tiède, Baghrir au miel, Bissara fumante, fromages et thé à la menthe.',
-        ar: 'تذوق أكلات الشارع: الحرشة، البغرير، حساء البيصارة الساخن، أجبان الجبل والشاي بالنعناع.',
+        es: 'Sabores entre callejuelas: harcha recién hecha, baghrir, bissara caliente, quesos locales y té a la menta.',
       },
       icon: UtensilsCrossed,
       image: '/images/food-tasting-walk/wood-oven.webp',
-      badge: { en: 'Street Food Safari', fr: 'Dégustations', ar: 'تذوق أصيل' },
+      badge: { en: 'Street Food Safari', fr: 'Dégustations', es: 'Sabores de la calle' },
     },
     {
       id: 'travel-tips' as PageId,
-      title: { en: 'Practical Travel Tips', fr: 'Conseils Pratiques', ar: 'نصائح وإرشادات السفر' },
+      title: { en: 'Practical Travel Tips', fr: 'Conseils Pratiques', es: 'Consejos prácticos de viaje' },
       desc: {
         en: 'Getting around on foot, red Petit Taxis (10–20 MAD), cash in MAD, Friday prayer rhythm, and customs.',
         fr: 'Se déplacer à pied, petits taxis rouges (10–20 MAD), espèces, rythme du vendredi et coutumes.',
-        ar: 'التنقل مشياً، سيارات التاكسي الأحمر، النقود، خصوصية يوم الجمعة وآداب الزيارة.',
+        es: 'Moverse a pie, taxis rojos (10–20 MAD), efectivo en dírhams, horarios de oración del viernes y costumbres locales.',
       },
       icon: HelpCircle,
       image: '/images/real/tips_getting_around_image1.jpg',
-      badge: { en: 'Local Advice', fr: 'Conseils Locaux', ar: 'إرشادات عملية' },
+      badge: { en: 'Local Advice', fr: 'Conseils Locaux', es: 'Consejos locales' },
     },
     {
       id: 'about' as PageId,
-      title: { en: 'About Us & Our Team', fr: 'À Propos & Équipe Locale', ar: 'من نحن وفريقنا المحلي' },
+      title: { en: 'About Us & Our Team', fr: 'À Propos & Équipe Locale', es: 'Quiénes somos y nuestro equipo' },
       desc: {
         en: 'Meet Med (Founder & Local Host), our licensed Medina guides, and trusted regional drivers.',
         fr: 'Rencontrez Med (fondateur & hôte local), nos guides agréés et nos chauffeurs de confiance.',
-        ar: 'تعرف على المؤسس والمضيف المحلي (Med)، مرشدينا المعتمدين وسائقينا الموثوقين.',
+        es: 'Conoce a Med, fundador y anfitrión local, a nuestros guías acreditados de la medina y a nuestros conductores de confianza.',
       },
       icon: Users,
       image: '/images/real/about_us_image1.jpg',
-      badge: { en: 'Local Team', fr: 'Équipe Locale', ar: 'فريق محلي' },
+      badge: { en: 'Local Team', fr: 'Équipe Locale', es: 'Equipo local' },
     },
   ];
 
   const whyChooseUs = [
     {
-      title: { en: 'Born & Based in Fez', fr: 'Nés & Basés à Fès', ar: 'أبناء فاس وسكانها' },
+      title: { en: 'Born & Based in Fez', fr: 'Nés & Basés à Fès', es: 'De Fez y en Fez' },
       desc: {
         en: 'We live here, understand every corner, and navigate the Medina with natural local ease.',
         fr: 'Nous vivons ici et connaissons chaque recoin de la médina depuis notre enfance.',
-        ar: 'نعيش في فاس ونعرف كل زقاق وحومة، ونتنقل في دروب فاس بأريحية عفوية.',
+        es: 'Vivimos aquí, conocemos cada rincón y nos movemos por la medina con la naturalidad de quienes son de Fez.',
       },
       icon: Compass,
     },
     {
-      title: { en: 'Private & Personal Pacing', fr: 'Visites Privées & Sur Mesure', ar: 'تجارب خاصة وشخصية' },
+      title: { en: 'Private & Personal Pacing', fr: 'Visites Privées & Sur Mesure', es: 'Visitas privadas a tu ritmo' },
       desc: {
         en: 'Dedicated only to you and your group. Move at your own relaxed pace without rushed tourist crowds.',
         fr: 'Exclusivement pour vous et vos compagnons. Visitez à votre rythme sans groupe imposé.',
-        ar: 'خاصة لك ولمجموعتك فقط، لتستمتعوا برحلتكم بالوتيرة التي تريحكم دون أي استعجال.',
+        es: 'Solo para ti y tu grupo. Disfrutad a vuestro ritmo, sin prisas ni grupos turísticos impuestos.',
       },
       icon: ShieldCheck,
     },
     {
-      title: { en: 'Comfortable Vehicles & Drivers', fr: 'Véhicules Confortables & Chauffeurs', ar: 'سيارات مريحة وسائقون موثوقون' },
+      title: { en: 'Comfortable Vehicles & Drivers', fr: 'Véhicules Confortables & Chauffeurs', es: 'Vehículos cómodos y conductores' },
       desc: {
         en: 'Modern air-conditioned transport for scenic day trips with trusted, punctual professional drivers.',
         fr: 'Flotte moderne et climatisée pour des excursions sécurisées avec chauffeurs prévenants.',
-        ar: 'سيارات سياحية حديثة ومكيفة لرحلات اليوم الواحد مع سائقين محترفين وملتزمين.',
+        es: 'Transporte moderno con aire acondicionado para las excursiones, con conductores profesionales, puntuales y de confianza.',
       },
       icon: Sparkles,
     },
@@ -140,7 +139,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Background Image - 100% sharp and clear across the entire above-the-fold section */}
         <img
           src={siteSettings?.heroImage || '/images/real/about_us_image7.jpg'}
-          alt="Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"
+          alt={language === 'es' ? "Grupo de visitantes ante Bab Boujloud con un guía local oficial" : "Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -188,22 +187,22 @@ export const HomePage: React.FC<HomePageProps> = ({
             <div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">
               <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
                 <ShieldCheck className="w-4 h-4 text-[#005F5A]" />
-                <span>Ministry of Tourism Licensed #FEZ-2849</span>
+                <span>{language === 'es' ? "Autorizados por el Ministerio de Turismo #FEZ-2849" : "Ministry of Tourism Licensed #FEZ-2849"}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
                 <Star className="w-4 h-4 text-[#E07A5F] fill-current" />
-                <span>5.0 on Tripadvisor (82 reviews)</span>
+                <span>{language === 'es' ? '5.0 en Tripadvisor (82 opiniones)' : '5.0 on Tripadvisor (82 reviews)'}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
                 <Clock className="w-4 h-4 text-[#005F5A]" />
-                <span>24/7 WhatsApp Assistance</span>
+                <span>{language === 'es' ? 'Asistencia por WhatsApp las 24 horas' : '24/7 WhatsApp Assistance'}</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. THE 5 CORE DEPARTMENTS QUICK ACCESS (User requirement: ومنها الزائر يقدر يوصل بسهولة لـ Fez و Day Trips و Food Tours و Travel Tips و About Us) */}
+      {/* 2. THE 5 CORE DEPARTMENTS QUICK ACCESS (Fez, Day Trips, Food Tours, Travel Tips and About Us) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
@@ -285,7 +284,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             onClick={() => onNavigate('fez')}
             className="text-xs font-bold text-[#C84B31] hover:text-[#B33D25] flex items-center gap-1 cursor-pointer"
           >
-            <span>View All Tours</span>
+            <span>{language === 'es' ? "Ver todas las visitas" : "View All Tours"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -351,15 +350,15 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="bg-[#005F5A] rounded-3xl p-8 sm:p-12 text-white text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3">
             <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              {language === 'ar'
-                ? 'جاهز لاكتشاف فاس برفقة مرشد سياحي معتمد؟'
+              {language === 'es'
+                ? "¿Listos para descubrir Fez con un guía local oficial?"
                 : language === 'fr'
                 ? 'Prêt à explorer Fès avec un guide officiel ?'
                 : 'Ready to Explore Fez with an Official Local Guide?'}
             </h2>
             <p className="text-xs sm:text-sm text-[#D4ECE9] leading-relaxed">
-              {language === 'ar'
-                ? 'احجز عبر الموقع مع إمكانية الإلغاء المرن، أو تواصل معنا مباشرة عبر واتساب لترتيب جولة مخصصة لك.'
+              {language === 'es'
+                ? "Reservad hoy en línea con cancelación flexible gratuita, o contactad directamente con nuestro equipo por WhatsApp para organizar una visita privada a medida."
                 : language === 'fr'
                 ? 'Réservez en ligne avec annulation flexible, ou écrivez-nous sur WhatsApp pour une visite sur mesure.'
                 : 'Book online today with free flexible cancellation, or chat with our team directly on WhatsApp for custom private requests.'}
@@ -374,8 +373,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
             <a
               href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-                language === 'ar'
-                  ? 'السلام عليكم ورحمة الله، أود التنسيق معكم لحجز جولة في فاس عبر FezGuideTours'
+                language === 'es'
+                  ? 'Hola, me gustaría organizar una visita en Fez con vosotros a través de FezGuideTours.'
                   : language === 'fr'
                   ? "Bonjour FezGuideTours ! J'aimerais planifier une visite guidée à Fès."
                   : 'Hello FezGuideTours! I would like to plan a guided tour in Fez.'
@@ -384,8 +383,8 @@ export const HomePage: React.FC<HomePageProps> = ({
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#005F5A] hover:bg-[#FAF8F5] font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-colors"
             >
-              {language === 'ar'
-                ? `تواصل عبر واتساب (${siteSettings.phoneNumber})`
+              {language === 'es'
+                ? `Contactar por WhatsApp (${siteSettings.phoneNumber})`
                 : language === 'fr'
                 ? `WhatsApp (${siteSettings.phoneNumber})`
                 : `WhatsApp Us (${siteSettings.phoneNumber})`}

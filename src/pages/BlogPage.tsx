@@ -40,12 +40,12 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
     title: {
       en: 'Fez Travel Stories, Heritage & Guides',
       fr: 'Récits de Voyage, Patrimoine & Guides de Fès',
-      ar: 'مدونة فاس: قصص التراث، دليلك السياحي، وأسرار المدينة',
+      es: 'Blog de Fez: historias de su patrimonio, guías y secretos de la ciudad',
     },
     subtitle: {
       en: 'Articles and insider guides curated by licensed local historians and storytellers.',
       fr: 'Articles et secrets locaux rédigés par nos historiens et guides officiels.',
-      ar: 'مقالات وأدلة حصرية يكتبها نخبة من المرشدين المعتمدين والمؤرخين المحليين.',
+      es: 'Artículos y guías exclusivos escritos por guías oficiales e historiadores locales.',
     },
   };
 
@@ -55,7 +55,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
           src="/images/real/fez_history_culture_image1.jpg"
-          alt="Fez Travel Blog"
+          alt={language === 'es' ? "Blog de viajes de Fez" : "Fez Travel Blog"}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -65,7 +65,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <BookOpen className="w-4 h-4 text-[#005F5A]" />
-              <span>FezGuideTours Journal</span>
+              <span>{language === 'es' ? "Diario de FezGuideTours" : "FezGuideTours Journal"}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
@@ -155,9 +155,9 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                     className="text-xs font-bold text-[#005F5A] hover:text-[#C84B31] flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>
-                      {language === 'ar' ? 'اقرأ المزيد' : language === 'fr' ? 'Lire la suite' : 'Read More'}
+                      {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire la suite' : 'Read More'}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
                 </div>
@@ -181,7 +181,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
             <button
               onClick={() => setSelectedPost(null)}
               className="absolute top-4 right-4 z-10 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors cursor-pointer"
-              aria-label="Close article"
+              aria-label={language === 'es' ? "Cerrar artículo" : "Close article"}
             >
               <X className="w-5 h-5" />
             </button>
@@ -212,7 +212,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
 
             {/* Prose Content */}
             <div className="p-6 sm:p-10 space-y-6">
-              <p className="text-base font-medium text-[#2A3735] leading-relaxed italic border-l-4 border-[#005F5A] pl-4 rtl:border-l-0 rtl:border-r-4 rtl:pl-0 rtl:pr-4">
+              <p className="text-base font-medium text-[#2A3735] leading-relaxed italic border-l-4 border-[#005F5A] pl-4">
                 {selectedPost.excerpt[language]}
               </p>
 
@@ -223,8 +223,8 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
               {/* Author & Booking CTA */}
               <div className="pt-6 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-[#728280]">
-                  {language === 'ar'
-                    ? 'كُتب بكل شغف بواسطة المرشدين المعتمدين لـ FezGuideTours.'
+                  {language === 'es'
+                    ? 'Escrito con pasión por los guías oficiales de FezGuideTours.'
                     : language === 'fr'
                     ? 'Rédigé avec passion par les guides certifiés de FezGuideTours.'
                     : 'Written with love by the certified guides of FezGuideTours.'}
@@ -236,8 +236,8 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                   }}
                   className="py-2.5 px-5 bg-[#C84B31] hover:bg-[#B33D25] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
                 >
-                  {language === 'ar'
-                    ? 'احجز جولة في فاس'
+                  {language === 'es'
+                    ? 'Reserva una visita en Fez'
                     : language === 'fr'
                     ? 'Réserver une visite'
                     : 'Book a Tour in Fez'}

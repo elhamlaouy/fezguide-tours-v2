@@ -24,17 +24,17 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   const getActionConfig = () => {
     const label = isFezOverviewCard
       ? isArticle
-        ? language === 'fr' ? 'Lire le guide' : language === 'ar' ? 'اقرأ الدليل' : 'Read the Guide'
-        : language === 'fr' ? 'Voir les détails de la visite' : language === 'ar' ? 'عرض تفاصيل الجولة' : 'View Tour Details'
+        ? language === 'fr' ? 'Lire le guide' : language === 'es' ? 'Leer la guía' : 'Read the Guide'
+        : language === 'fr' ? 'Voir les détails de la visite' : language === 'es' ? 'Ver los detalles de la visita' : 'View Tour Details'
       : isArticle
       ? pillar.id === 'fez-history-landmarks'
-        ? (language === 'fr' ? 'Lire le récit' : 'Read the Story')
+        ? (language === 'es' ? 'Leer el relato' : language === 'fr' ? 'Lire le récit' : 'Read the Story')
         : pillar.id === 'fez-things-to-do'
-          ? (language === 'fr' ? 'Lire le guide' : 'Read the Guide')
-        : (language === 'fr' ? 'Lire l’article' : 'Read the Article')
+          ? (language === 'es' ? 'Leer la guía' : language === 'fr' ? 'Lire le guide' : 'Read the Guide')
+        : (language === 'es' ? 'Leer el artículo' : language === 'fr' ? 'Lire l’article' : 'Read the Article')
       : pillar.id === 'our-fez-tours'
-      ? (language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
-      : (language === 'ar' ? 'عرض التفاصيل والبرنامج' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
+      ? (language === 'es' ? 'Ver la visita y el precio' : language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
+      : (language === 'es' ? 'Ver los detalles y el itinerario' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
     return {
       label,
       icon: Compass,
@@ -74,7 +74,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
           )}
           {pillar.id === 'our-fez-tours' ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
-              €170 / {language === 'fr' ? 'personne' : 'person'}
+              €170 / {language === 'es' ? 'persona' : language === 'fr' ? 'personne' : 'person'}
             </span>
           ) : pillar.practicalInfo?.priceMAD ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
@@ -136,7 +136,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
               onClick={() => onBookTour(pillar.title[language])}
               title={UI_TEXT.common.bookNow[language]}
               className="p-2.5 rounded-xl border border-[#DCD5CB] text-[#52605E] hover:text-[#C84B31] hover:border-[#C84B31] hover:bg-[#FAF8F5] transition-colors cursor-pointer shrink-0"
-              aria-label="Quick Book"
+              aria-label={language === 'es' ? "Reserva rápida" : "Quick Book"}
             >
               <Calendar className="w-3.5 h-3.5" />
             </button>

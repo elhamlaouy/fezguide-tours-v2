@@ -14,7 +14,7 @@ interface EditorialArticlePageProps {
 }
 
 const text = (value: Partial<Record<Language, string>> | undefined, language: Language) =>
-  value?.[language] || value?.en || '';
+  language === 'es' ? value?.es || '' : value?.[language] || value?.en || '';
 
 export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
   article,
@@ -23,13 +23,13 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
   onNavigate,
   onOpenProduct,
 }) => {
-  const bodyLanguage: Language = language === 'ar' ? 'en' : language;
+  const bodyLanguage = language;
   const parentLabel = article.parentLabel
     ? text(article.parentLabel, language)
-    : language === 'ar' ? 'جولات الأكل' : language === 'fr' ? 'Tours culinaires' : 'Food Tours';
+    : language === 'es' ? 'Visitas gastronómicas' : language === 'fr' ? 'Tours culinaires' : 'Food Tours';
 
   return (
-    <div className="bg-[#FAF8F5] pb-20" dir={language === 'ar' ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] pb-20">
       <PageCrumbBar
         language={language}
         parentLabel={parentLabel}
@@ -46,7 +46,7 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
         </header>
 
         {article.sections.map((section, index) => {
-          const paragraphs = section.paragraphs[bodyLanguage] || section.paragraphs.en;
+          const paragraphs = section.paragraphs[bodyLanguage] || (language === 'es' ? [] : section.paragraphs.en);
           const heading = text(section.heading, bodyLanguage);
           return (
             <section key={index} className="space-y-7">
@@ -119,7 +119,7 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
           </p>
         )}
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </article>
     </div>
   );

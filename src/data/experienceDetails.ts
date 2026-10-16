@@ -35,70 +35,70 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Bab Boujloud (The Blue Gate) & Tala’a Kbira',
           fr: 'Bab Boujloud (La Porte Bleue) & Tala’a Kbira',
-          ar: 'باب بوجلود (البوابة الزرقاء) والطلعة الكبيرة',
+          es: 'Bab Boujloud (la Puerta Azul) y Tala’a Kbira',
         },
         description: {
           en: 'Meet your licensed native guide under the cobalt blue arches of Bab Boujloud. Begin descending Tala’a Kbira, the vibrant historic spine of Fes el-Bali.',
           fr: 'Retrouvez votre guide officiel sous les superbes faïences bleues de Bab Boujloud. Descente de Tala’a Kbira, l’artère médiévale emblématique.',
-          ar: 'اللقاء بالمرشد المعتمد أمام باب بوجلود التاريخي، ثم الانطلاق عبر الطلعة الكبيرة، الشريان التراثي النابض لفاس البالي.',
+          es: 'Encuentra a tu guía local acreditado bajo los arcos azul cobalto de Bab Boujloud. Comienza a bajar por Tala’a Kbira, la animada arteria histórica de Fes el-Bali.',
         },
-        badge: { en: 'Historic Gateway', fr: 'Porte Emblématique', ar: 'بوابة تاريخية' },
+        badge: { en: 'Historic Gateway', fr: 'Porte Emblématique', es: 'Puerta histórica' },
       },
       {
         time: '10:30 AM',
         title: {
           en: 'Bou Inania Madrasa & Water Clock (Dar al-Magana)',
           fr: 'Médersa Bou Inania & Horloge Hydraulique',
-          ar: 'المدرسة البوعنانية ودار المگانة المائية',
+          es: 'Madraza Bou Inania y reloj de agua (Dar al-Magana)',
         },
         description: {
           en: 'Explore the 14th-century Marinid architectural masterpiece with its intricate stucco, carved cedarwood, and hand-cut geometric zellige tiles.',
           fr: 'Découverte de ce chef-d’œuvre mérinide du XIVe siècle, orné de stucs délicats, de bois de cèdre sculpté et de zelliges géométriques.',
-          ar: 'زيارة التحفة المعمارية المرينية التي شيدت في القرن الرابع عشر، وتأمل نقوش الجبس وخشب الأرز والزليج الفاسي النادر.',
+          es: 'Descubre esta obra maestra de la arquitectura meriní del siglo XIV, con sus delicados estucos, madera de cedro tallada y azulejos geométricos de zellige cortados a mano.',
         },
-        badge: { en: 'Architecture', fr: 'Architecture', ar: 'عمارة إسلامية' },
+        badge: { en: 'Architecture', fr: 'Architecture', es: 'Arquitectura' },
       },
       {
         time: '11:45 AM',
         title: {
           en: 'Living Craftsmen Quarters & Hidden Workshops',
           fr: 'Quartiers des Métiers & Ateliers Vivants',
-          ar: 'أحياء الحرفيين والورشات التقليدية الحية',
+          es: 'Barrios de artesanos y talleres escondidos',
         },
         description: {
           en: 'Venture into the heart of the artisan guilds: copper beating in Place Seffarine, loom weaving of agave cactus silk, and master woodworking.',
           fr: 'Immersion au cœur des corporations d’artisans : dinandiers de la place Seffarine, tisserands de soie végétale et ébénistes.',
-          ar: 'دخول دروب الحرفيين: نحاسيو ساحة الصفارين، نساجو حرير الصبار البلدي، وورشات النجارة التقليدية العريقة.',
+          es: 'Adéntrate en el corazón de los gremios artesanos: el trabajo del cobre en la plaza Seffarine, el tejido de seda vegetal de agave y la ebanistería tradicional.',
         },
-        badge: { en: 'Artisans', fr: 'Artisans', ar: 'حرف تقليدية' },
+        badge: { en: 'Artisans', fr: 'Artisans', es: 'Artesanos' },
       },
       {
         time: '01:00 PM',
         title: {
           en: 'Chouara Tannery & Leather Heritage',
           fr: 'Tannerie Chouara & Savoir-Faire du Cuir',
-          ar: 'دار الدباغ شوارة وتاريخ صناعة الجلد',
+          es: 'Curtiduría Chouara y tradición del cuero',
         },
         description: {
           en: 'View the world-famous natural stone dye vats from a terrace with fresh mint. Learn the medieval tanning process preserved unchanged since the 11th century.',
           fr: 'Vue panoramique sur les fosses de teinture naturelle du XIe siècle avec un brin de menthe fraîche et explications détaillées.',
-          ar: 'مشاهدة أحواض الصباغة الحجرية الشهيرة عالمياً مع باقة نعناع فريش، وشرح دقيق لمراحل الدباغة الطبيعية المستمرة منذ القرن الحادي عشر.',
+          es: 'Contempla las famosas cubas de piedra para tintes naturales desde una terraza, con una ramita de menta fresca. Conoce el proceso medieval de curtido, conservado desde el siglo XI.',
         },
-        badge: { en: 'World Famous', fr: 'Incontournable', ar: 'تراث عالمي' },
+        badge: { en: 'World Famous', fr: 'Incontournable', es: 'Fama mundial' },
       },
       {
         time: '02:00 PM',
         title: {
           en: 'Panoramic Rooftop Lookout & Fresh Mint Tea',
           fr: 'Panorama sur les Toits & Pause Thé à la Menthe',
-          ar: 'مطل بانورامي على مآذن فاس واستراحة شاي بالنعناع',
+          es: 'Terraza panorámica y té de menta',
         },
         description: {
           en: 'Conclude your walk at a quiet historic rooftop terrace overlooking the sea of minarets and medieval rooftops, sharing local tea and conversation.',
           fr: 'Terminez votre balade sur un toit-terrasse paisible offrant une vue saisissante sur les minarets et toitures médiévales.',
-          ar: 'ختام الجولة في شرفة بانورامية تطل على مآذن فاس البالي وتلالها المحيطة، مع جلسة شاي مغربي هادئة وتجاذب أطراف الحديث.',
+          es: 'Termina el paseo en una tranquila terraza histórica con vistas a los minaretes y tejados medievales, compartiendo té local y una buena conversación.',
         },
-        badge: { en: 'Panoramic View', fr: 'Vue Panoramique', ar: 'إطلالة ساحرة' },
+        badge: { en: 'Panoramic View', fr: 'Vue Panoramique', es: 'Vista panorámica' },
       },
     ],
     included: {
@@ -118,13 +118,13 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Pause thé à la menthe marocain traditionnel sur un toit panoramique',
         'Conseils authentiques et absence totale de boutiques imposées',
       ],
-      ar: [
-        'مرشد سياحي رسمي معتمد من وزارة السياحة من أبناء فاس العتيقة',
-        'جولة خاصة 100% لك ولمجموعتك فقط بدون أي أفواج مجهولة',
-        'اللقاء والتوصيل من مقر إقامتك بالرياض أو فندقك قرب المدينة العتيقة',
-        'وتيرة مشي مرنة ومريحة تناسب العائلات وهواة التصوير',
-        'استراحة شاي بالنعناع المغربي الأصيل في شرفة بانورامية ساحرة',
-        'مصداقية كاملة: لا عمولات خفية ولا إجبار على دخول محلات التسوق',
+      es: [
+        'Guía local oficial acreditado, nacido en Fez, que habla inglés, francés y árabe',
+        'Visita 100% privada, exclusiva para tu familia o grupo de viaje',
+        'Encuentro y recogida en tu riad u hotel dentro o cerca de la medina',
+        'Ritmo flexible adaptado a tu comodidad al caminar y a tus preferencias fotográficas',
+        'Pausa para tomar té de menta marroquí tradicional en un mirador panorámico',
+        'Consejos locales sinceros: sin trampas para turistas ni paradas de compras obligatorias',
       ],
     },
     excluded: {
@@ -140,11 +140,11 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Achats et dépenses personnelles',
         'Pourboire discrétionnaire pour votre guide',
       ],
-      ar: [
-        'تذاكر دخول المعالم التاريخية (المدرسة البوعنانية ~20 درهم)',
-        'وجبة الغداء (يوفر المرشد أفضل الترشيحات المحلية للمطاعم النظيفة)',
-        'المشتريات والمقتنيات الشخصية',
-        'الإكرامية الاختيارية للمرشد',
+      es: [
+        'Entradas a monumentos históricos (p. ej., madraza Bou Inania ~20 MAD)',
+        'Almuerzo (recomendaciones disponibles si las necesitas)',
+        'Recuerdos y compras personales',
+        'Propina opcional para el guía',
       ],
     },
     whatToBring: {
@@ -162,28 +162,28 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Espèces en Dirhams (MAD) pour les petites entrées et souvenirs',
         'Tenue sobre et respectueuse des traditions locales',
       ],
-      ar: [
-        'حذاء مشي مريح ومانع للانزلاق لملاءمة الأزقة الحجرية والدرجات',
-        'واقي شمس: نظارات شمسية وقبعة خفيفة',
-        'كاميرا أو هاتف محمول لتوثيق المشاهد النادرة والتفاصيل المعمارية',
-        'مبلغ نقدي بالدرهم المغربي (MAD) للدخوليات والمشروبات الخفيفة',
-        'ملابس محتشمة ومريحة تناسب طابع المدينة العتيقة',
+      es: [
+        'Calzado cómodo con buen agarre para las calles empedradas',
+        'Protección solar: gafas de sol, sombrero y crema solar ligera',
+        'Cámara o móvil para fotografiar la vida de las calles',
+        'Efectivo en dírhams marroquíes (MAD) para pequeñas entradas y bebidas',
+        'Ropa discreta y respetuosa con las costumbres locales',
       ],
     },
     meetingPointDetails: {
       en: 'Direct pickup at your Riad or Hotel inside or adjacent to the Medina, or at the landmark monument Bab Boujloud (outside Café Clock).',
       fr: 'Prise en charge à votre Riad ou hôtel dans la Médina, ou devant la grande porte Bab Boujloud.',
-      ar: 'التوصيل المباشر من باب الرياض أو الفندق، أو نقطة الالتقاء الرسمية أمام باب بوجلود التاريخي.',
+      es: 'Recogida en tu riad u hotel dentro o junto a la medina, o encuentro en Bab Boujloud (delante de Café Clock).',
     },
     cancellationPolicy: {
       en: 'Free cancellation with 100% refund up to 24 hours prior to tour departure.',
       fr: 'Annulation gratuite avec remboursement intégral jusqu’à 24 heures avant le départ.',
-      ar: 'إلغاء مجاني مع استرداد كامل للمبلغ حتى 24 ساعة قبل موعد بدء الجولة.',
+      es: 'Cancelación gratuita con reembolso íntegro hasta 24 horas antes de la salida.',
     },
     suitableFor: {
       en: ['Couples & Solos', 'Families with Children', 'Photography Enthusiasts', 'First-Time Morocco Visitors'],
       fr: ['Couples & Voyageurs solos', 'Familles avec enfants', 'Passionnés de photographie', 'Premier voyage au Maroc'],
-      ar: ['الأزواج والمسافرون المنفردون', 'العائلات مع أطفال', 'عشاق التصوير', 'القادمون للمغرب لأول مرة'],
+      es: ['Parejas y viajeros en solitario', 'Familias con niños', 'Aficionados a la fotografía', 'Quienes visitan Marruecos por primera vez'],
     },
     reviews: [
       {
@@ -194,7 +194,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Booking this private Medina tour with Med was hands down the best decision of our Morocco trip. We would have gotten hopelessly lost without him, but more importantly, he opened up doors to real workshops and explained the soul of Fez. Truly unforgettable!',
           fr: 'Réserver cette visite privée avec Med a été la meilleure décision de notre séjour. Il nous a fait découvrir des ateliers cachés et expliqué l’âme de Fès avec passion. Inoubliable !',
-          ar: 'حجز هذه الجولة مع ميد كان أفضل قرار اتخذناه في رحلتنا إلى المغرب. شرحه لتاريخ فاس وأزقتها وفتح أبواب الورشات الحقيقية جعل الرحلة تجربة لا تُنسى!',
+          es: 'Reservar esta visita privada a la medina con Med fue, sin duda, la mejor decisión de nuestro viaje a Marruecos. Sin él nos habríamos perdido, pero lo más importante fue que nos abrió las puertas de talleres de verdad y nos explicó el alma de Fez. ¡Inolvidable!',
         },
       },
       {
@@ -205,7 +205,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'A profound cultural immersion. No pushy shops, pure history and heartwarming human encounters in the quiet residential alleys. 10/10.',
           fr: 'Une immersion culturelle profonde. Pas de boutiques pièges, de la pure histoire et des rencontres humaines chaleureuses. 10/10.',
-          ar: 'انغماس ثقافي وتاريخي عميق. لا ضغط ولا محلات تسوق مفروضة، فقط تاريخ حقيقي ولقاءات إنسانية طيبة في دروب فاس. أنصح بها بشدة.',
+          es: 'Una inmersión cultural profunda. Sin tiendas insistentes, solo historia y encuentros entrañables en las tranquilas callejuelas residenciales. 10/10.',
         },
       },
     ],
@@ -227,56 +227,56 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'The Royal Palace of Fez (Dar al-Makhzen)',
           fr: 'Le Palais Royal de Fès (Dar al-Makhzen)',
-          ar: 'القصر الملكي بفاس (دار المخزن) وأبوابه الذهبية',
+          es: 'Palacio Real de Fez (Dar al-Makhzen)',
         },
         description: {
           en: 'Admire the monumental 7 bronze gates of the Royal Palace, adorned with hand-chiseled brass arabesques and zellige mosaic patterns.',
           fr: 'Contemplez les 7 majestueuses portes en bronze ciselé du Palais Royal et leurs décors de faïence zellige éclatants.',
-          ar: 'التوقف أمام الأبواب النحاسية السبعة المنقوشة يدوياً للقصر الملكي، وتأمل لوحات الزليج الهندسي البديع.',
+          es: 'Admira las siete puertas monumentales de bronce del Palacio Real, adornadas con arabescos de latón cincelados a mano y mosaicos de zellige.',
         },
-        badge: { en: 'Royal Splendor', fr: 'Splendeur Royale', ar: 'هيبة ملكية' },
+        badge: { en: 'Royal Splendor', fr: 'Splendeur Royale', es: 'Esplendor real' },
       },
       {
         time: '10:00 AM',
         title: {
           en: 'The Historic Jewish Mellah & Ibn Danan Synagogue',
           fr: 'Le Mellah Historique & Synagogue Ibn Danan',
-          ar: 'حي الملاح التاريخي وكنيس ابن دانان العتيق',
+          es: 'Mellah histórico y sinagoga Ibn Danan',
         },
         description: {
           en: 'Walk the distinctive wrought-iron balcony streets of the Mellah, visiting the 17th-century restored Ibn Danan Synagogue and Jewish cemetery.',
           fr: 'Parcourez les ruelles aux balcons en fer forgé du Mellah, visitez la synagogue du XVIIe siècle et le cimetière israélite.',
-          ar: 'جولة في شوارع الملاح ذات الشرفات الحديدية الأندلسية، وزيارة كنيس ابن دانان الأثري الذي شيد في القرن السابع عشر.',
+          es: 'Recorre las calles del Mellah con sus característicos balcones de hierro forjado y visita la sinagoga Ibn Danan, restaurada y del siglo XVII, y el cementerio judío.',
         },
-        badge: { en: 'Shared Heritage', fr: 'Mémoire Partagée', ar: 'تراث مشترك' },
+        badge: { en: 'Shared Heritage', fr: 'Mémoire Partagée', es: 'Patrimonio compartido' },
       },
       {
         time: '11:15 AM',
         title: {
           en: 'Al-Qarawiyyin University & Historic Quarter',
           fr: 'Université Al Quaraouiyine & Quartier Historique',
-          ar: 'جامعة القرويين التاريخية ومكتبتها العريقة',
+          es: 'Universidad Al-Qarawiyyin y barrio histórico',
         },
         description: {
           en: 'Founded in 859 AD by Fatima al-Fihri, recognized by UNESCO as the oldest existing educational institution in the world.',
           fr: 'Fondée en 859 par Fatima al-Fihri, reconnue par l’UNESCO comme la plus ancienne université au monde encore en activité.',
-          ar: 'تأسست عام 859م على يد فاطمة الفهرية، وهي أقدم مؤسسة للتعليم العالي المستمر في العالم بشهادة اليونسكو.',
+          es: 'Fundada en el año 859 por Fatima al-Fihri y reconocida por la UNESCO como la institución educativa en funcionamiento más antigua del mundo.',
         },
-        badge: { en: 'UNESCO Legacy', fr: 'Patrimoine UNESCO', ar: 'أقدم جامعة بالعالم' },
+        badge: { en: 'UNESCO Legacy', fr: 'Patrimoine UNESCO', es: 'Legado UNESCO' },
       },
       {
         time: '12:30 PM',
         title: {
           en: 'Al-Attarine Madrasa & Nejjarine Wood Museum',
           fr: 'Médersa Al-Attarine & Musée Nejjarine du Bois',
-          ar: 'مدرسة العطارين ومتحف النجارين لفنون الخشب',
+          es: 'Madraza Al-Attarine y Museo de la Madera Nejjarine',
         },
         description: {
           en: 'Discover the pinnacles of Islamic calligraphy, cedar carving, and the grand restored 18th-century fondouk in Place Nejjarine.',
           fr: 'Découvrez les sommets de la calligraphie islamique et l’ancien fondouk caravanier du XVIIIe siècle magnifiquement restauré.',
-          ar: 'اكتشاف أروع ما أبدعته اليد المغربية في فن الخط الكوفي، ونقش خشب الأرز، وزيارة فندق النجارين التراثي التاريخي.',
+          es: 'Descubre obras maestras de la caligrafía islámica y la talla de cedro, y el gran fondouk del siglo XVIII restaurado en la plaza Nejjarine.',
         },
-        badge: { en: 'Masterpieces', fr: 'Chefs-d’œuvre', ar: 'إبداع معماري' },
+        badge: { en: 'Masterpieces', fr: 'Chefs-d’œuvre', es: 'Obras maestras' },
       },
     ],
     included: {
@@ -294,38 +294,38 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Explications approfondies sur la géométrie islamique et l’histoire andalouse',
         'Bouteille d’eau minérale offerte',
       ],
-      ar: [
-        'مرشد ومؤرخ معتمد متخصص في تاريخ فاس الإسلامي والأندلسي',
-        'جولة خاصة 100% مصممة حسب اهتمامك التاريخي والمعماري',
-        'نقل خاص ومريح بين القصر الملكي والملاح ومدخل فاس البالي',
-        'شرح موثق لأسرار الهندسة الإسلامية والزخارف الأندلسية والتراث المشترك',
-        'مياه معدنية معبأة طوال الجولة',
+      es: [
+        'Guía e historiador acreditado con formación universitaria, especializado en la medina',
+        'Visita 100% privada adaptada a tus intereses históricos y arquitectónicos',
+        'Transporte privado cómodo entre el Palacio Real, el Mellah y la entrada de la medina',
+        'Explicaciones detalladas sobre geometría islámica, patrimonio judío y arquitectura andalusí',
+        'Agua mineral embotellada durante la visita',
       ],
     },
     excluded: {
       en: ['Monument entrance fees (~20 to 50 MAD per site)', 'Lunch & personal expenses', 'Guide gratuity'],
       fr: ['Entrées aux monuments (~20 à 50 MAD par site)', 'Déjeuner & dépenses personnelles', 'Pourboire'],
-      ar: ['تذاكر دخول المدارس والمتاحف (~20 إلى 50 درهم للمعلم)', 'وجبة الغداء والمصاريف الشخصية', 'إكرامية المرشد'],
+      es: ['Entradas a monumentos (~20 a 50 MAD por lugar)', 'Almuerzo y gastos personales', 'Propina para el guía'],
     },
     whatToBring: {
       en: ['Walking shoes', 'Camera with zoom lens', 'Cash in MAD', 'Scarf for visits near sacred sites'],
       fr: ['Chaussures confortables', 'Appareil photo', 'Dirhams en espèces', 'Foulard léger'],
-      ar: ['حذاء مريح', 'كاميرا بعدسة جيدة', 'مبلغ نقدي بالدرهم', 'وشاح خفيف'],
+      es: ['Calzado cómodo para caminar', 'Cámara con zoom', 'Efectivo en MAD', 'Pañuelo para las visitas cerca de lugares sagrados'],
     },
     meetingPointDetails: {
       en: 'Riad/Hotel pickup in Fez or Royal Palace Bab Dekkakin meeting point.',
       fr: 'Prise en charge à votre hébergement ou devant Bab Dekkakin.',
-      ar: 'التوصيل من مقر إقامتك أو اللقاء عند باب الدكاكين بالقصر الملكي.',
+      es: 'Recogida en tu riad u hotel de Fez, o encuentro en Bab Dekkakin, en el Palacio Real.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours in advance.',
       fr: 'Annulation gratuite jusqu’à 24h avant l’activité.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['History Buffs', 'Architecture Lovers', 'Academics & Cultural Travelers', 'Families'],
       fr: ['Amateurs d’histoire', 'Passionnés d’architecture', 'Voyageurs culturels', 'Familles'],
-      ar: ['عشاق التاريخ', 'محبو العمارة الإسلامية', 'الباحثون والمهتمون بالتراث', 'العائلات'],
+      es: ['Aficionados a la historia', 'Amantes de la arquitectura', 'Investigadores y viajeros culturales', 'Familias'],
     },
     reviews: [
       {
@@ -336,7 +336,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Our guide was a walking encyclopedia of Moroccan history. Learning how the Mellah, the Marinid sultans, and Al-Qarawiyyin intertwined was captivating. Best historical tour I have ever taken!',
           fr: 'Notre guide était une véritable encyclopédie vivante. L’histoire du Mellah et d’Al Quaraouiyine était captivante.',
-          ar: 'مرشدنا كان موسوعة تاريخية حية. الربط بين الملاح وتاريخ الملوك المرينيين وجامعة القرويين كان ساحراً وممتعاً جداً.',
+          es: 'Nuestro guía era una enciclopedia viviente de la historia de Marruecos. Conocer la relación entre el Mellah, los sultanes meriníes y Al-Qarawiyyin fue fascinante. ¡La mejor visita histórica que he hecho!',
         },
       },
     ],
@@ -358,56 +358,56 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Zellige & Pottery Co-op Live Hands-on Masterclass',
           fr: 'Coopérative de Poterie & Zellige : Démonstration en Direct',
-          ar: 'ورشة الخزف والزليج الفاسي: عرض حي وحرفي',
+          es: 'Cooperativa de cerámica y zellige: taller práctico en directo',
         },
         description: {
           en: 'Watch artisans knead grey clay from the local hills, spin potter’s wheels with their feet, and chip intricate zellige mosaic tesserae by hand with a heavy hammer.',
           fr: 'Observez les potiers façonner l’argile grise au tour et les maîtres artisans tailler les fragments de zellige avec leur marteau traditionnel.',
-          ar: 'مشاهدة حرفيي الفخار وهم يعجنون طين فاس الرمادي ويشكلون الأواني بأرجلهم، ثم تقطيع قطع الزليج الدقيقة يدوياً بالمنقاش.',
+          es: 'Observa cómo los artesanos amasan la arcilla gris de las colinas locales, mueven el torno con los pies y tallan a mano las pequeñas piezas de zellige con un pesado martillo.',
         },
-        badge: { en: 'Handmade Craft', fr: 'Artisanat d’Art', ar: 'صناعة يدوية' },
+        badge: { en: 'Handmade Craft', fr: 'Artisanat d’Art', es: 'Artesanía hecha a mano' },
       },
       {
         time: '11:45 AM',
         title: {
           en: 'Souk el-Attarine: Spices, Herbs & Pure Argan',
           fr: 'Souk el-Attarine : Épices, Plantes & Huile d’Argan Pure',
-          ar: 'سوق العطارين: التوابل، الأعشاب الطبيعية، والأركان الأصلي',
+          es: 'Souk el-Attarine: especias, hierbas y argán puro',
         },
         description: {
           en: 'Immerse your senses in cones of saffron, paprika, cumin, amber resin, and rosewater. Learn how locals use medicinal herbs in daily life.',
           fr: 'Éveillez vos sens devant les pyramides de safran, cumin, résines d’ambre et eau de rose distillée.',
-          ar: 'تأمل تلال الزعفران، الكمون، ماء الورد المقطر، والصمغ العربي، واكتشف أسرار استخدام الأعشاب في المطبخ والطب الشعبي.',
+          es: 'Despierta los sentidos entre montones de azafrán, pimentón, comino, resina de ámbar y agua de rosas. Descubre cómo se usan las hierbas medicinales en la vida cotidiana.',
         },
-        badge: { en: 'Sensory Souk', fr: 'Souk des Épices', ar: 'سوق التوابل' },
+        badge: { en: 'Sensory Souk', fr: 'Souk des Épices', es: 'Zoco de los sentidos' },
       },
       {
         time: '01:15 PM',
         title: {
           en: 'Seffarine Brass & Copper Coppersmithing',
           fr: 'Place Seffarine : Dinanderie & Cuivre Martelé',
-          ar: 'ساحة الصفارين: فن طرق النحاس وصناعة الصواني',
+          es: 'Seffarine: artesanía del latón y el cobre',
         },
         description: {
           en: 'The rhythmic music of coppersmiths hammering giant couscous steamers, teapots, and ornate brass trays under the shade of ancient plane trees.',
           fr: 'Le tintement mélodieux des marteaux forgeant les théières, chaudrons à couscous et plateaux en cuivre ciselé.',
-          ar: 'إيقاع مطارق النحاسيين العريقة في ساحة الصفارين تحت ظلال الأشجار المعمرة، وصناعة صواني الشاي وأواني الكسكس الضخمة.',
+          es: 'Escucha el ritmo de los caldereros mientras martillean grandes cuscuseras, teteras y bandejas de latón decoradas a la sombra de plátanos centenarios.',
         },
-        badge: { en: 'Living Sound', fr: 'Ambiance Vivante', ar: 'إيقاع تراثي' },
+        badge: { en: 'Living Sound', fr: 'Ambiance Vivante', es: 'Sonidos de la vida local' },
       },
       {
         time: '05:30 PM',
         title: {
           en: 'Sunset at Merenid Tombs & Borj Nord Overlook',
           fr: 'Coucher de Soleil aux Tombeaux Mérinides & Borj Nord',
-          ar: 'غروب الشمس الساحر من القلاع المرينية وبرج الشمال',
+          es: 'Atardecer en las tumbas meriníes y el mirador de Borj Nord',
         },
         description: {
           en: 'End the day with a dramatic golden hour view watching the call to prayer echo across the 10,000 rooftops of the medieval Medina.',
           fr: 'Clôturez la journée avec un coucher de soleil grandiose alors que l’appel à la prière résonne sur les toits de la médina.',
-          ar: 'اختتام اليوم بمشهد غروب الشمس الذهبي وسماع صدى أذان المغرب يتردد في أرجاء آلاف المآذن والدروب العتيقة.',
+          es: 'Termina el día con las vistas de la hora dorada mientras la llamada a la oración resuena sobre los 10.000 tejados de la medina medieval.',
         },
-        badge: { en: 'Golden Hour', fr: 'Coucher de Soleil', ar: 'لحظة الغروب' },
+        badge: { en: 'Golden Hour', fr: 'Coucher de Soleil', es: 'Hora dorada' },
       },
     ],
     included: {
@@ -423,37 +423,37 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Démonstrations d’artisanat en direct',
         'Conseils impartiaux pour distinguer le vrai artisanat des imitations',
       ],
-      ar: [
-        'مرشد رسمي معتمد يرافقك طوال البرنامج',
-        'نقل خاص ومريح لورش الخزف والمطلات البانورامية العالية',
-        'عروض حية لصناعة الفخار، الزليج، النسيج، وطرق النحاس',
-        'إرشادات أمينة لتمييز المنتجات اليدوية الأصلية والأسعار العادلة',
+      es: [
+        'Guía privado acreditado dedicado a tu programa',
+        'Transporte privado de ida y vuelta a la cooperativa de cerámica y los miradores',
+        'Demostraciones en directo de cerámica, zellige, tejido y trabajo del cobre',
+        'Consejos locales para reconocer piezas de calidad y negociar precios justos',
       ],
     },
     excluded: {
       en: ['Personal purchases', 'Meals and drinks', 'Tips for artisans & guide'],
       fr: ['Achats personnels', 'Repas et consommations', 'Pourboires'],
-      ar: ['المشتريات الشخصية', 'الوجبات والمشروبات', 'الإكراميات'],
+      es: ['Compras personales', 'Comidas y bebidas', 'Propinas para artesanos y guía'],
     },
     whatToBring: {
       en: ['Flat comfortable shoes', 'Tote bag for souvenirs', 'Cash for shopping', 'Camera'],
       fr: ['Chaussures plates confortables', 'Sac pour emplettes', 'Espèces', 'Appareil photo'],
-      ar: ['حذاء مريح', 'حقيبة تسوق قماشية', 'مبلغ نقدي', 'كاميرا للتصوير'],
+      es: ['Calzado plano y cómodo', 'Bolsa para los recuerdos', 'Efectivo para compras', 'Cámara'],
     },
     meetingPointDetails: {
       en: 'Pickup from your Riad or centrally located hotel in Fez.',
       fr: 'Prise en charge à votre riad ou hôtel à Fès.',
-      ar: 'التوصيل من مقر إقامتك بالرياض أو الفندق في فاس.',
+      es: 'Recogida en tu riad u hotel céntrico de Fez.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours prior to experience.',
       fr: 'Annulation gratuite jusqu’à 24 heures avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['Shoppers & Craft Lovers', 'Families', 'Design & Art Enthusiasts', 'Couples'],
       fr: ['Amateurs d’artisanat', 'Familles', 'Passionnés de design', 'Couples'],
-      ar: ['محبو الحرف والتسوق التراثي', 'العائلات', 'عشاق الفنون والديكور', 'الأزواج'],
+      es: ['Amantes de las compras y la artesanía', 'Familias', 'Aficionados al diseño y al arte', 'Parejas'],
     },
     reviews: [
       {
@@ -464,7 +464,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Watching the zellige masters piece together mosaics was like seeing living magic. And the sunset from the Merenid Tombs took my breath away. Perfect day in Fez!',
           fr: 'Voir les maîtres du zellige assembler les mosaïques était magique. Et le coucher de soleil aux tombeaux mérinides est sublime.',
-          ar: 'مشاهدة معلمي الزليج يجمعون القطع الصغيرة كان سحراً حقيقياً، وغروب الشمس من القلاع المرينية مشهد يحبس الأنفاس!',
+          es: 'Ver a los maestros del zellige montar los mosaicos fue como presenciar magia en vivo. Y el atardecer desde las tumbas meriníes me dejó sin aliento. ¡Un día perfecto en Fez!',
         },
       },
     ],
@@ -481,56 +481,56 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Departure from Fez & Scenic Rif Mountain Drive',
           fr: 'Départ de Fès & Traversée des Montagnes du Rif',
-          ar: 'الانطلاق من فاس وعبر جبال الريف الخضراء',
+          es: 'Salida de Fez y recorrido panorámico por las montañas del Rif',
         },
         description: {
           en: 'Your private air-conditioned vehicle picks you up at your Riad. Enjoy a scenic 3.5-hour journey through olive groves, dams, and Rif mountain passes with coffee stops.',
           fr: 'Prise en charge à votre Riad en véhicule moderne climatisé. Magnifique trajet de 3h30 à travers les paysages du Rif avec pauses café.',
-          ar: 'الانطلاق بسيارة حديثة ومكيفة من مقر إقامتك، والاستمتاع برحلة بانورامية عبر حقول الزيتون وسدود المياه وجبال الريف.',
+          es: 'Tu vehículo privado con aire acondicionado te recoge en el riad. Disfruta de un trayecto panorámico de 3,5 horas entre olivares, embalses y puertos del Rif, con paradas para tomar café.',
         },
-        badge: { en: 'Scenic Drive', fr: 'Route Panoramique', ar: 'طريق جبلي ساحر' },
+        badge: { en: 'Scenic Drive', fr: 'Route Panoramique', es: 'Ruta panorámica' },
       },
       {
         time: '11:45 AM',
         title: {
           en: 'Arrival at Chefchaouen & Outa el-Hammam Square',
           fr: 'Arrivée à Chefchaouen & Place Outa el-Hammam',
-          ar: 'الوصول إلى شفشاون وساحة وطاء الحمام',
+          es: 'Llegada a Chefchaouen y plaza Outa el-Hammam',
         },
         description: {
           en: 'Step into the tranquil blue pearl of Morocco. Explore the central plaza surrounded by red-walled Kasbah towers, cafes, and cedar-shaded patios.',
           fr: 'Entrez dans la perle bleue du Maroc. Découvrez la place centrale entourée de la Kasbah aux murs ocre et de terrasses ombragées.',
-          ar: 'دخول الجوهرة الزرقاء الساحرة، واستكشاف ساحة وطاء الحمام المركزية المحاطة بأسوار القصبة الحمراء ومقاهي الشاي الجبلي.',
+          es: 'Entra en la tranquila perla azul de Marruecos. Descubre la plaza central, rodeada de las torres de muros rojos de la kasbah, cafés y patios a la sombra de los cedros.',
         },
-        badge: { en: 'Blue Pearl', fr: 'Perle Bleue', ar: 'الجوهرة الزرقاء' },
+        badge: { en: 'Blue Pearl', fr: 'Perle Bleue', es: 'Perla azul' },
       },
       {
         time: '01:00 PM',
         title: {
           en: 'Exploring the Blue Alleys & Ras El Maa',
           fr: 'Balade dans les Ruelles Bleues & Source Ras el-Maa',
-          ar: 'التجول بين الدروب الزرقاء ومنبع رأس الماء',
+          es: 'Paseo por las callejuelas azules y Ras el-Maa',
         },
         description: {
           en: 'Stroll the famous cobalt-washed stairways, discover Berber wool blankets, and walk to the fresh mountain spring of Ras el-Maa where locals gather.',
           fr: 'Flânez dans les ruelles peintes de nuances d’azur, découvrez les tissages rifains et rejoignez la fraîcheur de la source Ras el-Maa.',
-          ar: 'المشي في الأزقة والسلالم الزرقاء الشهيرة، واكتشاف منسوجات صوف جبال الريف، والوصول إلى منبع شلالات رأس الماء البارد.',
+          es: 'Pasea por las famosas escaleras pintadas de azul cobalto, descubre mantas de lana bereber y acércate al fresco manantial de montaña Ras el-Maa, donde se reúnen los vecinos.',
         },
-        badge: { en: 'Pure Magic', fr: 'Magie Pure', ar: 'طبيعة عذبة' },
+        badge: { en: 'Pure Magic', fr: 'Magie Pure', es: 'Pura magia' },
       },
       {
         time: '04:30 PM',
         title: {
           en: 'Relaxed Return Journey to Fez',
           fr: 'Retour Confortable vers Fès',
-          ar: 'رحلة العودة المريحة إلى فاس',
+          es: 'Regreso tranquilo a Fez',
         },
         description: {
           en: 'Relax in your private vehicle during the comfortable drive back, arriving at your Fez accommodation around 7:30 PM.',
           fr: 'Trajet retour détendu en véhicule privé, arrivée à votre hébergement à Fès vers 19h30.',
-          ar: 'العودة بكل راحة في سيارتك الخاصة، والوصول إلى فندقك في فاس حوالي الساعة 7:30 مساءً.',
+          es: 'Relájate en tu vehículo privado durante el cómodo regreso, con llegada a tu alojamiento en Fez hacia las 19:30.',
         },
-        badge: { en: 'Comfort Return', fr: 'Retour Confort', ar: 'عودة مريحة' },
+        badge: { en: 'Comfort Return', fr: 'Retour Confort', es: 'Regreso cómodo' },
       },
     ],
     included: {
@@ -548,38 +548,38 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Carburant, péages d’autoroute et frais de stationnement inclus',
         'Liberté totale : arrêts photos et pauses café à votre demande',
       ],
-      ar: [
-        'سيارة سياحية خاصة وحديثة ومكيفة لك ولمجموعتك فقط',
-        'سائق محترف وموثوق ومرخص يتحدث العربية والإنجليزية والفرنسية',
-        'توصيل مباشر من باب الرياض في فاس والعودة إليه',
-        'شامل الوقود، رسوم الطرق السريعة، ومواقف السيارات بالكامل',
-        'حرية كاملة: التوقف متى رغبتم لالتقاط الصور والتمتع بالمناظر الجبلية',
+      es: [
+        'Vehículo privado moderno con aire acondicionado, exclusivo para tu grupo',
+        'Conductor privado profesional, puntual y acreditado que habla inglés y francés',
+        'Recogida y regreso puerta a puerta en tu riad u hotel de Fez',
+        'Combustible, peajes, aparcamiento e impuestos de circulación incluidos',
+        'Horario libre: paradas para fotos, té y miradores cuando queráis',
       ],
     },
     excluded: {
       en: ['Lunch & personal beverages in Chefchaouen', 'Local town guide (optional add-on ~250 MAD)', 'Driver tip'],
       fr: ['Déjeuner et boissons à Chefchaouen', 'Guide local de ville (optionnel ~250 MAD)', 'Pourboire chauffeur'],
-      ar: ['وجبة الغداء والمشروبات في شفشاون', 'مرشد محلي داخل المدينة (اختياري إضافي ~250 درهم)', 'إكرامية السائق'],
+      es: ['Almuerzo y bebidas en Chefchaouen', 'Guía local de la ciudad (opcional ~250 MAD)', 'Propina para el conductor'],
     },
     whatToBring: {
       en: ['Comfortable walking footwear for hilly cobblestones', 'Camera & charged power bank', 'Light jacket for mountain breezes', 'Cash in MAD'],
       fr: ['Chaussures confortables pour les ruelles en pente', 'Appareil photo & batterie', 'Veste légère', 'Espèces en MAD'],
-      ar: ['حذاء مشي مريح للدروب الجبلية والسلالم', 'كاميرا وشاحن متنقل', 'سترة خفيفة لنسيم الجبال', 'مبلغ نقدي بالدرهم'],
+      es: ['Calzado cómodo para las calles empedradas en cuesta', 'Cámara y batería externa cargada', 'Chaqueta ligera para la brisa de montaña', 'Efectivo en MAD'],
     },
     meetingPointDetails: {
       en: 'Door-to-door pickup at any Riad, hotel, or private villa in Fez at 08:00 AM.',
       fr: 'Prise en charge directement à votre hébergement à Fès à 08h00.',
-      ar: 'التوصيل من باب الفندق أو الرياض في فاس عند الساعة 08:00 صباحاً.',
+      es: 'Recogida puerta a puerta en cualquier riad, hotel o villa privada de Fez a las 08:00.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours before pickup.',
       fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل موعد الانطلاق.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la recogida.',
     },
     suitableFor: {
       en: ['Couples', 'Families', 'Photographers & Instagrammers', 'Small Groups of Friends'],
       fr: ['Couples', 'Familles', 'Photographes', 'Petits groupes d’amis'],
-      ar: ['الأزواج', 'العائلات', 'عشاق الصور والجمال الطبيعي', 'المجموعات والأصدقاء'],
+      es: ['Parejas', 'Familias', 'Fotógrafos y aficionados a Instagram', 'Pequeños grupos de amigos'],
     },
     reviews: [
       {
@@ -590,7 +590,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Our driver was so courteous, the car was spotless, and having our own private schedule meant we could wander the blue alleys at our leisure without any tour bus rush. Superb service!',
           fr: 'Chauffeur prévenant, véhicule impeccable, et aucune contrainte horaire de bus. Un service parfait.',
-          ar: 'السائق كان في قمة اللباقة والسيارة نظيفة جداً، والرحلة الخاصة منحتنا حرية كاملة للتجول والتصوير بدون استعجال الباصات السياحية.',
+          es: 'El conductor fue muy atento, el coche estaba impecable y tener nuestro propio horario nos permitió recorrer las callejuelas azules sin las prisas de los autobuses turísticos. ¡Un servicio excelente!',
         },
       },
     ],
@@ -611,42 +611,42 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Volubilis',
           fr: 'Volubilis',
-          ar: 'وليلي',
+          es: 'Volubilis',
         },
         description: {
           en: 'Walk among the remains of the ancient Roman city, its old streets and buildings, and the mosaics that have survived for centuries.',
           fr: 'Marchez parmi les vestiges de la cité romaine, ses anciennes rues, ses bâtiments et les mosaïques qui ont traversé les siècles.',
-          ar: 'تجولوا بين بقايا المدينة الرومانية وشوارعها ومبانيها القديمة والفسيفساء التي صمدت لقرون.',
+          es: 'Camina entre los restos de la antigua ciudad romana, sus calles y edificios, y los mosaicos que han sobrevivido durante siglos.',
         },
-        badge: { en: 'Roman Heritage', fr: 'Antiquité Romaine', ar: 'تراث روماني' },
+        badge: { en: 'Roman Heritage', fr: 'Antiquité Romaine', es: 'Patrimonio romano' },
       },
       {
         time: '',
         title: {
           en: 'Moulay Idriss Zerhoun',
           fr: 'Moulay Idriss Zerhoun',
-          ar: 'مولاي إدريس زرهون',
+          es: 'Moulay Idriss Zerhoun',
         },
         description: {
           en: 'A small hillside pilgrimage town. Walk part of it, look at the views, and see its link to the early history of Morocco.',
           fr: 'Une petite ville sainte sur les collines. Parcourez-en une partie, profitez des vues et découvrez son lien avec les débuts de l’histoire du Maroc.',
-          ar: 'بلدة حج صغيرة على التلال. امشوا في جزء منها، شاهدوا الإطلالات، واكتشفوا صلتها ببدايات تاريخ المغرب.',
+          es: 'Una pequeña localidad de peregrinación sobre las colinas. Recorre parte del pueblo, disfruta de las vistas y descubre su vínculo con los comienzos de la historia de Marruecos.',
         },
-        badge: { en: 'Holy Town', fr: 'Cité Sainte', ar: 'بلدة تاريخية' },
+        badge: { en: 'Holy Town', fr: 'Cité Sainte', es: 'Ciudad santa' },
       },
       {
         time: '',
         title: {
           en: 'Meknes: Bab Mansour and the old medina',
           fr: 'Meknès : Bab Mansour et l’ancienne médina',
-          ar: 'مكناس: باب المنصور والمدينة العتيقة',
+          es: 'Meknes: Bab Mansour y la antigua medina',
         },
         description: {
           en: 'Walk around Bab Mansour, the old medina, historic walls and traditional streets. If the sites are open, there is also time for more of Meknes from the period of Sultan Moulay Ismail.',
           fr: 'Faites le tour de Bab Mansour, de l’ancienne médina, des remparts et des rues traditionnelles. Si les sites sont ouverts, il reste aussi du temps pour d’autres lieux de Meknès liés à l’époque du sultan Moulay Ismaïl.',
-          ar: 'تجولوا حول باب المنصور والمدينة العتيقة والأسوار التاريخية والشوارع التقليدية. إذا كانت المواقع مفتوحة، هناك أيضاً وقت لمزيد من مكناس في فترة السلطان مولاي إسماعيل.',
+          es: 'Pasea por Bab Mansour, la antigua medina, las murallas históricas y las calles tradicionales. Si los lugares están abiertos, también habrá tiempo para conocer otros rincones de Meknes vinculados a la época del sultán Moulay Ismail.',
         },
-        badge: { en: 'Imperial Capital', fr: 'Capitale Impériale', ar: 'عاصمة إسماعيلية' },
+        badge: { en: 'Imperial Capital', fr: 'Capitale Impériale', es: 'Capital imperial' },
       },
     ],
     included: {
@@ -662,37 +662,37 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Tous frais de carburant, péages et parkings',
         'Programme personnalisable selon vos préférences historiques',
       ],
-      ar: [
-        'سيارة سياحية خاصة ومكيفة مع سائق محترف وخبير بالطرق',
-        'توصيل من وإلى مقر إقامتك بالرياض أو الفندق في فاس',
-        'شامل جميع تكاليف المحروقات والرسوم والمواقف',
-        'برنامج مرن يتيح لك قضاء الوقت المناسب في كل معلم أثري',
+      es: [
+        'Vehículo privado cómodo con conductor profesional experimentado',
+        'Recogida y regreso puerta a puerta en tu hotel o riad de Fez',
+        'Todos los gastos de transporte, peajes, aparcamiento y combustible',
+        'Horario flexible adaptado a tus intereses en arqueología y fotografía',
       ],
     },
     excluded: {
       en: ['Volubilis entrance ticket (~70 MAD)', 'Local site guide at Volubilis (optional ~200 MAD)', 'Lunch'],
       fr: ['Billet d’entrée à Volubilis (~70 MAD)', 'Guide officiel à Volubilis (optionnel ~200 MAD)', 'Déjeuner'],
-      ar: ['تذكرة دخول موقع وليلي الأثري (~70 درهم)', 'مرشد محلي خاص بوليلي (اختياري ~200 درهم)', 'الغداء'],
+      es: ['Entrada a Volubilis (~70 MAD)', 'Guía local en Volubilis (opcional ~200 MAD)', 'Almuerzo'],
     },
     whatToBring: {
       en: ['Sun hat and sunglasses (open archaeological ruins)', 'Comfortable walking sneakers', 'Camera', 'Cash in MAD'],
       fr: ['Chapeau et lunettes de soleil', 'Chaussures de marche', 'Appareil photo', 'Dirhams en espèces'],
-      ar: ['قبعة ونظارات شمسية (موقع أثري مفتوح)', 'حذاء رياضي مريح للمشي بين الآثار', 'كاميرا', 'مبلغ نقدي'],
+      es: ['Sombrero y gafas de sol (yacimiento al aire libre)', 'Zapatillas cómodas para caminar', 'Cámara', 'Efectivo en MAD'],
     },
     meetingPointDetails: {
       en: 'Doorstep pickup at your Fez accommodation at 9:00 AM.',
       fr: 'Prise en charge à votre hôtel ou riad à 9h00.',
-      ar: 'التوصيل من باب مقر إقامتك في فاس عند الساعة 9:00 صباحاً.',
+      es: 'Recogida en la puerta de tu alojamiento de Fez a las 9:00.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours prior to departure.',
       fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['History & Archaeology Lovers', 'Couples', 'Families', 'Curious Explorers'],
       fr: ['Passionnés d’archéologie', 'Couples', 'Familles', 'Curieux d’histoire'],
-      ar: ['عشاق الآثار والتاريخ الروماني والإسلامي', 'الأزواج', 'العائلات', 'المستكشفون'],
+      es: ['Amantes de la historia y la arqueología', 'Parejas', 'Familias', 'Exploradores curiosos'],
     },
     reviews: [
       {
@@ -703,7 +703,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'The Roman mosaics at Volubilis with the backdrop of the Zerhoun hills are breathtaking. Our driver made the whole day seamless and relaxing. Highly recommended!',
           fr: 'Les mosaïques de Volubilis avec les collines de Zerhoun en toile de fond sont spectaculaires.',
-          ar: 'فسيفساء وليلي الرومانية مع إطلالة تلال زرهون مشهد ساحر للغاية. السائق وفر لنا راحة تامة طوال اليوم.',
+          es: 'Los mosaicos romanos de Volubilis, con las colinas de Zerhoun al fondo, son impresionantes. Nuestro conductor hizo que todo el día resultara cómodo y relajado. ¡Muy recomendable!',
         },
       },
     ],
@@ -722,42 +722,42 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'From Fez into the mountains',
           fr: 'De Fès vers les montagnes',
-          ar: 'من فاس نحو الجبال',
+          es: 'De Fez a las montañas',
         },
         description: {
           en: 'The road leaves the city for a greener, cooler landscape, then reaches Ifrane, with its distinctive architecture, clean streets and green spaces.',
           fr: 'La route quitte la ville pour un paysage plus vert et plus frais, puis arrive à Ifrane, avec son architecture particulière, ses rues propres et ses espaces verts.',
-          ar: 'يغادر الطريق المدينة نحو منظر أكثر خضرة وبرودة، ثم يصل إلى إفران بعمارتها المميزة وشوارعها النظيفة ومساحاتها الخضراء.',
+          es: 'La carretera deja atrás la ciudad para adentrarse en un paisaje más verde y fresco, hasta llegar a Ifrane, con su arquitectura singular, calles limpias y espacios verdes.',
         },
-        badge: { en: 'Mountain Road', fr: 'Route de montagne', ar: 'طريق جبلي' },
+        badge: { en: 'Mountain Road', fr: 'Route de montagne', es: 'Carretera de montaña' },
       },
       {
         time: '',
         title: {
           en: 'Ifrane and the stone lion',
           fr: 'Ifrane et le lion de pierre',
-          ar: 'إفران والأسد الحجري',
+          es: 'Ifrane y el león de piedra',
         },
         description: {
           en: 'Walk the central areas and see the stone lion statue, one of the symbols associated with the city.',
           fr: 'Promenez-vous dans les quartiers centraux et voyez la statue du lion de pierre, l’un des symboles associés à la ville.',
-          ar: 'تجولوا في المناطق الوسطى وشاهدوا تمثال الأسد الحجري، أحد الرموز المرتبطة بالمدينة.',
+          es: 'Pasea por el centro y contempla la estatua del león de piedra, uno de los símbolos de la ciudad.',
         },
-        badge: { en: 'Ifrane', fr: 'Ifrane', ar: 'إفران' },
+        badge: { en: 'Ifrane', fr: 'Ifrane', es: 'Ifrane' },
       },
       {
         time: '',
         title: {
           en: 'Scenic stops along the way',
           fr: 'Arrêts selon la route',
-          ar: 'توقفات على الطريق',
+          es: 'Paradas panorámicas por el camino',
         },
         description: {
           en: 'Forests, mountains and countryside. Stops, photographs and short walks depend on the season, the weather and the road. The driver stays flexible, and a local guide can join you if you want one.',
           fr: 'Forêts, montagnes et campagne. Les arrêts, les photos et les courtes marches dépendent de la saison, du temps et de la route. Le chauffeur reste flexible, et un guide local peut vous accompagner si vous le souhaitez.',
-          ar: 'غابات وجبال وريف. التوقفات والصور والمشاوير القصيرة تعتمد على الموسم والطقس والطريق. يبقى السائق مرناً، ويمكن أن يرافقكم مرشد محلي إذا أردتم.',
+          es: 'Bosques, montañas y paisajes rurales. Las paradas, las fotos y los paseos cortos dependen de la estación, el tiempo y la carretera. El conductor se adapta, y puede acompañaros un guía local si lo deseáis.',
         },
-        badge: { en: 'Flexible', fr: 'Flexible', ar: 'مرن' },
+        badge: { en: 'Flexible', fr: 'Flexible', es: 'Flexible' },
       },
     ],
     included: {
@@ -773,37 +773,37 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Arrêts sur la route, selon la saison et l’état des routes',
         'Carburant, péages et parkings inclus',
       ],
-      ar: [
-        'سيارة سياحية خاصة ومريحة مع سائق خبير بأمان الطرق الجبلية',
-        'توصيل من باب الفندق أو الرياض والعودة إليه',
-        'توقفات على الطريق حسب الموسم وحالة الطريق',
-        'شامل جميع مصاريف الوقود والرسوم والمواقف',
+      es: [
+        'Vehículo privado con aire acondicionado y conductor profesional',
+        'Recogida y regreso en tu riad u hotel de Fez',
+        'Paradas panorámicas por el camino, cuando lo permitan la estación y la carretera',
+        'Todos los gastos del vehículo, combustible y peajes',
       ],
     },
     excluded: {
       en: ['Lunch at local mountain restaurant', 'Personal shopping', 'Driver tip'],
       fr: ['Déjeuner en auberge de montagne', 'Achats personnels', 'Pourboire chauffeur'],
-      ar: ['وجبة الغداء في مطعم جبلي', 'المشتريات الشخصية', 'إكرامية السائق'],
+      es: ['Almuerzo en un restaurante de montaña', 'Compras personales', 'Propina para el conductor'],
     },
     whatToBring: {
       en: ['Comfortable walking shoes', 'Light sweater or jacket (cooler mountain air)', 'Camera'],
       fr: ['Chaussures de marche', 'Gilet ou veste (air frais en altitude)', 'Appareil photo'],
-      ar: ['حذاء مريح للمشي في الغابة', 'سترة دافئة خفيفة (طقس الجبل منعش وبارد)', 'كاميرا'],
+      es: ['Calzado cómodo para caminar', 'Jersey o chaqueta ligera (el aire de montaña es más fresco)', 'Cámara'],
     },
     meetingPointDetails: {
       en: 'Door-to-door pickup in Fez at 09:00 AM.',
       fr: 'Prise en charge à votre hôtel à Fès à 09h00.',
-      ar: 'التوصيل من مقر إقامتك في فاس الساعة 09:00 صباحاً.',
+      es: 'Recogida puerta a puerta en Fez a las 09:00.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours before pickup.',
       fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['Families with Children', 'Nature Enthusiasts', 'Couples', 'Mountain Air Seekers'],
       fr: ['Familles avec enfants', 'Amoureux de la nature', 'Couples', 'En quête de grand air'],
-      ar: ['العائلات والأطفال', 'عشاق الطبيعة والغابات', 'الأزواج', 'الباحثون عن هواء الجبل النقي'],
+      es: ['Familias con niños', 'Amantes de la naturaleza', 'Parejas', 'Quienes buscan aire de montaña'],
     },
     reviews: [
       {
@@ -814,7 +814,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'A relaxed day in the mountains, with time to stop where we wanted. Ifrane felt very different from Fez.',
           fr: 'Une journée détendue dans les montagnes, avec le temps de s’arrêter où nous voulions. Ifrane est très différente de Fès.',
-          ar: 'يوم هادئ في الجبال، مع وقت للتوقف حيث نريد. بدت إفران مختلفة جداً عن فاس.',
+          es: 'Un día tranquilo en las montañas, con tiempo para parar donde queríamos. Ifrane nos pareció muy diferente de Fez.',
         },
       },
     ],
@@ -831,14 +831,14 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Tailored Route Co-Designed with You',
           fr: 'Circuit Sur Mesure Conçu avec Vous',
-          ar: 'برنامج خاص ومصمم وفق رغبتك بالكامل',
+          es: 'Ruta a medida diseñada contigo',
         },
         description: {
           en: 'Tell us the places you want to see, when to leave, and how long to stay at each stop. We arrange the day from Fez around that.',
           fr: 'Dites-nous les lieux, l’heure de départ et le temps à chaque arrêt. Nous organisons la journée au départ de Fès autour de cela.',
-          ar: 'أخبرونا بالأماكن ووقت الانطلاق والمدة في كل محطة. نرتب اليوم انطلاقاً من فاس وفق ذلك.',
+          es: 'Dinos qué lugares quieres conocer, a qué hora salir y cuánto tiempo pasar en cada parada. Organizamos la jornada desde Fez según tus preferencias.',
         },
-        badge: { en: 'Bespoke', fr: 'Sur Mesure', ar: 'حسب الطلب' },
+        badge: { en: 'Bespoke', fr: 'Sur Mesure', es: 'A medida' },
       },
     ],
     included: {
@@ -852,36 +852,36 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Création d’itinéraire personnalisé avec notre équipe',
         'Flexibilité absolue des horaires et des arrêts',
       ],
-      ar: [
-        'سيارة سياحية خاصة وسائق محترف مخصص لك طوال اليوم',
-        'تخطيط مسار خاص والتنسيق المباشر مع فريقنا المحلي',
-        'مرونة مطلقة في مواعيد الانطلاق والتوقفات على الطريق',
+      es: [
+        'Vehículo privado y conductor profesional a tu disposición todo el día',
+        'Planificación de la ruta a medida y coordinación personal con guías locales',
+        'Flexibilidad total en la hora de salida y las paradas',
       ],
     },
     excluded: {
       en: ['Personal expenses & meals', 'Optional monument entrance fees', 'Gratuities'],
       fr: ['Dépenses personnelles & repas', 'Entrées aux sites optionnels', 'Pourboires'],
-      ar: ['المصاريف الشخصية والوجبات', 'تذاكر المعالم الاختيارية', 'الإكراميات'],
+      es: ['Gastos personales y comidas', 'Entradas a monumentos opcionales', 'Propinas'],
     },
     whatToBring: {
       en: ['Passport or ID copy', 'Comfortable footwear', 'Camera', 'Cash in MAD'],
       fr: ['Pièce d’identité', 'Chaussures confortables', 'Appareil photo', 'Espèces'],
-      ar: ['بطاقة الهوية أو الجواز', 'حذاء مريح', 'كاميرا', 'مبلغ نقدي'],
+      es: ['Copia del pasaporte o documento de identidad', 'Calzado cómodo', 'Cámara', 'Efectivo en MAD'],
     },
     meetingPointDetails: {
       en: 'Any location or accommodation in Fez.',
       fr: 'Tout hébergement à Fès.',
-      ar: 'أي فندق أو رياض أو عنوان في فاس.',
+      es: 'Cualquier lugar o alojamiento de Fez.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours before tour departure.',
       fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['VIP Travelers', 'Families with Custom Needs', 'Special Celebrations', 'Photographers'],
       fr: ['Voyageurs VIP', 'Familles aux besoins spécifiques', 'Célébrations', 'Photographes'],
-      ar: ['كبار الشخصيات والمسافرون المميزون', 'العائلات ذات المتطلبات الخاصة', 'المناسبات الخاصة', 'المصورون'],
+      es: ['Viajeros VIP', 'Familias con necesidades específicas', 'Celebraciones especiales', 'Fotógrafos'],
     },
     reviews: [
       {
@@ -892,7 +892,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Med and his drivers created a completely custom trip for us to the Middle Atlas and cherry orchards. Super professional, responsive, and trustworthy.',
           fr: 'Med nous a concocté un circuit sur mesure absolument parfait. Professionnalisme et réactivité remarquables.',
-          ar: 'قام ميد وفريقه بتصميم رحلة خاصة رائعة لنا في جبال الأطلس وبساتين الكرز. احترافية عالية ومرونة وأمانة لا مثيل لها.',
+          es: 'Med y sus conductores nos organizaron una excursión totalmente a medida al Atlas Medio y a los campos de cerezos. Muy profesionales, atentos y de confianza.',
         },
       },
     ],
@@ -913,70 +913,70 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Stop 1: Hot Golden Harcha & Baghrir Honey Pancakes',
           fr: 'Étape 1 : Harcha Dorée & Crêpes Baghrir au Miel',
-          ar: 'المحطة الأولى: الحرشة الفاسية الساخنة والبغرير بالعسل والزبدة البلدية',
+          es: 'Parada 1: harcha dorada caliente y tortitas baghrir con miel',
         },
         description: {
           en: 'Begin at an authentic neighborhood griddle tasting piping hot semolina harcha spread with goat cheese, wild mountain honey, and thousand-hole baghrir.',
           fr: 'Démarrez devant une plaque traditionnelle pour goûter la galette de semoule harcha fumante avec miel de montagne et crêpes baghrir.',
-          ar: 'البداية في مخبز شعبي لتذوق الحرشة الساخنة بالسميد والزبدة البلدية والعسل الطبيعي والجبن الجبلي والبغرير الفاسي المخرم.',
+          es: 'Empieza junto a una plancha tradicional del barrio, probando harcha de sémola recién hecha con queso de cabra y miel silvestre de montaña, y baghrir de mil agujeros.',
         },
-        badge: { en: 'Morning Bite', fr: 'Douceur Matinale', ar: 'فطور بلدي' },
+        badge: { en: 'Morning Bite', fr: 'Douceur Matinale', es: 'Bocado de la mañana' },
       },
       {
         time: '11:00 AM',
         title: {
           en: 'Stop 2: Steaming Bissara with Extra Virgin Olive Oil & Cumin',
           fr: 'Étape 2 : Bissara Fumante à l’Huile d’Olive & Cumin',
-          ar: 'المحطة الثانية: حساء البيصارة المطهو بزيت الزيتون والكمون البلدي',
+          es: 'Parada 2: bissara caliente con aceite de oliva virgen extra y comino',
         },
         description: {
           en: 'Sip traditional slow-simmered fava bean soup directly from an earthenware bowl, drizzled with local Saïss olive oil, freshly ground cumin, and warm flatbread.',
           fr: 'Dégustez dans une échoppe populaire la soupe de fèves onctueuse, parfumée d’huile d’olive du terroir et de cumin moulu.',
-          ar: 'جلسة شعبية لتناول حساء البيصارة اللذيذ المطهو على نار هادئة بزيت الزيتون البكر من سهول سايس ورشة الكمون والخبز الساخن.',
+          es: 'Prueba una sopa tradicional de habas cocinada a fuego lento, servida en un cuenco de barro con aceite de oliva de Saïss, comino recién molido y pan plano caliente.',
         },
-        badge: { en: 'Authentic Soul Food', fr: 'Plat Populaire', ar: 'أكلة شعبية أصيلة' },
+        badge: { en: 'Authentic Soul Food', fr: 'Plat Populaire', es: 'Cocina popular auténtica' },
       },
       {
         time: '12:00 PM',
         title: {
           en: 'Stop 3: Ferran l-Houma (Wood-Fired Communal Oven)',
           fr: 'Étape 3 : Le Ferran l-Houma (Fournil Traditionnel du Quartier)',
-          ar: 'المحطة الثالثة: فران الحومة التقليدي بنار خشب الأرز',
+          es: 'Parada 3: Ferran l-Houma (horno comunitario de leña)',
         },
         description: {
           en: 'Step into the underground stone oven where families bring their kneaded dough. Smell fresh loaves baked over scented cedar wood embers.',
           fr: 'Pénétrez dans le fournil de quartier où les familles apportent leur pain pétri à la main, cuit au feu de bois de cèdre.',
-          ar: 'الدخول إلى فران الحومة الأثري حيث تحمل العائلات خبزها اليومي، واستنشاق رائحة الخبز البلدي المخبوز على حطب الأرز المعطر.',
+          es: 'Entra en el horno de piedra subterráneo al que las familias llevan su masa. Respira el aroma del pan recién horneado sobre brasas de madera de cedro.',
         },
-        badge: { en: 'Community Hearth', fr: 'Cœur du Quartier', ar: 'فران الحومة' },
+        badge: { en: 'Community Hearth', fr: 'Cœur du Quartier', es: 'El horno del barrio' },
       },
       {
         time: '01:00 PM',
         title: {
           en: 'Stop 4: Crispy Fresh Sfenj Fried Before Your Eyes',
           fr: 'Étape 4 : Sfenj Croustillants Frits sous vos Yeux',
-          ar: 'المحطة الرابعة: السفنج الفاسي المقرمش الطازج',
+          es: 'Parada 4: sfenj crujientes fritos ante tus ojos',
         },
         description: {
           en: 'Watch the sfenj master stretch airy dough with wet fingertips, fry golden rings in bubbling oil, and string them with fresh palm leaves.',
           fr: 'Admirez le tour de main du maître beignatier et croquez dans un sfenj doré et croustillant tout juste sorti du bain d’huile.',
-          ar: 'مشاهدة حرفي السفنج وهو يشكل العجين بأصابعه بخفة متناهية ويقليه حتى يصبح ذهبياً مقرمشاً، ويربطه بسعف النخيل البلدي.',
+          es: 'Observa al maestro del sfenj estirar la masa ligera con los dedos mojados, freír los aros hasta dorarlos y ensartarlos en hojas de palma frescas.',
         },
-        badge: { en: 'Fresh & Crispy', fr: 'Tout Chaud', ar: 'مقرمش وطازج' },
+        badge: { en: 'Fresh & Crispy', fr: 'Tout Chaud', es: 'Recién hechos y crujientes' },
       },
       {
         time: '01:45 PM',
         title: {
           en: 'Stop 5: Mint Tea Ceremony with Chebakia & Gazelle Horns',
           fr: 'Étape 5 : Cérémonie du Thé à la Menthe & Pâtisseries Fassies',
-          ar: 'المحطة الخامسة: صينية الشاي بالنعناع مع الشباكية وكعب الغزال',
+          es: 'Parada 5: ceremonia del té de menta con chebakia y cuernos de gacela',
         },
         description: {
           en: 'Conclude with a high-poured traditional mint tea ritual accompanied by almond gazelle horns (kaab el-ghzal) and honeyed chebakia.',
           fr: 'Terminez avec le rituel du thé à la menthe servi de haut avec cornes de gazelle aux amandes et chebakia parfumée à la fleur d’oranger.',
-          ar: 'ختام الجولة بجلسة شاي أصيلة مسكوب من علو مع رغوة بيضاء، وتذوق كعب الغزال بحشوة اللوز وماء الزهر والشباكية المعسلة.',
+          es: 'Termina con el ritual del té de menta servido desde lo alto, acompañado de cuernos de gacela de almendra (kaab el-ghzal) y chebakia bañada en miel.',
         },
-        badge: { en: 'Sweet Finale', fr: 'Douceur Finale', ar: 'جلسة شاي أصيلة' },
+        badge: { en: 'Sweet Finale', fr: 'Douceur Finale', es: 'Final dulce' },
       },
     ],
     included: {
@@ -994,38 +994,38 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Accès aux ateliers secrets et au fournil de quartier traditionnel',
         'Adaptations possibles selon vos régimes alimentaires (végétariens bienvenus)',
       ],
-      ar: [
-        'مرشد خبير بالمطبخ الفاسي وأصول الطبخ العائلي العريق',
-        'جميع التذوقات والمأكولات الشعبية والحلويات والمشروبات مشمولة (تغني عن وجبة غداء كاملة)',
-        'جولة خاصة 100% لك ولمجموعتك فقط',
-        'زيارة حصرية لفران الحومة ومتاجر الحرفيين التي لا يعرفها السياح العاديون',
-        'مراعاة أي حساسيات غذائية أو اختيارات نباتية مسبقاً',
+      es: [
+        'Guía gastronómico experto, nacido en Fez, que comparte historia culinaria y recetas familiares',
+        'Todas las degustaciones, bocados callejeros, dulces y bebidas incluidos (suficientes para una comida completa)',
+        'Visita 100% privada, exclusiva para ti y tus acompañantes',
+        'Visitas a puestos de comida del barrio y hornos comunitarios de leña',
+        'Adaptaciones a restricciones alimentarias (los vegetarianos son bienvenidos)',
       ],
     },
     excluded: {
       en: ['Alcoholic beverages (none served in the Medina stalls)', 'Personal take-home shopping of spices or sweets', 'Guide tip'],
       fr: ['Boissons alcoolisées', 'Achats d’épices ou douceurs à emporter', 'Pourboire guide'],
-      ar: ['المشروبات الكحولية', 'شراء التوابل أو علب الحلويات للمنزل', 'إكرامية المرشد'],
+      es: ['Bebidas alcohólicas (no se sirven en los puestos de la medina)', 'Compras de especias o dulces para llevar', 'Propina para el guía'],
     },
     whatToBring: {
       en: ['A very healthy appetite!', 'Comfortable walking shoes', 'Hand wipes or sanitizing gel', 'Camera'],
       fr: ['Un solide appétit !', 'Chaussures de marche', 'Lingettes', 'Appareil photo'],
-      ar: ['شهية مفتوحة وجوع حقيقي للاستمتاع بكل تذوق!', 'حذاء مريح للمشي', 'مناديل مبللة', 'كاميرا'],
+      es: ['¡Mucho apetito!', 'Calzado cómodo para caminar', 'Toallitas o gel desinfectante', 'Cámara'],
     },
     meetingPointDetails: {
       en: 'Bab Boujloud (Blue Gate) or pickup at your Medina Riad at 10:00 AM.',
       fr: 'Bab Boujloud ou départ depuis votre Riad à 10h00.',
-      ar: 'أمام باب بوجلود التاريخي أو من مقر إقامتك بالرياض عند الساعة 10:00 صباحاً.',
+      es: 'Bab Boujloud (Puerta Azul) o recogida en tu riad de la medina a las 10:00.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours prior to tour start.',
       fr: 'Annulation gratuite jusqu’à 24 heures avant le début de la visite.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل موعد بدء الجولة.',
+      es: 'Cancelación gratuita hasta 24 horas antes del inicio de la visita.',
     },
     suitableFor: {
       en: ['Food Lovers & Curious Eaters', 'Couples', 'Families', 'Culture Enthusiasts'],
       fr: ['Amateurs de bonne chère', 'Couples', 'Familles', 'Passionnés de culture'],
-      ar: ['عشاق الأكل والتذوق الشعبي الأصيل', 'الأزواج', 'العائلات', 'الباحثون عن الثقافة اليومية'],
+      es: ['Amantes de la gastronomía y paladares curiosos', 'Parejas', 'Familias', 'Aficionados a la cultura'],
     },
     reviews: [
       {
@@ -1036,7 +1036,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'As a chef, this was the most genuine food experience I had in Morocco. No sanitized tourist restaurant, just raw, honest, delicious heritage food eaten where the locals eat. The hot sfenj and bissara were extraordinary!',
           fr: 'En tant que cuisinier, c’est la meilleure expérience culinaire de mon voyage. Une nourriture authentique, généreuse et pleine d’âme.',
-          ar: 'كطاهٍ محترف، كانت هذه أصدق جولة طعام عشتها في المغرب. أكل شعبي حقيقي ولذيذ وسط أهل فاس، والسفنج والبيصارة حكاية استثنائية!',
+          es: 'Como cocinero, fue la experiencia gastronómica más auténtica que tuve en Marruecos. Nada de restaurantes turísticos sin carácter: cocina tradicional de verdad, deliciosa, allí donde comen los vecinos. ¡El sfenj caliente y la bissara eran extraordinarios!',
         },
       },
     ],
@@ -1057,42 +1057,42 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'The History of Fassi Imperial Gastronomy',
           fr: 'Histoire de la Gastronomie Impériale Fassie',
-          ar: 'تاريخ المطبخ الفاسي الإمبراطوري وأصوله الأندلسية',
+          es: 'Historia de la gastronomía imperial de Fez',
         },
         description: {
           en: 'Introduction to Arab-Andalusian culinary crosscurrents, spice blending with Ras el Hanout, and the royal pastilla tradition.',
           fr: 'Introduction aux influences arabo-andalouses, composition du Ras el Hanout et secrets de la pastilla royale.',
-          ar: 'مقدمة عن التأثيرات الأندلسية والمغربية في الطبخ الفاسي، وتركيبة بهارات رأس الحانوت النادرة وأسرار البسطيلة الملكية.',
+          es: 'Introducción a las influencias culinarias araboandalusíes, las mezclas de especias Ras el Hanout y la tradición de la pastilla real.',
         },
-        badge: { en: 'Culinary Heritage', fr: 'Héritage Culinaire', ar: 'تراث الطهي' },
+        badge: { en: 'Culinary Heritage', fr: 'Héritage Culinaire', es: 'Patrimonio culinario' },
       },
       {
         time: '12:30 PM',
         title: {
           en: 'Royal Pastilla & Slow-Simmered Tajine Tasting',
           fr: 'Dégustation de Pastilla Royale & Tajines Mijotés',
-          ar: 'مائدة البسطيلة الفاسية وطواجن اللحم بالبرقوق واللوز',
+          es: 'Degustación de pastilla real y tajines a fuego lento',
         },
         description: {
           en: 'Savor crisp golden pastilla dusted with cinnamon and sugar, followed by slow-cooked lamb with caramelized prunes, toasted almonds, and handmade flatbreads.',
           fr: 'Dégustation de pastilla croustillante à la cannelle suivie d’un tajine d’agneau fondant aux pruneaux caramélisés et amandes torréfiées.',
-          ar: 'تذوق البسطيلة المقرمشة بالقرفة واللوز، يليها طاجين لحم الغنم الفاسي بالبرقوق المعسل واللوز المقلي والخبز البلدي الساخن.',
+          es: 'Saborea una pastilla dorada y crujiente, espolvoreada con canela y azúcar, seguida de cordero a fuego lento con ciruelas caramelizadas, almendras tostadas y panes planos hechos a mano.',
         },
-        badge: { en: 'Royal Feast', fr: 'Festin Royal', ar: 'وليمة ملكية' },
+        badge: { en: 'Royal Feast', fr: 'Festin Royal', es: 'Banquete real' },
       },
       {
         time: '02:00 PM',
         title: {
           en: 'Tea Ceremony & Gazelle Horns (Kaab el-Ghzal)',
           fr: 'Cérémonie du Thé & Cornes de Gazelle',
-          ar: 'جلسة الشاي الفاسي وكعب الغزال الأصيل',
+          es: 'Ceremonia del té y cuernos de gacela (Kaab el-Ghzal)',
         },
         description: {
           en: 'End the feast with orange blossom infused almond pastries and authentic fresh mint tea.',
           fr: 'Clôture avec pâtisseries aux amandes et eau de fleur d’oranger, accompagnées du thé à la menthe.',
-          ar: 'ختام الجلسة بكعب الغزال المعطر بماء الزهر الحر وشاي النعناع المنعش.',
+          es: 'Termina el banquete con dulces de almendra aromatizados con agua de azahar y auténtico té de menta fresca.',
         },
-        badge: { en: 'Sweet Finish', fr: 'Douceur', ar: 'حلويات فاسية' },
+        badge: { en: 'Sweet Finish', fr: 'Douceur', es: 'Final dulce' },
       },
     ],
     included: {
@@ -1108,37 +1108,37 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Explications passionnantes d’un expert culinaire local',
         'Cérémonie traditionnelle du thé à la menthe',
       ],
-      ar: [
-        'وجبة غداء مغربية ملكية كاملة (بسطيلة، طواجن، سلطات مغربية، حلويات، مشروبات)',
-        'تجربة خاصة 100% في رياض فاسي تراثي عريق',
-        'شروحات موثقة لأسرار الطبخ من خبير محلي',
-        'صينية شاي مغربي بالنعناع والحلويات التقليدية',
+      es: [
+        'Comida marroquí completa de varios platos (pastilla, tajines, ensaladas, dulces y bebidas)',
+        'Experiencia gastronómica 100% privada en un riad auténtico de la medina',
+        'Explicaciones de un historiador gastronómico local',
+        'Ritual tradicional del té de menta',
       ],
     },
     excluded: {
       en: ['Alcoholic beverages', 'Personal souvenir purchases', 'Staff gratuities'],
       fr: ['Boissons alcoolisées', 'Achats personnels', 'Pourboires'],
-      ar: ['المشروبات الكحولية', 'المشتريات الشخصية', 'الإكراميات'],
+      es: ['Bebidas alcohólicas', 'Compras de recuerdos personales', 'Propinas para el personal'],
     },
     whatToBring: {
       en: ['Good appetite', 'Camera for beautiful food presentation photos'],
       fr: ['Bonne faim', 'Appareil photo pour les superbes présentations'],
-      ar: ['شهية جيدة', 'كاميرا لتوثيق أطباق المائدة الفاسية الفاخرة'],
+      es: ['Buen apetito', 'Cámara para fotografiar la presentación de los platos'],
     },
     meetingPointDetails: {
       en: 'Doorstep pickup at your Riad or hotel in Fez at 11:00 AM.',
       fr: 'Prise en charge à votre riad à Fès à 11h00.',
-      ar: 'التوصيل من باب مقر إقامتك بالرياض في فاس عند الساعة 11:00 صباحاً.',
+      es: 'Recogida en la puerta de tu riad u hotel de Fez a las 11:00.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours prior to experience.',
       fr: 'Annulation gratuite jusqu’à 24h avant le départ.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['Couples', 'Food Connoisseurs', 'Families', 'Special Occasion Celebrations'],
       fr: ['Couples', 'Gastronomes', 'Familles', 'Célébrations'],
-      ar: ['الأزواج', 'عشاق المطبخ الرفيع', 'العائلات', 'المناسبات والاحتفالات الخاصة'],
+      es: ['Parejas', 'Entendidos en gastronomía', 'Familias', 'Celebraciones especiales'],
     },
     reviews: [
       {
@@ -1149,7 +1149,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'The pastilla here is a work of art. Melt-in-your-mouth perfection with just the right touch of cinnamon. Best meal in our entire 2 weeks in Morocco!',
           fr: 'La pastilla est une œuvre d’art. Meilleur repas de nos 2 semaines au Maroc !',
-          ar: 'البسطيلة هنا تحفة فنية لا تُضاهى، تذوب في الفم بنكهة القرفة واللوز المتوازنة. أفضل وجبة تذوقناها في المغرب!',
+          es: 'La pastilla de aquí es una obra de arte. Se deshace en la boca, con el toque justo de canela. ¡La mejor comida de nuestras dos semanas en Marruecos!',
         },
       },
     ],
@@ -1170,28 +1170,28 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Communal Oven (Ferran l-Houma) & Bread Making',
           fr: 'Le Fournil de Quartier (Ferran) & Tradition du Pain',
-          ar: 'فران الحومة الشعبي وتقاليد خبز الدار البلدي',
+          es: 'Horno comunitario (Ferran l-Houma) y elaboración del pan',
         },
         description: {
           en: 'Witness families and children delivering proofed bread dough to be baked on scented cedar wood embers. Learn the unique bread seals of neighborhood families.',
           fr: 'Découvrez la tradition vivante du pain cuit au feu de bois dans les vieux fournil souterrains de la médina.',
-          ar: 'مشاهدة أهالي الحومة وهم يحملون صواني الخبز المطبوع بختم العائلة ليخبز على جمر خشب الأرز الفواح.',
+          es: 'Observa a familias y niños llevar la masa fermentada para hornearla sobre brasas de cedro. Descubre las marcas con las que cada familia del barrio identifica su pan.',
         },
-        badge: { en: 'Living Tradition', fr: 'Tradition Vivante', ar: 'تقليد حي' },
+        badge: { en: 'Living Tradition', fr: 'Tradition Vivante', es: 'Tradición viva' },
       },
       {
         time: '11:00 AM',
         title: {
           en: 'Sacred Friday Couscous Ritual & Seven Vegetables',
           fr: 'Le Rituel Sacré du Couscous du Vendredi & Sept Légumes',
-          ar: 'طقوس كسكس يوم الجمعة المباركة والخضار السبع',
+          es: 'Ritual del cuscús del viernes y las siete verduras',
         },
         description: {
           en: 'Learn how couscous is hand-rolled from durum semolina, steamed three times in a couscoussier, and crowned with pumpkin, carrots, zucchini, turnips, cabbage, chickpeas, and sweet caramelized tfaya.',
           fr: 'Comprenez le savoir-faire ancestral du couscous roulé à la main, cuit à la vapeur trois fois et garni des 7 légumes et tfaya caramélisée.',
-          ar: 'التعرف على فن فتل الكسكس يدوياً، وتفويره 3 مرات فوق المرق العطر، وتزيينه بالقرع والجزر والكوسا والحمص والتفاية المعسلة.',
+          es: 'Descubre cómo se trabaja a mano la sémola de trigo duro para hacer cuscús, se cuece al vapor tres veces en una cuscusera y se sirve con calabaza, zanahorias, calabacín, nabos, col, garbanzos y tfaya dulce caramelizada.',
         },
-        badge: { en: 'Friday Heritage', fr: 'Couscous Rituel', ar: 'كسكس الجمعة' },
+        badge: { en: 'Friday Heritage', fr: 'Couscous Rituel', es: 'Tradición del viernes' },
       },
     ],
     included: {
@@ -1207,37 +1207,37 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Dégustation de pain chaud tout juste sorti du four et thé à la menthe',
         'Explications sur la vie sociale et la solidarité de quartier',
       ],
-      ar: [
-        'جولة مشي خاصة داخل دروب وأحياء فاس السكنية الأصيلة',
-        'دخول حصري لأفران الحومة والمطاحن التقليدية التاريخية',
-        'تذوق الخبز الساخن الخارج لتوه من الفران مع زيت الزيتون والشاي',
-        'شرح ممتع لأواصر التضامن الاجتماعي وعادات أهل فاس العريقة',
+      es: [
+        'Paseo privado guiado por barrios residenciales auténticos',
+        'Acceso exclusivo a hornos y molinos históricos del barrio que siguen en funcionamiento',
+        'Degustación de pan recién hecho, aceitunas y té de menta tradicional',
+        'Relatos sobre la solidaridad vecinal y las costumbres del barrio',
       ],
     },
     excluded: {
       en: ['Personal grocery shopping', 'Guide tip'],
       fr: ['Achats personnels', 'Pourboire guide'],
-      ar: ['المشتريات التذكارية', 'إكرامية المرشد'],
+      es: ['Compras personales de alimentos', 'Propina para el guía'],
     },
     whatToBring: {
       en: ['Comfortable walking shoes', 'Modest clothing for residential quarters', 'Camera'],
       fr: ['Chaussures confortables', 'Tenue décente pour les quartiers résidentiels', 'Appareil photo'],
-      ar: ['حذاء مريح', 'لباس محتشم ومريح يناسب الأحياء السكنية', 'كاميرا'],
+      es: ['Calzado cómodo para caminar', 'Ropa discreta para los barrios residenciales', 'Cámara'],
     },
     meetingPointDetails: {
       en: 'Bab Boujloud or pickup at your Riad in Fez.',
       fr: 'Bab Boujloud ou départ de votre riad.',
-      ar: 'أمام باب بوجلود أو من مقر إقامتك بالرياض.',
+      es: 'Bab Boujloud o recogida en tu riad de Fez.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours in advance.',
       fr: 'Annulation gratuite jusqu’à 24h avant.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الموعد.',
+      es: 'Cancelación gratuita hasta 24 horas antes de la actividad.',
     },
     suitableFor: {
       en: ['Anthropology & Culture Seekers', 'Families', 'Slow Travel Enthusiasts'],
       fr: ['Amateurs de culture', 'Familles', 'Voyageurs curieux'],
-      ar: ['الباحثون عن الأصالة الثقافية', 'العائلات', 'عشاق السفر الهادئ'],
+      es: ['Interesados en la antropología y la cultura', 'Familias', 'Amantes de los viajes sin prisas'],
     },
     reviews: [
       {
@@ -1248,7 +1248,7 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         comment: {
           en: 'Entering the underground communal bakery and smelling the cedar wood was a sensory memory we will keep forever. The couscous story is so beautiful.',
           fr: 'Entrer dans le four à bois souterrain était un souvenir sensoriel inoubliable. L’histoire du couscous est magnifique.',
-          ar: 'دخول فران الحومة واستنشاق رائحة خشب الأرز والخبز الساخن تجربة حفرت في ذاكرتنا. حكاية الكسكس الفاسي وثقافته رائعة جداً.',
+          es: 'Entrar en el horno comunitario subterráneo y oler la madera de cedro fue un recuerdo sensorial que guardaremos para siempre. La historia del cuscús es preciosa.',
         },
       },
     ],
@@ -1269,42 +1269,42 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         title: {
           en: 'Walk the food streets of the Medina',
           fr: 'Marcher dans les rues alimentaires de la médina',
-          ar: 'المشي في أزقة الأكل بالمدينة',
+          es: 'Pasea por las calles gastronómicas de la medina',
         },
         description: {
           en: 'Bakeries, food shops, spice sellers and small stalls. The Medina is part of the tasting, not a backdrop.',
           fr: 'Fours, boutiques, vendeurs d’épices et petits étals. La médina fait partie de la dégustation.',
-          ar: 'أفران ودكاكين وبائعو توابل وبسطات صغيرة. المدينة جزء من التذوق.',
+          es: 'Panaderías, tiendas de comida, vendedores de especias y pequeños puestos. La medina forma parte de la degustación, no es un simple decorado.',
         },
-        badge: { en: 'Medina', fr: 'Médina', ar: 'المدينة' },
+        badge: { en: 'Medina', fr: 'Médina', es: 'Medina' },
       },
       {
         time: '',
         title: {
           en: 'Taste what is available that day',
           fr: 'Goûter ce qui est disponible ce jour-là',
-          ar: 'تذوّق ما هو متاح في ذلك اليوم',
+          es: 'Prueba lo que haya disponible ese día',
         },
         description: {
           en: 'Sweet and savoury foods, tea and everyday specialities. The list is not fixed. Shops do not prepare the same things every day.',
           fr: 'Sucré, salé, thé et spécialités du quotidien. La liste n’est pas fixe. Les boutiques ne préparent pas la même chose chaque jour.',
-          ar: 'حلو ومالح وشاي وتخصصات يومية. القائمة ليست ثابتة. الدكاكين لا تحضّر الشيء نفسه كل يوم.',
+          es: 'Bocados dulces y salados, té y especialidades cotidianas. La selección no es fija. Las tiendas no preparan lo mismo todos los días.',
         },
-        badge: { en: 'Tastings', fr: 'Dégustations', ar: 'تذوّق' },
+        badge: { en: 'Tastings', fr: 'Dégustations', es: 'Degustaciones' },
       },
       {
         time: '',
         title: {
           en: 'Ask, photograph, and stay longer',
           fr: 'Demander, photographier, rester plus longtemps',
-          ar: 'اسألوا وصوّروا وابقوا أطول',
+          es: 'Pregunta, haz fotos y quédate más tiempo',
         },
         description: {
           en: 'The walk is private. There is time to talk with sellers and to understand how the food fits into everyday life in Fez.',
           fr: 'La balade est privée. Il y a le temps de parler avec les vendeurs et de comprendre la place de la cuisine dans la vie de Fès.',
-          ar: 'الجولة خاصة. هناك وقت للحديث مع البائعين وفهم مكان الطعام في حياة فاس.',
+          es: 'El paseo es privado. Hay tiempo para hablar con los vendedores y comprender el lugar de la comida en la vida cotidiana de Fez.',
         },
-        badge: { en: 'Flexible', fr: 'Flexible', ar: 'مرن' },
+        badge: { en: 'Flexible', fr: 'Flexible', es: 'Flexible' },
       },
     ],
     included: {
@@ -1318,36 +1318,36 @@ export const EXPERIENCE_EXTRAS: Record<string, ExperienceExtraDetails> = {
         'Dégustations de ce qui est disponible ce jour-là',
         'Explications sur ce que vous mangez et sa place dans la vie de Fès',
       ],
-      ar: [
-        'جولة خاصة بمجموعتكم',
-        'تذوّق ما هو متاح في ذلك اليوم',
-        'شرح لما تأكلونه ومكانه في حياة فاس',
+      es: [
+        'Paseo privado para vuestro grupo',
+        'Degustaciones de los alimentos disponibles ese día',
+        'Explicaciones sobre lo que coméis y su lugar en la vida de Fez',
       ],
     },
     excluded: {
       en: ['Personal shopping', 'Tips'],
       fr: ['Achats personnels', 'Pourboires'],
-      ar: ['مشتريات شخصية', 'إكراميات'],
+      es: ['Compras personales', 'Propinas'],
     },
     whatToBring: {
       en: ['An appetite', 'Comfortable walking shoes'],
       fr: ['De l’appétit', 'Chaussures de marche confortables'],
-      ar: ['شهية', 'حذاء مريح للمشي'],
+      es: ['Apetito', 'Calzado cómodo para caminar'],
     },
     meetingPointDetails: {
       en: 'Bab Boujloud or Bab Rcif.',
       fr: 'Bab Boujloud ou Bab Rcif.',
-      ar: 'باب بوجلود أو باب الرصيف.',
+      es: 'Bab Boujloud o Bab Rcif.',
     },
     cancellationPolicy: {
       en: 'Free cancellation up to 24 hours before the walk.',
       fr: 'Annulation gratuite jusqu’à 24 heures avant la balade.',
-      ar: 'إلغاء مجاني حتى 24 ساعة قبل الجولة.',
+      es: 'Cancelación gratuita hasta 24 horas antes del paseo.',
     },
     suitableFor: {
       en: ['Curious eaters', 'Couples', 'Families', 'Private groups'],
       fr: ['Curieux de cuisine', 'Couples', 'Familles', 'Groupes privés'],
-      ar: ['محبو الطعام', 'الأزواج', 'العائلات', 'المجموعات الخاصة'],
+      es: ['Paladares curiosos', 'Parejas', 'Familias', 'Grupos privados'],
     },
     reviews: [],
   },

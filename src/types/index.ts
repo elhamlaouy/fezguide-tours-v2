@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr' | 'ar';
+export type Language = 'en' | 'fr' | 'es';
 
 export type StandardPageId = 'home' | 'fez' | 'day-trips' | 'food-tours' | 'travel-tips' | 'about' | 'blog' | 'admin';
 export type PageId = StandardPageId | string;

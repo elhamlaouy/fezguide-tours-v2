@@ -24,12 +24,12 @@ export const FezPage: React.FC<FezPageProps> = ({
     title: {
       en: 'Explore the Medina of Fez — Through Local Eyes',
       fr: 'Explorer la Médina de Fès — À Travers des Yeux Locaux',
-      ar: 'استكشف فاس العتيقة — بعيون أبنائها المحليين',
+      es: "Explorad la medina de Fez a través de los ojos de sus habitantes",
     },
     subtitle: {
       en: 'The Medina of Fez is not a museum. People still live and work here every day. Discover historic gates, hidden workshops, living traditions, and panoramic viewpoints.',
       fr: 'La Médina de Fès n’est pas un musée : les habitants y vivent et travaillent chaque jour. Découvrez ses portes historiques, ses ateliers vivants et ses panoramas.',
-      ar: 'فاس البالي ليست مجرد متحف، بل مدينة تنبض بالروح والحياة اليومية. اكتشف أبوابها التاريخية، ورشات الحرفيين، الأسواق العتيقة، والمطلات البانورامية.',
+      es: "La medina de Fez no es un museo. La gente sigue viviendo y trabajando aquí cada día. Descubrid puertas históricas, talleres escondidos, tradiciones vivas y miradores panorámicos.",
     },
   };
 
@@ -46,7 +46,7 @@ export const FezPage: React.FC<FezPageProps> = ({
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
           src="/images/real/fez_explore_medina_image1.jpg"
-          alt="Medina of Fez gates and rooftops"
+          alt={language === 'es' ? "Puertas y tejados de la medina de Fez" : "Medina of Fez gates and rooftops"}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -56,7 +56,7 @@ export const FezPage: React.FC<FezPageProps> = ({
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <Compass className="w-4 h-4 text-[#005F5A]" />
-              <span>Fes el-Bali · Fes Jdid & Mellah · Living Heritage</span>
+              <span>{language === 'es' ? "Fes el-Bali · Fes Jdid y Mellah · Patrimonio vivo" : "Fes el-Bali \u00b7 Fes Jdid & Mellah \u00b7 Living Heritage"}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
@@ -77,31 +77,31 @@ export const FezPage: React.FC<FezPageProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm text-[#4E5B59] leading-relaxed">
             <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-2">
               <span className="font-bold text-[#005F5A] block uppercase text-xs tracking-wider">
-                {language === 'ar' ? 'فاس البالي' : 'Fes el-Bali (Old Medina)'}
+                {language === 'es' ? "Fes el-Bali (medina antigua)" : 'Fes el-Bali (Old Medina)'}
               </span>
               <p>
-                {language === 'ar'
-                  ? 'القلب التاريخي للمدينة بدروبه الضيقة الخالية من السيارات، وأسواره العتيقة وورشات الصناع التقليديين المستمرة منذ قرون.'
+                {language === 'es'
+                  ? "El corazón histórico de Fez, conocido por sus estrechas calles peatonales, sus zocos tradicionales, sus edificios históricos y sus auténticos talleres artesanales."
                   : 'The historic heart of Fez, known for its narrow pedestrian streets, traditional souks, historic buildings, and authentic craftsman workshops.'}
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-2">
               <span className="font-bold text-[#005F5A] block uppercase text-xs tracking-wider">
-                {language === 'ar' ? 'فاس الجديد والملاح' : 'Fes Jdid & Mellah'}
+                {language === 'es' ? "Fes Jdid y el Mellah" : 'Fes Jdid & Mellah'}
               </span>
               <p>
-                {language === 'ar'
-                  ? 'الحي التاريخي المرتبط بالقصر الملكي العريق والتراث اليهودي المغربي بعمارته الخشبية المميزة.'
+                {language === 'es'
+                  ? "Una importante zona histórica vinculada al Palacio Real y al patrimonio judío centenario de Fez, con sus característicos balcones de madera."
                   : 'An important historic area connected to the Royal Palace and the centuries-old Jewish heritage of Fez with distinctive wooden balconies.'}
               </p>
             </div>
             <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-2">
               <span className="font-bold text-[#005F5A] block uppercase text-xs tracking-wider">
-                {language === 'ar' ? 'المدينة الجديدة والإطلالات' : 'New City & Viewpoints'}
+                {language === 'es' ? "Ciudad Nueva y miradores" : 'New City & Viewpoints'}
               </span>
               <p>
-                {language === 'ar'
-                  ? 'مطلات بانورامية تكشف روعة مآذن المدينة من الأعلى، ومقاهي المدينة الجديدة التي تمنح تجربة متكاملة ليلاً.'
+                {language === 'es'
+                  ? "Miradores en las colinas con vistas a los tejados y minaretes de la medina, y animadas cafeterías de la Ciudad Nueva para disfrutar de Fez por la noche."
                   : 'Panoramic hillside viewpoints over the rooftops and minarets of the Medina, and lively New City cafés to experience Fez at night.'}
               </p>
             </div>
@@ -118,7 +118,7 @@ export const FezPage: React.FC<FezPageProps> = ({
                 : 'text-[#445250] hover:text-[#005F5A]'
             }`}
           >
-            {language === 'ar' ? 'جميع التجارب' : `All Experiences (${fezPillars.length})`}
+            {language === 'es' ? 'Todas las experiencias' : `All Experiences (${fezPillars.length})`}
           </button>
           {fezPillars.map((p) => (
             <button
@@ -160,14 +160,14 @@ export const FezPage: React.FC<FezPageProps> = ({
         <div className="space-y-6 pt-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
             <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              {language === 'ar' ? 'من قلب الحدث' : 'Living Heritage Gallery'}
+              {language === 'es' ? "Galería del patrimonio vivo" : 'Living Heritage Gallery'}
             </span>
             <h3 className="text-2xl font-bold text-[#005F5A]">
-              {language === 'ar' ? 'مشاهد ولقطات حقيقية من فاس' : 'Real Scenes From the Streets of Fez'}
+              {language === 'es' ? "Escenas reales de las calles de Fez" : 'Real Scenes From the Streets of Fez'}
             </h3>
             <p className="text-xs text-[#52605E]">
-              {language === 'ar'
-                ? 'صور أصيلة لورشات الحرفيين، وأبواب فاس، والتفاصيل المعمارية التي لا تراها في الكتيبات السياحية'
+              {language === 'es'
+                ? "Fotografías auténticas de talleres artesanales, puertas y rincones tranquilos."
                 : 'Authentic photos of craftsman workshops, gates, and quiet corners.'}
             </p>
           </div>
@@ -176,23 +176,23 @@ export const FezPage: React.FC<FezPageProps> = ({
             {[
               {
                 src: '/images/real/fez_explore_medina_image2.jpg',
-                alt: 'Narrow Medina passage',
-                caption: language === 'ar' ? 'دروب فاس الهادئة' : 'Quiet Medina lanes',
+                alt: language === 'es' ? 'Pasadizo estrecho de la medina' : 'Narrow Medina passage',
+                caption: language === 'es' ? "Calles tranquilas de la medina" : 'Quiet Medina lanes',
               },
               {
                 src: '/images/real/fez_history_culture_image2.jpg',
-                alt: 'Madrasa woodwork and plaster carving',
-                caption: language === 'ar' ? 'نقوش خشب الأرز والجبس' : 'Carved cedar & plaster',
+                alt: language === 'es' ? 'Madera y yeso tallados en una madraza' : 'Madrasa woodwork and plaster carving',
+                caption: language === 'es' ? "Cedro y yeso tallados" : 'Carved cedar & plaster',
               },
               {
                 src: '/images/real/fez_things_to_do_image2.jpg',
-                alt: 'Master craftsmen workshop',
-                caption: language === 'ar' ? 'حرفيون في ورشاتهم' : 'Artisans at work',
+                alt: language === 'es' ? 'Taller de maestros artesanos' : 'Master craftsmen workshop',
+                caption: language === 'es' ? "Artesanos trabajando" : 'Artisans at work',
               },
               {
                 src: '/images/real/fez_explore_medina_image4.jpg',
-                alt: 'Panoramic rooftop view',
-                caption: language === 'ar' ? 'إطلالة من الأعلى' : 'Panoramic rooftops',
+                alt: language === 'es' ? 'Vista panorámica de los tejados' : 'Panoramic rooftop view',
+                caption: language === 'es' ? "Panorámica de los tejados" : 'Panoramic rooftops',
               },
             ].map((item, idx) => (
               <div

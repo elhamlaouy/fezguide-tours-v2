@@ -46,6 +46,23 @@ const content = {
     back: 'Retour à Fès',
     cta: 'Explorer Nos Visites de Fès',
   },
+  es: {
+    title: 'Explora la medina',
+    paragraphs: [
+      'Antes de adentrarte en la medina, conviene conocer un poco la propia Fez. Para quienes vivimos aquí, la medina es mucho más que el casco antiguo. Es un lugar ligado a nuestra historia, nuestras tradiciones, nuestras familias y nuestra vida cotidiana. Cuando hablamos de «la medina», nos referimos al corazón histórico y tradicional de Fez: un lugar que ha conservado su carácter a lo largo de generaciones.',
+      'Fez tiene distintas zonas, cada una con su propia personalidad. Fez el-Bali es la medina antigua, conocida por sus callejuelas, sus zocos tradicionales, sus edificios históricos y sus talleres artesanos. Fez Jdid y el Mellah forman otro núcleo histórico importante, vinculado al Palacio Real y al patrimonio judío de la ciudad. La ciudad nueva muestra otra cara de Fez, con avenidas modernas, cafeterías, restaurantes y la vida diaria de una ciudad actual.',
+      'La medina de Fez no es un museo. Aquí se sigue viviendo y trabajando todos los días. Los artesanos trabajan en sus talleres tradicionales, los comerciantes abren sus tiendas y los vecinos compran alimentos y pan. Los oficios de siempre siguen formando parte del día a día. Al recorrer la medina, no solo contemplas la historia: observas una parte viva de Fez.',
+      'La medina es famosa por sus puertas históricas, sus calles estrechas, sus zocos y sus pasadizos laberínticos. Al cruzar una de sus puertas, el ambiente cambia enseguida. Las calles se estrechan y empiezas a descubrir talleres, pequeñas tiendas, zonas residenciales y rincones escondidos. Puedes recorrer la medina muchas veces y seguir encontrando algo nuevo.',
+      'No es lo mismo pasear por la medina que comprender lo que estás viendo. Un guía local puede explicarte la historia de los edificios, acercarte a los oficios tradicionales, enseñarte lugares menos conocidos y ayudarte a descubrir la medina más allá del recorrido turístico habitual. Nuestro objetivo no es únicamente mostrarte los monumentos famosos, sino ayudarte a apreciar los pequeños detalles que hacen de Fez lo que es.',
+      'Explorar la medina también significa saborearla. La cocina tradicional, los mercados locales, las especias, las panaderías y las pequeñas tiendas de comida forman parte de la vida cotidiana de Fez. Para muchos viajeros, descubrir la medina consiste en conocer su gastronomía tanto como su historia y su cultura.',
+      'Después de pasar un rato en las estrechas calles de la medina, merece la pena contemplar Fez desde arriba. Desde un mirador panorámico puedes ver los tejados, los minaretes, las murallas históricas y el paisaje que rodea la ciudad. Es una perspectiva completamente distinta, que permite entender mejor las dimensiones y el carácter de la medina.',
+      'La visita a Fez no tiene por qué terminar al salir de la medina. Por la noche, la ciudad nueva ofrece un ambiente diferente, con cafeterías, restaurantes, calles modernas y luces urbanas. Después de conocer el lado tradicional de Fez durante el día, pasear por la ciudad nueva al anochecer te permite descubrir otra faceta de la misma ciudad.',
+    ],
+    closing: 'Descubre la medina con alguien que conoce sus calles, sus historias, sus tradiciones y sus rincones escondidos. Ve más allá de los monumentos famosos, conoce a los vecinos, prueba la cocina tradicional y vive el día a día de Fez.',
+    lead: 'Descubre nuestras visitas de Fez y conoce la ciudad de la mano de quienes viven aquí.',
+    back: 'Volver a Fez',
+    cta: 'Descubre nuestras visitas de Fez',
+  },
 };
 
 const imageGroups = [
@@ -74,16 +91,16 @@ const imageAlts = [
   'Panoramic view over the rooftops of Fez',
   'Fountain and city lights in the New City of Fez at night',
 ];
+const spanishImageAlts = ["Calle de un mercado tradicional de la medina de Fez con banderas marroquíes", "Calle de la zona moderna de Fez", "Plaza pública y vida cotidiana en Fez", "Artesano trabajando en un taller tradicional de Fez", "Artesano dando forma al metal a mano en Fez", "Artesanos trabajando juntos en un taller de Fez", "Artesano local del cuero en la medina", "Puerta histórica a la entrada de la medina de Fez", "Pasaje comercial estrecho dentro de la medina de Fez", "Arquitectura histórica y patio en Fez", "Panadería tradicional y comida local en Fez", "Vista panorámica de los tejados de Fez", "Fuente y luces de la Ciudad Nueva de Fez por la noche"];
 
 export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = language === 'fr' ? content.fr : content.en;
-  const fallbackEnglish = language === 'ar';
+  const copy = content[language];
 
   return (
-    <div className="bg-[#FAF8F5] pb-20" dir={fallbackEnglish ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] pb-20">
       <PageCrumbBar
         language={language}
-        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
         onParent={onBack}
@@ -102,7 +119,7 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
                 <div key={src} className={`overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm ${images.length === 1 ? 'max-h-[620px]' : 'aspect-4/3'}`}>
                   <img
                     src={src}
-                    alt={imageAlts[imageGroups.slice(0, index).flat().length + imageIndex]}
+                    alt={(language === 'es' ? spanishImageAlts : imageAlts)[imageGroups.slice(0, index).flat().length + imageIndex]}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding="async"
                     className={`w-full h-full ${images.length === 1 ? 'object-contain bg-[#1C2524]' : 'object-cover'}`}
@@ -114,9 +131,9 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
           </section>
         ))}
 
-        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} />
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </article>
     </div>
   );

@@ -61,8 +61,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
 
   const openWhatsApp = () => {
     let text = '';
-    if (language === 'ar') {
-      text = `السلام عليكم ورحمة الله، أنا مهتم بحجز جولة "${pillar.title[language]}" عبر موقع FezGuideTours. هل يمكن تزويدي بالتواريخ المتاحة والترتيبات؟`;
+    if (language === 'es') {
+      text = `Hola, me interesa reservar la visita "${pillar.title[language]}" a través de FezGuideTours. ¿Podéis indicarme las fechas disponibles y los detalles?`;
     } else if (language === 'fr') {
       text = `Bonjour ! Je souhaite me renseigner sur la visite "${pillar.title[language]}" via FezGuideTours. Quelles sont vos disponibilités ?`;
     } else {
@@ -82,27 +82,27 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       case 'fez':
         return {
           id: 'fez' as PageId,
-          label: language === 'ar' ? 'جولات فاس' : language === 'fr' ? 'Visites de Fès' : 'Fez Experiences',
+          label: language === 'es' ? "Visitas por Fez" : language === 'fr' ? 'Visites de Fès' : 'Fez Experiences',
         };
       case 'day-trips':
         return {
           id: 'day-trips' as PageId,
-          label: language === 'ar' ? 'رحلات يومية' : language === 'fr' ? 'Excursions' : 'Day Trips',
+          label: language === 'es' ? "Excursiones de un día" : language === 'fr' ? 'Excursions' : 'Day Trips',
         };
       case 'food-tours':
         return {
           id: 'food-tours' as PageId,
-          label: language === 'ar' ? 'جولات الأكل' : language === 'fr' ? 'Tours Culinaires' : 'Food Tours',
+          label: language === 'es' ? "Rutas gastronómicas" : language === 'fr' ? 'Tours Culinaires' : 'Food Tours',
         };
       case 'travel-tips':
         return {
           id: 'travel-tips' as PageId,
-          label: language === 'ar' ? 'نصائح السفر' : language === 'fr' ? 'Conseils Voyage' : 'Travel Tips',
+          label: language === 'es' ? "Consejos de viaje" : language === 'fr' ? 'Conseils Voyage' : 'Travel Tips',
         };
       default:
         return {
           id: 'home' as PageId,
-          label: language === 'ar' ? 'الرئيسية' : language === 'fr' ? 'Accueil' : 'Home',
+          label: language === 'es' ? "Inicio" : language === 'fr' ? 'Accueil' : 'Home',
         };
     }
   };
@@ -114,21 +114,21 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       {/* 1. Breadcrumbs & Quick Back Navigation */}
       <div className="bg-white border-b border-[#E7E2DA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between text-xs text-[#52605E]">
-          <nav className="flex items-center gap-1.5 sm:gap-2 flex-wrap" aria-label="Breadcrumb">
+          <nav className="flex items-center gap-1.5 sm:gap-2 flex-wrap" aria-label={language === 'es' ? "Ruta de navegación" : "Breadcrumb"}>
             <button
               onClick={() => onNavigate('home')}
               className="hover:text-[#005F5A] transition-colors cursor-pointer"
             >
-              {language === 'ar' ? 'الرئيسية' : language === 'fr' ? 'Accueil' : 'Home'}
+              {language === 'es' ? "Inicio" : language === 'fr' ? 'Accueil' : 'Home'}
             </button>
-            <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0] rtl:rotate-180" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0]" />
             <button
               onClick={() => onNavigate(categoryNav.id)}
               className="hover:text-[#005F5A] font-medium transition-colors cursor-pointer"
             >
               {categoryNav.label}
             </button>
-            <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0] rtl:rotate-180" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0]" />
             <span className="text-[#1C2524] font-bold truncate max-w-[200px] sm:max-w-md">
               {pillar.title[language]}
             </span>
@@ -138,9 +138,9 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             onClick={() => onNavigate(categoryNav.id)}
             className="flex items-center gap-1 text-[#005F5A] hover:text-[#004743] font-bold text-xs transition-colors cursor-pointer shrink-0"
           >
-            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>
-              {language === 'ar' ? 'العودة للقائمة' : language === 'fr' ? 'Retour' : 'Back to list'}
+              {language === 'es' ? "Volver a la lista" : language === 'fr' ? 'Retour' : 'Back to list'}
             </span>
           </button>
         </div>
@@ -200,7 +200,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   }`}
                   aria-label={`View photo ${idx + 1}`}
                 >
-                  <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                  <img src={img} alt={language === 'es' ? "Miniatura" : "Thumbnail"} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -215,10 +215,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </div>
             <div>
               <span className="text-[11px] text-[#718280] font-medium block">
-                {language === 'ar' ? 'المدة الزمنية' : language === 'fr' ? 'Durée' : 'Duration'}
+                {language === 'es' ? "Duración" : language === 'fr' ? 'Durée' : 'Duration'}
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#1C2524]">
-                {pillar.practicalInfo?.duration?.[language] || '4 - 5 Hours'}
+                {pillar.practicalInfo?.duration?.[language] || (language === 'es' ? '4 - 5 horas' : '4 - 5 Hours')}
               </span>
             </div>
           </div>
@@ -229,10 +229,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </div>
             <div>
               <span className="text-[11px] text-[#718280] font-medium block">
-                {language === 'ar' ? 'نوع التجربة' : language === 'fr' ? 'Format' : 'Format'}
+                {language === 'es' ? "Formato" : language === 'fr' ? 'Format' : 'Format'}
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#1C2524]">
-                {pillar.practicalInfo?.groupSize?.[language] || 'Private Group Only'}
+                {pillar.practicalInfo?.groupSize?.[language] || (language === 'es' ? 'Solo vuestro grupo privado' : 'Private Group Only')}
               </span>
             </div>
           </div>
@@ -243,10 +243,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </div>
             <div>
               <span className="text-[11px] text-[#718280] font-medium block">
-                {language === 'ar' ? 'نقطة الانطلاق' : language === 'fr' ? 'Départ' : 'Meeting / Pickup'}
+                {language === 'es' ? "Punto de encuentro / Recogida" : language === 'fr' ? 'Départ' : 'Meeting / Pickup'}
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#1C2524] truncate">
-                {pillar.practicalInfo?.departure?.[language] || 'Bab Boujloud or Riad'}
+                {pillar.practicalInfo?.departure?.[language] || (language === 'es' ? 'Bab Boujloud o tu riad' : 'Bab Boujloud or Riad')}
               </span>
             </div>
           </div>
@@ -257,10 +257,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             </div>
             <div>
               <span className="text-[11px] text-[#718280] font-medium block">
-                {language === 'ar' ? 'اللغات المتاحة' : language === 'fr' ? 'Langues' : 'Languages'}
+                {language === 'es' ? "Idiomas" : language === 'fr' ? 'Langues' : 'Languages'}
               </span>
               <span className="text-xs sm:text-sm font-bold text-[#1C2524]">
-                English, Français and Español
+                {language === 'es' ? 'Inglés, francés y español' : 'English, Français and Español'}
               </span>
             </div>
           </div>
@@ -274,11 +274,11 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-                  {language === 'ar' ? 'عن هذه التجربة' : language === 'fr' ? 'Présentation' : 'Experience Overview'}
+                  {language === 'es' ? "Descripción de la experiencia" : language === 'fr' ? 'Présentation' : 'Experience Overview'}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
-                  {language === 'ar'
-                    ? 'القصة الكاملة والتفاصيل الحقيقية'
+                  {language === 'es'
+                    ? "La historia viva detrás de la experiencia"
                     : language === 'fr'
                     ? 'L’histoire et l’immersion locale'
                     : 'The Living Story Behind the Experience'}
@@ -293,7 +293,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               {pillar.highlights[language].length > 0 && (
                 <div className="pt-6 border-t border-[#F2ECE4] space-y-3">
                   <h3 className="text-sm font-bold text-[#1C2524]">
-                    {language === 'ar' ? 'أبرز ما ستكتشفه في هذه الجولة:' : language === 'fr' ? 'Points forts de la visite :' : 'Highlights of This Experience:'}
+                    {language === 'es' ? "Lo más destacado de esta experiencia:" : language === 'fr' ? 'Points forts de la visite :' : 'Highlights of This Experience:'}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     {pillar.highlights[language].map((hl, idx) => (
@@ -315,25 +315,25 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <div className="space-y-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-                    {language === 'ar' ? 'مسار الجولة ومحطاتها' : language === 'fr' ? 'Programme Détaillé' : 'Experience Itinerary'}
+                    {language === 'es' ? "Itinerario de la experiencia" : language === 'fr' ? 'Programme Détaillé' : 'Experience Itinerary'}
                   </span>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
-                    {language === 'ar'
-                      ? 'خطوة بخطوة: ماذا ستعيش وتكتشف؟'
+                    {language === 'es'
+                      ? "La experiencia y sus paradas, paso a paso"
                       : language === 'fr'
                       ? 'Étape par étape : Ce que vous allez vivre'
                       : 'Step-by-Step Experience & Stops'}
                   </h2>
                 </div>
 
-                <div className="relative pl-6 rtl:pl-0 rtl:pr-6 border-l-2 rtl:border-l-0 rtl:border-r-2 border-[#005F5A]/20 space-y-8">
+                <div className="relative pl-6 border-l-2 border-[#005F5A]/20 space-y-8">
                   {(livePillar.itinerary && livePillar.itinerary.length > 0
                     ? livePillar.itinerary
                     : extra?.itinerary || []
                   ).map((stop, idx) => (
                     <div key={idx} className="relative space-y-1.5 group">
                       {/* Timeline Dot */}
-                      <span className="absolute -left-[31px] rtl:-left-auto rtl:-right-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-[#005F5A] group-hover:scale-125 transition-transform" />
+                      <span className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-[#005F5A] group-hover:scale-125 transition-transform" />
 
                       <div className="flex flex-wrap items-center gap-2">
                         {stop.time && (
@@ -343,17 +343,17 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                         )}
                         {stop.badge && (
                           <span className="text-[10px] font-bold text-[#C84B31] bg-[#C84B31]/10 px-2 py-0.5 rounded-md">
-                            {stop.badge[language] || stop.badge.en}
+                            {stop.badge[language] || (language === 'es' ? '' : stop.badge.en)}
                           </span>
                         )}
                       </div>
 
                       <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">
-                        {stop.title[language] || stop.title.en}
+                        {stop.title[language] || (language === 'es' ? '' : stop.title.en)}
                       </h3>
 
                       <p className="text-xs text-[#52605E] leading-relaxed">
-                        {stop.description[language] || stop.description.en}
+                        {stop.description[language] || (language === 'es' ? '' : stop.description.en)}
                       </p>
                     </div>
                   ))}
@@ -367,7 +367,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               (extra?.included && extra.included[language]?.length > 0)) && (
               <section className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-xs space-y-6">
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
-                  {language === 'ar' ? 'ما تشمله التجربة وما لا تشمله' : language === 'fr' ? 'Inclusions & Exclusions' : 'What is Included & Excluded'}
+                  {language === 'es' ? "Qué está incluido y qué no" : language === 'fr' ? 'Inclusions & Exclusions' : 'What is Included & Excluded'}
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -375,7 +375,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   <div className="p-5 rounded-2xl bg-[#F0F8F6] border border-[#D0EBE5] space-y-3">
                     <span className="text-xs font-bold text-[#005F5A] flex items-center gap-1.5">
                       <Check className="w-4 h-4 text-[#005F5A]" />
-                      {language === 'ar' ? 'مشمول في الحجز:' : language === 'fr' ? 'Inclus :' : 'Included in Tour:'}
+                      {language === 'es' ? "Incluido en la visita:" : language === 'fr' ? 'Inclus :' : 'Included in Tour:'}
                     </span>
                     <ul className="space-y-2">
                       {(livePillar.included && livePillar.included[language]?.length > 0
@@ -394,7 +394,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   <div className="p-5 rounded-2xl bg-[#FFF6F4] border border-[#FBE3DC] space-y-3">
                     <span className="text-xs font-bold text-[#C84B31] flex items-center gap-1.5">
                       <X className="w-4 h-4 text-[#C84B31]" />
-                      {language === 'ar' ? 'غير مشمول:' : language === 'fr' ? 'Non inclus :' : 'Not Included:'}
+                      {language === 'es' ? "No incluido:" : language === 'fr' ? 'Non inclus :' : 'Not Included:'}
                     </span>
                     <ul className="space-y-2">
                       {(livePillar.excluded && livePillar.excluded[language]?.length > 0
@@ -419,7 +419,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <h2 className="text-lg sm:text-xl font-bold text-[#1C2524] flex items-center gap-2">
                   <HelpCircle className="w-5 h-5 text-[#005F5A]" />
                   <span>
-                    {language === 'ar' ? 'نصائح عملية وما يجب إحضاره' : language === 'fr' ? 'Conseils pratiques & Ce qu’il faut apporter' : 'Practical Tips & What to Bring'}
+                    {language === 'es' ? "Consejos prácticos y qué llevar" : language === 'fr' ? 'Conseils pratiques & Ce qu’il faut apporter' : 'Practical Tips & What to Bring'}
                   </span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -443,10 +443,10 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-                      {language === 'ar' ? 'تجارب الزوار' : language === 'fr' ? 'Avis Vérifiés' : 'Verified Reviews'}
+                      {language === 'es' ? "Opiniones verificadas" : language === 'fr' ? 'Avis Vérifiés' : 'Verified Reviews'}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
-                      {language === 'ar' ? 'ماذا يقول المسافرون عن هذه الجولة؟' : language === 'fr' ? 'Ce que nos voyageurs en disent' : 'What Travelers Say'}
+                      {language === 'es' ? "Qué dicen los viajeros" : language === 'fr' ? 'Ce que nos voyageurs en disent' : 'What Travelers Say'}
                     </h2>
                   </div>
                   <div className="flex items-center gap-1 text-[#E07A5F]">
@@ -482,7 +482,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
               {/* Pricing Box */}
               <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-1">
                 <span className="text-[11px] text-[#718280] uppercase tracking-wider font-semibold block">
-                  {language === 'ar' ? 'السعر الشامل' : language === 'fr' ? 'Tarif Global' : 'All-Inclusive Rate'}
+                  {language === 'es' ? "Tarifa todo incluido" : language === 'fr' ? 'Tarif Global' : 'All-Inclusive Rate'}
                 </span>
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tabular-nums">
@@ -493,8 +493,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   </span>
                 </div>
                 <p className="text-[11px] text-[#52605E]">
-                  {language === 'ar'
-                    ? 'سعر خاص للمجموعة بالكامل (حتى 6 أشخاص) · بدون تكاليف خفية'
+                  {language === 'es'
+                    ? 'Precio privado para todo el grupo (hasta 6 personas) · Sin costes ocultos'
                     : language === 'fr'
                     ? 'Tarif privé pour votre groupe entier (jusqu’à 6 pers.)'
                     : 'Private group pricing for your party · No hidden fees'}
@@ -509,7 +509,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 >
                   <Calendar className="w-4 h-4" />
                   <span>
-                    {language === 'ar' ? 'احجز هذه الجولة الآن' : language === 'fr' ? 'Réserver cette Visite' : 'Book This Experience'}
+                    {language === 'es' ? "Reservar esta experiencia" : language === 'fr' ? 'Réserver cette Visite' : 'Book This Experience'}
                   </span>
                 </button>
 
@@ -521,7 +521,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
                   </svg>
                   <span>
-                    {language === 'ar' ? 'استفسر فوراً على واتساب' : language === 'fr' ? 'Question via WhatsApp' : 'Inquire on WhatsApp'}
+                    {language === 'es' ? "Consultar por WhatsApp" : language === 'fr' ? 'Question via WhatsApp' : 'Inquire on WhatsApp'}
                   </span>
                 </button>
               </div>
@@ -531,25 +531,25 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'ar' ? 'جولة خاصة 100% لك ولمجموعتك' : language === 'fr' ? 'Visite 100% privée pour votre groupe' : '100% Private (Your party only)'}
+                    {language === 'es' ? 'Visita 100 % privada para ti y tu grupo' : language === 'fr' ? 'Visite 100% privée pour votre groupe' : '100% Private (Your party only)'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'ar' ? 'إلغاء مجاني حتى 24 ساعة قبل الموعد' : language === 'fr' ? 'Annulation gratuite jusqu’à 24h avant' : 'Free cancellation up to 24h before'}
+                    {language === 'es' ? 'Cancelación gratuita hasta 24 horas antes' : language === 'fr' ? 'Annulation gratuite jusqu’à 24h avant' : 'Free cancellation up to 24h before'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'ar' ? 'مرشدون معتمدون من وزارة السياحة' : language === 'fr' ? 'Guides officiels agréés par l’État' : 'Official Ministry-licensed guides'}
+                    {language === 'es' ? 'Guías oficiales autorizados por el Ministerio de Turismo' : language === 'fr' ? 'Guides officiels agréés par l’État' : 'Official Ministry-licensed guides'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'ar' ? 'لا عمولات ولا متاجر مفروضة' : language === 'fr' ? 'Zéro boutique ou arrêt forcé' : 'Zero tourist shop traps or kickbacks'}
+                    {language === 'es' ? 'Sin comisiones ni paradas obligatorias en tiendas' : language === 'fr' ? 'Zéro boutique ou arrêt forcé' : 'Zero tourist shop traps or kickbacks'}
                   </span>
                 </div>
               </div>
@@ -574,18 +574,18 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-                  {language === 'ar' ? 'تجارب أخرى مميزة' : language === 'fr' ? 'Vous Aimerez Aussi' : 'More Experiences'}
+                  {language === 'es' ? "Más experiencias" : language === 'fr' ? 'Vous Aimerez Aussi' : 'More Experiences'}
                 </span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">
-                  {language === 'ar' ? 'اكتشف المزيد من جولات فاس' : language === 'fr' ? 'Complétez votre séjour à Fès' : 'You Might Also Like'}
+                  {language === 'es' ? "También os puede interesar" : language === 'fr' ? 'Complétez votre séjour à Fès' : 'You Might Also Like'}
                 </h2>
               </div>
               <button
                 onClick={() => onNavigate(categoryNav.id)}
                 className="text-xs font-bold text-[#005F5A] hover:underline flex items-center gap-1 cursor-pointer"
               >
-                <span>{language === 'ar' ? 'عرض الكل' : language === 'fr' ? 'Voir tout' : 'View all'}</span>
-                <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                <span>{language === 'es' ? "Ver todo" : language === 'fr' ? 'Voir tout' : 'View all'}</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
 
@@ -622,8 +622,8 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       </p>
                     </div>
                     <div className="pt-2 flex items-center justify-between text-xs font-bold text-[#005F5A]">
-                      <span>{language === 'ar' ? 'عرض التفاصيل' : language === 'fr' ? 'Voir détails' : 'View Details'}</span>
-                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-transform" />
+                      <span>{language === 'es' ? "Ver detalles" : language === 'fr' ? 'Voir détails' : 'View Details'}</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </div>
@@ -632,7 +632,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
           </div>
         )}
         {(pillar.pageId === 'day-trips' || pillar.id === 'our-food-tours') && (
-          <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+          <TripadvisorReviewsSection language={language} />
         )}
       </div>
 
@@ -659,7 +659,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
             >
               <Calendar className="w-4 h-4" />
               <span>
-                {language === 'ar' ? 'احجز هذه التجربة الآن' : language === 'fr' ? 'Réserver cette Visite' : 'Book This Experience'}
+                {language === 'es' ? "Reservar esta experiencia" : language === 'fr' ? 'Réserver cette Visite' : 'Book This Experience'}
               </span>
             </button>
 
@@ -671,7 +671,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
               </svg>
               <span>
-                {language === 'ar' ? 'استفسر فوراً على واتساب' : language === 'fr' ? 'Question via WhatsApp' : 'Inquire on WhatsApp'}
+                {language === 'es' ? "Consultar por WhatsApp" : language === 'fr' ? 'Question via WhatsApp' : 'Inquire on WhatsApp'}
               </span>
             </button>
           </div>

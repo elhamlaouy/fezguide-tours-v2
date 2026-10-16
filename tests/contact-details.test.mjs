@@ -45,8 +45,9 @@ test('CMS data cannot restore stale public contact details', () => {
 
 test('footer exposes clickable email and Google Maps contact links', () => {
   const footer = read('src/components/Footer.tsx');
-  assert.ok(footer.includes('href={`mailto:${siteSettings.email}`}'));
-  assert.ok(footer.includes('href={siteSettings.googleMaps}'));
+  assert.ok(footer.includes('const contact = cms?.siteSettings ?? siteSettings'));
+  assert.ok(footer.includes('href={`mailto:${contact.email}`}'));
+  assert.ok(footer.includes('href={contact.googleMaps}'));
   assert.match(footer, /target="_blank"/);
   assert.match(footer, /rel="noopener noreferrer"/);
 });

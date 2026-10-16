@@ -1,0 +1,729 @@
+{
+  "scope": {
+    "repository": "/home/ubuntu/website-builder/projects/Other Websites/fez-guide-tours-fes",
+    "branch": "feat/customizable-cms",
+    "baselineCommit": "241dca78c7c89dc5803082a4804681fc5b7529a9",
+    "workingTree": "Dirty existing CMS implementation, tracked changes and untracked CMS/tests/docs; audit source hashes captured 2026-10-15T11:41:49.171985+00:00. Not a committed release.",
+    "mode": "Audit only; code read-only; only docs/cms-security-review.json and docs/cms-security-review.md written by auditor.",
+    "framework": "Vite 8 + React 19 + TypeScript + Cloudflare Worker; D1/R2/Images for local CMS, existing CMS_KV for legacy production.",
+    "statusMeaning": "Exactly one final status per check. PASS is limited to the explicitly inspected repository/application surface and exercised tests; it never certifies unconfigured provider settings. UNKNOWN means unresolved external/build/runtime proof. N/A requires an absent surface. FAIL is a demonstrated control gap, not necessarily a proven exploit.",
+    "productionUrl": "https://fezguidetours.elhamlaouy.workers.dev",
+    "productionBoundary": "Existing old deployment only: GET /api/cms returns legacy public JSON; GET /api/cms/document and /api/admin/content return 404 JSON; GET /admin is root-identical SPA fallback. wrangler.toml has only existing CMS_KV, no approved CMS_DB/CMS_MEDIA/CMS_IMAGES/Access configuration. No production writes/config/auth changes/provisioning/deployments.",
+    "productionObservationUtc": "2026-10-15T11:38:02.475438+00:00; entry-script follow-up 2026-10-15T11:41:49.171985+00:00",
+    "localOwnerPreview": "Port 9196 and owner state deliberately not requested, mutated, stopped or copied by auditor. Parent smoke inspected from current log uses scratch state/assets and dynamically selected independent loopback ports.",
+    "build": "Auditor did not rebuild dist (report-only scope). Parent current smoke script builds a fresh isolated scratch outDir before runtime, observed ok=true; build cleaned by finally. Existing project dist inspected separately is old (09:13:02 UTC) and not treated as current release output.",
+    "verification": [
+      {
+        "id": "FOCUSED-A",
+        "command": "node --test --test-concurrency=1 tests/cms-backend.test.mjs tests/cms-media.test.mjs tests/cms-recovery.test.mjs tests/cms-storage-safeguards.test.mjs tests/cms-schema.test.mjs",
+        "result": "exit 0; 127 passed, 0 failed, 0 skipped; 17441.218446 ms",
+        "boundary": "handler imports + real in-memory SQLite/real schema; synthetic signed JWT/JWKS; media re-encoder double"
+      },
+      {
+        "id": "FOCUSED-B",
+        "command": "node --test --test-concurrency=1 tests/cms-seo.test.mjs tests/cms-renderer.test.mjs tests/cms-integration.test.mjs tests/cms-preview-launcher.test.mjs tests/cms-local-backup.test.mjs tests/booking-handoff.test.mjs",
+        "result": "exit 0; 23 passed, 0 failed, 0 skipped; 9644.332566 ms",
+        "boundary": "handler/rendering tests + isolated scratch snapshot tests, not remote provider auth"
+      },
+      {
+        "id": "DEPENDENCIES",
+        "command": "npm audit --json --ignore-scripts",
+        "result": "exit 0; vulnerabilities total=0 (info/low/moderate/high/critical all 0); dependency total=152",
+        "boundary": "lockfile advisory scan at execution time, no packages installed/updated; not a guarantee against unknown vulnerabilities"
+      },
+      {
+        "id": "SCAN",
+        "command": "Read-only Python/git: git ls-files; git rev-list --all; git rev-list --objects --all; git cat-file; private-key/AWS/GitHub/provider-token/secret-assignment regex scan; output-name inventory; git check-ignore",
+        "result": "135 current text files, 35 reachable commits, 392 history blobs, no confirmed secret; no tracked/public/dist forbidden names; dist 198 files; .env placeholder and French copy false positives classified",
+        "boundary": "decodable text/blobs <=10 MB; no unreachable/remote-only refs, private simulator state, provider secrets/logs or exhaustive entropy scanner"
+      },
+      {
+        "id": "INLINE-PROBE",
+        "command": "node --import tsx --input-type=module inline audit: real migrations, in-memory SQLite, real schema, ephemeral RSA key and synthetic JWKS",
+        "result": {
+          "sqlPayloadRoundTripsAsData": true,
+          "rolesAndIdsCannotElevate": true,
+          "privateObjectReadDenials": 12,
+          "noCrossOriginCorsGrant": true,
+          "rejectedNonTrustedIssuers": 8,
+          "traversalPayloadDenials": 5,
+          "consoleMarkerAbsent": true,
+          "finalRevisionCount": 2
+        },
+        "boundary": "not workerd, not an operational Access issuer; no test values/tokens printed"
+      },
+      {
+        "id": "PARENT-READ",
+        "log": "/home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log",
+        "lineRanges": [
+          "2-3",
+          "278-286"
+        ],
+        "result": "tsc --noEmit showed no diagnostics; full suite 273 tests passed, 0 failed/skip; real isolated workerd smoke JSON ok=true. Auditor read log and scripts/cms-preview-smoke.mjs:1-86 before citing it.",
+        "runtimeProof": {
+          "adminHtml": true,
+          "signedWorkerAuth": true,
+          "anonymousUpstreamDenied": true,
+          "rebindingAndCsrfDenied": true,
+          "realLocalD1R2Images": true,
+          "durableRateFinalSlotConcurrency": true,
+          "savePublishReload": true,
+          "restartPreservesOwnerEdits": true,
+          "protectedBackupHash": true,
+          "restoreDraftOnly": true,
+          "completeLocalSnapshotRestore": true,
+          "remoteResources": false
+        },
+        "boundary": "real local D1/R2/Images and RSA verification; synthetic JWKS-fetch seam, NOT actual Access issuer HTTP/login or production settings"
+      },
+      {
+        "id": "BROWSER",
+        "result": "No successful current real-browser-through-buttons publish proof read. Parent reported first Puppeteer attempt protocol timeout and active debugging. Do not count as PASS.",
+        "boundary": "Mounted React/DOM unit tests and HTTP publication smoke are not equivalent to real browser buttons/save/reload/publish proof."
+      }
+    ],
+    "productionGetEvidence": [
+      {
+        "paths": [
+          "/",
+          "/admin",
+          "/.env",
+          "/.git/config",
+          "/.wrangler/state/v3/d1/db.sqlite",
+          "/src/main.tsx",
+          "/assets/index.js.map",
+          "/__vite_ping"
+        ],
+        "method": "GET",
+        "status": 200,
+        "contentType": "text/html",
+        "bytes": 4040,
+        "sha256": "928b3523a83018f97b7a42287f800216bf6d272802bd556eef5a8003ff6814d2",
+        "interpretation": "identical legacy SPA fallback, not private data/source/debug output; requested CSP/nosniff/XFO/Referrer/Permissions/HSTS headers absent"
+      },
+      {
+        "paths": [
+          "/api/cms/document",
+          "/api/admin/content",
+          "/api/admin/recovery/backup",
+          "/api/debug"
+        ],
+        "method": "GET",
+        "status": 404,
+        "contentType": "application/json; charset=utf-8",
+        "bodyShape": {
+          "error": "Not found"
+        },
+        "headers": {
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY",
+          "referrer-policy": "strict-origin-when-cross-origin",
+          "permissions-policy": "camera=(), microphone=(), geolocation=()"
+        },
+        "interpretation": "old API, not operational CMS auth/write availability"
+      },
+      {
+        "paths": [
+          "/api/cms"
+        ],
+        "method": "GET",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "publicTopLevelKeys": [
+          "blogPosts",
+          "customPages",
+          "faqs",
+          "siteSettings",
+          "teamMembers",
+          "tours"
+        ],
+        "headers": {
+          "cache-control": "public, max-age=30, s-maxage=30",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "DENY"
+        },
+        "interpretation": "public legacy projection; body values/PII not retained"
+      },
+      {
+        "paths": [
+          "/assets/index-CLpabP8N.js"
+        ],
+        "method": "GET",
+        "status": 200,
+        "contentType": "text/javascript",
+        "bytes": 677641,
+        "sha256": "24801116c46ed5a4bb3a7e047a350fb5bd7f1733278303b84e433e4526847a8f",
+        "privateCredentialSignatureHits": 0,
+        "sourceMappingURL": false,
+        "interpretation": "existing production entry only; not the dirty CMS release bundle"
+      }
+    ],
+    "attackSurface": {
+      "publicPages": "Legacy public site plus typed CMS EN/FR/ES page/product/editorial routes and public sitemap/robots; new Worker publishes projected visible content into escaped HTML/JSON.",
+      "dynamicRoutes": "GET /api/cms, /api/cms/document; authenticated GET /api/admin/content, /content/revisions, /content/revisions/N; PUT /content/draft; POST /content/validate, /content/publish, /content/rollback; POST /api/admin/media; GET/HEAD /api/admin/media/<key>; GET /api/admin/recovery/backup, /recovery/orphans; POST /recovery/restore; public GET/HEAD /media/upload-<uuid>.<jpg|png|webp>.",
+      "authSession": "Cloudflare Access RS256 assertions, issuer/audience and subject/email allowlist; no local passwords, sessions or frontend auth authority. Synthetic local signer/JWKS are scratch-only harness, production entry unchanged.",
+      "databaseStorage": "Singleton site in D1; append-only revisions with version-CAS transactional pointers; R2 uploads private by application design; durable D1 upload reservations. Legacy production KV fixed read-only key.",
+      "uploads": "Raw JPEG/PNG/WebP only, 8 MiB streamed cap, 8192 dimension and 12M pixel max, strict containers + Images decode/re-encode, UUID object names, protected previews/current publication-gated public reads.",
+      "outboundFetch": "Restricted configured Access cert endpoint only; fixed ASSETS service binding requests. Browser external HTTPS links/images are not server URL imports.",
+      "adminPrivate": "/admin[/...] and every /api/admin path gated before fallback; same shared permission for every allowlisted editor, including backup and publication. No tenant/customer accounts.",
+      "paymentsWebhooks": "None. Product prices are editorial display; booking prepares WhatsApp inquiry without server submission/payment or stored customer bookings.",
+      "aiSpend": "No AI endpoint; D1/R2/Images and revision/backup CPU/storage are spend-sensitive. Upload budgets are durable, other CMS read/write rates and revision growth are not bounded.",
+      "logging": "Worker no console logging; generic errors; private actor subjects in immutable revision/accounting records. Provider/Access/CI log access/retention unknown.",
+      "recovery": "Authenticated export contains documents + media hash manifest, NOT object bytes; restore validates manifests/objects then adds draft only; orphan route dry-run only; local stopped-state snapshot includes D1/R2 bytes with symlink/overlap/integrity checks. No remote offsite backup/restore operations proven.",
+      "ciArtifacts": "No tracked CI workflow. Vite build + Worker dist assets; ignore dist/.wrangler/logs/.cms-backups; .dev.vars* not ignored. Fresh isolated parent build succeeded but final release output manifest scan remains open."
+    },
+    "sourceSha256": {
+      "worker/index.ts": "d18670b93aa9d836f545f229d09f4cab5749b3c6884a62fb5eb0c47bf4f1acad",
+      "worker/cms-auth.ts": "972527e952c6acbc6b9326378a6c5af7f54600d53707ac2ff6a44331a99b40d0",
+      "worker/cms-routes.ts": "473ef73980912f362c088f8efe77d16ee302cc5d8b765ff36a27e8c6768810d9",
+      "worker/cms-store.ts": "27147586a8271f09a0109dcd5a6f4c00d68302d0777a4f07fba1d96dfcd0941e",
+      "worker/cms-recovery.ts": "791d631aaa240b9c7a741deaf8f085367658ce0ce23a2a90360812f71bb8c347",
+      "worker/media.ts": "e7f0aa20eace521bf1d2ca7f0d0e3d3b2fdc2de6f275c1a428b7f2295b9722a0",
+      "worker/media-budget.ts": "595671bbff4e21352c536fb0ea88f198ee8302e2b7894fa539597b5e8d65605c",
+      "src/cms/schema.ts": "69ac7dee7be3ec33b1a033744b392b0e8858a2444ed4c6fed8a43883ea0bb72a",
+      "wrangler.toml": "e5f8a3de1f4d96f8a382350e74a2498ce984fdf4eb176e54222de9a7bf530949",
+      "package-lock.json": "878ab55454725f3ada0c44348e47020954d467e0fb14f6d830a67ba13cbdaa84"
+    },
+    "limits": [
+      "Security launch-filter audit, not a penetration test or production-readiness certification.",
+      "No commits, pushes, deployment, remote resource/config/auth change, production writes or owner-preview writes. Auditor only wrote the two report files; tests used in-memory or isolated temporary state.",
+      "Cloudflare Access/IdP sessions, password recovery, IAM, actual private bucket settings, secret storage, logs/retention, staging hosts, default vendor accounts, account quotas/costs and scheduled production backups were not inspected/configured.",
+      "No production POST/PUT/DELETE/OPTIONS or credentialed/private-data requests; production GET bodies retained only as hashes/shapes/header names, no personal body values or secrets.",
+      "One follow-up uncustomized Python root GET returned HTTP 403; retry using the same explicit read-only audit headers as the successful initial sweep succeeded. No authentication bypass, token use or state-changing workaround.",
+      "Working tree is shared/dirty. Hashes pin security files at audit snapshot; concurrent later source changes require focused/full re-audit. Parent browser proof was still unresolved when this report was prepared."
+    ]
+  },
+  "checks": [
+    {
+      "number": 1,
+      "name": "Exposed database credentials",
+      "status": "UNKNOWN",
+      "evidence": [
+        "wrangler.toml:1-20 has only ASSETS and existing CMS_KV; no CMS_DB/CMS_MEDIA/CMS_IMAGES/ACCESS_* production configuration.",
+        "SCAN: 135 current text files and 392 reachable-history blobs inspected with redacted multi-pattern scan; no confirmed database credentials. D1/R2 are capability bindings, not browser connection strings.",
+        "migrations/0001_cms.sql:3-24; worker/cms-store.ts:47-141 keep database access in Worker."
+      ],
+      "reason": "Local: no exposed DB credential found. Production: approved secret stores, account roles and actual D1 binding do not exist in reviewed config and were not read from Cloudflare; no production-secret assertion is justified.",
+      "failureMode": "Future provisioning could put credentials in public vars or grant an overprivileged deployment identity.",
+      "fix": "After approval, provision isolated capability bindings and minimum-scope deployment credentials in platform secret storage; audit names/roles without values. Never reuse a production secret in local preview.",
+      "verification": "Repeat redacted source/history/output scan; inspect approved Cloudflare binding/secret-name and role inventory; verify no unauthenticated provider access. Requires remote configuration approval."
+    },
+    {
+      "number": 2,
+      "name": "Public .env files",
+      "status": "PASS",
+      "evidence": [
+        ".gitignore:1-12 ignores .env* except .env.example, dist/, .wrangler/, .cms-backups/. git check-ignore -v .env.audit-synthetic returned .gitignore:7.",
+        "SCAN: only .env.example candidate; lines 4 and 9 classified as placeholders by value-pattern boolean without printing values; no sensitive tracked/public/dist filenames.",
+        "PROD GET /.env: 200 text/html, 4040 bytes, SHA256 identical to root SPA, not environment contents."
+      ],
+      "reason": "Repository/public-file check passes for observed .env surface; the production 200 is fallback HTML, not a leaked env file. This does not prove provider secret-store policy (check 01).",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed git check-ignore and public/dist filename inventories; read-only production GET body-type/hash comparison. Preventive follow-up: .dev.vars and .dev.vars.local are currently NOT ignored (git check-ignore exit 1); add ignore rules before using Wrangler secret files, with code-change approval."
+    },
+    {
+      "number": 3,
+      "name": "Hardcoded API keys or secrets",
+      "status": "PASS",
+      "evidence": [
+        "SCAN: private-key, AWS, GitHub, provider-token and secret-assignment patterns over 135 current files including src/worker/scripts/public/dist and 392 history blobs; only placeholder .env.example and French tourism-copy false positives.",
+        "src search: no import.meta.env credential exposure, document.cookie, localStorage or sessionStorage; scripts/cms-preview.mjs:65-72 generates fresh ephemeral RSA keys, not hardcoded private material.",
+        "PROD GET /assets/index-CLpabP8N.js: 200 text/javascript, 677641 bytes, four private-credential signature patterns returned 0 matches."
+      ],
+      "reason": "No confirmed hardcoded private credential in inspected local code, reachable history, existing output or current production entry bundle. This is bounded pattern-scan evidence, not assurance about inaccessible platform logs/unreachable history.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed redacted multi-pattern current/history scan and production script scan; npm audit --json --ignore-scripts exited 0 with vulnerabilities.total=0. Re-scan fresh build before release."
+    },
+    {
+      "number": 4,
+      "name": "Weak or missing authentication",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-auth.ts:112-145 requires configured issuer/audience/allowlist and verified RS256 signature; no PIN/dev-flag bypass (148-149).",
+        "worker/cms-routes.ts:136-165 gates decoded admin paths before assets; tests/cms-backend.test.mjs:496-504 passed encoded and anonymous route denials.",
+        "FOCUSED-A: Access positive/forged/expired/malformed/unapproved tests passed using synthetic RSA JWKS; wrangler.toml:1-20 has no operational Access configuration.",
+        "PROD GET /admin: 200 root-identical legacy SPA; /api/admin/content: 404 generic JSON. These are NOT a functioning authenticated CMS login.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Local cryptographic denial/allow behavior is proven in handler tests. Real issuer HTTP, Access application/policy, login, owner identity and direct-host coverage are unconfigured/unverified.",
+      "failureMode": "A deployed editor without correct Access application/host policy could be unusable or accidentally exposed by future misconfiguration.",
+      "fix": "With approval configure actual Access application, allowed owner identities and issuer/audience; cover workers.dev/custom/preview hosts and retain server verification. Do not replace fail-closed code with a PIN or preview bypass.",
+      "verification": "After approval: real signed-out /admin and every /api/admin route deny, allowlisted login succeeds, disallowed user/expired token denies, direct Worker hostname cannot bypass."
+    },
+    {
+      "number": 5,
+      "name": "Missing server-side authorization",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-routes.ts:158-159 verifies allowlisted identity before request parsing, D1 and R2; 187-229 uses identity.subject as actor for restore/save/publish/rollback.",
+        "worker/cms-auth.ts:116-139 derives allowlisting from verified claims, not browser role fields.",
+        "INLINE-PROBE: signed non-owner denied on six private read surfaces (12 anonymous/non-owner denials); injected role/isAdmin/userId/tenantId rejected; no database mutation from rejected requests.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Local server permission boundary works; intended model is one site with equally privileged allowlisted editors. Actual production Access identities and protected resources are not provisioned/verified.",
+      "failureMode": "Wrong operational allowlist grants whole-site editor and recovery authority to an unintended identity.",
+      "fix": "Approve and verify least necessary owner/editor allowlist; document that every allowed editor can read backups and publish/rollback. Add separate roles only if required, not assumed.",
+      "verification": "Run direct API allow/deny tests with actual authorized and unauthorized provider users and real resource IDs, including restore/publish/media, against isolated approved deployment."
+    },
+    {
+      "number": 6,
+      "name": "Cross-user data access",
+      "status": "NOT APPLICABLE",
+      "evidence": [
+        "migrations/0001_cms.sql:12-18 enforces singleton document id=1; worker/cms-store.ts:69-99 reads one shared site and global immutable revisions.",
+        "worker/cms-auth.ts:116-143 defines an explicit shared-editor allowlist, not customer accounts/tenant claims.",
+        "src/components/BookingModal.tsx:119-165 only prepares a WhatsApp inquiry; no stored per-customer bookings or user-owned CMS documents."
+      ],
+      "reason": "No tenant/customer-owned object namespace exists: authorized editors intentionally share the same site. Public-vs-private object controls remain applicable under checks 05/21/33. This is NOT proof of multitenant isolation.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Inspected schema, all server routes, auth and booking flow; searched identity/tenant/ownership usage. Reassess before introducing per-editor ownership or tenant resources."
+    },
+    {
+      "number": 7,
+      "name": "Open database permissions",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-store.ts:47-141 is the only D1 adapter; all CMS admin entrypoints gate identity in worker/cms-routes.ts:158-159.",
+        "migrations/0001_cms.sql:12-24 constrains pointers and prohibits revision UPDATE/DELETE.",
+        "wrangler.toml:12-20 only existing public read-only CMS_KV; local D1 placeholder in wrangler.cms-local.toml:14-18 explicitly is not a provisioned database."
+      ],
+      "reason": "Local application gate and immutable SQL schema are proven; provider IAM, Cloudflare account/token roles, D1 access and production migration state cannot be read/proven.",
+      "failureMode": "An overly broad deployment/account token could bypass application authorization and alter database state.",
+      "fix": "Approve a production database and least-privilege deployment/operator roles; apply reviewed migrations and inspect actual access policies. Keep provider admin tokens out of the app.",
+      "verification": "Inspect exact approved account and binding permissions; exercise signed-out/non-owner application requests; verify actual schema triggers and public route publication-only reads."
+    },
+    {
+      "number": 8,
+      "name": "Misconfigured Firebase/Supabase/S3",
+      "status": "UNKNOWN",
+      "evidence": [
+        "Inventory: no Firebase/Supabase/S3 SDK or endpoints; Cloudflare R2 is the analogous relevant object-storage surface.",
+        "worker/media.ts:160-191 writes only via private binding; 208-216 serves through Worker; worker/cms-routes.ts:195-201 authenticates previews and checks visible current published references for public objects.",
+        "wrangler.cms-local.toml:20-27 and wrangler.cms-preview.toml:16-20 are local placeholders only. wrangler.toml has no production R2 or Images binding."
+      ],
+      "reason": "Local storage access design is private-by-default; actual bucket public-domain/r2.dev settings, CORS, credentials and account access were neither provisioned nor inspected.",
+      "failureMode": "An enabled public bucket hostname bypasses publication/unpublish authorization even if Worker routes are correct.",
+      "fix": "After approval create a private bucket without public domains, scoped credentials/binding and deliberate CORS; inventory existing objects before initializing budget accounting.",
+      "verification": "Read actual bucket settings; test signed-out/wrong-user list/read/write/metadata via all bucket hostnames and Worker paths, then verify publish and unpublish revoke Worker access."
+    },
+    {
+      "number": 9,
+      "name": "Unprotected admin routes",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/index.ts:54-61 dispatches all decoded admin routes before ASSETS even without D1.",
+        "worker/cms-routes.ts:136-165,174-184 gates admin HTML and all admin API/methods; FOCUSED-A and B passed anonymous and encoded-path denials.",
+        "PROD GET /admin returned 200 root-identical old SPA while GET /api/admin/content and /api/admin/recovery/backup returned 404 JSON; no production write test sent.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Working-tree code has a real server gate. Old production fallback HTML does not expose this new editor or prove an Access-protected operational admin system.",
+      "failureMode": "Future deployment could leave an alternate host/path outside Access or fail to enable intended owner administration.",
+      "fix": "Approve production auth/bindings and deploy the gated implementation; explicitly cover all admin host/path combinations. Do not treat a hidden navigation link or legacy 404 as authorization proof.",
+      "verification": "Real signed-out and normal-user requests to HTML, content, revisions, upload, backup, restore and orphan routes must deny before side effects; allowlisted owner operations must succeed."
+    },
+    {
+      "number": 10,
+      "name": "Production debug tools exposed",
+      "status": "PASS",
+      "evidence": [
+        "worker/index.ts:86-88 returns JSON 404 for unknown API paths; Worker route inventory has no profiler/test/debug route.",
+        "scripts/cms-preview.mjs:1,69-75 builds its synthetic-JWKS entry only in scratch; wrangler.toml:2 production entry is worker/index.ts, not preview launcher.",
+        "PROD GET /api/debug: 404 generic JSON; /__vite_ping and /src/main.tsx: 200 text/html, root-identical 4040-byte fallback, not Vite/source content.",
+        "SCAN: no debug/source/runtime-state artifacts in tracked files or inspected public/dist inventories."
+      ],
+      "reason": "No exposed debug implementation found in inspected production paths or current Worker route graph. The known-path 200s are SPA fallbacks, not debug endpoints. Remote host inventory remains unknown under check 29.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed route/code/output inventory and read-only production GETs with content-type/body-hash checks; FOCUSED-A/B passed admin-before-assets and unknown-route behavior."
+    },
+    {
+      "number": 11,
+      "name": "Build logs leaking secrets",
+      "status": "UNKNOWN",
+      "evidence": [
+        "package.json:6-13 build is vite build; no secret echo/export scripts. No tracked .github, GitLab CI, CircleCI or Jenkins configuration found.",
+        "scripts/cms-preview.mjs:40-43,78-79 bounds captured local Wrangler error output but may include provider output; startup log at 118 reports URL/state/booleans, no token.",
+        "No current CI/Cloudflare build logs or secret masking/retention settings supplied or read."
+      ],
+      "reason": "Repository scripts do not intentionally print secrets; external build/CI log content and controls are inaccessible, so no global log PASS.",
+      "failureMode": "Provider/CLI error or shell tracing can publish secrets to build logs with excessive access/retention.",
+      "fix": "After approval inspect recent actual build logs and CI masking, log access and retention; explicitly prohibit environment dumps and shell tracing with secrets.",
+      "verification": "Review actual build/deploy logs using redacted scanner, synthetic marker tests in isolated CI and masking/access-setting readback; never print secret values."
+    },
+    {
+      "number": 12,
+      "name": "Verbose production errors",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-routes.ts:230-232 converts unexpected failures to {error:cms_unavailable}, never echoes stack/SQL/document/JWT.",
+        "worker/index.ts:81-83 and 97-99 use generic legacy/public error messages.",
+        "tests/cms-backend.test.mjs:426-451 passed malformed JSON/schema/media/method errors and injected private SQL exception returning only generic 503.",
+        "PROD GET /api/cms/document, /api/admin/content, /api/debug: 404 application/json with only error=Not found."
+      ],
+      "reason": "Observed local negative cases and current production missing-route errors are generic. Inaccessible platform-edge exceptions and logs are separate limits, not claimed tested.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "FOCUSED-A API method/media/schema/error and streamed-limit tests passed; FOCUSED-B store-failure test passed; only read-only safe GET errors induced on production."
+    },
+    {
+      "number": 13,
+      "name": "Secrets in Git history",
+      "status": "PASS",
+      "evidence": [
+        "SCAN: git rev-list --all returned 35 reachable commits; enumerated 392 historical blobs and scanned decodable non-binary blobs up to 10 MB without printing matches.",
+        "Only matched .env.example placeholder and the identical French tourism phrase ending in secret at src/pages/FezPage.tsx:217 in objects 7564a3eaff671c333ce0939c73eb9ccff09ffd93, 79dcf1fdb7bb5bf1d017b37dff263b615df2089a, 3f032a08e3e084c7cbb85ec7591f41d313aa6cf6.",
+        "No confirmed secret or tracked .env/runtime-state/database/log artifact in reachable history/current index."
+      ],
+      "reason": "Reachable local history scan found no confirmed secret; false positives were examined. No rotation is asserted because none was identified. Unreachable/deleted remote refs and provider logs are outside inspected history.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed git rev-list --objects --all with git cat-file type/size/blob and redacted private-key/provider/assignment patterns; manually classified all reported matches without exposing credential values."
+    },
+    {
+      "number": 14,
+      "name": "Secrets shipped in frontend JavaScript",
+      "status": "UNKNOWN",
+      "evidence": [
+        "vite.config.ts:1-22 has no define/loadEnv credential injection; src search found no import.meta.env or browser credential persistence.",
+        "SCAN: existing dist has 198 files, no credential match or source maps; dist/index.html mtime 2026-10-15T09:13:02.866611+00:00, SHA256 34c2e3cbebe6d40020d3896cfc287b21f428b593d384edccb498617ccd4575ec.",
+        "PROD entry /assets/index-CLpabP8N.js: 677641 bytes, SHA256 24801116c46ed5a4bb3a7e047a350fb5bd7f1733278303b84e433e4526847a8f, 0 private-credential signature hits and no sourceMappingURL.",
+        "PARENT-READ /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:286 plus scripts/cms-preview-smoke.mjs:13-18,86 prove a fresh scratch-isolated Vite build completed before smoke and was cleaned afterward; its bundle manifest/secret scan was not captured. Browser-through-buttons proof is not yet a PASS (parent reported Puppeteer protocol timeout)."
+      ],
+      "reason": "Source, old dist and current production entry show no secret leakage. Parent log/source now proves a fresh isolated Vite build succeeded for actual runtime testing, but its generated assets were cleaned without a captured secret/manifest scan; browser/config proof for that build remains unverified.",
+      "failureMode": "A later build step can inject a private environment variable or accidentally include local preview material in the distributable.",
+      "fix": "Parent must supply fresh build and matching artifact scan/browser evidence; before any approved release, re-scan generated frontend/Worker outputs and compare deployed hashes. Keep secrets server-only.",
+      "verification": "Run npm run build in the approved parent workflow, scan fresh dist + exact generated Worker bundle for secret names/material and preview seam markers, then inspect browser network/config after authorized deployment."
+    },
+    {
+      "number": 15,
+      "name": "Client-side-only security checks",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-routes.ts:95-129,158-184,218-229 enforces auth, same-origin writes, byte/content-type/method/exact envelope/version/schema controls on the server.",
+        "worker/cms-store.ts:50-65,120-140 validates again and transactionally guards versions; src/cms/schema.ts:75-83,198-223 rejects unknown/prototype/non-JSON/oversized data.",
+        "FOCUSED-A direct handler requests bypassed UI and rejected malformed/forbidden/oversized values before revision writes. INLINE-PROBE rejected four caller role/identity envelope keys.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "PASS is the inspected working-tree server-control implementation, not a statement that the unconfigured new CMS exists on production. Booking is only a WhatsApp handoff, not a trusted server entitlement/submission.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed focused backend/schema/media/recovery tests and direct in-memory API negative/positive probes; production functional CMS remains blocked by checks 04/07/08/09."
+    },
+    {
+      "number": 16,
+      "name": "Missing input validation",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-routes.ts:95-134 streamed UTF-8 JSON cap, exact type/encoding/envelope and numeric pagination; 218-229 validates before writes.",
+        "src/cms/schema.ts:5,65-105,183-223 bounded typed allowlisted schema with URL/CSS/JSON/prototype/depth checks; validation preserves authored data instead of merging defaults.",
+        "FOCUSED-A 127/127 included wrong type, malformed JSON, extra fields, private booking field, huge UTF-8, invalid URLs, hidden relationships, versions and streamed over-limit cancellation.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Server input validation is exercised with real schema plus local SQLite-backed writes. Provider runtime compatibility and fresh build remain separate unresolved checks, not inferred from frontend constraints.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "node --test --test-concurrency=1 tests/cms-backend.test.mjs tests/cms-media.test.mjs tests/cms-recovery.test.mjs tests/cms-storage-safeguards.test.mjs tests/cms-schema.test.mjs exited 0; 127 passed, 0 failed."
+    },
+    {
+      "number": 17,
+      "name": "SQL injection",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-store.ts:70-95,129-136 uses constant SQL and bind placeholders for version, document, actor and pagination.",
+        "worker/media-budget.ts:7-16,20-30 and worker/cms-recovery.ts:34-35,85 use bound values, never interpolated user SQL.",
+        "INLINE-PROBE stored and published a site-name SQL payload, read it back exactly, retained both revisions and intact schema; final revision count=2."
+      ],
+      "reason": "All inventoried application SQL uses parameter binding; representative malicious string remained literal data in actual in-memory SQLite with the real schema. No ORM/framework assumption substitutes for this proof.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed inline node --import tsx --input-type=module probe using DatabaseSync(:memory:) and real migration files; payload audit'); DROP TABLE cms_revisions; -- round-tripped while SELECT COUNT(*) remained 2. Focused concurrency/transaction rollback tests also passed."
+    },
+    {
+      "number": 18,
+      "name": "NoSQL injection",
+      "status": "NOT APPLICABLE",
+      "evidence": [
+        "package.json:15-31 contains no document-database client; complete worker inventory uses D1 parameterized SQL.",
+        "worker/index.ts:75 fixes KV lookup to fez_cms_data, with no caller-controlled filter/query operator.",
+        "src/cms/schema.ts:75-83,198-223 and worker/cms-routes.ts:126-129 reject unknown/nested operator shapes instead of merging query objects."
+      ],
+      "reason": "No NoSQL query/operator surface exists; fixed-key KV content retrieval is not a user-controlled NoSQL selector. SQL and schema injection checks remain applicable.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Inventoried dependencies, all Worker storage calls and schema envelope handling; searched provider/operator/client use. Reassess if a document database or caller-driven KV selector is introduced."
+    },
+    {
+      "number": 19,
+      "name": "Cross-site scripting (XSS)",
+      "status": "FAIL",
+      "evidence": [
+        "src/cms/seo.ts:15-16,47-71,83-87 escapes HTML/JSON at the single controlled innerHTML sink; worker/seo.ts:17-29 embeds only safe serialized published projection.",
+        "tests/cms-renderer.test.mjs:186-207 and tests/cms-seo.test.mjs:68-101 passed script-closing/unsafe-link/text-escaping negatives.",
+        "worker/index.ts:20-25,93-108 and worker/cms-routes.ts:87-92 set some headers but no CSP; no Content-Security-Policy implementation found.",
+        "PROD GET / and /admin: no CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy or HSTS in observed response headers. /api/cms has some headers, not HTML."
+      ],
+      "reason": "Local escaping tests pass; no exploitable stored XSS was demonstrated. FAIL is the missing CSP/HTML defense-in-depth required for this authenticated, content-editing surface, plus the observed production HTML header gap—not a claim that text escaping is broken.",
+      "failureMode": "Any later rendering/dependency injection regression executes without a CSP boundary; old production HTML is also frameable by observed headers.",
+      "fix": "With code-change approval implement a tested CSP for real fonts/images/inline JSON and motion/theme behavior, including frame-ancestors and base/form restrictions; consistently apply HTML/admin headers and verify asset-excluded routes. Do not blindly add unsafe-inline or break preview/editor.",
+      "verification": "Keep current injection regressions; test fresh real browser admin/public workflows with enforcement and no CSP violations. After authorized deploy GET exact HTML/API/media/static paths and verify headers plus framing denial. No policy/deploy changed in this audit."
+    },
+    {
+      "number": 20,
+      "name": "Cross-site request forgery (CSRF)",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-routes.ts:160-169 rejects explicit cross-origin writes and cross-site uploads; uploads require non-simple X-CMS-Metadata.",
+        "tests/cms-backend.test.mjs:439, tests/cms-media.test.mjs:45-55 and tests/cms-preview-launcher.test.mjs:3-23 passed hostile-origin/fetch-metadata and missing-origin local-proxy write denials.",
+        "scripts/cms-preview.mjs:12-27,90-108 validates loopback socket/Host/Origin/Fetch Metadata and strips incoming cookie/auth/assertion/forwarded headers.",
+        "Operational Access session cookies and real browser login were not available; production new CMS is not configured.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Local request defenses passed. Real browser-authenticated cookie SameSite behavior, Access header injection and state-changing cross-origin behavior at the deployed host remain unproven.",
+      "failureMode": "An IdP/browser/proxy combination not matching assumptions could attach an authenticated session to a cross-site request.",
+      "fix": "After approved Access setup inspect secure cookie flags and execute real browser cross-origin attempts against isolated data; retain strict origins, JSON types and non-simple media header.",
+      "verification": "Same-origin save/publish/upload succeeds, hostile Origin/missing or null origin browser attempts and cross-site form/fetch uploads fail without writes; verify actual IdP cookie SameSite/Secure/HttpOnly settings."
+    },
+    {
+      "number": 21,
+      "name": "Insecure file uploads",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-routes.ts:158-169,195-201 authenticates before upload parsing; live published visible references gate public image reads.",
+        "worker/media.ts:4-6,23,27-137,140-191 enforces 8 MiB streamed input/output, exact JPEG/PNG/WebP MIME/container/magic, dimensions/pixels, decoder/re-encoder, UUID names and tiny object metadata; serveMedia:208-216 nosniff/no-store/same-origin CORP.",
+        "FOCUSED-A media negative/positive tests all passed (tests/cms-media.test.mjs:35-36 explicitly uses a deterministic decoder double, NOT actual Images); invalid MIME/metadata/traversal/truncation/polyglot/empty JPEG entropy and oversized streams rejected.",
+        "migrations/0002_media_budget.sql + worker/media-budget.ts:2-30 prove durable accounting in SQLite tests. PARENT-READ /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:286 and scripts/cms-preview-smoke.mjs:40-84 prove actual local PNG decoding/write/read, draft privacy, publication, final-slot rate race, restart, draft-only restore and complete snapshot/media restore in real D1/R2/Images. No production bucket/Images binding configured."
+      ],
+      "reason": "Local validation negatives pass; parent real runtime now proves actual PNG decode/R2 persistence and private/public/restored delivery, not just a fake re-encoder. However its JWT/JWKS is synthetic, malformed-image cases are mostly unit doubles, and production private bucket/Images/Access/provider policies remain unconfigured/unverified. UNKNOWN is specifically the external release boundary, not a denial that real local uploads work.",
+      "failureMode": "A provider-specific malformed image tolerance, misbound/public bucket or unverified decoder could leak a draft or preserve malicious/metadata bytes.",
+      "fix": "Retain parent real runtime proof; optionally run dedicated actual-decoder malformed JPEG/PNG/WebP smoke to extend negative coverage. Obtain approval for real private bucket/Images/Access configuration, then verify actual provider access and output behavior without touching owner preview.",
+      "verification": "Run scripts/cms-media-local-smoke.mjs or isolated scripts/cms-preview-smoke.mjs in parent with independent ports/state; verify actual decode rejects corruption, output metadata stripped, draft hidden, publish/rollback/unpublish, boundary quotas and restart. Then repeat on approved isolated deployed provider resources with actual login."
+    },
+    {
+      "number": 22,
+      "name": "Path traversal",
+      "status": "PASS",
+      "evidence": [
+        "worker/media.ts:23,180-186,208-213 uses exact UUID key grammar and fixed uploads/ prefix, never caller filenames; worker/cms-routes.ts:170-173 denies malformed keys.",
+        "src/cms/schema.ts:91-97 rejects encoded/double-encoded dot segments/backslashes; scripts/cms-local-backup.mjs:7-23,43-57 rejects symlink ancestry, special files, absolute/dot/empty/backslash entries and verifies inventories.",
+        "INLINE-PROBE: 5 encoded separator/double-encoded/absolute/backslash/fullwidth traversal paths returned 404. FOCUSED-B passed symlink snapshot-root/ancestor and corrupt restore negatives."
+      ],
+      "reason": "Observed application media and local snapshot paths cannot resolve outside approved object prefixes/directories. These are local code/control tests, not a statement about unseen provider bucket policies.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed inline path probes and node --test tests/cms-local-backup.test.mjs tests/cms-schema.test.mjs tests/cms-media.test.mjs (in focused groups). Snapshot tests use isolated scratch state and did not read/mutate the live owner preview."
+    },
+    {
+      "number": 23,
+      "name": "Server-side request forgery (SSRF)",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-auth.ts:30-34 allows only exact HTTPS *.cloudflareaccess.com issuer hostname; 81-85 fixes /cdn-cgi/access/certs and redirect:error with bounded body/timeouts.",
+        "worker/seo.ts:73-74 fetches a fixed /index.html through ASSETS service binding; worker/index.ts:103 is ASSETS fetch, not an arbitrary external HTTP fetch.",
+        "CMS media accepts raw bytes rather than remote-fetch URL imports (worker/media.ts:160-177); arbitrary HTTPS CMS links/images are browser rendering only.",
+        "INLINE-PROBE rejected 8 loopback/private/link-local/encoded-IP/userinfo/path/nontrusted issuer settings without an outbound fetch; FOCUSED-A JWKS caps/cache/timeout tests passed."
+      ],
+      "reason": "No caller-controlled server URL fetch surface exists; the only external HTTP destination is a trusted deployment-configured restricted issuer with redirects disabled. Actual issuer availability is still unknown under auth checks.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed malicious issuer probe, JWKS timeout/body-size/cache tests and full outbound call inventory. Reassess redirect/DNS/private-network rules if URL import, proxy, webhook or screenshot features are introduced."
+    },
+    {
+      "number": 24,
+      "name": "Broken password reset",
+      "status": "UNKNOWN",
+      "evidence": [
+        "No local password store/reset/token routes in inventoried src/worker/dependencies; auth is delegated to Cloudflare Access (worker/cms-auth.ts:1-7,112-145).",
+        "No operational Access identity provider/recovery configuration or reset-session evidence available."
+      ],
+      "reason": "Not N/A: editor account recovery can affect trusted owner access, but belongs to an unconfigured external identity provider rather than this application.",
+      "failureMode": "Weak owner mailbox/IdP recovery or reset token/session handling can compromise CMS publishing authority.",
+      "fix": "After approval select an appropriate IdP with secure recovery, MFA where required, single-use short-lived recovery and post-reset/session invalidation policy. Do not add an improvised app reset endpoint.",
+      "verification": "Using disposable provider accounts verify enumeration behavior, reset expiry/replay/single-use, token leakage and old-session behavior; inspect actual provider policy without retaining reset tokens."
+    },
+    {
+      "number": 25,
+      "name": "Weak session management",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-auth.ts:119-142 consumes only Cf-Access-Jwt-Assertion and validates signature/time/allowlist; no browser PIN, custom app cookies or localStorage trust.",
+        "src/admin/admin-api.ts:31-41 uses credentials:same-origin and no-store; preview proxy scripts/cms-preview.mjs:93-100 strips caller cookies/assertions and response cookies.",
+        "Operational IdP Access cookies, duration, revocation, logout and privilege-change settings were not available/read."
+      ],
+      "reason": "Local app does not invent insecure sessions; external session lifetime/rotation/logout invalidation cannot be inferred from valid JWT checking. A still-valid assertion may remain valid until expiry depending on provider policy.",
+      "failureMode": "A stolen or stale Access session could retain editor access after logout, account recovery or privilege changes.",
+      "fix": "Approve and configure short suitable Access session lifetime, secure cookie flags and explicit revocation/identity-removal runbook; verify actual provider behavior. Retain server signature/allowlist gate.",
+      "verification": "Real browser tests inspect Secure/HttpOnly/SameSite, logout and reset/role-removal invalidation, fixation and replay, and direct-header access. Never store actual assertion/cookie values in report."
+    },
+    {
+      "number": 26,
+      "name": "Weak or invalid JWT validation",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-auth.ts:20-33,81-107,112-145 pins RS256, RSA modulus/exponent, issuer, audience, kid, signature, exp, nbf, claim types/allowlist and completion-time recheck; bounded cached JWKS.",
+        "tests/cms-backend.test.mjs:233-331 (FOCUSED-A) passed malformed/none/wrong algorithm/key/issuer/audience/subject/time/claims/JWKS failures.",
+        "scripts/cms-preview.mjs:69-75 explicitly injects only a synthetic trusted-JWKS fetch seam; wrangler.toml lacks actual ACCESS_* configuration.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Cryptographic implementation is behaviorally proven in tests; no operational issuer HTTP key retrieval, authentic Access token/login or deployed configuration was tested. Synthetic signed JWT/JWKS is never production provider proof.",
+      "failureMode": "An incorrect real issuer/audience/allowlist or provider key-fetch policy can lock out the owner or trust unintended identities after deployment.",
+      "fix": "After approval configure real issuer/audience/allowlist and verify authentic issuer HTTPS/cert rotation/failure behavior while preserving all existing local negative tests. Do not broaden the issuer regex for convenience.",
+      "verification": "Real-issuer valid owner token succeeds; altered/expired/none/wrong issuer/audience/kid/role denies, provider outage fails closed and key refresh recovers after documented cache window. Do not retain live tokens."
+    },
+    {
+      "number": 27,
+      "name": "Overly permissive CORS",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-routes.ts:87-92 and worker/index.ts:20-36 deliberately emit no Access-Control-Allow-*; private writes independently check Origin.",
+        "INLINE-PROBE OPTIONS publish: own origin 405, hostile origin 403, neither ACAO nor ACAC; same-origin APIs require no CORS grant.",
+        "PROD hostile-Origin GET /api/cms and /api/admin/content: no ACAO/ACAC in inspected headers."
+      ],
+      "reason": "Observed app CORS surface grants no cross-origin browser read/write credentials and has no wildcard+credentials combination. Future provider bucket CORS settings are not covered by this app PASS (check 08).",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed preflight handler probes and production GET header inspection from a hostile Origin; no non-GET production request was sent. Recheck actual provider edge/bucket CORS after approved setup."
+    },
+    {
+      "number": 28,
+      "name": "Missing rate limits",
+      "status": "FAIL",
+      "evidence": [
+        "worker/media-budget.ts:2-30 + migrations/0002_media_budget.sql:2-11 implement shared D1 upload-attempt ceiling (30/hour/identity) and aggregate reservations (256 MiB/500 objects). FOCUSED-A storage final-slot/attempt/released/ambiguous-write tests passed.",
+        "worker/cms-routes.ts:187-229 has no durable numerical ceiling for draft/publish/rollback/validate/revision/backup/restore/orphan/public reads; CmsStore append:120-140 has no aggregate revision-byte/count budget.",
+        "worker/cms-recovery.ts:34-43 fetches up to 1001 full revision documents before checking summed byte limit. Upload quotas are NOT general CMS rate controls; no production platform limiter config was read.",
+        "PARENT-READ /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:286; scripts/cms-preview-smoke.mjs:44-49,69-74: actual shared D1 final-slot upload race returned [201,429], and 429 survived Worker restart. This strengthens upload-specific control only; other routes remain unbounded."
+      ],
+      "reason": "Upload route has genuine durable local SQL controls, not an isolate Map; nevertheless the overall dynamic CMS has no proven durable rate limits and immutable revision growth is unbounded. Per-request size caps and JWKS cache do not solve request-rate/spend abuse.",
+      "failureMode": "An allowed or compromised editor can accumulate many 2 MB immutable revisions or repeatedly invoke heavy backup/validation/list operations, causing D1/CPU/storage cost or denial of service; public reads are also uncapped by inspected application config.",
+      "fix": "With code/config approval add durable per-identity and public abuse limits for relevant routes, bounded aggregate revision storage, and paged byte-budgeted export before materializing many documents. Define retention/backup policy without deleting history or objects without owner approval.",
+      "verification": "Exercise threshold and next request across two isolates/restart/concurrent final slot on real shared state; verify 429 without mutation and valid request success after window. Verify migration-backed aggregate storage limits and large export behavior. Production platform rules require separate owner approval/readback."
+    },
+    {
+      "number": 29,
+      "name": "Unprotected staging/test environments",
+      "status": "UNKNOWN",
+      "evidence": [
+        "scripts/cms-preview.mjs:12-27,75-77,90-108 binds both proxy/upstream to loopback and validates Host/Origin/Fetch Metadata. FOCUSED-B rebinding/remote/cross-site/missing-origin tests passed.",
+        "wrangler.cms-local.toml:1-6 and wrangler.cms-preview.toml:1-5 mark placeholders local-only workers_dev=false; production wrangler.toml:4 enables workers_dev and 18-20 previews reuse existing CMS_KV.",
+        "No Cloudflare dashboard host/branch/preview deployment inventory or Access coverage read; owner preview on 9196 was deliberately not queried, changed or stopped.",
+        "PARENT-READ /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:286 plus scripts/cms-preview-smoke.mjs:13,28-30: random loopback ports, scratch-isolated state/assets; actual rebinding/CSRF requests denied; no remote resource writes. No owner-preview endpoint used by auditor."
+      ],
+      "reason": "Local loopback-only test harness controls are proven. All remote staging/branch hosts, binding separation and protection remain unknown; local synthetic identity is not remote authentication.",
+      "failureMode": "An overlooked branch/preview host may share production data or expose admin access outside the intended Access policy.",
+      "fix": "After approval inventory every workers.dev/custom/preview/branch host and ensure authenticated/private staging with isolated resources; review existing branch KV sharing before introducing writes.",
+      "verification": "Read exact dashboard deployment/binding inventories and signed-out probes for all hosts; confirm non-production identity policies/resources are isolated and there is no production secret/data reuse."
+    },
+    {
+      "number": 30,
+      "name": "Default credentials unchanged",
+      "status": "UNKNOWN",
+      "evidence": [
+        "No application password/PIN/default admin credential in worker/cms-auth.ts:112-149; missing issuer/audience/allowlist denies all access.",
+        "scripts/cms-preview.mjs:65-72 generates ephemeral signing material; its documented synthetic owner subject is local-only, not a production credential.",
+        "No actual Access IdP/account/deployment-token/vendor account inventory available."
+      ],
+      "reason": "No exploitable default application login found. Vendor default accounts, bootstrap identities and unused provider tokens cannot be certified absent without actual provider inventory.",
+      "failureMode": "An unused privileged account/default IdP bootstrap identity or broad old deployment token retains control outside the app.",
+      "fix": "With approval inventory provider/admin identities and token scopes, remove unused defaults/bootstrap access and enforce appropriate MFA. No credential rotation/deletion performed here.",
+      "verification": "Inspect actual vendor identity/token/default-account inventory; test documented defaults only against approved isolated accounts, then verify intended owner access still succeeds."
+    },
+    {
+      "number": 31,
+      "name": "Webhook signatures not verified",
+      "status": "NOT APPLICABLE",
+      "evidence": [
+        "Complete worker/index.ts and worker/cms-routes.ts route inventory contains no webhook receiver or event-ingest endpoint.",
+        "package.json:15-31 has no payment/webhook SDK; unknown /api routes are JSON 404 (worker/index.ts:86-88)."
+      ],
+      "reason": "No inbound webhook/replay-trusted event surface exists. Local editor POST publish/restore actions are authenticated APIs, not webhooks.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Inspected route/method map, all outbound calls/dependencies and webhook/provider keyword inventory. Introduce raw-body signature/timestamp/replay tests if a webhook route is later added."
+    },
+    {
+      "number": 32,
+      "name": "Frontend-only payment checks",
+      "status": "NOT APPLICABLE",
+      "evidence": [
+        "src/components/BookingModal.tsx:119-165 prepares an inquiry reference/WhatsApp URL; 169-189 explicitly says no payment taken and inquiry not sent yet.",
+        "package.json:15-31 and Worker route inventory have no checkout/payment/entitlement/subscription handler or provider client.",
+        "FOCUSED-B tests/booking-handoff.test.mjs passed the no-false-receipt/booking-confirmation contract."
+      ],
+      "reason": "Displayed product prices are public editorial data, not payment authority. There is no paid entitlement or payment state to bypass; a WhatsApp conversation is outside application payment processing.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Inspected booking component, route/dependency/provider inventory and executed booking-handoff regression. Reassess if real checkout, stored bookings or automatic payment entitlement is introduced."
+    },
+    {
+      "number": 33,
+      "name": "IDOR/BOLA",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-routes.ts:158-159 gates every private resource before object selection, including revision detail/media/recovery; 197-200 checks current projected published reference for anonymous uploaded image.",
+        "FOCUSED-A tests/cms-media.test.mjs:91-101 proved draft/unused/hidden images return 404, authenticated preview stays private and rollback restores intended public reference.",
+        "INLINE-PROBE: anonymous and correctly signed non-owner user denied on content/revisions/detail/recovery/orphans/media (12 read denials); single-site authorized editors intentionally share objects.",
+        "Actual production resource IDs/owner and non-owner Access sessions/private bucket policy not available; old production routes are 404.",
+        "PARENT-READ: /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:2-3,278-286: tsc no diagnostics; 273 tests passed, 0 failed; isolated real workerd D1/R2/Images smoke ok=true. scripts/cms-preview-smoke.mjs:13-18,24-85 inspected; synthetic JWKS only, not operational Access HTTP."
+      ],
+      "reason": "Local public/private object boundary is tested; multitenancy does not exist. Real deployed authorization on real D1/R2 resources and alternate object hostnames is not verified.",
+      "failureMode": "A deployed bypass or public bucket domain lets an outsider enumerate/retrieve historical, private or unpublished content/media.",
+      "fix": "Approve private resources/auth then run real object-level tests for every supported verb, including nested revisions/media/recovery and direct bucket hostnames. Do not rely on UUID unpredictability.",
+      "verification": "Use synthetic real object IDs in isolated approved deployment: signed-out/non-owner read/list/save/publish/rollback/restore/upload denied, owner succeeds, hidden/unpublished object remains 404 without existence leakage."
+    },
+    {
+      "number": 34,
+      "name": "APIs trust user-controlled roles/IDs",
+      "status": "PASS",
+      "evidence": [
+        "worker/cms-auth.ts:125-143 returns identity only after signed allowlisted sub/email; worker/cms-routes.ts:193,195,226-229 derives all actor authority from identity.subject.",
+        "worker/cms-routes.ts:126-129,191-192,220-225 enforces exact envelopes, refusing role/isAdmin/userId/tenantId extra fields.",
+        "INLINE-PROBE: four forged identity/role fields each rejected 400; valid signed non-owner plus X-User-Role/X-User-Id still 401; two legitimate revisions remained unchanged."
+      ],
+      "reason": "Inspected server code and direct handler probes prove caller-supplied role/identity headers/body do not elevate privilege. References/expectedVersion select content, never grant authority. Production operational allowlist remains unknown under checks 04/05.",
+      "failureMode": "",
+      "fix": "",
+      "verification": "Executed INLINE-PROBE with real RSA signature verification, real schema and SQLite; FOCUSED-A exact-field, unapproved identity and private booking-field tests passed."
+    },
+    {
+      "number": 35,
+      "name": "Sensitive data in logs",
+      "status": "UNKNOWN",
+      "evidence": [
+        "worker/cms-routes.ts:230-232 deliberately suppresses request/identity/JWT/provider errors; no console/logger calls found in Worker source.",
+        "INLINE-PROBE intercepted console log/warn/error/info/debug during invalid synthetic PII-marker request; response 422 and marker absent from all captured console calls.",
+        "worker/cms-store.ts:87-88,130-132 and worker/media-budget.ts:7-12 persist editor subject as private audit/accounting metadata, not public telemetry. Immutable history has no retention policy.",
+        "No Cloudflare/Access/CI request or error logs, access control or retention settings read. Local CLI diagnostic buffers may include provider diagnostic output."
+      ],
+      "reason": "App-level marker non-logging is proven locally; platform request/body/identity log configuration and audit-metadata retention/access are unknown. A no-console implementation alone does not certify external logging.",
+      "failureMode": "Provider access/error/build logs or exported private history can retain tokens, user identifiers, full URLs/IPs or sensitive content too broadly/too long.",
+      "fix": "After approval inspect provider/CI/Access logging, redact headers/bodies/PII, bound access and retention, document justified subject metadata and backup handling. Use keyed HMAC only where correlation truly requires it.",
+      "verification": "Send unique synthetic markers in isolated real requests then inspect actual authorized provider/runtime logs without printing secret/PII values; confirm token/body/IP absence and exact retention/access settings. Preserve private audit trail intentionally, not by accidental indefinite logging."
+    },
+    {
+      "number": 36,
+      "name": "Sensitive source maps/build artifacts",
+      "status": "UNKNOWN",
+      "evidence": [
+        ".gitignore:1-12 excludes dist/.wrangler/log/backups; SCAN current tracked/public/existing 198-file dist inventories found no map, local database, trace, env or state files.",
+        "PROD GET /.git/config, /.wrangler/state/v3/d1/db.sqlite, /src/main.tsx, /assets/index.js.map: 200 text/html root-identical SHA256, not source/state/maps; production entry JS has no sourceMappingURL.",
+        "Existing dist/index.html is from 09:13:02 UTC; no fresh dirty-tree build/generated Worker bundle or CI publish-artifact allowlist was read or run by this audit. .dev.vars* currently not ignored.",
+        "PARENT-READ /home/ubuntu/.hermes/profiles/website-builder/cache/terminal-output/out-1792064183-1055199-f5c0.log:286 and scripts/cms-preview-smoke.mjs:13-18,86: fresh build existed in isolated scratch runtime, then cleanup removed it; no matching generated-output artifact scan/publish manifest captured."
+      ],
+      "reason": "Observed old output/production paths do not leak artifacts. A fresh isolated build and real runtime are now proven by inspected parent log/script, but that cleaned build/generated Worker archive was not artifact-scanned; CI publish globs and final release outputs are still unverified.",
+      "failureMode": "Future build/upload globs may ship source maps, scratch signing material, private snapshots or SQLite state despite clean source review.",
+      "fix": "With approved parent build, scan fresh dist and generated Worker archive using explicit forbidden-artifact/secret/seam checks and asset manifest; add .dev.vars* ignore rules before secrets are used. Keep local config/scripts outside production upload boundary.",
+      "verification": "Parent fresh build and manifest/hash scan, then authorized deployed exact asset/map/state/source probes with MIME/body comparison; missing route must not be confused with SPA 200. Re-scan Git tracked files; verify only intended artifacts are publishable."
+    }
+  ],
+  "counts": {
+    "PASS": 12,
+    "FAIL": 2,
+    "UNKNOWN": 18,
+    "NOT APPLICABLE": 4,
+    "total": 36
+  }
+}

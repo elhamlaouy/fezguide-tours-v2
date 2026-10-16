@@ -18,7 +18,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
   onBookTour,
 }) => {
   const { siteSettings } = useCms();
-  const pageTitle = page.title[language] || page.title.en;
+  const pageTitle = page.title[language] || (language === 'es' ? '' : page.title.en);
   const cleanNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
 
 
@@ -28,7 +28,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
       <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
         <img
           src={page.heroImage}
-          alt={page.title[language] || page.title.en}
+          alt={page.title[language] || (language === 'es' ? '' : page.title.en)}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -38,15 +38,15 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <Compass className="w-4 h-4 text-[#005F5A]" />
-              <span>FezGuideTours Exclusive</span>
+              <span>{language === 'es' ? "Una experiencia exclusiva de FezGuideTours" : "FezGuideTours Exclusive"}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
-              {page.title[language] || page.title.en}
+              {page.title[language] || (language === 'es' ? '' : page.title.en)}
             </h1>
 
             <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {page.subtitle[language] || page.subtitle.en}
+              {page.subtitle[language] || (language === 'es' ? '' : page.subtitle.en)}
             </p>
           </div>
         </div>
@@ -60,9 +60,9 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
             onClick={() => onNavigate('home')}
             className="inline-flex items-center gap-1.5 font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>
-              {language === 'ar' ? 'العودة للرئيسية' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
+              {language === 'es' ? 'Volver al inicio' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
             </span>
           </button>
         </div>
@@ -70,10 +70,10 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
         {/* Prose Overview */}
         <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 shadow-xs space-y-6">
           <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524] tracking-tight">
-            {language === 'ar' ? 'تفاصيل البرنامج' : language === 'fr' ? 'Détails du Programme' : 'About This Journey'}
+            {language === 'es' ? 'Detalles del itinerario' : language === 'fr' ? 'Détails du Programme' : 'About This Journey'}
           </h2>
           <p className="text-sm text-[#4E5B59] leading-relaxed whitespace-pre-line">
-            {page.content[language] || page.content.en}
+            {page.content[language] || (language === 'es' ? '' : page.content.en)}
           </p>
 
           {/* Highlights */}
@@ -96,7 +96,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
           {/* Action CTAs */}
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
             <button
-              onClick={() => onBookTour(page.title[language] || page.title.en)}
+              onClick={() => onBookTour(page.title[language] || (language === 'es' ? '' : page.title.en))}
               className="w-full sm:w-auto py-3 px-6 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
             >
               <Calendar className="w-4 h-4" />
@@ -105,8 +105,8 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
 
             <a
               href={`https://wa.me/${cleanNumber}?text=${encodeURIComponent(
-                language === 'ar'
-                  ? `السلام عليكم ورحمة الله، أنا مهتم بتجربة "${pageTitle}" عبر FezGuideTours.`
+                language === 'es'
+                  ? `Hola, me interesa la experiencia "${pageTitle}" de FezGuideTours.`
                   : language === 'fr'
                   ? `Bonjour ! Je suis intéressé(e) par l'expérience "${pageTitle}" avec FezGuideTours.`
                   : `Hello! I'm interested in the "${pageTitle}" experience with FezGuideTours.`

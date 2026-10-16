@@ -20,11 +20,11 @@ const copy = {
     cta: 'Découvrir nos visites de Fès',
     imageAlt: 'Guide local avec des visiteurs devant un monument historique de Fès',
   },
-  ar: {
-    intro: 'اكتشفوا المدينة العتيقة مع شخص يعرف أزقتها وقصصها وتقاليدها وأماكنها الخفية. تجاوزوا المعالم الشهيرة، والتقوا بالسكان المحليين، وتذوقوا الطعام التقليدي، واختبروا الحياة اليومية في فاس.',
-    lead: 'اكتشفوا جولاتنا في فاس وتعرّفوا على المدينة بعيون أهلها.',
-    cta: 'استكشفوا جولات فاس',
-    imageAlt: 'مرشد محلي مع زوار أمام معلم تاريخي في فاس',
+  es: {
+    intro: 'Descubre la medina con alguien que conoce sus calles, sus historias, sus tradiciones y sus rincones escondidos. Ve más allá de los monumentos famosos, conoce a los vecinos, prueba la cocina tradicional y vive el día a día de Fez.',
+    lead: 'Descubre nuestras visitas de Fez y conoce la ciudad de la mano de quienes viven aquí.',
+    cta: 'Descubre nuestras visitas de Fez',
+    imageAlt: 'Guía local con visitantes ante un monumento histórico de Fez',
   },
 };
 
@@ -32,7 +32,7 @@ export const FezToursCtaSection: React.FC<FezToursCtaSectionProps> = ({ language
   const text = copy[language];
 
   return (
-    <section className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-3xl bg-[#005F5A] text-white shadow-xl" dir={language === 'ar' ? 'rtl' : 'ltr'}>
+    <section className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-3xl bg-[#005F5A] text-white shadow-xl">
       <img
         src="/images/fez-medina/medina-14.jpg"
         alt={text.imageAlt}

@@ -166,49 +166,122 @@ const copy = {
     viewPhoto: 'Voir la photo',
     detailsLabel: 'Informations sur la visite',
   },
+  es: {
+    title: 'Explora la medina de Fez con un guía local privado',
+    lead: 'Una visita privada a pie por la medina declarada Patrimonio Mundial por la UNESCO, con un guía local y solo tu grupo.',
+    overviewLabel: 'Presentación',
+    overviewTitle: 'Descubre el alma de Fez',
+    overview: [
+      'Recorre la medina declarada Patrimonio Mundial por la UNESCO con un guía local privado. Es una de las ciudades antiguas mejor conservadas que siguen habitadas hoy. Pasearás por callejuelas escondidas, grandes monumentos y zocos llenos de vida, donde los artesanos siguen elaborando sus piezas a mano.',
+      'El recorrido incluye la Universidad Al-Qarawiyyin, la animada Talaa Kebira, los patios tallados de Bou Inania y Al-Attarine y las cubetas de tinte de la curtiduría Chouara. Tu guía te explica la historia, las costumbres del barrio y la jornada de trabajo que transcurre a tu alrededor.',
+      'Al ser una visita privada, el ritmo se adapta a ti. Historia, arquitectura, compras, fotografía o simplemente disfrutar del ambiente: el guía puede orientar el paseo hacia lo que más te interese.',
+    ],
+    includedLabel: 'Qué incluye',
+    includedTitle: 'Incluido y no incluido',
+    includedHeading: 'Incluido',
+    excludedHeading: 'No incluido',
+    included: [
+      'Agua embotellada',
+      'Guía local privado y acreditado',
+      'Tiempo para hacer fotos y pequeñas pausas',
+      'Visita privada a pie: solo tu grupo',
+    ],
+    excluded: [
+      'Entradas a museos y monumentos',
+      'Comida y gastos personales',
+      'Entrada a la madrasa Bou Inania: 2 € por persona',
+      'Entrada a la madrasa Al-Attarine: 2 € por persona',
+      'Entrada al Museo Nejjarine: 2 € por persona',
+    ],
+    meetingLabel: 'Punto de encuentro y recogida',
+    meetingTitle: 'Dónde empieza la visita',
+    meeting: [
+      'El punto de partida es Bab Boujloud, la plaza Batha o la calle Rcif. Llega 10 minutos antes. Tu guía te estará esperando, a veces con un cartel y otras con ropa tradicional.',
+      '¿Te alojas dentro de la medina? Solicítalo con antelación y el guía podrá encontrarte en tu riad u hotel. Si te alojas fuera, podemos organizar un traslado o acompañarte a pie desde el punto de encuentro.',
+      'El paseo termina de nuevo en el punto de encuentro.',
+    ],
+    itineraryLabel: 'Itinerario',
+    itineraryTitle: 'El paseo por la medina',
+    passBy: 'De paso',
+    free: 'Entrada gratuita',
+    notIncluded: 'Entrada no incluida',
+    extraLabel: 'Información adicional',
+    extraTitle: 'Conviene saber',
+    extra: [
+      'Recibirás la confirmación al reservar',
+      'No accesible en silla de ruedas',
+      'Accesible con carrito de bebé',
+      'Se admiten animales de asistencia',
+      'Cerca del transporte público',
+      'No recomendado en caso de problemas cardíacos o médicos graves',
+      'La mayoría de los viajeros pueden participar',
+      'Visita privada: solo participa tu grupo',
+    ],
+    cancelLabel: 'Política de cancelación',
+    cancelTitle: 'Cancela hasta 24 horas antes',
+    cancel: 'Cancela hasta 24 horas antes de la visita para recibir un reembolso completo.',
+    priceLabel: 'Precio de la visita',
+    perPerson: 'por persona',
+    estimate: 'Equivalencias aproximadas. Los tipos de cambio varían.',
+    book: 'Reserva esta visita',
+    whatsapp: 'Consulta por WhatsApp',
+    back: 'Volver a Fez',
+    durationLabel: 'Duración',
+    duration: '3–5 horas',
+    formatLabel: 'Modalidad',
+    format: 'Visita privada a pie',
+    pickupLabel: 'Encuentro / Recogida',
+    pickup: 'Bab Boujloud, Batha o Rcif',
+    languagesLabel: 'Idiomas',
+    languages: 'Inglés, francés y español',
+    galleryLabel: 'Fotos de la visita a pie por la medina de Fez',
+    viewPhoto: 'Ver foto',
+    detailsLabel: 'Detalles de la visita',
+  },
 };
 
 const galleryImages = [
-  { src: '/images/our-fez-tours/01.webp', width: 1200, height: 1600, alt: { en: 'Guide and visitors in front of an ornate tiled gate in Fez', fr: 'Guide et visiteurs devant une porte ornée de zellige à Fès' } },
-  { src: '/images/our-fez-tours/02.webp', width: 1536, height: 2048, alt: { en: 'Visitors walking a narrow alley in the Fez Medina', fr: 'Visiteurs dans une ruelle étroite de la médina de Fès' } },
-  { src: '/images/our-fez-tours/03.webp', width: 1200, height: 1600, alt: { en: 'Carved brass door with a geometric star pattern', fr: 'Porte en laiton ciselé au motif d’étoile géométrique' } },
-  { src: '/images/our-fez-tours/04.webp', width: 1200, height: 1600, alt: { en: 'Travelers in a carved courtyard in Fez', fr: 'Voyageurs dans une cour sculptée à Fès' } },
-  { src: '/images/our-fez-tours/05.webp', width: 1200, height: 1600, alt: { en: 'Carpet showroom with visitors seated under hanging rugs', fr: 'Salon de tapis, visiteurs assis sous des tapis suspendus' } },
-  { src: '/images/our-fez-tours/06.webp', width: 1200, height: 1600, alt: { en: 'A guide unrolling a carpet for seated visitors', fr: 'Un guide déroule un tapis devant des visiteurs assis' } },
-  { src: '/images/our-fez-tours/07.webp', width: 1200, height: 1600, alt: { en: 'Two travelers wearing scarves in a textile shop', fr: 'Deux voyageurs en écharpes dans une boutique de tissus' } },
-  { src: '/images/our-fez-tours/08.webp', width: 1200, height: 1600, alt: { en: 'Busy covered souk lane in the Fez Medina', fr: 'Allée couverte et animée d’un souk dans la médina de Fès' } },
+  { src: '/images/our-fez-tours/01.webp', width: 1200, height: 1600, alt: { en: 'Guide and visitors in front of an ornate tiled gate in Fez', fr: 'Guide et visiteurs devant une porte ornée de zellige à Fès', es: "Guía y visitantes ante una puerta de Fez decorada con azulejos" } },
+  { src: '/images/our-fez-tours/02.webp', width: 1536, height: 2048, alt: { en: 'Visitors walking a narrow alley in the Fez Medina', fr: 'Visiteurs dans une ruelle étroite de la médina de Fès', es: "Visitantes recorriendo un callejón estrecho de la medina de Fez" } },
+  { src: '/images/our-fez-tours/03.webp', width: 1200, height: 1600, alt: { en: 'Carved brass door with a geometric star pattern', fr: 'Porte en laiton ciselé au motif d’étoile géométrique', es: "Puerta de latón labrado con un motivo geométrico de estrella" } },
+  { src: '/images/our-fez-tours/04.webp', width: 1200, height: 1600, alt: { en: 'Travelers in a carved courtyard in Fez', fr: 'Voyageurs dans une cour sculptée à Fès', es: "Viajeros en un patio de Fez con decoración tallada" } },
+  { src: '/images/our-fez-tours/05.webp', width: 1200, height: 1600, alt: { en: 'Carpet showroom with visitors seated under hanging rugs', fr: 'Salon de tapis, visiteurs assis sous des tapis suspendus', es: "Exposición de alfombras con visitantes sentados bajo alfombras colgadas" } },
+  { src: '/images/our-fez-tours/06.webp', width: 1200, height: 1600, alt: { en: 'A guide unrolling a carpet for seated visitors', fr: 'Un guide déroule un tapis devant des visiteurs assis', es: "Un guía desenrollando una alfombra ante los visitantes sentados" } },
+  { src: '/images/our-fez-tours/07.webp', width: 1200, height: 1600, alt: { en: 'Two travelers wearing scarves in a textile shop', fr: 'Deux voyageurs en écharpes dans une boutique de tissus', es: "Dos viajeros con pañuelos en una tienda de tejidos" } },
+  { src: '/images/our-fez-tours/08.webp', width: 1200, height: 1600, alt: { en: 'Busy covered souk lane in the Fez Medina', fr: 'Allée couverte et animée d’un souk dans la médina de Fès', es: "Calle cubierta y animada de un zoco de la medina de Fez" } },
 ];
 
 const itinerary = [
-  { title: 'Bab Boujloud', en: 'Iconic entrance to the old city.', fr: 'Entrée emblématique de la vieille ville.', time: '5 min', ticket: 'free' },
-  { title: 'Bou Inania Medersa', en: 'A 14th-century Islamic school with carved plaster, wood, and zellige.', fr: 'École islamique du XIVe siècle, plâtre sculpté, bois et zellige.', time: '20 min', ticket: 'paid' },
-  { title: 'Rue Talaa Kebira', en: 'One of the main streets of the Medina, full of shops and daily life. Pass by.', fr: 'Une des rues principales de la médina, boutiques et vie quotidienne. Passage.', time: '', ticket: 'pass' },
-  { title: 'Al-Qarawiyyin Mosque and University', en: 'The world’s oldest existing university.', fr: 'La plus ancienne université encore existante.', time: '15 min', ticket: 'free' },
-  { title: 'Al-Attarine Madrasa', en: 'A Marinid masterpiece beside the Qarawiyyin.', fr: 'Chef-d’œuvre mérinide à côté de la Qarawiyyin.', time: '20 min', ticket: 'paid' },
-  { title: 'Chouara Tannery', en: 'The open-air leather tannery.', fr: 'La tannerie de cuir à ciel ouvert.', time: '30 min', ticket: 'free' },
-  { title: 'Nejjarine Museum', en: 'Museum of wooden arts and crafts, in a restored funduq.', fr: 'Musée des arts du bois, dans un fondouk restauré.', time: '20 min', ticket: 'paid' },
-  { title: 'Place Seffarine', en: 'The square of the copper and metal workers.', fr: 'La place des dinandiers et des métaux.', time: '15 min', ticket: 'free' },
-  { title: 'Zaouia of Moulay Idriss II', en: 'A sacred place for locals. Non-Muslims view it from outside.', fr: 'Lieu sacré pour les habitants. Les non-musulmans le voient de l’extérieur.', time: '5 min', ticket: 'free' },
+  { title: 'Bab Boujloud', titleEs: "Bab Boujloud", en: 'Iconic entrance to the old city.', fr: 'Entrée emblématique de la vieille ville.', es: "Entrada emblemática a la ciudad antigua.", time: '5 min', ticket: 'free' },
+  { title: 'Bou Inania Medersa', titleEs: "Madraza Bou Inania", en: 'A 14th-century Islamic school with carved plaster, wood, and zellige.', fr: 'École islamique du XIVe siècle, plâtre sculpté, bois et zellige.', es: "Escuela islámica del siglo XIV con yeso y madera tallados y zellige.", time: '20 min', ticket: 'paid' },
+  { title: 'Rue Talaa Kebira', titleEs: "Calle Talaa Kebira", en: 'One of the main streets of the Medina, full of shops and daily life. Pass by.', fr: 'Une des rues principales de la médina, boutiques et vie quotidienne. Passage.', es: "Una de las calles principales de la medina, llena de tiendas y vida cotidiana. Visita de paso.", time: '', ticket: 'pass' },
+  { title: 'Al-Qarawiyyin Mosque and University', titleEs: "Mezquita y Universidad Al-Qarawiyyin", en: 'The world’s oldest existing university.', fr: 'La plus ancienne université encore existante.', es: "La universidad más antigua del mundo que sigue existiendo.", time: '15 min', ticket: 'free' },
+  { title: 'Al-Attarine Madrasa', titleEs: "Madraza Al-Attarine", en: 'A Marinid masterpiece beside the Qarawiyyin.', fr: 'Chef-d’œuvre mérinide à côté de la Qarawiyyin.', es: "Una obra maestra meriní junto a la Qarawiyyin.", time: '20 min', ticket: 'paid' },
+  { title: 'Chouara Tannery', titleEs: "Curtiduría Chouara", en: 'The open-air leather tannery.', fr: 'La tannerie de cuir à ciel ouvert.', es: "La curtiduría de cuero al aire libre.", time: '30 min', ticket: 'free' },
+  { title: 'Nejjarine Museum', titleEs: "Museo Nejjarine", en: 'Museum of wooden arts and crafts, in a restored funduq.', fr: 'Musée des arts du bois, dans un fondouk restauré.', es: "Museo de las artes y oficios de la madera, situado en un funduq restaurado.", time: '20 min', ticket: 'paid' },
+  { title: 'Place Seffarine', titleEs: "Plaza Seffarine", en: 'The square of the copper and metal workers.', fr: 'La place des dinandiers et des métaux.', es: "La plaza de los artesanos del cobre y del metal.", time: '15 min', ticket: 'free' },
+  { title: 'Zaouia of Moulay Idriss II', titleEs: "Zauía de Moulay Idriss II", en: 'A sacred place for locals. Non-Muslims view it from outside.', fr: 'Lieu sacré pour les habitants. Les non-musulmans le voient de l’extérieur.', es: "Un lugar sagrado para los habitantes. Los no musulmanes lo contemplan desde fuera.", time: '5 min', ticket: 'free' },
 ];
 
 export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, onNavigate, onBookTour }) => {
   const { siteSettings } = useCms();
-  const text = language === 'fr' ? copy.fr : copy.en;
-  const contentLanguage = language === 'fr' ? 'fr' : 'en';
-  const fallbackEnglish = language === 'ar';
+  const text = copy[language];
+  const contentLanguage = language;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const whatsappNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
-  const whatsappText = language === 'fr'
+  const whatsappText = language === 'es'
+    ? 'Hola Fez Guide Tours, me gustaría reservar la visita privada a pie por la medina de Fez a 170 € por persona. ¿Podéis indicarme las fechas disponibles?'
+    : language === 'fr'
     ? 'Bonjour Fez Guide Tours ! Je souhaite réserver la visite privée de la médina de Fès à 170 € par personne. Pouvez-vous me communiquer les disponibilités ?'
     : 'Hello Fez Guide Tours! I would like to book the private Fez Medina walking tour at €170 per person. Could you share availability?';
   const activeImage = galleryImages[activeImageIndex];
   const ticketLabel = (ticket: string) => ticket === 'paid' ? text.notIncluded : ticket === 'pass' ? text.passBy : text.free;
 
   return (
-    <div className="bg-[#FAF8F5] min-h-screen pb-24" dir={fallbackEnglish ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] min-h-screen pb-24" dir="ltr">
       <PageCrumbBar
         language={language}
-        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={text.title}
         onHome={() => onNavigate('home')}
         onParent={onBack}
@@ -336,15 +409,15 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
               </div>
               <ol className="relative pl-6 border-l-2 border-[#005F5A]/20 space-y-7">
                 {itinerary.map((stop, index) => (
-                  <li key={stop.title} className="relative space-y-1.5">
+                  <li key={language === 'es' ? stop.titleEs : stop.title} className="relative space-y-1.5">
                     <span className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-[#005F5A]" />
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-[11px] font-bold text-[#005F5A] bg-[#005F5A]/10 px-2 py-0.5 rounded-md">{index + 1}</span>
                       {stop.time && <span className="text-[11px] font-bold text-[#52605E]">{stop.time}</span>}
                       <span className="text-[10px] font-bold text-[#C84B31] bg-[#C84B31]/10 px-2 py-0.5 rounded-md">{ticketLabel(stop.ticket)}</span>
                     </div>
-                    <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">{stop.title}</h3>
-                    <p className="text-xs text-[#52605E] leading-relaxed">{contentLanguage === 'fr' ? stop.fr : stop.en}</p>
+                    <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">{language === 'es' ? stop.titleEs : stop.title}</h3>
+                    <p className="text-xs text-[#52605E] leading-relaxed">{stop[contentLanguage]}</p>
                   </li>
                 ))}
               </ol>
@@ -400,7 +473,7 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
           </aside>
         </div>
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </main>
     </div>
   );
