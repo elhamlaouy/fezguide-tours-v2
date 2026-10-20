@@ -2,11 +2,63 @@ name = "fezguidetours"
 main = "worker/index.ts"
 compatibility_date = "2026-10-01"
 workers_dev = true
+account_id = "417f3820605485ace5bdbb9576452f42"
+
+[[d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms"
+database_id = "1256f794-3fe3-48fa-b747-c7536b1e842e"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-media"
+
+[images]
+binding = "CMS_IMAGES"
+
+[[ratelimits]]
+name = "CMS_PUBLIC_RATE_LIMITER"
+namespace_id = "1416269765"
+simple = { limit = 600, period = 60 }
+
+[[previews.ratelimits]]
+name = "CMS_PUBLIC_RATE_LIMITER"
+namespace_id = "405251459"
+simple = { limit = 600, period = 60 }
+
+
+[vars]
+CANONICAL_ORIGIN = "https://fezguidetours.elhamlaouy.workers.dev"
+ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
+ACCESS_AUD = "ceca0a5d3c57647e2ee38ba429819025e496bbb9e90a1078315a2bc3616b3274"
+ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
+CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
+
+[previews.vars]
+CANONICAL_ORIGIN = "https://fezguidetours.elhamlaouy.workers.dev"
+ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
+ACCESS_AUD = "3c29685d1185a4db5ca7576805bf832884148910a7c0d4cb97fecc464898e4d8"
+ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
+CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
+
+[[previews.d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms-preview"
+database_id = "0a0ffd04-1c44-4710-810d-cc8fe71229c5"
+
+[[previews.r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-media-preview"
+
+[previews.images]
+binding = "CMS_IMAGES"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
-run_worker_first = ["/api/*"]
+run_worker_first = ["/*", "!/assets/*", "!/images/*", "!/fonts/*", "!/favicon.svg"]
 
 [[kv_namespaces]]
 binding = "CMS_KV"

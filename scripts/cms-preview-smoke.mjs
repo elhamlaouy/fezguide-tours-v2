@@ -1,0 +1,86 @@
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import path from 'node:path';
+import net from 'node:net';
+import { request } from 'node:http';
+import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { startPreview } from './cms-preview.mjs';
+import { backupLocalState, restoreLocalState } from './cms-local-backup.mjs';
+const scratch=process.env.TMPDIR??'/home/ubuntu/.hermes/profiles/website-builder/cache/scratch';
+const temporary=await mkdtemp(path.join(scratch,'cms-preview-proof-'));
+async function freePort(){return new Promise((resolve,reject)=>{const s=net.createServer();s.once('error',reject);s.listen(0,'127.0.0.1',()=>{const port=s.address().port;s.close(()=>resolve(port));});});}
+const options={port:await freePort(),upstream:await freePort(),inspector:await freePort(),state:path.join(temporary,'owner-state'),assetsDirectory:path.join(temporary,'built-assets')};
+let preview;
+try {
+ // Isolate built assets: parallel canonical suites may rebuild/delete project dist.
+ const root=path.resolve(import.meta.dirname,'..');
+ await new Promise((resolve,reject)=>{const build=spawn(process.execPath,[path.join(root,'node_modules/vite/bin/vite.js'),'build','--outDir',options.assetsDirectory],{cwd:root,stdio:['ignore','pipe','pipe']});let output='';build.stdout.on('data',b=>output+=b);build.stderr.on('data',b=>output+=b);build.once('error',reject);build.once('exit',code=>code===0?resolve():reject(Error(`Isolated build failed: ${output}`)));});
+ preview=await startPreview(options);
+ const api=async(pathname,method='GET',body)=>{
+  const response=await fetch(preview.url+pathname,{method,headers:{...(body?{'Content-Type':'application/json',Origin:preview.url}:{})},...(body?{body:JSON.stringify(body)}:{})});
+  assert.equal(response.status,200,await response.clone().text());return response.json();
+ };
+ assert.equal((await fetch(preview.url+'/admin')).status,200);
+ assert.match(await (await fetch(preview.url+'/admin')).text(),/<div id="root"><\/div>/);
+ assert.equal((await fetch(`http://127.0.0.1:${options.upstream}/admin`)).status,401);
+ assert.equal((await fetch(`http://127.0.0.1:${options.upstream}/api/admin/content`,{headers:{'Cf-Access-Jwt-Assertion':'attacker.invalid.token'}})).status,401);
+ const rawStatus=headers=>new Promise((resolve,reject)=>{const req=request(preview.url+'/api/admin/content',{headers},res=>{res.resume();resolve(res.statusCode);});req.once('error',reject);req.end();});
+ for(const headers of [{Host:'rebinding.test'},{Origin:'https://evil.test'},{'Sec-Fetch-Site':'cross-site'}])assert.equal(await rawStatus(headers),403,JSON.stringify(headers));
+ assert.equal((await fetch(preview.url+'/api/admin/content/publish',{method:'POST',body:'{}',headers:{'Content-Type':'application/json'}})).status,403);
+ const initial=await api('/api/admin/content');assert.equal(initial.version,2);assert.equal(initial.publishedRevision,2);
+ const localizedPage=await fetch(preview.url+'/es/about');assert.equal(localizedPage.status,200);
+ const publicHtml=await localizedPage.text();assert.match(publicHtml,/<html lang="es"/);
+ assert.ok(publicHtml.includes(initial.document.pages.find(p=>p.id==='about').seo.title.es));
+ assert.match(publicHtml, /rel="canonical" href="https:\/\/fezguidetours\.elhamlaouy\.workers\.dev\/es\/about"/);
+ assert.equal((await fetch(preview.url+'/missing-owner-page')).status,404);
+ const legacy=await fetch(preview.url+'/?page=about&lang=es',{redirect:'manual'});assert.equal(legacy.status,308);assert.equal(legacy.headers.get('Location'),'/es/about');
+ assert.match(await(await fetch(preview.url+'/sitemap.xml')).text(),/<loc>https:\/\/fezguidetours\.elhamlaouy\.workers\.dev\/es\/about<\/loc>/);
+ const asset=publicHtml.match(/<script[^>]*src="([^"]+)"/)[1];assert.equal((await fetch(preview.url+asset)).status,200);
+ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAIAAAASFvFNAAAAFUlEQVR4nGNcpRHAwMDAwMDAxAADABT6ASa2hsqRAAAAAElFTkSuQmCC','base64');
+ const alt={en:'Preview photo',fr:'Photo locale',es:'Foto local'};
+ const upload=await fetch(preview.url+'/api/admin/media',{method:'POST',body:png,headers:{Origin:preview.url,'Content-Type':'image/png','X-CMS-Metadata':encodeURIComponent(JSON.stringify({alt}))}});
+ assert.equal(upload.status,201,await upload.clone().text());const media=await upload.json();
+ // Spend 28 failed pre-write attempts (not bytes), then race the final identity slot
+ // through real Worker/D1/R2, proving the limiter is not an in-memory counter.
+ const uploadHeaders={Origin:preview.url,'Content-Type':'image/png','X-CMS-Metadata':encodeURIComponent(JSON.stringify({alt}))};
+ for(let i=0;i<28;i++)assert.equal((await fetch(preview.url+'/api/admin/media',{method:'POST',body:Buffer.from('invalid'),headers:uploadHeaders})).status,422);
+ const raced=await Promise.all([1,2].map(()=>fetch(preview.url+'/api/admin/media',{method:'POST',body:png,headers:uploadHeaders})));
+ assert.deepEqual(raced.map(r=>r.status).sort(),[201,429]);const orphan=await raced.find(r=>r.status===201).json();
+ const originalPhoto=Buffer.from(await (await fetch(preview.url+media.previewSrc)).arrayBuffer());
+ assert.equal((await fetch(preview.url+media.media.src)).status,404);
+ assert.equal((await fetch(`http://127.0.0.1:${options.upstream}${media.previewSrc}`)).status,401);
+ const edited=structuredClone(initial.document);edited.siteSettings.siteName='Persistent loopback proof';edited.media.push(media.media);
+ edited.pages.find(p=>p.id==='home').sections.push({id:'preview-proof-photo',type:'hero',variant:'banner',enabled:true,links:[],image:{mediaId:media.media.id,alt}});
+ const saved=await api('/api/admin/content/draft','PUT',{expectedVersion:initial.version,document:edited});
+ assert.equal(saved.version,3);
+ const published=await api('/api/admin/content/publish','POST',{expectedVersion:saved.version});assert.equal(published.version,4);
+ assert.deepEqual(Buffer.from(await (await fetch(preview.url+media.media.src)).arrayBuffer()),originalPhoto);
+ assert.equal((await api('/api/cms/document')).document.siteSettings.siteName,'Persistent loopback proof');
+ const backup=await api('/api/admin/recovery/backup');assert.equal(backup.revisions.length,4);assert.equal(backup.media.length,1);
+ assert.equal(backup.media[0].sha256,createHash('sha256').update(originalPhoto).digest('hex'));
+ assert.equal((await fetch(`http://127.0.0.1:${options.upstream}/api/admin/recovery/backup`)).status,401);
+ const tampered=structuredClone(backup);tampered.media[0].sha256='0'.repeat(64);
+ const rejected=await fetch(preview.url+'/api/admin/recovery/restore',{method:'POST',body:JSON.stringify({backup:tampered,revision:3,expectedVersion:4}),headers:{Origin:preview.url,'Content-Type':'application/json'}});
+ assert.equal(rejected.status,422);assert.equal((await api('/api/admin/content')).version,4,'hash failure must leave D1 unchanged');
+ const restored=await api('/api/admin/recovery/restore','POST',{backup,revision:3,expectedVersion:4});assert.equal(restored.version,5);assert.equal((await api('/api/admin/content')).publishedRevision,4);
+ assert.equal((await api('/api/admin/recovery/orphans')).deleted,0);
+ const expected=await api('/api/admin/content');
+ await preview.close();preview=null;
+ preview=await startPreview(options);
+ assert.deepEqual(await api('/api/admin/content'),expected,'restart must not seed over owner edits');
+ assert.equal((await fetch(preview.url+'/api/admin/media',{method:'POST',body:png,headers:{...uploadHeaders,Origin:preview.url}})).status,429,'attempt budget survives Worker restart');
+ assert.equal((await fetch(preview.url+orphan.previewSrc)).status,200,'unused orphan is retained privately');assert.equal((await fetch(preview.url+orphan.media.src)).status,404);
+ assert.deepEqual(Buffer.from(await (await fetch(preview.url+media.media.src)).arrayBuffer()),originalPhoto);
+ await preview.close();preview=null;
+ const snapshot=path.join(temporary,'snapshot'),isolated=path.join(temporary,'isolated-restore');
+ const snap=await backupLocalState(options.state,snapshot);assert.ok(snap.files>0);
+ await restoreLocalState(snapshot,isolated);
+ preview=await startPreview({...options,state:isolated});
+ assert.deepEqual(await api('/api/admin/content'),expected,'complete local restore preserves exact revision pointers and document');
+ assert.deepEqual(Buffer.from(await (await fetch(preview.url+media.media.src)).arrayBuffer()),originalPhoto,'restored R2 object matches');
+ const fromRestored=await api('/api/admin/recovery/backup');
+ assert.deepEqual(fromRestored.state,{version:5,draftRevision:5,publishedRevision:4});
+ assert.deepEqual(fromRestored.revisions.slice(0,4),backup.revisions);assert.deepEqual(fromRestored.media,backup.media);
+ console.log(JSON.stringify({ok:true,adminHtml:true,signedWorkerAuth:true,anonymousUpstreamDenied:true,rebindingAndCsrfDenied:true,realLocalD1R2Images:true,durableRateFinalSlotConcurrency:true,savePublishReload:true,restartPreservesOwnerEdits:true,protectedBackupHash:true,restoreDraftOnly:true,completeLocalSnapshotRestore:true,remoteResources:false}));
+}finally{if(preview)await preview.close();await rm(temporary,{recursive:true,force:true});}

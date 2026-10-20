@@ -1,7 +1,9 @@
 import React from 'react';
 import { CustomPage, Language, PageId } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
+import { ApprovedSection, useApprovedContent } from '../cms/approved-content';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { Calendar, Check, Compass, MessageCircle, ArrowLeft } from 'lucide-react';
 
 interface CustomPageRendererProps {
@@ -18,39 +20,44 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
   onBookTour,
 }) => {
   const { siteSettings } = useCms();
-  const pageTitle = page.title[language] || page.title.en;
+  const { document, section } = useApprovedContent(page.id);
+  const hero = section('hero', 'hero');
+  const content = section('content', 'richText');
+  const highlightsSection = section('highlights', 'richText');
+  const highlights = document ? (highlightsSection?.enabled ? highlightsSection.blocks.flatMap(block => block.type === 'list' ? block.items[language] : []) : []) : page.highlights?.[language] ?? [];
+  const heroImage = document ? document.media.find(media => media.id === hero?.image?.mediaId)?.src : page.heroImage;
+  const pageTitle = document ? hero?.title?.[language] ?? '' : page.title[language] || (language === 'es' ? '' : page.title.en);
   const cleanNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
-
 
   return (
     <div className="space-y-12 pb-32">
       {/* Hero Banner */}
-      <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
-        <img
-          src={page.heroImage}
-          alt={page.title[language] || page.title.en}
+      <ApprovedSection id="hero"><section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
+        {heroImage && <img
+          {...responsiveImageProps(heroImage, '100vw', true)}
+          alt={document ? hero?.image?.alt[language] ?? '' : pageTitle}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        />}
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <Compass className="w-4 h-4 text-[#005F5A]" />
-              <span>FezGuideTours Exclusive</span>
+              <span>{document ? hero?.eyebrow?.[language] ?? '' : language === 'es' ? "Una experiencia exclusiva de FezGuideTours" : "FezGuideTours Exclusive"}</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
-              {page.title[language] || page.title.en}
+              {pageTitle}
             </h1>
 
             <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {page.subtitle[language] || page.subtitle.en}
+              {document ? hero?.description?.[language] ?? '' : page.subtitle[language] || (language === 'es' ? '' : page.subtitle.en)}
             </p>
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -60,43 +67,45 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
             onClick={() => onNavigate('home')}
             className="inline-flex items-center gap-1.5 font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors cursor-pointer"
           >
-            <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
+            <ArrowLeft className="w-3.5 h-3.5" />
             <span>
-              {language === 'ar' ? 'العودة للرئيسية' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
+              {language === 'es' ? 'Volver al inicio' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
             </span>
           </button>
         </div>
 
         {/* Prose Overview */}
-        <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 shadow-xs space-y-6">
+        <div className="bg-white rounded-3xl border border-[#E7E2DA] p-8 sm:p-12 shadow-xs space-y-6" data-section-id={document && content?.enabled ? 'content' : undefined} data-section-type={document && content?.enabled ? 'richText' : undefined}>
           <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524] tracking-tight">
-            {language === 'ar' ? 'تفاصيل البرنامج' : language === 'fr' ? 'Détails du Programme' : 'About This Journey'}
+            {document ? content?.enabled ? content.title?.[language] ?? '' : '' : language === 'es' ? 'Detalles del itinerario' : language === 'fr' ? 'Détails du Programme' : 'About This Journey'}
           </h2>
-          <p className="text-sm text-[#4E5B59] leading-relaxed whitespace-pre-line">
-            {page.content[language] || page.content.en}
-          </p>
+          {document ? (content?.enabled ? content.blocks : []).map((block, index) => (
+            <p key={index} className="text-sm text-[#4E5B59] leading-relaxed whitespace-pre-line">{'text' in block ? block.text[language] : block.items[language].join('\n')}</p>
+          )) : <p className="text-sm text-[#4E5B59] leading-relaxed whitespace-pre-line">
+            {page.content[language] || (language === 'es' ? '' : page.content.en)}
+          </p>}
 
           {/* Highlights */}
-          {page.highlights && page.highlights[language] && page.highlights[language].length > 0 && (
-            <div className="pt-6 border-t border-[#F2ECE4] space-y-4">
+          {highlights.length > 0 && (
+            <ApprovedSection id="highlights"><div className="pt-6 border-t border-[#F2ECE4] space-y-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-                {UI_TEXT.common.highlights[language]}
+                {document ? highlightsSection?.title?.[language] ?? '' : UI_TEXT.common.highlights[language]}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {page.highlights[language].map((h, i) => (
+                {highlights.map((h, i) => (
                   <div key={i} className="flex items-start gap-2.5 text-xs text-[#2A3735]">
                     <Check className="w-4 h-4 text-[#005F5A] shrink-0 mt-0.5" />
                     <span>{h}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </div></ApprovedSection>
           )}
 
           {/* Action CTAs */}
           <div className="pt-6 flex flex-col sm:flex-row items-center gap-4">
             <button
-              onClick={() => onBookTour(page.title[language] || page.title.en)}
+              onClick={() => onBookTour(pageTitle)}
               className="w-full sm:w-auto py-3 px-6 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-xs rounded-xl shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
             >
               <Calendar className="w-4 h-4" />
@@ -105,8 +114,8 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
 
             <a
               href={`https://wa.me/${cleanNumber}?text=${encodeURIComponent(
-                language === 'ar'
-                  ? `السلام عليكم ورحمة الله، أنا مهتم بتجربة "${pageTitle}" عبر FezGuideTours.`
+                language === 'es'
+                  ? `Hola, me interesa la experiencia "${pageTitle}" de FezGuideTours.`
                   : language === 'fr'
                   ? `Bonjour ! Je suis intéressé(e) par l'expérience "${pageTitle}" avec FezGuideTours.`
                   : `Hello! I'm interested in the "${pageTitle}" experience with FezGuideTours.`
@@ -124,4 +133,3 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
     </div>
   );
 };
-

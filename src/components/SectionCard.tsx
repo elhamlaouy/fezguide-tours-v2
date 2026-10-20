@@ -1,6 +1,9 @@
 import React from 'react';
 import { SectionPillar, Language } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
+import { useApprovedContent } from '../cms/approved-content';
+import { formatPrice } from '../cms/SectionRenderer';
+import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { Clock, Calendar, Compass } from 'lucide-react';
 
 interface SectionCardProps {
@@ -8,6 +11,7 @@ interface SectionCardProps {
   language: Language;
   onExplore: (pillar: SectionPillar) => void;
   onBookTour: (tourTitle: string) => void;
+  imageSizes?: string;
 }
 
 export const SectionCard: React.FC<SectionCardProps> = ({
@@ -15,7 +19,11 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   language,
   onExplore,
   onBookTour,
+  imageSizes,
 }) => {
+  const { document, page } = useApprovedContent();
+  const product = document?.products.find(item => item.id === pillar.id && item.published !== false);
+  const livePrice = product?.price ? formatPrice(product, language) : '';
   const isArticle = pillar.kind === 'article' || pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
   const isFezOverviewCard = pillar.pageId === 'fez' && (
     isArticle || pillar.id === 'our-fez-tours'
@@ -24,17 +32,17 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   const getActionConfig = () => {
     const label = isFezOverviewCard
       ? isArticle
-        ? language === 'fr' ? 'Lire le guide' : language === 'ar' ? 'اقرأ الدليل' : 'Read the Guide'
-        : language === 'fr' ? 'Voir les détails de la visite' : language === 'ar' ? 'عرض تفاصيل الجولة' : 'View Tour Details'
+        ? language === 'fr' ? 'Lire le guide' : language === 'es' ? 'Leer la guía' : 'Read the Guide'
+        : language === 'fr' ? 'Voir les détails de la visite' : language === 'es' ? 'Ver los detalles de la visita' : 'View Tour Details'
       : isArticle
       ? pillar.id === 'fez-history-landmarks'
-        ? (language === 'fr' ? 'Lire le récit' : 'Read the Story')
+        ? (language === 'es' ? 'Leer el relato' : language === 'fr' ? 'Lire le récit' : 'Read the Story')
         : pillar.id === 'fez-things-to-do'
-          ? (language === 'fr' ? 'Lire le guide' : 'Read the Guide')
-        : (language === 'fr' ? 'Lire l’article' : 'Read the Article')
+          ? (language === 'es' ? 'Leer la guía' : language === 'fr' ? 'Lire le guide' : 'Read the Guide')
+        : (language === 'es' ? 'Leer el artículo' : language === 'fr' ? 'Lire l’article' : 'Read the Article')
       : pillar.id === 'our-fez-tours'
-      ? (language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
-      : (language === 'ar' ? 'عرض التفاصيل والبرنامج' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
+      ? (language === 'es' ? 'Ver la visita y el precio' : language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
+      : (language === 'es' ? 'Ver los detalles y el itinerario' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
     return {
       label,
       icon: Compass,
@@ -56,7 +64,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         aria-label={pillar.title[language]}
       >
         <img
-          src={pillar.image}
+          {...responsiveImageProps(pillar.image, imageSizes ?? authoredCardImageSizes(pillar.image, page?.id ?? pillar.pageId))}
+          loading="lazy"
+          decoding="async"
           alt={pillar.imageAlt[language]}
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -72,9 +82,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
               {pillar.practicalInfo.duration[language]}
             </span>
           )}
-          {pillar.id === 'our-fez-tours' ? (
+          {document ? (livePrice && <span data-price-product-id={product!.id} className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">{livePrice}</span>) : pillar.id === 'our-fez-tours' ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
-              €170 / {language === 'fr' ? 'personne' : 'person'}
+              €170 / {language === 'es' ? 'persona' : language === 'fr' ? 'personne' : 'person'}
             </span>
           ) : pillar.practicalInfo?.priceMAD ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
@@ -136,7 +146,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
               onClick={() => onBookTour(pillar.title[language])}
               title={UI_TEXT.common.bookNow[language]}
               className="p-2.5 rounded-xl border border-[#DCD5CB] text-[#52605E] hover:text-[#C84B31] hover:border-[#C84B31] hover:bg-[#FAF8F5] transition-colors cursor-pointer shrink-0"
-              aria-label="Quick Book"
+              aria-label={language === 'es' ? "Reserva rápida" : "Quick Book"}
             >
               <Calendar className="w-3.5 h-3.5" />
             </button>

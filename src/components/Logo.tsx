@@ -5,6 +5,7 @@ interface LogoProps {
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
+  brandName?: string;
 }
 
 export const Logo: React.FC<LogoProps> = ({
@@ -12,6 +13,7 @@ export const Logo: React.FC<LogoProps> = ({
   showText = true,
   size = 'md',
   onClick,
+  brandName = 'FezGuideTours',
 }) => {
   const iconDimensions = {
     sm: { width: 34, height: 38 },
@@ -31,7 +33,8 @@ export const Logo: React.FC<LogoProps> = ({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       className={`inline-flex items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
-      aria-label="FezGuideTours Logo"
+      aria-label={`${brandName} Logo`}
+      onKeyDown={onClick ? event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } } : undefined}
     >
       <div className="relative shrink-0 flex items-center justify-center">
         <svg
@@ -117,8 +120,7 @@ export const Logo: React.FC<LogoProps> = ({
 
       {showText && (
         <div className="flex items-center tracking-tight font-extrabold whitespace-nowrap">
-          <span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span>
-          <span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span>
+          {brandName === 'FezGuideTours' ? <><span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span><span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span></> : <span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>{brandName}</span>}
         </div>
       )}
     </div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Language } from '../types';
+import { useApprovedContent, ApprovedSection } from '../cms/approved-content';
+import { contentLanguage, uiText } from '../cms/render-utils';
 
 interface TripadvisorReviewsSectionProps {
   language: Language;
@@ -53,21 +55,31 @@ const tripadvisorReviews = [
   },
 ];
 
-export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps> = ({ language }) => (
-  <section id="tripadvisor-reviews" className="space-y-8 overflow-hidden">
+export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps> = ({ language }) => {
+  const { document, page, section } = useApprovedContent();
+  const configured = section('reviews', 'reviews');
+  const locale = page ? contentLanguage(page, language) : language;
+  const reviews = document ? (configured?.reviewIds ?? []).flatMap(id => {
+    const review = document.reviews.find(review => review.id === id && review.enabled);
+    return review ? [review] : [];
+  }) : tripadvisorReviews;
+  const listing = document ? document.siteSettings.socialTripadvisor : tripadvisorListing;
+  if (document && !configured?.enabled) return null;
+  return (
+  <ApprovedSection id="reviews"><section id="tripadvisor-reviews" className="space-y-8 overflow-hidden">
     <div className="text-center max-w-xl mx-auto space-y-2 px-4">
       <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">Tripadvisor · 5.0 / 5</span>
       <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
-        {language === 'fr' ? 'De vrais avis de voyageurs à Fès' : 'Real stories from travelers in Fez'}
+        {document ? configured?.title?.[locale] ?? '' : language === 'fr' ? 'De vrais avis de voyageurs à Fès' : language === 'es' ? 'Historias reales de viajeros en Fez' : 'Real stories from travelers in Fez'}
       </h2>
       <p className="text-xs sm:text-sm text-[#52605E] leading-relaxed">
-        {language === 'fr' ? 'Avis authentiques publiés sur la page Tripadvisor officielle de Fez Guide Tours.' : 'Verified reviews published on the official Fez Guide Tours Tripadvisor page.'}
+        {language === 'fr' ? 'Avis authentiques publiés sur la page Tripadvisor officielle de Fez Guide Tours.' : language === 'es' ? 'Opiniones verificadas publicadas en la página oficial de Fez Guide Tours en Tripadvisor.' : 'Verified reviews published on the official Fez Guide Tours Tripadvisor page.'}
       </p>
     </div>
 
-    <div className="tripadvisor-marquee" tabIndex={0} aria-label="Tripadvisor traveler reviews">
+    <div className="tripadvisor-marquee" tabIndex={0} aria-label={document ? uiText(document, 'TripadvisorReviewsSection.text.1', locale, { en: 'Tripadvisor traveler reviews', fr: 'Tripadvisor traveler reviews', es: 'Opiniones de viajeros en Tripadvisor' }) : language === 'es' ? "Opiniones de viajeros en Tripadvisor" : "Tripadvisor traveler reviews"}>
       <div className="tripadvisor-track">
-        {[tripadvisorReviews, tripadvisorReviews].map((reviews, copyIndex) => (
+        {[reviews, reviews].map((reviews, copyIndex) => (
           <div className="tripadvisor-set" key={copyIndex}>
             {reviews.map((review) => {
               const duplicate = copyIndex === 1;
@@ -78,10 +90,10 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
                     <span className="tripadvisor-author"><strong>{review.author}</strong><small>Tripadvisor · {review.date}</small></span>
                     <svg className="tripadvisor-mark" viewBox="0 0 48 28" aria-label="Tripadvisor" role="img"><circle cx="14" cy="15" r="9"/><circle cx="34" cy="15" r="9"/><circle cx="14" cy="15" r="3"/><circle cx="34" cy="15" r="3"/><path d="M20 9h8M24 9l-5-6h10z"/></svg>
                   </div>
-                  <div className="tripadvisor-bubbles" aria-label="5 out of 5 bubbles" role="img">{[0, 1, 2, 3, 4].map((bubble) => <span key={bubble} />)}</div>
+                  <div className="tripadvisor-bubbles" aria-label={language === 'es' ? '5 de 5 burbujas' : language === 'fr' ? '5 bulles sur 5' : '5 out of 5 bubbles'} role="img">{[0, 1, 2, 3, 4].map((bubble) => <span key={bubble} />)}</div>
                   <h3>{review.title}</h3>
                   <p>“{review.quote}”</p>
-                  <span className="tripadvisor-read">{language === 'fr' ? 'Lire sur Tripadvisor' : 'Read on Tripadvisor'} <ArrowRight aria-hidden="true" /></span>
+                  <span className="tripadvisor-read">{document ? uiText(document, 'TripadvisorReviewsSection.label.3', locale, { en: 'Read on Tripadvisor', fr: 'Lire sur Tripadvisor', es: 'Leer en Tripadvisor' }) : language === 'es' ? 'Leer en Tripadvisor' : language === 'fr' ? 'Lire sur Tripadvisor' : 'Read on Tripadvisor'} <ArrowRight aria-hidden="true" /></span>
                 </a>
               );
             })}
@@ -91,9 +103,10 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
     </div>
 
     <div className="text-center">
-      <a href={tripadvisorListing} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors">
-        {language === 'fr' ? 'Lire les 82 avis sur Tripadvisor' : 'Read all 82 reviews on Tripadvisor'} <ArrowRight className="w-4 h-4" />
-      </a>
+      {listing && <a href={listing} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors">
+        {language === 'fr' ? 'Lire les 82 avis sur Tripadvisor' : language === 'es' ? 'Leer las 82 opiniones en Tripadvisor' : 'Read all 82 reviews on Tripadvisor'} <ArrowRight className="w-4 h-4" />
+      </a>}
     </div>
-  </section>
+  </section></ApprovedSection>
 );
+};

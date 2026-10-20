@@ -1,119 +1,6 @@
-import { Language, PageId, SectionPillar, TeamMember, FaqItem, BlogPost, CustomPage, SiteSettings } from '../types';
+import { Language, PageId, SectionPillar, TeamMember, FaqItem, BlogPost, CustomPage } from '../types';
+export { UI_TEXT, DEFAULT_SITE_SETTINGS, DEFAULT_BLOG_POSTS, DEFAULT_CUSTOM_PAGES } from './shared-ui';
 
-export const UI_TEXT = {
-  nav: {
-    home: { en: 'Home', fr: 'Accueil', ar: 'الرئيسية' },
-    fez: { en: 'Fez', fr: 'Fès', ar: 'فاس' },
-    dayTrips: { en: 'Day Trips', fr: 'Excursions', ar: 'رحلات يومية' },
-    foodTours: { en: 'Food Tours', fr: 'Tours Culinaires', ar: 'جولات الأكل والتذوق' },
-    travelTips: { en: 'Travel Tips', fr: 'Conseils Voyage', ar: 'نصائح السفر' },
-    about: { en: 'About Us', fr: 'À Propos', ar: 'من نحن' },
-    faq: { en: 'FAQ', fr: 'FAQ', ar: 'الأسئلة الشائعة' },
-    bookTour: { en: 'Book an Experience', fr: 'Réserver une Expérience', ar: 'احجز تجربة' },
-  },
-  common: {
-    viewMore: { en: 'View More', fr: 'En Savoir Plus', ar: 'عرض المزيد' },
-    explore: { en: 'Explore Details', fr: 'Explorer en détail', ar: 'استكشف التفاصيل' },
-    bookNow: { en: 'Book This Tour', fr: 'Réserver ce Tour', ar: 'احجز هذه الجولة' },
-    close: { en: 'Close', fr: 'Fermer', ar: 'إغلاق' },
-    whatsappChat: { en: 'Talk to Someone Who Knows Fez', fr: 'Parlez à un local de Fès', ar: 'تحدث مع ابن فاس مباشرة' },
-    duration: { en: 'Duration', fr: 'Durée', ar: 'المدة' },
-    groupSize: { en: 'Experience Format', fr: 'Format', ar: 'نوع التجربة' },
-    departure: { en: 'Meeting / Departure', fr: 'Départ / Rendez-vous', ar: 'نقطة الانطلاق' },
-    licensedGuides: { en: 'Local Guides & Drivers', fr: 'Guides Locaux & Chauffeurs', ar: 'مرشدون وسائقون محليون' },
-    highlights: { en: 'What You Discover', fr: 'Ce que vous découvrirez', ar: 'ما ستكتشفه' },
-    included: { en: 'Included & Formats', fr: 'Inclusions & Formats', ar: 'ما تشمله التجربة' },
-    fromPrice: { en: 'From', fr: 'À partir de', ar: 'ابتداءً من' },
-    allDepartments: { en: 'Explore Our City', fr: 'Découvrir la Ville', ar: 'استكشف مدينتنا' },
-  },
-  hero: {
-    tagline: {
-      en: 'Fez Guide Tours — Discover the City Through Local Eyes',
-      fr: 'Fez Guide Tours — Découvrez la Ville à Travers des Yeux Locaux',
-      ar: 'فاس جايد تورز — اكتشف فاس بعيون أبنائها المحليين',
-    },
-    title: {
-      en: 'Discover Fez in a Simple, Comfortable and Personal Way',
-      fr: 'Découvrez Fès de Manière Simple, Confortable et Personnelle',
-      ar: 'اكتشف فاس بطريقة بسيطة، مريحة وتجربة خاصة بك',
-    },
-    subtitle: {
-      en: 'We know the streets of the Medina, the local food, living traditions and everyday life. Private walking tours, food tastings, and relaxed day trips beyond the city.',
-      fr: 'Nous connaissons les ruelles de la Médina, les saveurs locales, les traditions vivantes et le quotidien. Balades guidées privées, dégustations et excursions.',
-      ar: 'نعرف دروب فاس البالي، مأكولاتنا الشعبية الأصيلة، تقاليدنا وتفاصيل الحياة اليومية. جولات خاصة مشياً على الأقدام، رحلات تذوق، ورحلات يومية مريحة.',
-    },
-    ctaExplore: {
-      en: 'Explore Medina Experiences',
-      fr: 'Explorer la Médina',
-      ar: 'استكشف جولات فاس',
-    },
-    ctaDayTrips: {
-      en: 'Day Trips Beyond Fez',
-      fr: 'Excursions d’un Jour',
-      ar: 'رحلات يومية خاصة',
-    },
-  },
-  homeQuickNav: {
-    title: {
-      en: 'Welcome to Fez. See the City Through Local Eyes.',
-      fr: 'Bienvenue à Fès. Découvrez la ville à travers des yeux locaux.',
-      ar: 'مرحباً بكم في فاس. اكتشفوا سحر المدينة بعيون أبنائها.',
-    },
-    subtitle: {
-      en: 'Choose an experience designed around comfort, local knowledge, and genuine Moroccan hospitality.',
-      fr: 'Choisissez une expérience pensée pour votre confort, votre curiosité et l’accueil marocain.',
-      ar: 'اختر تجربة سياحية مصممة لتضمن لك الراحة والمعرفة والضيافة المغربية الأصيلة.',
-    },
-  },
-  trustBar: {
-    badge1: {
-      title: { en: 'Local Knowledge', fr: 'Expertise Locale', ar: 'معرفة محلية عميقة' },
-      desc: { en: 'Guides born and living in Fez', fr: 'Guides nés et vivants à Fès', ar: 'مرشدون من أبناء المدينة العتيقة' },
-    },
-    badge2: {
-      title: { en: 'Private & Flexible', fr: 'Privé & Flexible', ar: 'خاص ومرن بالكامل' },
-      desc: { en: 'For your group, at your own pace', fr: 'Pour votre groupe, à votre rythme', ar: 'لكم ولمجموعتكم بالوتيرة التي تناسبكم' },
-    },
-    badge3: {
-      title: { en: 'Comfortable Vehicles', fr: 'Véhicules Confortables', ar: 'سيارات مريحة ومكيفة' },
-      desc: { en: 'Trusted drivers for scenic day trips', fr: 'Chauffeurs de confiance pour excursions', ar: 'سائقون موثوقون لرحلات اليوم الواحد' },
-    },
-    badge4: {
-      title: { en: 'Living Heritage', fr: 'Patrimoine Vivant', ar: 'تراث حي أصيل' },
-      desc: { en: 'Craftsmen, food, and daily rhythm', fr: 'Artisans, cuisine et vie quotidienne', ar: 'حرف تقليدية، أطعمة، ونبض الحياة' },
-    },
-  },
-  footer: {
-    aboutText: {
-      en: 'Fez Guide Tours is a small local team based in Fez dedicated to sharing our city in a simple, comfortable and personal way. Discover Fez through local eyes.',
-      fr: 'Fez Guide Tours est une équipe locale basée à Fès dédiée à partager notre ville de manière simple, confortable et authentique. Découvrez la ville à travers des yeux locaux.',
-      ar: 'فاس جايد تورز فريق محلي مقيم في فاس نسعى لمشاركتكم روح مدينتنا وتاريخها العريق بأسلوب بسيط، مريح وشخصي.',
-    },
-    quickLinks: { en: 'Quick Navigation', fr: 'Navigation Rapide', ar: 'روابط سريعة' },
-    contactUs: { en: 'Direct Contact', fr: 'Contact Direct', ar: 'تواصل مباشر' },
-    contactTitle: { en: 'Direct Contact & Inquiries', fr: 'Contact & Réservations', ar: 'تواصل مباشر واستفسارات' },
-    address: {
-      en: 'Bab Boujloud, Medina of Fez, Morocco',
-      fr: 'Bab Boujloud, Médina de Fès, Maroc',
-      ar: 'باب بوجلود، فاس البالي، المغرب',
-    },
-    trustBadges: {
-      en: 'Local Native Hosts & Certified Medina Guides',
-      fr: 'Hôtes Natifs & Guides Locaux Agréés',
-      ar: 'فريق محلي من أبناء فاس ومرشدون معتمدون',
-    },
-    rights: {
-      en: 'All rights reserved. FezGuideTours — Discover Fez Through Local Eyes.',
-      fr: 'Tous droits réservés. FezGuideTours — Découvrez Fès à travers des yeux locaux.',
-      ar: 'جميع الحقوق محفوظة. فاس جايد تورز — اكتشف فاس بعيون أهلها.',
-    },
-    copyright: {
-      en: '© 2026 FezGuideTours. All rights reserved. Welcome to Fez. See the city through local eyes.',
-      fr: '© 2026 FezGuideTours. Tous droits réservés. Bienvenue à Fès. Découvrez la ville à travers des yeux locaux.',
-      ar: '© 2026 فاس جايد تورز. جميع الحقوق محفوظة. مرحباً بكم في فاس. اكتشفوا المدينة بعيون أهلها.',
-    },
-  },
-};
 
 // 1. FEZ MEDINA EXPERIENCES
 export const FEZ_PILLARS: SectionPillar[] = [
@@ -123,33 +10,33 @@ export const FEZ_PILLARS: SectionPillar[] = [
     title: {
       en: 'Explore the Medina',
       fr: 'Explorer la Médina',
-      ar: 'استكشف المدينة العتيقة',
+      es: 'Descubre la medina',
     },
     subtitle: {
       en: 'Medina Guide',
       fr: 'Guide de la Médina',
-      ar: 'دليل المدينة العتيقة',
+      es: 'Guía de la medina',
     },
     shortDescription: {
       en: 'Understand the Medina through its historic lanes, artisan workshops, and everyday life.',
       fr: 'Comprenez la Médina à travers ses ruelles historiques, ses ateliers d’artisans et la vie quotidienne.',
-      ar: 'تعرّف على المدينة من خلال أزقتها التاريخية وورش الحرفيين والحياة اليومية لأهل فاس.',
+      es: 'Conoce la medina a través de sus callejuelas históricas, sus talleres artesanales y su vida cotidiana.',
     },
     fullDescription: {
       en: 'Explore the Medina through the supplied story, photographs and local perspective.',
       fr: 'Explorez la Médina à travers le récit, les photographies et le regard local fournis.',
-      ar: 'Explore the Medina through the supplied story, photographs and local perspective.',
+      es: 'Descubre la medina a través del relato, las fotografías y la perspectiva local que compartimos.',
     },
     highlights: {
       en: ['Historic lanes, gates & souks', 'Workshops & everyday life'],
       fr: ['Ruelles, portes historiques et souks', 'Ateliers d’artisans et vie quotidienne'],
-      ar: ['أزقة وأبواب وأسواق تاريخية', 'ورش حرفية وحياة يومية'],
+      es: ['Callejuelas, puertas históricas y zocos', 'Talleres artesanales y vida cotidiana'],
     },
     image: '/images/fez-medina/medina-01.jpg',
     imageAlt: {
       en: 'Traditional Fez Medina market lane with Moroccan flags',
       fr: 'Ruelle traditionnelle de la Médina de Fès avec des drapeaux marocains',
-      ar: 'Traditional Fez Medina market lane with Moroccan flags',
+      es: 'Callejuela de un mercado tradicional de la medina de Fez con banderas marroquíes',
     },
     actionType: 'explore',
     published: true,
@@ -160,33 +47,33 @@ export const FEZ_PILLARS: SectionPillar[] = [
     title: {
       en: 'History, Culture & Landmarks',
       fr: 'Histoire, Culture & Grands Monuments',
-      ar: 'تاريخ، ثقافة ومعالم فاس العريقة',
+      es: 'Historia, cultura y monumentos',
     },
     subtitle: {
       en: 'History & Culture',
       fr: 'Histoire & Culture',
-      ar: 'التاريخ والثقافة',
+      es: 'Historia y cultura',
     },
     shortDescription: {
       en: 'Trace Fez’s history through its madrasas, landmarks, traditional crafts, and historic neighbourhoods.',
       fr: 'Suivez l’histoire de Fès à travers ses médersas, monuments, métiers d’art et quartiers historiques.',
-      ar: 'اكتشف تاريخ فاس عبر المدارس العريقة والمعالم والحرف والأحياء التاريخية.',
+      es: 'Recorre la historia de Fez a través de sus madrasas, monumentos, oficios tradicionales y barrios históricos.',
     },
     fullDescription: {
       en: 'Fez’s history is part of everyday life. Discover the city’s learning traditions, historic gates and madrasas, crafts, food, Mellah and Fes Jdid, and Chouara Tanneries through local eyes.',
       fr: 'À Fès, l’histoire fait partie de la vie quotidienne. Découvrez ses traditions du savoir, ses portes et médersas historiques, son artisanat, sa cuisine, le Mellah et Fès Jdid, ainsi que les tanneries Chouara à travers des yeux locaux.',
-      ar: `تتميز فاس بأن معالمها الكبرى ليست صروحاً معزولة، بل جزء لا يتجزأ من النسيج اليومي للناس. من جامعة القرويين التي أُسست عام 859 م، إلى روائع العمارة المرينية في مدرستي العطارين والبوعنانية، ودار الدباغ شوارة التي ما زالت تعمل بالأساليب الطبيعية ذاتها منذ مئات السنين.`
+      es: `En Fez, los grandes monumentos no están aislados: forman parte de la vida cotidiana. Desde la universidad de Al Quaraouiyine, fundada en el año 859, hasta la arquitectura meriní de las madrasas Al Attarine y Bou Inania y las curtidurías Chouara, que siguen utilizando métodos naturales centenarios, descubre el patrimonio de la ciudad con una mirada local.`
     },
     highlights: {
       en: ['Madrasas & historic landmarks', 'Mellah, Fes Jdid & traditional crafts'],
       fr: ['Médersas et monuments historiques', 'Mellah, Fès Jdid et artisanat traditionnel'],
-      ar: ['مدارس عريقة ومعالم تاريخية', 'الملاح وفاس الجديد والحرف التقليدية']
+      es: ['Madrasas y monumentos históricos', 'Mellah, Fes Jdid y oficios tradicionales']
     },
     image: '/images/fez-history/history-01.jpg',
     imageAlt: {
       en: 'Narrow alley in the old Medina of Fez',
       fr: 'Ruelle étroite dans l’ancienne Médina de Fès',
-      ar: 'Narrow alley in the old Medina of Fez',
+      es: 'Callejuela estrecha de la antigua medina de Fez',
     },
     actionType: 'explore',
     published: true,
@@ -197,17 +84,17 @@ export const FEZ_PILLARS: SectionPillar[] = [
     title: {
       en: 'Things to Do in Fez',
       fr: 'Que Faire à Fès : Expériences & Activités',
-      ar: 'أنشطة وتجارب لا تفوت في فاس',
+      es: 'Qué hacer en Fez',
     },
     subtitle: {
       en: 'Fez City Guide',
       fr: 'Guide de Fès',
-      ar: 'دليل فاس',
+      es: 'Guía de Fez',
     },
     shortDescription: {
       en: 'Plan a visit around the souks, craft workshops, local food, panoramic views, and evenings in Fez.',
       fr: 'Organisez votre séjour entre souks, ateliers, cuisine locale, panoramas et soirées dans la Ville Nouvelle.',
-      ar: 'خطّط لزيارتك بين الأسواق والورشات والطعام المحلي والإطلالات والأمسيات في فاس.',
+      es: 'Organiza tu visita entre zocos, talleres artesanales, gastronomía local, vistas panorámicas y noches en Fez.',
     },
     fullDescription: {
       en: `There is much more to do in Fez than simply visiting its famous monuments. The city is best experienced by walking through its streets, meeting local people, discovering traditional crafts, tasting local food and taking time to enjoy the different sides of the city.
@@ -218,18 +105,24 @@ Discover the traditional crafts of Fez by visiting local workshops and watching 
 
 Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view over the Medina walls at sunset, and experience the lively cafés of the New City at night.`,
       fr: `Explorez les ateliers de zellige, de dinanderie et de cuir. Parcourez le quartier historique du Mellah et terminez votre journée devant un coucher de soleil sur les collines mérinides.`,
-      ar: `استمتع بزيارة ورشات صناعة الفخار والزليج والنحاسيات، وتجول في أزقة الملاح ذات الشرفات الخشبية المميزة، واختم يومك بإطلالة ساحرة على أسوار فاس أثناء غروب الشمس.`
+      es: `En Fez hay mucho más que hacer que visitar sus monumentos más conocidos. La mejor forma de vivir la ciudad es recorrer sus calles, conocer a sus habitantes, descubrir los oficios tradicionales, probar la gastronomía local y disfrutar con calma de sus distintas facetas.
+
+Empieza por la antigua medina de Fez. Pasea por sus callejuelas, descubre los zocos tradicionales, visita lugares históricos y fíjate en los detalles que te rodean. Cada zona tiene su propio ambiente y, a veces, las mejores experiencias se encuentran lejos de las principales calles turísticas.
+
+Visita los talleres locales y observa a los artesanos trabajar el zellige, el cuero, la madera y el metal. Son oficios que forman parte de la identidad de la ciudad desde hace generaciones.
+
+Dedica tiempo al histórico Mellah y a Fes Jdid, disfruta de una vista panorámica sobre las murallas de la medina al atardecer y conoce los animados cafés de la ciudad nueva por la noche.`
     },
     highlights: {
       en: ['Souks, workshops & Moroccan food', 'Panoramic views & Fez after dark'],
       fr: ['Souks, ateliers et cuisine marocaine', 'Panoramas et Fès après le coucher du soleil'],
-      ar: ['أسواق وورش ومأكولات مغربية', 'إطلالات بانورامية وأجواء المساء']
+      es: ['Zocos, talleres y gastronomía marroquí', 'Vistas panorámicas y Fez por la noche']
     },
     image: '/images/fez-things-to-do/things-01.jpg',
     imageAlt: {
       en: 'Busy souk lane in the old Medina of Fez',
       fr: 'Allée animée d’un souk dans l’ancienne médina de Fès',
-      ar: 'Busy souk lane in the old Medina of Fez',
+      es: 'Callejuela animada de un zoco en la antigua medina de Fez',
     },
     actionType: 'explore',
     published: true,
@@ -240,27 +133,27 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
     title: {
       en: 'Our Fez Tours',
       fr: 'Nos Visites de Fès',
-      ar: 'جولاتنا في فاس',
+      es: 'Nuestras visitas por Fez',
     },
     subtitle: {
       en: 'Private Walking Tour',
       fr: 'Visite privée à pied',
-      ar: 'جولة مشي خاصة',
+      es: 'Visita privada a pie',
     },
     shortDescription: {
       en: 'Walk the Medina privately with a local guide and discover its stories, crafts, and hidden corners.',
       fr: 'Parcourez la Médina avec un guide local et découvrez ses histoires, métiers d’art et passages cachés.',
-      ar: 'اكتشف المدينة في جولة مشي خاصة مع مرشد محلي، بين القصص والحرف والأزقة المخفية.',
+      es: 'Recorre la medina en una visita privada con un guía local y descubre sus historias, oficios y rincones escondidos.',
     },
     fullDescription: {
       en: 'Explore our Fez tours and discover the city through local eyes.',
       fr: 'Explorez nos visites de Fès et découvrez la ville à travers des yeux locaux.',
-      ar: 'Explore our Fez tours and discover the city through local eyes.',
+      es: 'Conoce nuestras visitas por Fez y descubre la ciudad con quienes viven en ella.',
     },
     highlights: {
       en: ['Private walking tour · 3–5 hours', 'English, Français and Español'],
       fr: ['Visite privée à pied · 3–5 heures', 'Anglais, français et espagnol'],
-      ar: ['جولة مشي خاصة لمدة 3–5 ساعات', 'الإنجليزية والفرنسية والإسبانية'],
+      es: ['Visita privada a pie · 3–5 horas', 'Inglés, francés y español'],
     },
     practicalInfo: {
       priceEUR: 170,
@@ -271,7 +164,7 @@ Take time to explore the historic Mellah and Fes Jdid, enjoy a panoramic view ov
     imageAlt: {
       en: 'Guide with visitors at a historic Fez monument',
       fr: 'Guide avec des visiteurs devant un monument historique de Fès',
-      ar: 'Guide with visitors at a historic Fez monument',
+      es: 'Guía con visitantes junto a un monumento histórico de Fez',
     },
     actionType: 'book_tour',
     published: true,
@@ -286,17 +179,17 @@ export const DAY_TRIPS_PILLARS: SectionPillar[] = [
     title: {
       en: 'Chefchaouen Day Trip from Fez',
       fr: 'Excursion à Chefchaouen au départ de Fès',
-      ar: 'رحلة يومية إلى شفشاون (المدينة الزرقاء)',
+      es: 'Excursión de un día a Chefchaouen desde Fez',
     },
     subtitle: {
       en: 'The Famous Blue City of Northern Morocco in the Rif Mountains',
       fr: 'La Perle Bleue du Nord du Maroc au cœur du Rif',
-      ar: 'جوهرة الشمال الزرقاء وسط أحضان جبال الريف الشامخة',
+      es: 'La famosa ciudad azul del norte de Marruecos, en las montañas del Rif',
     },
     shortDescription: {
       en: 'Spend a day discovering Chefchaouen, the famous Blue City of northern Morocco, surrounded by the Rif Mountains.',
       fr: 'Passez une journée à découvrir Chefchaouen, la célèbre ville bleue du nord du Maroc, au cœur des montagnes du Rif.',
-      ar: 'اقضِ يوماً في اكتشاف شفشاون، المدينة الزرقاء الشهيرة في شمال المغرب، وسط جبال الريف.',
+      es: 'Dedica un día a descubrir Chefchaouen, la famosa ciudad azul del norte de Marruecos, rodeada por las montañas del Rif.',
     },
     fullDescription: {
       en: `Spend a day discovering Chefchaouen, the famous Blue City of northern Morocco, surrounded by the Rif Mountains.
@@ -325,19 +218,19 @@ Vous pouvez aussi marcher jusqu’à Ras El Maa, la source naturelle au bord de 
 Il reste aussi du temps pour les petites rues, l’artisanat, les photos et le déjeuner dans la vieille ville. Nous ne voulons pas vous presser d’une attraction à l’autre : le chauffeur reste flexible et nous prenons le temps disponible pour profiter de la destination.
 
 Vous pouvez faire le trajet avec un chauffeur privé seulement, ou choisir un guide local pour expliquer l’histoire, la culture et les lieux visités.`,
-      ar: `اقضِ يوماً في اكتشاف شفشاون، المدينة الزرقاء الشهيرة في شمال المغرب، وسط جبال الريف.
+      es: `Dedica un día a descubrir Chefchaouen, la famosa ciudad azul del norte de Marruecos, rodeada por las montañas del Rif.
 
-بعد مغادرة فاس، يعبر الطريق الريف المغربي والمناظر الجبلية قبل الوصول إلى شفشاون. هناك تبدأ التجربة بجولة في المدينة العتيقة، حيث الجدران الزرقاء والأزقة الضيقة والبيوت التقليدية تصنع أجواء شفشاون المعروفة.
+Tras salir de Fez, el trayecto atraviesa el campo marroquí y paisajes de montaña antes de llegar a Chefchaouen. Allí, la experiencia comienza con un paseo por el casco antiguo, donde las paredes azules, las callejuelas y las casas tradicionales crean el ambiente por el que se conoce la ciudad.
 
-بحسب المسار والوقت المتاح، يمكن زيارة بعض معالمها، ومنها ساحة وطاء الحمام في قلب المدينة العتيقة، للجلوس على شاي ومشاهدة الحياة المحلية والأجواء حول القصبة التاريخية.
+Según la ruta y el tiempo disponible, puedes descubrir algunos de sus lugares principales, como la Plaza Uta el-Hammam, el corazón del casco antiguo. Allí podrás sentarte a tomar un té marroquí, observar la vida local y disfrutar del ambiente alrededor de la histórica Kasbah.
 
-ومن هناك، نواصل عبر الأزقة الزرقاء نحو قصبة شفشاون، أحد معالم المدينة، ثم الأحياء القديمة والدكاكين الصغيرة والبيوت التقليدية.
+Desde allí, continúa por las estrechas calles azules hacia la Kasbah de Chefchaouen, uno de los monumentos históricos de la ciudad, y explora los barrios antiguos de los alrededores, sus pequeñas tiendas y sus casas tradicionales.
 
-يمكن أيضاً المشي نحو رأس الماء، المنبع الطبيعي على طرف المدينة العتيقة. مكان مناسب للتمهل، ورؤية الماء المنحدر من الجبل، وملاحظة جانب أكثر محلية من شفشاون.
+También puedes caminar hasta Ras El Maa, el manantial natural situado al borde del casco antiguo. Es un lugar agradable para hacer una pausa, ver el agua que baja de las montañas y conocer una faceta más local de Chefchaouen.
 
-ويبقى وقت لاستكشاف الأزقة الصغيرة والحرف التقليدية والتقاط الصور وتناول الغداء في المدينة العتيقة. لا نريد أن تشعروا بالاستعجال من معلم إلى آخر، لذلك يبقى السائق مرناً ونأخذ الوقت المتاح للاستمتاع بالوجهة.
+Queda tiempo para recorrer las callejuelas, descubrir la artesanía local, hacer fotografías y comer en el casco antiguo. No queremos que vayas con prisas de un lugar a otro: el conductor mantiene un horario flexible y aprovechamos el tiempo disponible para disfrutar del destino.
 
-يمكن القيام بالرحلة مع سائق خاص فقط، أو مع مرشد محلي يشرح التاريخ والثقافة والأماكن التي تزورونها.`
+Puedes hacer la excursión solo con un conductor privado o elegir que te acompañe un guía local para explicar la historia, la cultura y los lugares que visites.`
     },
     highlights: {
       en: [
@@ -354,18 +247,18 @@ Vous pouvez faire le trajet avec un chauffeur privé seulement, ou choisir un gu
         'Ras El Maa, la source au bord de la vieille ville',
         'Découvrir Chefchaouen à votre rythme'
       ],
-      ar: [
-        'رحلة خاصة · سيارة مريحة · وقت مرن',
-        'سائق فقط، أو سائق مع مرشد محلي',
-        'أزقة زرقاء وساحة وطاء الحمام والقصبة التاريخية',
-        'رأس الماء، المنبع على طرف المدينة العتيقة',
-        'اكتشفوا شفشاون على وتيرتكم'
+      es: [
+        'Excursión privada de un día · Vehículo cómodo · Horario flexible',
+        'Solo conductor o conductor con guía local',
+        'Calles azules, Plaza Uta el-Hammam y la histórica Kasbah',
+        'Ras El Maa, el manantial de montaña junto al casco antiguo',
+        'Descubre Chefchaouen a tu ritmo'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Full Day (~10-11 Hours)', fr: 'Journée entière (~10-11h)', ar: 'يوم كامل (~10-11 ساعة)' },
-      departure: { en: '8:00 AM from Fez (Hotel / Riad)', fr: '8h00 de Fès (Hôtel / Riad)', ar: '8:00 صباحاً من فندقكم بفاس' },
-      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', ar: 'مركبة خاصة (1 إلى 6 ركاب)' },
+      duration: { en: 'Full Day (~10-11 Hours)', fr: 'Journée entière (~10-11h)', es: 'Día completo (unas 10-11 horas)' },
+      departure: { en: '8:00 AM from Fez (Hotel / Riad)', fr: '8h00 de Fès (Hôtel / Riad)', es: 'A las 8:00 desde Fez (hotel / riad)' },
+      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', es: 'Vehículo privado (de 1 a 6 pasajeros)' },
       priceMAD: 1400,
       priceEUR: 130,
     },
@@ -373,7 +266,7 @@ Vous pouvez faire le trajet avec un chauffeur privé seulement, ou choisir un gu
     imageAlt: {
       en: 'Blue alley in Chefchaouen with a studded door and a person walking under an umbrella',
       fr: 'Ruelle bleue de Chefchaouen, porte cloutée et personne marchant sous un parapluie',
-      ar: 'زقاق أزرق في شفشاون، باب مرصع وشخص يمشي تحت مظلة',
+      es: 'Callejuela azul de Chefchaouen con una puerta claveteada y una persona caminando bajo un paraguas',
     },
     actionType: 'book_tour',
     published: true,
@@ -384,17 +277,17 @@ Vous pouvez faire le trajet avec un chauffeur privé seulement, ou choisir un gu
     title: {
       en: 'Meknes, Volubilis & Moulay Idriss Day Trip from Fez',
       fr: 'Excursion Meknès, Volubilis et Moulay Idriss au départ de Fès',
-      ar: 'رحلة مكناس ووليلي ومولاي إدريس انطلاقاً من فاس',
+      es: 'Excursión de un día a Meknes, Volubilis y Moulay Idriss desde Fez',
     },
     subtitle: {
       en: 'Discover Roman history, Moroccan heritage and an imperial city in one day.',
       fr: 'Découvrir l’histoire romaine, le patrimoine marocain et une ville impériale en une journée.',
-      ar: 'اكتشفوا التاريخ الروماني والتراث المغربي ومدينة إمبراطورية في يوم واحد.',
+      es: 'Descubre la historia romana, el patrimonio marroquí y una ciudad imperial en un solo día.',
     },
     shortDescription: {
       en: 'Discover three different sides of Morocco’s history in one private day trip from Fez, combining the ancient Roman ruins of Volubilis, the holy town of Moulay Idriss and the historic imperial city of Meknes.',
       fr: 'Découvrez trois facettes de l’histoire du Maroc en une excursion privée au départ de Fès : les ruines romaines de Volubilis, la ville sainte de Moulay Idriss et la cité impériale de Meknès.',
-      ar: 'اكتشفوا ثلاثة جوانب مختلفة من تاريخ المغرب في رحلة يومية خاصة انطلاقاً من فاس، تجمع بين آثار وليلي الرومانية ومدينة مولاي إدريس ومدينة مكناس الإمبراطورية.',
+      es: 'Descubre tres facetas de la historia de Marruecos en una excursión privada de un día desde Fez: las antiguas ruinas romanas de Volubilis, la ciudad santa de Moulay Idriss y la histórica ciudad imperial de Meknes.',
     },
     fullDescription: {
       en: `Discover three different sides of Morocco's history in one private day trip from Fez, combining the ancient Roman ruins of Volubilis, the holy town of Moulay Idriss and the historic imperial city of Meknes.
@@ -423,19 +316,19 @@ Selon les horaires d’ouverture et vos intérêts, vous pouvez aussi visiter ce
 L’ordre et le rythme des visites peuvent rester souples pendant la journée. Vous pouvez rester plus longtemps là où cela vous intéresse, vous arrêter pour le déjeuner ou des photos, et profiter du trajet sans vous sentir pressé.
 
 Vous pouvez voyager avec un chauffeur privé seulement, ou choisir un guide local pour une explication plus approfondie de l’histoire, de l’architecture et de la culture des lieux visités.`,
-      ar: `اكتشفوا ثلاثة جوانب مختلفة من تاريخ المغرب في رحلة يومية خاصة انطلاقاً من فاس، تجمع بين آثار وليلي الرومانية، ومدينة مولاي إدريس، ومدينة مكناس الإمبراطورية.
+      es: `Descubre tres facetas de la historia de Marruecos en una excursión privada de un día desde Fez: las antiguas ruinas romanas de Volubilis, la ciudad santa de Moulay Idriss y la histórica ciudad imperial de Meknes.
 
-يمكن أن تكون المحطة الأولى وليلي، أحد أهم المواقع الأثرية في المغرب. تجولوا بين بقايا المدينة الرومانية، واكتشفوا شوارعها ومبانيها القديمة، وخذوا وقتكم لتأمل الفسيفساء الشهيرة التي صمدت لقرون. يمنحكم الموقع نظرة مختلفة إلى تاريخ المغرب، قبل المدن والمعالم التي نعرفها اليوم.
+La primera parada puede ser Volubilis, uno de los yacimientos arqueológicos más importantes de Marruecos. Pasea entre los restos de la antigua ciudad romana, descubre sus calles y edificios y admira los famosos mosaicos que han sobrevivido durante siglos. El yacimiento ofrece otra perspectiva de la historia de Marruecos, mucho antes de las ciudades y monumentos que conocemos hoy.
 
-من وليلي، تواصلون نحو مولاي إدريس زرهون، بلدة صغيرة مبنية على التلال ومعروفة كوجهة حج مهمة في المغرب. بيوتها البيضاء وأزقتها الضيقة وموقعها على السفح يمنحها أجواء مختلفة جداً عن المدن المغربية الأكبر. حسب الوقت المتاح، يمكنكم المشي في جزء من البلدة، والاستمتاع بالإطلالات، واكتشاف صلتها ببدايات تاريخ المغرب.
+Desde Volubilis, continúa hacia Moulay Idriss Zerhoun, una pequeña ciudad construida sobre las colinas y conocida como un importante destino de peregrinación en Marruecos. Sus casas blancas, callejuelas y emplazamiento en la ladera le dan un ambiente muy distinto al de las grandes ciudades marroquíes. Según el tiempo disponible, puedes recorrer parte de la ciudad, disfrutar de las vistas y conocer su relación con los primeros tiempos de la historia de Marruecos.
 
-ثم تتواصل الرحلة إلى مكناس، إحدى المدن الإمبراطورية الأربع في المغرب. هنا يمكنكم استكشاف قلب المدينة التاريخي، والتجول حول باب المنصور، إحدى أشهر بواباتها الضخمة، واكتشاف المدينة العتيقة والأسوار التاريخية والشوارع التقليدية.
+El recorrido continúa hacia Meknes, una de las cuatro ciudades imperiales de Marruecos. Aquí puedes explorar su centro histórico, pasear junto a Bab Mansour, una de sus puertas monumentales más conocidas, y descubrir la antigua medina, las murallas y las calles tradicionales.
 
-حسب أوقات الفتح واهتماماتكم، يمكنكم أيضاً زيارة بعض المواقع التاريخية في مكناس ومعرفة المزيد عن الفترة التي أصبحت فيها المدينة عاصمة ملكية مهمة في عهد السلطان مولاي إسماعيل.
+Según los horarios de apertura y tus intereses, también puedes visitar otros lugares históricos de Meknes y conocer la época en la que la ciudad se convirtió en una importante capital real bajo el sultán Moulay Ismail.
 
-يمكن أن يبقى ترتيب الزيارات وتوقيتها مرناً خلال اليوم. يمكنكم قضاء وقت أطول في المكان الذي يهمكم، والتوقف للغداء أو للصور، والاستمتاع بالطريق من دون استعجال.
+El orden y el horario de las visitas pueden mantenerse flexibles durante el día. Puedes dedicar más tiempo a un lugar que te interese, parar para comer o hacer fotografías y disfrutar del recorrido sin prisas.
 
-يمكنكم السفر مع سائق خاص فقط، أو اختيار مرشد محلي لشرح أعمق لتاريخ الأماكن وعمارتها وثقافتها.`
+Puedes viajar solo con un conductor privado o elegir que te acompañe un guía local para conocer con más detalle la historia, la arquitectura y la cultura de los lugares que visites.`
     },
     highlights: {
       en: [
@@ -452,18 +345,18 @@ Vous pouvez voyager avec un chauffeur privé seulement, ou choisir un guide loca
         'Chauffeur seul, ou chauffeur et guide local',
         'Découvrir l’histoire romaine, le patrimoine marocain et une ville impériale en une journée'
       ],
-      ar: [
-        'رحلة يومية خاصة',
-        'سيارة مريحة',
-        'توقيت مرن',
-        'سائق فقط، أو سائق مع مرشد محلي',
-        'اكتشفوا التاريخ الروماني والتراث المغربي ومدينة إمبراطورية في يوم واحد'
+      es: [
+        'Excursión privada de un día',
+        'Vehículo cómodo',
+        'Horario flexible',
+        'Solo conductor o conductor con guía local',
+        'Historia romana, patrimonio marroquí y una ciudad imperial en un solo día'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Full Day (~8 Hours)', fr: 'Journée entière (~8h)', ar: 'يوم كامل (~8 ساعات)' },
-      departure: { en: '9:00 AM from Fez', fr: '9h00 de Fès', ar: '9:00 صباحاً من فاس' },
-      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', ar: 'سيارة خاصة (1 إلى 6 ركاب)' },
+      duration: { en: 'Full Day (~8 Hours)', fr: 'Journée entière (~8h)', es: 'Día completo (unas 8 horas)' },
+      departure: { en: '9:00 AM from Fez', fr: '9h00 de Fès', es: 'A las 9:00 desde Fez' },
+      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', es: 'Vehículo privado (de 1 a 6 pasajeros)' },
       priceMAD: 1100,
       priceEUR: 100,
     },
@@ -471,7 +364,7 @@ Vous pouvez voyager avec un chauffeur privé seulement, ou choisir un guide loca
     imageAlt: {
       en: 'Volubilis, Moulay Idriss and Meknes',
       fr: 'Volubilis, Moulay Idriss et Meknès',
-      ar: 'وليلي ومولاي إدريس ومكناس',
+      es: 'Volubilis, Moulay Idriss y Meknes',
     },
     actionType: 'book_tour',
     published: true,
@@ -482,17 +375,17 @@ Vous pouvez voyager avec un chauffeur privé seulement, ou choisir un guide loca
     title: {
       en: 'Ifrane & Middle Atlas Day Trip from Fez',
       fr: 'Excursion Ifrane et Moyen Atlas au départ de Fès',
-      ar: 'رحلة إفران والأطلس المتوسط انطلاقاً من فاس',
+      es: 'Excursión de un día a Ifrane y el Atlas Medio desde Fez',
     },
     subtitle: {
       en: 'Discover the mountains and landscapes beyond Fez.',
       fr: 'Découvrir les montagnes et les paysages au-delà de Fès.',
-      ar: 'اكتشفوا الجبال والمناظر خارج فاس.',
+      es: 'Descubre las montañas y los paisajes más allá de Fez.',
     },
     shortDescription: {
       en: 'Leave the historic streets of Fez behind and spend a day discovering a completely different side of Morocco in Ifrane and the Middle Atlas.',
       fr: 'Laissez les rues historiques de Fès et passez une journée à découvrir une autre facette du Maroc, à Ifrane et dans le Moyen Atlas.',
-      ar: 'اتركوا شوارع فاس التاريخية واقضوا يوماً في اكتشاف جانب مختلف من المغرب، في إفران والأطلس المتوسط.',
+      es: 'Deja atrás las calles históricas de Fez y dedica un día a descubrir una faceta muy distinta de Marruecos en Ifrane y el Atlas Medio.',
     },
     fullDescription: {
       en: `Leave the historic streets of Fez behind and spend a day discovering a completely different side of Morocco in Ifrane and the Middle Atlas.
@@ -517,17 +410,17 @@ Depuis Ifrane, le voyage continue vers le Moyen Atlas, où forêts, montagnes et
 L’expérience ne consiste pas seulement à atteindre un point précis. La route fait partie de la journée. Elle vous permet de voir une autre face du Maroc et des paysages très différents de ceux autour de Fès.
 
 Votre chauffeur privé reste flexible tout au long du trajet, pour que vous preniez votre temps et fassiez les arrêts qui conviennent. Si vous voulez en savoir plus sur la région, ses paysages et la vie locale, vous pouvez aussi voyager avec un guide local.`,
-      ar: `اتركوا شوارع فاس التاريخية واقضوا يوماً في اكتشاف جانب مختلف من المغرب، في إفران والأطلس المتوسط.
+      es: `Deja atrás las calles históricas de Fez y dedica un día a descubrir una faceta muy distinta de Marruecos en Ifrane y el Atlas Medio.
 
-يأخذكم الطريق تدريجياً من المدينة نحو الجبال، حيث تصبح المناظر أكثر خضرة وبرودة. من أول الأماكن إفران، المعروفة بعمارتها المميزة وشوارعها النظيفة ومساحاتها الخضراء وأجوائها الجبلية. تختلف المدينة كثيراً عن شوارع فاس التقليدية، فيكون الطريق تغييراً حقيقياً في المشهد.
+El trayecto te lleva poco a poco de la ciudad hacia las montañas, donde el paisaje se vuelve más verde y fresco. Uno de los primeros lugares que puedes descubrir es Ifrane, conocida por su arquitectura singular, sus calles limpias, sus espacios verdes y su ambiente de montaña. La ciudad es muy distinta de las calles tradicionales de Fez, por lo que la excursión supone un interesante cambio de escenario.
 
-في إفران يمكنكم التجول في البلدة والسير في مناطقها الوسطى ورؤية بعض معالمها، ومنها تمثال الأسد الحجري الشهير الذي أصبح أحد رموز المدينة.
+En Ifrane puedes recorrer la ciudad, pasear por sus zonas céntricas y ver algunos de sus lugares más conocidos, como la famosa estatua del león de piedra, que se ha convertido en uno de sus símbolos.
 
-من إفران تتواصل الرحلة نحو الأطلس المتوسط، حيث تصنع الغابات والجبال والريف مشهداً مختلفاً تماماً. حسب الموسم والطقس وحالة الطريق، قد تتاح توقفات للمناظر والصور ومشاوير قصيرة.
+Desde Ifrane, el recorrido continúa hacia el Atlas Medio, donde los bosques, las montañas y el campo crean un paisaje completamente diferente. Según la estación, el tiempo y el estado de las carreteras, puede haber ocasiones para parar a disfrutar de las vistas, hacer fotografías y dar pequeños paseos.
 
-التجربة ليست الوصول إلى نقطة بعينها فقط. الطريق نفسه جزء من اليوم، ويمنحكم رؤية جانب آخر من المغرب ومناظر مختلفة جداً عن تلك المحيطة بفاس.
+La experiencia no consiste solo en llegar a un lugar concreto. El propio trayecto forma parte del día y te permite conocer otra faceta de Marruecos y disfrutar de paisajes muy distintos a los de los alrededores de Fez.
 
-يبقى السائق الخاص مرناً طوال الرحلة، لتأخذوا وقتكم وتتوقفوا حيث يناسبكم. وإذا أردتم معرفة المزيد عن المنطقة ومناظرها والحياة المحلية، يمكنكم أيضاً السفر مع مرشد محلي.`
+Tu conductor privado mantiene la flexibilidad durante toda la excursión para que puedas disfrutar con calma de cada lugar y hacer las paradas que convengan. Si quieres saber más sobre la región, sus paisajes y la vida local, también puedes elegir viajar con un guía local.`
     },
     highlights: {
       en: [
@@ -544,18 +437,18 @@ Votre chauffeur privé reste flexible tout au long du trajet, pour que vous pren
         'Chauffeur seul, ou chauffeur et guide local',
         'Découvrir les montagnes et les paysages au-delà de Fès'
       ],
-      ar: [
-        'رحلة يومية خاصة',
-        'سيارة مريحة',
-        'توقفات مرنة',
-        'سائق فقط، أو سائق مع مرشد محلي',
-        'اكتشفوا الجبال والمناظر خارج فاس'
+      es: [
+        'Excursión privada de un día',
+        'Vehículo cómodo',
+        'Paradas flexibles',
+        'Solo conductor o conductor con guía local',
+        'Descubre las montañas y los paisajes más allá de Fez'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Full Day (~7-8 Hours)', fr: 'Journée (~7-8h)', ar: 'يوم كامل (~7-8 ساعات)' },
-      departure: { en: '9:00 AM from Fez', fr: '9h00 de Fès', ar: '9:00 صباحاً من فاس' },
-      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', ar: 'سيارة خاصة (1 إلى 6 ركاب)' },
+      duration: { en: 'Full Day (~7-8 Hours)', fr: 'Journée (~7-8h)', es: 'Día completo (unas 7-8 horas)' },
+      departure: { en: '9:00 AM from Fez', fr: '9h00 de Fès', es: 'A las 9:00 desde Fez' },
+      groupSize: { en: 'Private Vehicle (1 to 6 Passengers)', fr: 'Véhicule Privé (1 à 6 pers.)', es: 'Vehículo privado (de 1 a 6 pasajeros)' },
       priceMAD: 1100,
       priceEUR: 100,
     },
@@ -563,7 +456,7 @@ Votre chauffeur privé reste flexible tout au long du trajet, pour que vous pren
     imageAlt: {
       en: 'Ifrane and the Middle Atlas',
       fr: 'Ifrane et le Moyen Atlas',
-      ar: 'إفران والأطلس المتوسط',
+      es: 'Ifrane y el Atlas Medio',
     },
     actionType: 'book_tour',
     published: true,
@@ -574,17 +467,17 @@ Votre chauffeur privé reste flexible tout au long du trajet, pour que vous pren
     title: {
       en: 'Custom Private Day Trip from Fez',
       fr: 'Excursion Privée Sur Mesure au départ de Fès',
-      ar: 'رحلة خاصة ومخصصة حسب رغبتكم',
+      es: 'Excursión privada de un día a medida desde Fez',
     },
     subtitle: {
       en: 'Have Somewhere Specific in Mind? Design Your Own Day',
       fr: 'Une destination précise en tête ? Créez votre journée idéale',
-      ar: 'هل تود زيارة وجهة معينة؟ صمم برنامجك الخاص بكامل المرونة',
+      es: '¿Tienes un destino en mente? Diseña tu propio día',
     },
     shortDescription: {
       en: 'Have somewhere specific in mind? We can also organize a private day trip around your own interests.',
       fr: 'Vous avez une idée précise ? Nous pouvons aussi organiser une excursion privée autour de ce qui vous intéresse.',
-      ar: 'هل لديكم وجهة بعينها؟ يمكننا أيضاً تنظيم رحلة يومية خاصة حسب اهتماماتكم.',
+      es: '¿Tienes un destino concreto en mente? También podemos organizar una excursión privada de un día según tus intereses.',
     },
     fullDescription: {
       en: `Have somewhere specific in mind? We can also organize a private day trip around your own interests.
@@ -601,13 +494,13 @@ Dites-nous ce que vous souhaitez voir et nous vous aidons à composer un itinér
 Le chauffeur reste flexible toute la journée, pour que l’expérience ne ressemble pas à une excursion de groupe figée. Si vous préférez plus d’indépendance, vous pouvez voyager avec le chauffeur seulement. Si vous voulez des explications et un regard local, nous pouvons prévoir un chauffeur avec un guide.
 
 L’idée est simple : un véhicule confortable, un horaire souple et une journée conçue comme vous voulez découvrir le Maroc.`,
-      ar: `هل لديكم وجهة بعينها؟ يمكننا أيضاً تنظيم رحلة يومية خاصة حسب اهتماماتكم.
+      es: `¿Tienes un destino concreto en mente? También podemos organizar una excursión privada de un día según tus intereses.
 
-أخبرونا بما تودون رؤيته وسنساعدكم على إعداد مسار مريح انطلاقاً من فاس. تختارون الأماكن ووقت الانطلاق والمدة في كل محطة.
+Cuéntanos qué te gustaría ver y te ayudaremos a preparar un itinerario cómodo desde Fez. Puedes elegir los lugares que te interesen, la hora de salida y cuánto tiempo quieres dedicar a cada parada.
 
-يبقى السائق مرناً طوال اليوم، حتى لا تشبه التجربة جولة جماعية ثابتة. إذا فضلتم استقلالية أكبر، يمكن السفر مع السائق فقط. وإذا أردتم شروحات وانطباعاً محلياً، نرتب سائقاً مع مرشد.
+Nuestro conductor mantiene la flexibilidad durante todo el día para que la experiencia no se parezca a una excursión de grupo con un programa fijo. Si prefieres más independencia, puedes viajar solo con el conductor. Si quieres explicaciones y una perspectiva local durante la visita, podemos organizar un conductor junto con un guía local.
 
-الفكرة بسيطة: سيارة مريحة، وبرنامج مرن، ويوم مصمم بالطريقة التي تريدون بها اكتشاف المغرب.`
+La idea es sencilla: un vehículo cómodo, un horario flexible y un día diseñado según tu forma de descubrir Marruecos.`
     },
     highlights: {
       en: [
@@ -624,18 +517,18 @@ L’idée est simple : un véhicule confortable, un horaire souple et une journ�
         'Chauffeur seul, ou chauffeur et guide local',
         'Dites-nous ce que vous voulez découvrir'
       ],
-      ar: [
-        'رحلة خاصة',
-        'مسار مرن',
-        'سيارة مريحة',
-        'سائق فقط، أو سائق مع مرشد محلي',
-        'أخبرونا بما تودون اكتشافه'
+      es: [
+        'Excursión privada',
+        'Itinerario flexible',
+        'Vehículo cómodo',
+        'Solo conductor o conductor con guía local',
+        'Cuéntanos qué te gustaría descubrir'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Custom / Flexible', fr: 'Sur mesure / Flexible', ar: 'مخصص / مرن' },
-      departure: { en: 'Your Chosen Time & Location', fr: 'Heure et lieu de votre choix', ar: 'الوقت والمكان باختياركم' },
-      groupSize: { en: 'Private (1 to 7 Passengers)', fr: 'Privé (1 à 7 personnes)', ar: 'خاص (1 إلى 7 ركاب)' },
+      duration: { en: 'Custom / Flexible', fr: 'Sur mesure / Flexible', es: 'A medida / Flexible' },
+      departure: { en: 'Your Chosen Time & Location', fr: 'Heure et lieu de votre choix', es: 'Hora y lugar a tu elección' },
+      groupSize: { en: 'Private (1 to 7 Passengers)', fr: 'Privé (1 à 7 personnes)', es: 'Privado (de 1 a 7 pasajeros)' },
       priceMAD: 1200,
       priceEUR: 110,
     },
@@ -643,7 +536,7 @@ L’idée est simple : un véhicule confortable, un horaire souple et une journ�
     imageAlt: {
       en: 'Travelers taking a photo above a mountain town in Morocco',
       fr: 'Voyageurs photographiés au-dessus d’une ville de montagne au Maroc',
-      ar: 'مسافرون يلتقطون صورة فوق مدينة جبلية في المغرب',
+      es: 'Viajeros haciéndose una foto sobre una ciudad de montaña en Marruecos',
     },
     actionType: 'book_tour',
     published: true,
@@ -658,17 +551,17 @@ export const FOOD_TOURS_PILLARS: SectionPillar[] = [
     title: {
       en: 'Taste Fez Through Local Eyes',
       fr: 'Goûter Fès à travers des yeux locaux',
-      ar: 'تذوّقوا فاس بعيون أهلها',
+      es: 'Saborea Fez con quienes viven en ella',
     },
     subtitle: {
       en: 'Taste Fez Through Local Eyes — Not a Sit-Down Dinner, but an Alley Safari',
       fr: 'Goûtez Fès à travers des yeux locaux au fil des ruelles',
-      ar: 'تذوق أكلات فاس الشعبية في محلاتها الأصلية وأفرانها العتيقة',
+      es: 'Saborea Fez con una mirada local: no es una cena en un restaurante, sino una ruta por sus callejuelas',
     },
     shortDescription: {
       en: 'Walk the old Medina and taste what local shops are preparing that day. This is not one large sit-down meal.',
       fr: 'Pour comprendre Fès, il faut la goûter ! Goûtez Harcha, Baghrir, Chebakia, Sfenj, Bissara, fromages locaux et thé à la menthe dans les adresses secrètes des Fassis.',
-      ar: 'لفهم فاس الحقيقية، يجب أن تتذوق طعامها الشعبي. مسار ممتع لتذوق الحرشة، البغرير، الشباكية، السفنج المقرمش، البيصارة الساخنة، أجبان الجبل والشاي بالنعناع.',
+      es: 'Recorre la antigua medina y prueba lo que preparan las tiendas locales ese día. No se trata de sentarse a tomar una única comida abundante.',
     },
     fullDescription: {
       en: `Taste Fez Through Local Eyes. To understand Fez, you should not only walk through its streets. You should taste them.
@@ -681,7 +574,15 @@ Depending on the day, season and availability, tastings can include: Harcha, Bag
 
 This is a private, flexible food experience just for you and your group. Come hungry — leave with a taste of Fez!`,
       fr: `Une aventure culinaire unique : marchez dans les ruelles animées et arrêtez-vous dans les échoppes traditionnelles pour savourer une dizaine de spécialités locales authentiques.`,
-      ar: `جولة لا تشبه موائد المطاعم العادية؛ بل هي رحلة ميدانية بين الأفران الشعبية ودكاكين الحومة العتيقة لتذوق أشهر المأكولات الفاسية الطازجة والتعرف على قصصها ومكوناتها.`
+      es: `Saborea Fez con quienes viven en ella. Para entender Fez, no basta con recorrer sus calles: también hay que probar sus sabores.
+
+La comida forma parte de la vida cotidiana de Fez. Está en las pequeñas tiendas, las panaderías, los puestos del mercado, los establecimientos tradicionales y las cocinas familiares. Es el olor del pan recién salido del horno, el sonido de quienes piden el desayuno, los colores de las especias, un vaso de té marroquí compartido durante una conversación y los pequeños bocados que se disfrutan a lo largo del día.
+
+Nuestra ruta de degustación te acerca a esta faceta cotidiana de la medina. No es una visita en la que te sientas a tomar una gran comida marroquí. Recorremos la antigua medina y hacemos paradas para descubrir y probar platos, tentempiés, dulces y productos locales mientras aprendemos qué relación tienen con la vida en Fez.
+
+Según el día, la estación y la disponibilidad, las degustaciones pueden incluir Harcha, Baghrir, Chebakia, quesos locales dulces y salados, té marroquí a la menta, nueces, zumos frescos de temporada, Sfenj calientes, una sabrosa sopa Bissara de habas, Zamgawiya, pescado frito, hígado con chermoula y tortitas de patata Maakouda.
+
+Es una experiencia gastronómica privada y flexible, solo para ti y tu grupo. ¡Ven con hambre y llévate el sabor de Fez!`
     },
     highlights: {
       en: [
@@ -698,25 +599,25 @@ This is a private, flexible food experience just for you and your group. Come hu
         'Apprenez les secrets du rituel du thé à la menthe marocain',
         'Visite privée et pauses conviviales avec les commerçants locaux'
       ],
-      ar: [
-        'تذوق ما بين 8 إلى 10 أكلات شعبية فاسية طازجة ومخبوزات تقليدية',
-        'تذوق الحرشة الساخنة، البغرير، السفنج المقرمش والمعقودة الفاسية',
-        'صحن بيصارة مغربية ساخنة مع زيت الزيتون البكر والكمون والخبز البلدي',
-        'أسرار جلسة الشاي المغربي بالنعناع وتقاليد الضيافة وحسن الاستقبال',
-        'جولة خاصة تتيح لكم التوقف والتحدث مع أصحاب الدكاكين والأفران'
+      es: [
+        'Prueba entre 8 y 10 o más especialidades locales de comida callejera, tentempiés y dulces tradicionales',
+        'Saborea Harcha caliente, Baghrir con sus pequeños agujeros, Sfenj y Maakouda doradas',
+        'Disfruta de una Bissara de habas bien caliente con aceite de oliva, comino y pan fresco',
+        'Conoce el arte, la hospitalidad y el ritual del té marroquí a la menta',
+        'Paseo privado a vuestro ritmo, con paradas para conversar con panaderos y cocineros locales'
       ]
     },
     practicalInfo: {
-      duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', ar: '3 إلى 3.5 ساعات' },
-      departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', ar: 'باب بوجلود أو باب الرصيف' },
-      groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (Dégustations incluses)', ar: 'خاص (التذوق متضمن بالكامل)' },
+      duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', es: 'De 3 a 3 horas y media' },
+      departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', es: 'Bab Boujloud o Bab Rcif' },
+      groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (Dégustations incluses)', es: 'Privado (degustaciones incluidas)' },
     },
     image: '/images/food-tasting-walk/street-sandwich.webp',
     kind: 'article',
     imageAlt: {
       en: 'Fresh Moroccan pastries and street food tastings in Fez',
       fr: 'Pâtisseries marocaines et dégustations culinaires à Fès',
-      ar: 'أكلات شعبية وحلويات فاسية طازجة في جولة التذوق',
+      es: 'Dulces marroquíes recién hechos y degustaciones de comida callejera en Fez',
     },
     actionType: 'explore',
     published: true,
@@ -727,17 +628,17 @@ This is a private, flexible food experience just for you and your group. Come hu
     title: {
       en: 'Discover Traditional Food of Fez',
       fr: 'Découvrir la Cuisine Traditionnelle Fassie',
-      ar: 'المطبخ الفاسي الأصيل وتاريخ الطهي الإمبراطوري',
+      es: 'Descubre la cocina tradicional de Fez',
     },
     subtitle: {
       en: 'Pastilla, Tagines, Couscous & Royal Gastronomy',
       fr: 'Pastilla, tajines mijotés, couscous et gastronomie royale',
-      ar: 'البسطيلة الملكية، الطواجن الفاسية العريقة، والكسكس بالسبع خضار',
+      es: 'Pastilla, tajines, cuscús y gastronomía real',
     },
     shortDescription: {
       en: 'Fez is considered the gastronomic capital of Morocco. Discover why Fassi cuisine is renowned for its refined balance of sweet and savoury, fragrant Ras el Hanout, and centuries of culinary art.',
       fr: 'Capitale gastronomique du Maroc, Fès marie subtilement le sucré et le salé avec sa célèbre Pastilla au pigeon, ses tajines aux pruneaux et ses mélanges d’épices.',
-      ar: 'تُعتبر فاس عاصمة الطبخ المغربي بلا منازع. تعرف على أسرار المزيج المتناغم بين الحلو والمالح في البسطيلة الفاسية، وطواجن اللحم بالبرقوق، وتوابل رأس الحانوت النادرة.',
+      es: 'Fez está considerada la capital gastronómica de Marruecos. Descubre por qué su cocina es famosa por el delicado equilibrio entre dulce y salado, el aromático Ras el Hanout y siglos de tradición culinaria.',
     },
     fullDescription: {
       en: `Fez has a particularly rich culinary heritage. Its food traditions have been influenced by the city's long history and by diverse cultures, including Arab-Andalusian, Jewish and Amazigh influences.
@@ -746,7 +647,11 @@ Fassi gastronomy is famous for its intricate balance of sweet and savoury flavou
 
 From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to fragrant Couscous with seven vegetables and hearty Tfaya, you will understand why recipes passed down through generations of Fassi families are celebrated worldwide.`,
       fr: `Héritière d'un métissage arabo-andalou raffiné, la gastronomie fassie est célèbre pour ses plats emblématiques comme la Pastilla croustillante, le tajine mrouzia au miel et amandes, et le couscous traditionnel.`,
-      ar: `يمتلك المطبخ الفاسي إرثاً حضارياً عريقاً تأثر بالثقافة الأندلسية واليهودية والأمازيغية. تميزت فاس بابتكار البسطيلة الفاسية الشهيرة، وطاجين المروزية المعسل، وأطباق الكسكس الملكي المطهوة على نار هادئة.`
+      es: `Fez posee un patrimonio culinario especialmente rico. Sus tradiciones gastronómicas reflejan la larga historia de la ciudad y las aportaciones de distintas culturas, entre ellas la árabe-andalusí, la judía y la amazigh.
+
+La gastronomía de Fez es famosa por su delicado equilibrio entre sabores dulces y salados, sus tajines cocinados a fuego lento y sus finos dulces. Aquí se perfeccionó la legendaria Pastilla: capas de paloma o pollo envueltas en finísimas hojas de masa warqa con almendras trituradas, canela y azúcar glas.
+
+Desde el tajín de cordero cocinado lentamente con ciruelas pasas caramelizadas y almendras tostadas hasta el aromático cuscús de siete verduras y la sabrosa Tfaya, descubrirás por qué las recetas transmitidas durante generaciones por las familias de Fez son apreciadas en todo el mundo.`
     },
     highlights: {
       en: [
@@ -763,25 +668,25 @@ From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to f
         'Calendrier des repas familiaux et traditions festives',
         'Bonnes adresses de tables d’hôtes et riads authentiques'
       ],
-      ar: [
-        'تاريخ وسر تحضير البسطيلة الفاسية الملكية بطبقات الورقة المقرمشة',
-        'طرق الطهي البطيء في الطواجن الطينية التقليدية مثل طاجين المروزية',
-        'التعرف على خلطة بهارات "رأس الحانوت" الفاسية المكونة من عشرات الأعشاب',
-        'عادات المائدة المغربية في الأعياد والمناسبات العائلية الكبرى',
-        'توصيات لأفضل مطاعم الرياضات العائلية التي تطبخ على الطريقة المنزلية'
+      es: [
+        'Conoce la historia y la preparación de la auténtica Pastilla real de Fez',
+        'Descubre las técnicas de cocción lenta en tajines tradicionales de barro, como el Tajine Mrouzia',
+        'Conoce las más de 30 especias que componen el auténtico Ras el Hanout de Fez',
+        'Explora el calendario estacional de comidas familiares y celebraciones marroquíes',
+        'Recomendaciones de riads familiares y mesas locales con auténtica cocina casera'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Culinary Masterclass & Lunch', fr: 'Masterclass & Déjeuner', ar: 'درس طهي وغداء فاسي' },
-      departure: { en: 'Medina Riad Kitchen', fr: 'Cuisine de Riad', ar: 'مطبخ رياض تقليدي' },
-      groupSize: { en: 'Private Session (2 to 8 Guests)', fr: 'Session Privée (2 à 8 pers.)', ar: 'جلسة خاصة (2 إلى 8 أفراد)' },
+      duration: { en: 'Culinary Masterclass & Lunch', fr: 'Masterclass & Déjeuner', es: 'Clase de cocina y comida' },
+      departure: { en: 'Medina Riad Kitchen', fr: 'Cuisine de Riad', es: 'Cocina de un riad de la medina' },
+      groupSize: { en: 'Private Session (2 to 8 Guests)', fr: 'Session Privée (2 à 8 pers.)', es: 'Sesión privada (de 2 a 8 personas)' },
     },
     image: '/images/food-traditional-fassi/pastilla.webp',
     kind: 'article',
     imageAlt: {
       en: 'Traditional Moroccan tagine with almonds and prunes',
       fr: 'Tajine marocain traditionnel aux pruneaux et amandes',
-      ar: 'طاجين مغربي فاسي أصيل بالبرقوق المعسل واللوز',
+      es: 'Tajín tradicional marroquí con almendras y ciruelas pasas',
     },
     actionType: 'explore',
     published: true,
@@ -792,17 +697,17 @@ From slow-simmered lamb tagine with caramelized prunes and roasted almonds, to f
     title: {
       en: 'Food Culture & Local Life in Fez',
       fr: 'Culture Culinaire & Vie Quotidienne à Fès',
-      ar: 'ثقافة الطعام والحياة اليومية في حومات فاس',
+      es: 'Cultura gastronómica y vida local en Fez',
     },
     subtitle: {
       en: 'Neighborhood Ferran Ovens, Communal Traditions & Tea Hospitality',
       fr: 'Fours de quartier traditionnels, rituels familiaux et hospitalité',
-      ar: 'أفران الحومة الشعبية، المخبوزات اليومية وثقافة الضيافة بالشاي',
+      es: 'Hornos Ferran de barrio, tradiciones compartidas y hospitalidad alrededor del té',
     },
     shortDescription: {
       en: 'Food in Fez is deeply social. Discover how neighborhood communal wood-fired ovens (Ferran) operate, how families bake their daily bread, and how Moroccan mint tea connects friends and strangers alike.',
       fr: 'La nourriture est au cœur du lien social à Fès. Découvrez le rôle central du four communal à bois (Ferran), les rituels du pain quotidien et l’art du thé à la menthe.',
-      ar: 'الطعام في فاس رابط اجتماعي وثيق. تعرف على دور "الفران البلدي" في الحومة، وكيف تعجن الأسر خبزها اليومي، وأسرار كرم الضيافة عند تقديم صينية الشاي بالنعناع.',
+      es: 'La comida en Fez tiene un profundo carácter social. Descubre cómo funcionan los hornos comunitarios de leña del barrio, llamados Ferran, cómo hornean las familias su pan diario y cómo el té marroquí a la menta reúne a amigos y desconocidos.',
     },
     fullDescription: {
       en: `Food Is Part of Everyday Life. In the Medina, food is not simply something you eat at a restaurant table; it is woven into the neighborhood architecture and social rituals.
@@ -811,7 +716,11 @@ One of the most fascinating aspects is the neighborhood Ferran (communal wood-fi
 
 During our cultural food discovery, we step inside these active neighborhood ovens, visit traditional spice shops, understand the communal values of Moroccan dining, and experience genuine hospitality.`,
       fr: `Poussez les portes du Ferran de quartier, où le boulanger cuit au feu de bois les pains façonnés chaque matin par les familles de la médina. Un témoignage vivant de solidarité et de tradition.`,
-      ar: `ادخل إلى قلب "الفران البلدي" الذي ما زال يجمع أهل الحومة منذ قرون؛ حيث يحمل الجيران خبزهم المعجون في البيوت ليطهى على حطب الزيتون والأرز بنكهة لا تُنسى، مع فهم عادات المشاركة في المائدة الواحدة.`
+      es: `La comida forma parte de la vida cotidiana. En la medina no es simplemente algo que se toma sentado en un restaurante: está integrada en la arquitectura del barrio y en sus costumbres sociales.
+
+Uno de sus aspectos más fascinantes es el Ferran, el horno comunitario de leña del barrio. Durante siglos, las familias han preparado la masa en casa y han enviado a los niños con los panes sobre tablas de madera al panadero local. Este identifica el pan de cada familia con un corte propio antes de hornearlo sobre brasas aromáticas de cedro u olivo.
+
+En nuestro recorrido por la cultura gastronómica entramos en estos hornos de barrio en funcionamiento, visitamos tiendas tradicionales de especias, conocemos el valor de compartir la mesa en Marruecos y vivimos su auténtica hospitalidad.`
     },
     highlights: {
       en: [
@@ -828,25 +737,25 @@ During our cultural food discovery, we step inside these active neighborhood ove
         'Rituels festifs et saisonniers (Ramadan, récolte des olives)',
         'Dégustation de thé parfumé aux herbes aromatiques de saison'
       ],
-      ar: [
-        'زيارة فران الحومة الشعبي المشتغل بالحطب التقليدي',
-        'مشاهدة الخباز وهو يصفف أطباق الخبز الخشبي بمجرفته الطويلة بحرفية',
-        'التعرف على آداب المائدة المشتركة في الثقافة المغربية',
-        'تقاليد المواسم الدينية وموسم عصر زيت الزيتون في خريف فاس',
-        'شرب كؤوس الشاي المنعنع المحضر بأعشاب الحديقة العطرية'
+      es: [
+        'Visita un horno comunitario de leña del barrio en funcionamiento (Ferran)',
+        'Observa cómo los panaderos hornean decenas de panes familiares con palas tradicionales de madera',
+        'Conoce las normas de cortesía y el significado social de compartir un tajín',
+        'Descubre las tradiciones del Ramadán, el Eid y la temporada de recogida de aceitunas',
+        'Saborea té marroquí recién preparado con hierbas frescas de montaña'
       ]
     },
     practicalInfo: {
-      duration: { en: '2.5 Hours', fr: '2h30', ar: 'ساعتان ونصف' },
-      departure: { en: 'Bab Rcif Medina Entrance', fr: 'Entrée Bab Rcif', ar: 'باب الرصيف' },
-      groupSize: { en: 'Small Private Group', fr: 'Petit groupe privé', ar: 'مجموعة خاصة صغيرة' },
+      duration: { en: '2.5 Hours', fr: '2h30', es: '2 horas y media' },
+      departure: { en: 'Bab Rcif Medina Entrance', fr: 'Entrée Bab Rcif', es: 'Entrada de la medina por Bab Rcif' },
+      groupSize: { en: 'Small Private Group', fr: 'Petit groupe privé', es: 'Grupo privado reducido' },
     },
     image: '/images/food-culture-life/tea-tray.webp',
     kind: 'article',
     imageAlt: {
       en: 'Communal bread oven and daily food life in Fez',
       fr: 'Four à pain de quartier et vie quotidienne à Fès',
-      ar: 'فرن الحومة الشعبي والحياة اليومية في فاس البالي',
+      es: 'Horno comunitario de pan y vida gastronómica cotidiana en Fez',
     },
     actionType: 'explore',
     published: true,
@@ -857,17 +766,17 @@ During our cultural food discovery, we step inside these active neighborhood ove
     title: {
       en: 'Local Markets & Souks of Fez',
       fr: 'Marchés Locaux & Souks Gourmands de Fès',
-      ar: 'أسواق الأغذية والتوابل الشعبية في فاس',
+      es: 'Mercados locales y zocos de Fez',
     },
     subtitle: {
       en: 'Spices, Olives, Fresh Produce & Honey Markets of the Medina',
       fr: 'Épices, olives marinées, fruits frais et marché du miel',
-      ar: 'سوق العطارين، دكاكين الزيتون، الخضر الطازجة وسوق العسل الحر',
+      es: 'Mercados de especias, aceitunas, productos frescos y miel de la medina',
     },
     shortDescription: {
       en: 'The souks of Fez are the pantry of the city. Walk through Souk el-Attarine, taste marinated Atlas olives, discover rare Moroccan spices, pure mountain honey, and fresh culinary herbs.',
       fr: 'Parcourez les souks alimentaires animés : pyramides de curcuma et safran, olives marinées aux herbes, dattes du Sahara et miels de montagne.',
-      ar: 'جولة بين ألوان وروائح أسواق فاس العتيقة: تلال التوابل الفواحة، براميل الزيتون المغربي المتبل بالأعشاب، التمور الصحراوية وعسل الجبال الحر.'
+      es: 'Los zocos de Fez son la despensa de la ciudad. Recorre Souk el-Attarine, prueba aceitunas aliñadas del Atlas y descubre especias marroquíes poco comunes, miel pura de montaña y hierbas aromáticas frescas.'
     },
     fullDescription: {
       en: `The souks of Fez are not just tourist attractions; they are the living pantry where local families buy their fresh ingredients every morning.
@@ -876,7 +785,11 @@ Walk through Souk el-Attarine, famous since the Middle Ages for spices, incense,
 
 Your local guide will help you understand local produce, compare quality, and interact respectfully with stallholders.`,
       fr: `Découvrez les étals vibrants du Souk el-Attarine, le marché aux olives de Bab Rcif et apprenez à reconnaître le véritable safran de Taliouine et l'huile d'argan pure.`,
-      ar: `جولة في سوق العطارين التاريخي، وسوق الزيتون بباب الرصيف؛ حيث تتعلم التمييز بين الزعفران الحر المغشوش والأصلي، وأجود أنواع زيت الأركان وعسل الدغموس والسدر.`
+      es: `Los zocos de Fez no son solo atractivos turísticos: son la despensa viva donde las familias locales compran ingredientes frescos cada mañana.
+
+Recorre Souk el-Attarine, famoso desde la Edad Media por sus especias, incienso, remedios naturales y perfumes. Prueba aceitunas aliñadas con ajo, harissa y tomillo silvestre de grandes barriles de madera. Descubre el aromático azafrán de Taliouine, el aceite de argán puro, los capullos de rosa secos y las mieles de montaña de tomillo, lavanda y eucalipto.
+
+Tu guía local te ayudará a conocer los productos de la zona, comparar su calidad y conversar con respeto con los vendedores.`
     },
     highlights: {
       en: [
@@ -893,25 +806,25 @@ Your local guide will help you understand local produce, compare quality, and in
         'Dégustation de miels rares de thym de montagne et fleur d’oranger',
         'Échanges chaleureux avec les marchands locaux'
       ],
-      ar: [
-        'استكشاف سوق العطارين ومخازن التوابل والأعشاب الطبية التاريخية',
-        'تذوق أصناف الزيتون المغربي المتبل بالحار والزعتر والليمون',
-        'إرشادات لمعرفة الزعفران التالويني الحر وزيت الأركان الأصلي',
-        'تذوق أنواع عسل النحل الجبلي الطبيعي (الزعتر، الدغموس، والليمون)',
-        'حوارات لطيفة مع تجار الأسواق القديمة في أجواء ترحيبية صادقة'
+      es: [
+        'Explora Souk el-Attarine, un mercado centenario de especias poco comunes y productos botánicos naturales',
+        'Prueba distintas variedades de aceitunas marroquíes aliñadas directamente de los vendedores',
+        'Aprende a reconocer el auténtico azafrán de Taliouine y el aceite de argán culinario',
+        'Descubre degustaciones de mieles locales de tomillo de montaña, azahar y eucalipto',
+        'Conversa con los amables comerciantes del mercado con la ayuda de tu guía como intérprete'
       ]
     },
     practicalInfo: {
-      duration: { en: '2.5 to 3 Hours', fr: '2h30 à 3h', ar: 'ساعتان ونصف إلى 3 ساعات' },
-      departure: { en: 'Bab Boujloud Gate', fr: 'Porte Bab Boujloud', ar: 'باب بوجلود' },
-      groupSize: { en: 'Private Market Walk', fr: 'Balade Privée au Marché', ar: 'جولة خاصة في الأسواق' },
+      duration: { en: '2.5 to 3 Hours', fr: '2h30 à 3h', es: 'De 2 horas y media a 3 horas' },
+      departure: { en: 'Bab Boujloud Gate', fr: 'Porte Bab Boujloud', es: 'Puerta Bab Boujloud' },
+      groupSize: { en: 'Private Market Walk', fr: 'Balade Privée au Marché', es: 'Paseo privado por el mercado' },
     },
     image: '/images/food-markets-souks/spice-tins.webp',
     kind: 'article',
     imageAlt: {
       en: 'Vibrant spice souk and colorful produce in Fez',
       fr: 'Souk des épices coloré et produits frais à Fès',
-      ar: 'سوق التوابل والأعشاب بألوانه وروائحه الزكية في فاس',
+      es: 'Animado zoco de especias y productos de vivos colores en Fez',
     },
     actionType: 'explore',
     published: true,
@@ -923,17 +836,17 @@ Your local guide will help you understand local produce, compare quality, and in
     title: {
       en: 'Private Food Tasting Walk',
       fr: 'Balade privée de dégustation',
-      ar: 'جولة تذوق خاصة',
+      es: 'Ruta privada de degustación a pie',
     },
     subtitle: {
       en: 'Taste Fez through local eyes',
       fr: 'Goûter Fès à travers des yeux locaux',
-      ar: 'تذوّقوا فاس بعيون أهلها',
+      es: 'Saborea Fez con quienes viven en ella',
     },
     shortDescription: {
       en: 'A private walk through the old Medina, with tastings of what local shops are preparing that day.',
       fr: 'Une balade privée dans la vieille médina, avec les dégustations de ce que les boutiques préparent ce jour-là.',
-      ar: 'جولة خاصة في المدينة العتيقة، مع تذوق ما تحضّره الدكاكين في ذلك اليوم.',
+      es: 'Un paseo privado por la antigua medina, con degustaciones de lo que preparan las tiendas locales ese día.',
     },
     fullDescription: {
       en: `To understand Fez, you should not only walk through its streets. You should taste them.
@@ -950,13 +863,13 @@ La balade vous emmène dans le quotidien de la médina. Ce n’est pas une visit
 La sélection n’est pas fixe. La cuisine est de saison, et les boutiques ne préparent pas toujours la même chose. C’est une partie de l’expérience.
 
 La balade est privée, pour vous et votre groupe. On peut prendre le temps, photographier, parler avec les vendeurs et rester plus longtemps là où cela vous intéresse.`,
-      ar: `لفهم فاس، لا يكفي المشي في أزقتها. يجب تذوّقها.
+      es: `Para entender Fez, no basta con recorrer sus calles: también hay que probar sus sabores.
 
-تأخذكم الجولة إلى الجانب اليومي من المدينة العتيقة. ليست جلسة لوجبة كبيرة واحدة. نمشي في المدينة ونتوقف لتذوّق الأكلات والحلويات والمنتجات المحلية، ولفهم صلتها بحياة فاس.
+Nuestra ruta de degustación te acerca a la vida cotidiana de la medina. No es una visita en la que te sientas a tomar una gran comida marroquí. Recorremos la antigua medina y hacemos paradas para probar platos, tentempiés, dulces y productos locales, y conocer qué relación tienen con la vida en Fez.
 
-الاختيار ليس ثابتاً. الطعام موسمي، والدكاكين لا تحضّر الشيء نفسه كل يوم. هذا جزء من التجربة.
+La selección concreta no es fija. La comida depende de la temporada y las tiendas locales no siempre preparan lo mismo cada día. Eso forma parte de la experiencia.
 
-الجولة خاصة بكم وبمجموعتكم. يمكن أخذ الوقت والتقاط الصور والحديث مع البائعين والبقاء أطول حيث يهمكم.`
+Es un paseo privado para ti y tu grupo. Podemos ir con calma, parar a hacer fotografías, conversar con los vendedores y quedarnos más tiempo donde os interese. No hace falta ir con prisas de una degustación a otra.`
     },
     highlights: {
       en: [
@@ -973,18 +886,18 @@ La balade est privée, pour vous et votre groupe. On peut prendre le temps, phot
         'Le temps de poser des questions, photographier et parler avec les vendeurs',
         'Pas de course d’une dégustation à l’autre'
       ],
-      ar: [
-        'جولة خاصة بمجموعتكم',
-        'التذوق يعتمد على اليوم والموسم وما تحضّره الدكاكين',
-        'حلو ومالح وشاي وتخصصات يومية',
-        'وقت للسؤال والصور والحديث مع البائعين',
-        'من دون استعجال بين التذوّقات'
+      es: [
+        'Paseo privado para vuestro grupo',
+        'Las degustaciones dependen del día, la temporada y lo que preparen las tiendas locales',
+        'Sabores dulces y salados, té y especialidades del día a día',
+        'Tiempo para preguntar, hacer fotografías y conversar con los vendedores',
+        'Sin prisas de una degustación a otra'
       ]
     },
     practicalInfo: {
-      duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', ar: '3 إلى 3.5 ساعات' },
-      departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', ar: 'باب بوجلود أو باب الرصيف' },
-      groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (dégustations incluses)', ar: 'خاص (التذوق متضمن)' },
+      duration: { en: '3 to 3.5 Hours', fr: '3 à 3h30', es: 'De 3 a 3 horas y media' },
+      departure: { en: 'Bab Boujloud or Bab Rcif', fr: 'Bab Boujloud ou Bab Rcif', es: 'Bab Boujloud o Bab Rcif' },
+      groupSize: { en: 'Private (Tastings Included)', fr: 'Privé (dégustations incluses)', es: 'Privado (degustaciones incluidas)' },
       priceMAD: 550,
       priceEUR: 50,
     },
@@ -992,7 +905,7 @@ La balade est privée, pour vous et votre groupe. On peut prendre le temps, phot
     imageAlt: {
       en: 'A covered lane in the Fez Medina',
       fr: 'Une ruelle couverte de la médina de Fès',
-      ar: 'زقاق مسقوف في مدينة فاس',
+      es: 'Una callejuela cubierta de la medina de Fez',
     },
     actionType: 'book_tour',
     published: true,
@@ -1007,17 +920,17 @@ export const TRAVEL_TIPS_PILLARS: SectionPillar[] = [
     title: {
       en: 'Planning Your Visit to Fez',
       fr: 'Planifier Votre Séjour à Fès',
-      ar: 'دليل التخطيط لزيارة فاس',
+      es: 'Planifica tu visita a Fez',
     },
     subtitle: {
       en: 'Best Seasons, Ideal Duration, Neighborhoods & Weather',
       fr: 'Meilleures saisons, durée idéale, météo et quartiers',
-      ar: 'أفضل أوقات الزيارة، المدة المقترحة، الطقس واختيار الأحياء',
+      es: 'Mejores épocas, duración ideal, barrios y clima',
     },
     shortDescription: {
       en: 'Make the most of your journey to Fez. Learn why spring and autumn are the ideal travel months, how many days you need (2 to 4 days), and where to stay between authentic Riads and modern hotels.',
       fr: 'Conseils pour réussir votre voyage : printemps et automne privilégiés, durée idéale de 2 à 4 jours, et choix entre Riad traditionnel et hôtel moderne.',
-      ar: 'كل ما تحتاج لمعرفته قبل السفر: لماذا يعتبر الربيع والخريف أفضل الفصول، المدة المثالية (2 إلى 4 أيام)، والفرق بين الإقامة في رياض عتيق أو فندق حديث.',
+      es: 'Aprovecha al máximo tu viaje a Fez. Descubre por qué la primavera y el otoño son las mejores épocas, cuántos días necesitas (de 2 a 4) y dónde alojarte, entre riads tradicionales y hoteles modernos.',
     },
     fullDescription: {
       en: `Planning Your Visit to Fez. A few simple preparations can make your stay in Fez much more enjoyable and relaxing.
@@ -1028,7 +941,13 @@ How Long to Stay: Two to three days allows you to discover the main areas of the
 
 Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authentic historical atmosphere with interior courtyards and tiled fountains. Alternatively, the Ville Nouvelle offers modern hotels with car access right to the door.`,
       fr: `Privilégiez le printemps et l'automne pour une météo clémente. Prévoyez 3 jours pour la médina et 1 à 2 jours supplémentaires pour les excursions vers Chefchaouen et Volubilis.`,
-      ar: `يُفضل زيارة فاس في فصلي الربيع والخريف حيث الطقس معتدل ومثالي للمشي في الدروب. يُنصح بقضاء 3 أيام لاستكشاف المدينة، وإضافة يومين في حال الرغبة في زيارة شفشاون ووليلي.`
+      es: `Planifica tu visita a Fez. Unos preparativos sencillos pueden hacer que tu estancia sea mucho más agradable y relajada.
+
+Cuándo viajar: la primavera (de marzo a mayo) y el otoño (de septiembre a noviembre) ofrecen temperaturas agradables durante el día y noches suaves. Son las épocas más cómodas para recorrer la medina a pie. El verano puede ser bastante caluroso y el invierno trae días más frescos y noches frías.
+
+Cuánto tiempo quedarse: dos o tres días permiten descubrir las principales zonas de la antigua medina, visitar los monumentos históricos más importantes, disfrutar de una experiencia de degustación y contemplar las vistas desde los miradores. Si quieres añadir excursiones a Chefchaouen o Volubilis, lo ideal son cuatro o cinco días.
+
+Dónde alojarse: un riad tradicional en Fes el-Bali ofrece un ambiente histórico auténtico, con patios interiores y fuentes revestidas de azulejos. Como alternativa, la Ville Nouvelle cuenta con hoteles modernos a los que se puede llegar en coche hasta la puerta.`
     },
     highlights: {
       en: [
@@ -1045,25 +964,25 @@ Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authen
         'Dans la valise : vêtements légers et pudiques, chaussures confortables',
         'Accès aéroport : Aéroport Fès-Saïss (FEZ) situé à seulement 25 min'
       ],
-      ar: [
-        'أفضل أوقات السفر: فترتا الربيع (مارس-مايو) والخريف المعتدل (سبتمبر-نوفمبر)',
-        'المدة الموصى بها: 2 إلى 3 أيام للمدينة العتيقة، و4 إلى 5 أيام مع الرحلات الخارجية',
-        'الإقامة: سحر الرياضات التاريخية داخل الدروب أو فنادق المدينة الجديدة بسهولة المواصلات',
-        'حقيبة السفر: ملابس خفيفة ومريحة ومحترمة، وحذاء مشي متين ومريح',
-        'المطار: مطار فاس سايس الدولي (FEZ) يقع على بعد 25 دقيقة فقط من المدينة'
+      es: [
+        'Mejores épocas: primavera agradable (marzo–mayo) y otoño suave (septiembre–noviembre)',
+        'Estancia recomendada: 2–3 días para la medina y 4–5 días si incluyes excursiones',
+        'Riad u hotel: encanto histórico en zona peatonal o alojamiento moderno con acceso en coche',
+        'Qué llevar: ropa ligera por capas, protección solar y calzado resistente para caminar',
+        'Acceso al aeropuerto: Fez-Saïss (FEZ), a tan solo 25 minutos'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Travel Guide', fr: 'Guide Pratique', ar: 'دليل السفر' },
-      departure: { en: 'Fez Destination Guide', fr: 'Guide Destination Fès', ar: 'دليل فاس السياحي' },
-      groupSize: { en: 'Free Local Knowledge', fr: 'Conseils Gratuits', ar: 'معلومات محلية مجانية' },
+      duration: { en: 'Travel Guide', fr: 'Guide Pratique', es: 'Guía de viaje' },
+      departure: { en: 'Fez Destination Guide', fr: 'Guide Destination Fès', es: 'Guía de Fez como destino' },
+      groupSize: { en: 'Free Local Knowledge', fr: 'Conseils Gratuits', es: 'Información local gratuita' },
     },
     image: '/images/tips-plan-trip/medina-view.webp',
     kind: 'article',
     imageAlt: {
       en: 'Panoramic view over the rooftops of Fez during sunset',
       fr: 'Vue panoramique sur les toits de Fès au coucher du soleil',
-      ar: 'منظر بانورامي بديع لمدينة فاس عند غروب الشمس',
+      es: 'Vista panorámica de los tejados de Fez al atardecer',
     },
     actionType: 'explore',
     published: true,
@@ -1074,17 +993,17 @@ Where to Stay: Staying inside a traditional Riad in Fes el-Bali offers an authen
     title: {
       en: 'Getting Around Fez',
       fr: 'Se Déplacer à Fès : Rues, Portes & Taxis',
-      ar: 'المواصلات والتنقل في فاس (المشي، الأبواب، والتاكسي الأحمر)',
+      es: 'Cómo moverse por Fez',
     },
     subtitle: {
       en: 'Pedestrian Medina, Historic Gates, Red Petit Taxis & City Access',
       fr: 'Médina piétonne, portes principales, petits taxis rouges et trajets',
-      ar: 'المدينة الخالية من السيارات، الأبواب الرئيسية، وطريقة ركوب التاكسي الصغير',
+      es: 'Medina peatonal, puertas históricas, pequeños taxis rojos y accesos a la ciudad',
     },
     shortDescription: {
       en: 'Getting around Fez is unique. The Old Medina is completely pedestrian with narrow lanes. Outside the walls, red Petit Taxis are easy and cheap (10–20 MAD). Learn how to navigate with ease.',
       fr: 'La Médina est 100% piétonne. À l’extérieur des remparts, les petits taxis rouges sont très pratiques et économiques (10 à 20 MAD la course en ville).',
-      ar: 'التنقل في فاس مميز جداً: فاس البالي مخصصة بالكامل للمشاة دون سيارات، وخارج الأسوار تتوافر سيارات التاكسي الأحمر الصغيرة بأسعار مناسبة جداً (10-20 درهم).',
+      es: 'Moverse por Fez es una experiencia singular. La antigua medina es completamente peatonal y tiene callejuelas estrechas. Fuera de las murallas, los pequeños taxis rojos son prácticos y económicos (10–20 MAD). Aprende a orientarte con facilidad.',
     },
     fullDescription: {
       en: `Getting around Fez is different from moving around a modern city. The Old Medina was built around walking, with narrow streets, small passages and pedestrian areas. Outside the Medina, taxis and cars are much more practical.
@@ -1099,7 +1018,17 @@ Red Petit Taxis: Outside the pedestrian walls, the red petit taxi is the easiest
 
 Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 9,000 alleys and lets you focus on enjoying the beauty, stories, and crafts.`,
       fr: `À l'intérieur de la médina, tout se fait à pied. Aux abords des remparts (Bab Boujloud, Bab Rcif, Batha), empruntez les petits taxis rouges pour rejoindre la Ville Nouvelle pour 10 à 20 dirhams.`,
-      ar: `فاس البالي مدينة بيئية تاريخية خالية من السيارات؛ حيث ينزل الزوار عند أحد الأبواب الرئيسية مثل باب بوجلود، باب الرصيف أو ساحة البطحاء للمتابعة مشياً. وللتنقل للمدينة الجديدة، تكفي الإشارة لسيارة تاكسي أحمر بعداد نظامي بتكلفة تتراوح بين 10 و20 درهماً.`
+      es: `Moverse por Fez es distinto de desplazarse por una ciudad moderna. La antigua medina está pensada para caminar, con calles estrechas, pequeños pasajes y zonas peatonales. Fuera de la medina, los taxis y los coches resultan mucho más prácticos.
+
+Principales puertas de la medina: como los coches no pueden entrar en la antigua medina, los taxis dejan a los pasajeros junto a las puertas principales, donde empiezan las calles peatonales. Los accesos más prácticos son:
+* Bab Boujloud (la emblemática puerta azul)
+* Bab Rcif (acceso central a la parte baja de la medina)
+* Bab Mahrouk, Bab Ziat y Ain Azliten
+* Place Batha (cerca de museos y riads)
+
+Pequeños taxis rojos: fuera de las murallas de la zona peatonal, el pequeño taxi rojo es la forma más sencilla de desplazarse. Un trayecto de la medina a la ciudad nueva suele costar unos 10–20 MAD. Admiten hasta 3 pasajeros. Comprueba siempre que el conductor active el taxímetro.
+
+Recorrer la ciudad con un guía: un guía local evita la preocupación de perderse entre 9.000 callejuelas y te permite concentrarte en disfrutar de la belleza, las historias y la artesanía.`
     },
     highlights: {
       en: [
@@ -1116,25 +1045,25 @@ Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 
         'Grands taxis et vans privés : idéals pour l’aéroport et les excursions',
         'Confort d’un guide local : sérénité totale sans risque de se perdre'
       ],
-      ar: [
-        'مدينة للمشاة: فاس البالي أكبر منطقة حضرية تاريخية خالية تماماً من السيارات',
-        'أبواب ركوب السيارات: باب بوجلود، باب الرصيف، عين أزليطن، وساحة البطحاء',
-        'التاكسي الصغير (الأحمر): يتسع لـ 3 ركاب، وتعرفة الرحلة العادية بين 10 و20 درهماً',
-        'السيارات السياحية الخاصة: الخيار الأمثل للتوصيل من المطار والرحلات اليومية المريحة',
-        'فائدة المرشد المحلي: استكشاف واثق وممتع دون الحاجة المستمرة للنظر في الهاتف والخرائط'
+      es: [
+        'Centro peatonal: Fes el-Bali es la mayor zona urbana sin coches del mundo',
+        'Principales puntos de recogida: Bab Boujloud, Bab Rcif, Ain Azliten y Batha',
+        'Pequeños taxis rojos: hasta 3 pasajeros, con una tarifa urbana habitual de 10–20 MAD',
+        'Grandes taxis y vehículos privados: para trayectos regionales, traslados al aeropuerto y excursiones',
+        'Ventaja de un guía local: orientarte con facilidad sin consultar el mapa cada dos minutos'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Transit Guide', fr: 'Guide Transports', ar: 'دليل التنقل' },
-      departure: { en: 'Medina Gates & City', fr: 'Portes & Ville', ar: 'أبواب فاس والمدينة' },
-      groupSize: { en: 'Practical Local Advice', fr: 'Conseils Utiles', ar: 'إرشادات عملية' },
+      duration: { en: 'Transit Guide', fr: 'Guide Transports', es: 'Guía de transporte' },
+      departure: { en: 'Medina Gates & City', fr: 'Portes & Ville', es: 'Puertas de la medina y ciudad' },
+      groupSize: { en: 'Practical Local Advice', fr: 'Conseils Utiles', es: 'Consejos prácticos locales' },
     },
     image: '/images/tips-getting-around/medina-walker.webp',
     kind: 'article',
     imageAlt: {
       en: 'Red Petit Taxis outside the historic gates of Fez',
       fr: 'Petits taxis rouges devant les portes historiques de Fès',
-      ar: 'سيارات التاكسي الأحمر أمام بوابات فاس التاريخية',
+      es: 'Pequeños taxis rojos junto a las puertas históricas de Fez',
     },
     actionType: 'explore',
     published: true,
@@ -1145,17 +1074,17 @@ Exploring with a Guide: A local guide eliminates the anxiety of getting lost in 
     title: {
       en: 'Practical Tips for Visitors',
       fr: 'Conseils Pratiques pour Votre Séjour',
-      ar: 'نصائح وإرشادات عملية للزوار',
+      es: 'Consejos prácticos para visitantes',
     },
     subtitle: {
       en: 'Cash, Shoes, Modesty, Safety, Friday Rhythm & Photography',
       fr: 'Espèces, chaussures, tenue vestimentaire, rythme du vendredi et photos',
-      ar: 'العملة النقدية، الأحذية المريحة، اللباس المحترم، يوم الجمعة والتصوير',
+      es: 'Efectivo, calzado, vestimenta, seguridad, ritmo del viernes y fotografías',
     },
     shortDescription: {
       en: 'A few simple things make your stay in Fez comfortable and stress-free. Carry local cash (MAD), wear comfortable walking shoes, dress respectfully, respect the Friday rhythm, and enjoy local tea breaks.',
       fr: 'Quelques réflexes simples garantissent un séjour serein : prévoir des espèces (MAD), des chaussures confortables, une tenue respectueuse et profiter des pauses thé.',
-      ar: 'نصائح سهلة تجعل رحلتك سلسة وممتعة: حمل نقود بالدرهم المغربي، ارتداء حذاء مشي مريح، لباس محتشم، احترام خصوصية الناس عند التصوير، والتمهل والاستمتاع.',
+      es: 'Unos consejos sencillos harán que tu estancia en Fez sea cómoda y sin preocupaciones. Lleva efectivo en moneda local (MAD), usa calzado cómodo, viste con respeto, ten en cuenta el ritmo del viernes y disfruta de las pausas para tomar té.',
     },
     fullDescription: {
       en: `A few simple things can make your stay in Fez much easier and more comfortable. Fez is a historic city with its own rhythm and customs. Knowing a few practical details can help you feel at home:
@@ -1170,7 +1099,17 @@ Friday Has a Different Rhythm: Friday is the holy day in Morocco. Many tradition
 
 Photography Etiquette: Always ask with a warm smile before taking close-up photos of craftsmen or shopkeepers. A little courtesy goes a very long way!`,
       fr: `Gardez toujours des dirhams liquides sur vous, portez de bonnes chaussures de marche, prévoyez des vêtements couvrant épaules et genoux, et demandez poliment avant de photographier les habitants.`,
-      ar: `احرص دائماً على حمل مبالغ نقدية بالدرهم، ارتدِ حذاءً مريحاً للمشي لساعات، اختر ملابس محتشمة ومريحة، واطلب الإذن بلباقة قبل التقاط صور مقربة للصناع التقليديين وأهل الحومة.`
+      es: `Unas precauciones sencillas pueden hacer que tu estancia en Fez sea mucho más fácil y cómoda. Es una ciudad histórica con su propio ritmo y sus costumbres. Conocer algunos detalles prácticos te ayudará a sentirte como en casa:
+
+Lleva algo de efectivo: aunque los hoteles y los riads de categoría aceptan tarjetas, el efectivo en dírhams marroquíes (MAD) es imprescindible en pequeñas tiendas, puestos de comida, taxis y para las propinas. Lleva monedas y billetes pequeños.
+
+Usa calzado cómodo: en la medina caminarás más de lo que imaginas. Las calles de piedra pueden ser irregulares y tener cuestas y escalones. Un buen calzado para caminar marca la diferencia.
+
+Viste con respeto: Fez es un centro cultural tradicional. Se agradece la ropa discreta que cubra hombros y rodillas, sobre todo cerca de lugares religiosos y en barrios tradicionales.
+
+El viernes tiene otro ritmo: es el día sagrado en Marruecos. Muchas tiendas tradicionales cierran o reducen su actividad entre las 12:00 y las 15:30 por la oración comunitaria del viernes. Tenlo en cuenta al planificar visitas a museos y mercados.
+
+Cortesía al hacer fotografías: pide siempre permiso con una sonrisa antes de fotografiar de cerca a artesanos o comerciantes. ¡Un pequeño gesto de cortesía ayuda mucho!`
     },
     highlights: {
       en: [
@@ -1189,26 +1128,26 @@ Photography Etiquette: Always ask with a warm smile before taking close-up photo
         'Respect en photo : demandez toujours l’accord avant de photographier quelqu’un',
         'Carte SIM locale : facile à obtenir à l’arrivée pour rester connecté'
       ],
-      ar: [
-        'احتفظ دائماً بنقود بالدرهم المغربي للدفع في الأسواق والمقاهي وسيارات الأجرة',
-        'ارتدِ حذاء مشي مريحاً لملاءمة الأزقة التاريخية المرصوفة والدرجات الحجرية',
-        'اختر ملابس مريحة ومحتشمة تناسب تقاليد وهوية المدينة العريقة',
-        'خصوصية يوم الجمعة: تغلق بعض الدكاكين الشعبية بين الظهر والعصر لأداء الصلاة',
-        'أدب التصوير: استئذان الأشخاص والصناع بابتسامة قبل التقاط الصور التذكارية',
-        'شريحة الهاتف المحمول: سهلة الشراء في المطار أو مراكز الاتصالات لتفعيل الإنترنت'
+      es: [
+        'Lleva siempre efectivo en dírhams marroquíes para los tentempiés, taxis y zocos de artesanía',
+        'Usa calzado que sujete bien el pie para las callejuelas medievales, escaleras y adoquines',
+        'Viste con comodidad y respeto: prendas ligeras por capas que cubran hombros y rodillas',
+        'Oración del viernes: los zocos y puestos artesanales hacen una pausa entre las 12:00 y las 15:30',
+        'Fotografías con respeto: pide permiso antes de fotografiar a artesanos y residentes',
+        'Tarjetas SIM locales: disponibles en el aeropuerto y en quioscos de la ciudad para conectarte fácilmente'
       ]
     },
     practicalInfo: {
-      duration: { en: 'Local Advice', fr: 'Conseils Pratiques', ar: 'نصائح وإرشادات' },
-      departure: { en: 'Essential Preparation', fr: 'Préparation Voyage', ar: 'استعدادات هامة' },
-      groupSize: { en: 'Visitor Etiquette', fr: 'Savoir-vivre Local', ar: 'آداب الزيارة' },
+      duration: { en: 'Local Advice', fr: 'Conseils Pratiques', es: 'Consejos locales' },
+      departure: { en: 'Essential Preparation', fr: 'Préparation Voyage', es: 'Preparativos esenciales' },
+      groupSize: { en: 'Visitor Etiquette', fr: 'Savoir-vivre Local', es: 'Normas de cortesía para visitantes' },
     },
     image: '/images/tips-practical/medina-steps.webp',
     kind: 'article',
     imageAlt: {
       en: 'Traditional Moroccan tea, crafts, and relaxed Medina moments',
       fr: 'Moment de détente autour d’un thé marocain dans la médina',
-      ar: 'جلسة شاي مغربي هادئة وأجواء الضيافة الفاسية العريقة',
+      es: 'Té tradicional marroquí, artesanía y momentos tranquilos en la medina',
     },
     actionType: 'explore',
     published: true,
@@ -1223,15 +1162,15 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: {
       en: 'Founder & Local Host',
       fr: 'Fondateur & Hôte Local',
-      ar: 'المؤسس والمضيف المحلي',
+      es: 'Fundador y anfitrión local',
     },
     bio: {
       en: 'Based in Fez, Med created Fez Guide Tours to share his home city with world travellers in a simple, comfortable and personal way. He coordinates closely with guests, native guides, and trusted partners to curate unforgettable experiences.',
       fr: 'Basé à Fès, Med a créé Fez Guide Tours pour partager sa ville natale avec les voyageurs de manière simple, chaleureuse et sur mesure. Il coordonne chaque visite avec soin.',
-      ar: 'ابن مدينة فاس ومؤسس فاس جايد تورز. كرس شغفه لتمكين الزوار من استكشاف فاس بطريقة مريحة، بسيطة وشخصية، وينسق يومياً مع المرشدين والسائقين لضمان أرقى تجربة.',
+      es: 'Med vive en Fez y creó Fez Guide Tours para compartir su ciudad natal con viajeros de todo el mundo de una forma sencilla, cómoda y personal. Coordina cada detalle con los visitantes, los guías locales y los colaboradores de confianza para preparar experiencias inolvidables.',
     },
     languages: ['Arabic', 'English', 'French'],
-    experience: { en: 'Native Fassi Host', fr: 'Hôte Natif de Fès', ar: 'ابن فاس الأصلي' },
+    experience: { en: 'Native Fassi Host', fr: 'Hôte Natif de Fès', es: 'Anfitrión nacido en Fez' },
     avatarUrl: '/src/assets/images/real/about_us_image1.jpg',
   },
   {
@@ -1240,15 +1179,15 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: {
       en: 'Knowledgeable Native Guides',
       fr: 'Guides Locaux Passionnés',
-      ar: 'مرشدونا المحليون المعتمدون',
+      es: 'Guías locales con un profundo conocimiento de Fez',
     },
     bio: {
       en: 'We work with licensed local guides who truly know Fez, its history, architecture, Medina, and living culture. They share their deep knowledge, answer all your questions, and help you discover the city through local eyes.',
       fr: 'Nous travaillons avec des guides locaux expérimentés qui maîtrisent l’histoire, les trésors architecturaux et les ruelles secrètes de Fès pour vous offrir une visite passionnante.',
-      ar: 'فريق من خيرة المرشدين السياحيين من أبناء فاس العتيقة، على دراية عميقة بتاريخ المدينة، معالمها، أزقتها، وحرفها، يجيبون عن كافة تساؤلاتكم بكل كرم واعتزاز.',
+      es: 'Trabajamos con guías locales acreditados que conocen a fondo Fez, su historia, su arquitectura, la medina y su cultura viva. Comparten sus conocimientos, responden a tus preguntas y te ayudan a descubrir la ciudad con una mirada local.',
     },
     languages: ['English', 'French', 'Spanish', 'Arabic'],
-    experience: { en: '10+ Years in Medina', fr: '10+ ans d’expérience', ar: 'أكثر من 10 سنوات خبرة' },
+    experience: { en: '10+ Years in Medina', fr: '10+ ans d’expérience', es: 'Más de 10 años de experiencia en la medina' },
     avatarUrl: '/src/assets/images/real/about_us_image2.jpg',
   },
   {
@@ -1257,15 +1196,15 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: {
       en: 'Trusted Drivers & Regional Hosts',
       fr: 'Chauffeurs de Confiance & Partenaires',
-      ar: 'سائقونا وشركاؤنا الموثوقون',
+      es: 'Conductores de confianza y anfitriones de la región',
     },
     bio: {
       en: 'For scenic day trips, airport transfers, and excursions across northern Morocco, we work with professional, trusted local drivers with comfortable, modern air-conditioned vehicles to ensure your journey is safe, relaxing, and on schedule.',
       fr: 'Pour vos excursions vers Chefchaouen, Meknès ou l’Atlas, nos chauffeurs professionnels vous garantissent confort, sécurité et ponctualité à bord de véhicules récents.',
-      ar: 'لرحلات اليوم الواحد ونقل المطار، نوفر سائقين محترفين ومركبات سياحية حديثة ومكيفة تضمن سلامتكم وراحتكم التامة ومرونة كاملة في المواعيد والتوقفات.',
+      es: 'Para las excursiones de un día, los traslados al aeropuerto y los recorridos por el norte de Marruecos, trabajamos con conductores locales profesionales y de confianza. Sus vehículos modernos, cómodos y con aire acondicionado permiten viajar con seguridad, tranquilidad y puntualidad.',
     },
     languages: ['Arabic', 'French', 'English'],
-    experience: { en: 'Professional Fleet', fr: 'Flotte Confortable', ar: 'أسطول سياحي مريح' },
+    experience: { en: 'Professional Fleet', fr: 'Flotte Confortable', es: 'Flota profesional' },
     avatarUrl: '/src/assets/images/real/about_us_image5.jpg',
   },
 ];
@@ -1274,46 +1213,46 @@ export const ABOUT_STORY = {
   title: {
     en: 'About Us & Our Team',
     fr: 'À Propos de Nous & Notre Équipe',
-    ar: 'من نحن وفريق عملنا المحلي',
+    es: 'Quiénes somos y nuestro equipo',
   },
   subtitle: {
     en: 'A small local team based in Fez dedicated to sharing our city in a simple, comfortable and personal way.',
     fr: 'Une équipe locale basée à Fès dédiée à vous faire découvrir notre ville avec simplicité et confort.',
-    ar: 'فريق محلي من أبناء فاس نسعى لمشاركتكم روح مدينتنا بأسلوب بسيط، مريح وشخصي.',
+    es: 'Un pequeño equipo local con sede en Fez, dedicado a compartir nuestra ciudad de una forma sencilla, cómoda y a tu medida.',
   },
   storyParagraph1: {
     en: 'We are a small local team based in Fez. We created Fez Guide Tours to share our city with travellers and help them discover Fez in a simple, comfortable and personal way. We know the streets of the Medina, the different areas of the city, the local food, traditions and everyday life. Our goal is simple: to help you enjoy Fez and discover the city through local eyes.',
     fr: 'Nous sommes une petite équipe locale basée à Fès. Nous avons créé Fez Guide Tours pour partager notre passion et aider les voyageurs à découvrir la ville en toute simplicité, confort et authenticité. Notre objectif est clair : vous faire vivre Fès à travers des yeux locaux.',
-    ar: 'نحن فريق محلي مقيم في فاس. أنشأنا "فاس جايد تورز" لمشاركة مدينتنا مع المسافرين ومساعدتهم على استكشاف فاس بطريقة بسيطة ومريحة وشخصية. نعرف دروب المدينة العتيقة، أحياءها المختلفة، مأكولاتها الشعبية، تقاليدها وتفاصيل حياتها اليومية. هدفنا واضح وبسيط: أن تستمتع بفاس وتراها بعيون أهلها.',
+    es: 'Somos un pequeño equipo local con sede en Fez. Creamos Fez Guide Tours para compartir nuestra ciudad con los viajeros y ayudarles a descubrirla de una forma sencilla, cómoda y personal. Conocemos las callejuelas de la medina, los distintos barrios, la gastronomía local, las tradiciones y la vida cotidiana. Nuestro objetivo es sencillo: ayudarte a disfrutar de Fez y descubrir la ciudad con quienes viven en ella.',
   },
   storyParagraph2: {
     en: 'Why We Do It: We believe that the best way to discover Fez is not only by visiting its famous places, but also by seeing how the city really lives. We want to welcome you to our city, share what we know and help you create good memories in Fez. Welcome to Fez. See the city through local eyes.',
     fr: 'Pourquoi nous le faisons : Nous croyons que la meilleure façon de découvrir Fès n’est pas seulement de visiter ses monuments célèbres, mais de comprendre comment la ville vit réellement. Nous voulons vous accueillir chaleureusement et créer des souvenirs inoubliables.',
-    ar: 'لماذا نقوم بذلك؟ لأننا نؤمن بأن أفضل طريقة لاكتشاف فاس ليست مجرد زيارة صروحها الشهيرة عن بعد، بل مشاهدة كيف تعيش المدينة حقاً في تفاصيلها اليومية. نود الترحيب بكم في مدينتنا، ومشاركتكم ما نعرفه ومساعدتكم على صنع ذكريات جميلة تدوم طويلاً.',
+    es: 'Por qué lo hacemos: creemos que la mejor forma de descubrir Fez no consiste solo en visitar sus lugares más famosos, sino también en conocer cómo vive realmente la ciudad. Queremos darte la bienvenida, compartir lo que sabemos y ayudarte a crear buenos recuerdos en Fez. Bienvenido a Fez. Descubre la ciudad con quienes viven en ella.',
   },
   pillars: [
     {
-      title: { en: 'Born & Based in Fez', fr: 'Nés & Basés à Fès', ar: 'أبناء فاس وسكانها' },
+      title: { en: 'Born & Based in Fez', fr: 'Nés & Basés à Fès', es: 'Nacidos en Fez y residentes en la ciudad' },
       desc: {
         en: 'We live here, understand every corner, and navigate the Medina with natural ease.',
         fr: 'Nous vivons ici et connaissons chaque recoin de la médina depuis notre enfance.',
-        ar: 'نعيش هنا، ونعرف كل زقاق وحومة، ونتنقل في دروب فاس بأريحية عفوية.',
+        es: 'Vivimos aquí, conocemos cada rincón y nos movemos por la medina con total naturalidad.',
       },
     },
     {
-      title: { en: 'Private & Personal', fr: 'Visites Privées & Sur Mesure', ar: 'جولات خاصة وشخصية' },
+      title: { en: 'Private & Personal', fr: 'Visites Privées & Sur Mesure', es: 'Visitas privadas y a medida' },
       desc: {
         en: 'Dedicated experiences for you and your group, moving at your pace with no rushed crowds.',
         fr: 'Des expériences exclusives adaptées à votre rythme, sans la contrainte des grands groupes.',
-        ar: 'تجارب مخصصة لكم ولمجموعتكم بالوتيرة التي تناسبكم بعيداً عن صخب المجموعات الكبيرة.',
+        es: 'Experiencias pensadas para ti y tu grupo, a vuestro ritmo y sin las prisas de los grandes grupos.',
       },
     },
     {
-      title: { en: 'Comfort & Trust', fr: 'Confort & Confiance', ar: 'راحة وأمان وموثوقية' },
+      title: { en: 'Comfort & Trust', fr: 'Confort & Confiance', es: 'Comodidad y confianza' },
       desc: {
         en: 'Clear communication, comfortable vehicles, and honest local guidance every step of the way.',
         fr: 'Communication fluide, véhicules climatisés confortables et conseils bienveillants.',
-        ar: 'تواصل واضح وسريع، سيارات مريحة ومكيفة، وتوجيه محلي صادق في كل خطوة.',
+        es: 'Comunicación clara, vehículos cómodos y orientación local sincera en cada paso del viaje.',
       },
     },
   ],
@@ -1327,12 +1266,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'What types of experiences do you offer in Fez?',
       fr: 'Quels types d’expériences proposez-vous à Fès ?',
-      ar: 'ما هي أنواع الجولات والتجارب التي تقدمونها في فاس؟',
+      es: '¿Qué tipos de experiencias ofrecéis en Fez?',
     },
     answer: {
       en: 'We offer private tours and local experiences in Fez, including Medina walking tours, food and tasting experiences, cultural visits, and customized itineraries. We also organize private day trips from Fez to destinations such as Chefchaouen, Meknes, Volubilis, Moulay Idriss and Ifrane in the Middle Atlas.',
       fr: 'Nous proposons des visites privées de la médina, des balades dégustations de street food, des découvertes culturelles et des excursions privées vers Chefchaouen, Meknès, Volubilis et Ifrane.',
-      ar: 'نقدم جولات خاصة مشياً على الأقدام في فاس العتيقة، جولات تذوق الأكلات الشعبية، زيارات ثقافية ومعمارية مخصصة، بالإضافة إلى رحلات يومية خاصة إلى شفشاون، مكناس، وليلي، وإفران.',
+      es: 'Ofrecemos visitas privadas y experiencias locales en Fez: recorridos a pie por la medina, rutas gastronómicas y degustaciones, visitas culturales e itinerarios a medida. También organizamos excursiones privadas de un día desde Fez a destinos como Chefchaouen, Meknes, Volubilis, Moulay Idriss e Ifrane, en el Atlas Medio.',
     },
   },
   {
@@ -1341,12 +1280,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Are your tours private?',
       fr: 'Vos visites sont-elles privées ?',
-      ar: 'هل جولاتكم خاصة أم جماعية؟',
+      es: '¿Vuestras visitas son privadas?',
     },
     answer: {
       en: 'Most of our experiences are arranged privately, meaning the experience is exclusively for you and your travelling group rather than a large group of strangers. This allows you to ask questions, take your time, and enjoy a much more personal pace.',
       fr: 'La quasi-totalité de nos expériences sont organisées en privé, exclusivement pour vous et vos compagnons de voyage, afin de garantir un rythme détendu et personnalisé.',
-      ar: 'نعم، معظم تجاربنا وجولاتنا خاصة بالكامل لك ولمجموعتك فقط، مما يمنحكم حرية طرح الأسئلة، التقاط الصور، والتحرك بالوتيرة التي تريحكم دون أي استعجال.',
+      es: 'La mayoría de nuestras experiencias se organizan de forma privada, exclusivamente para ti y tus compañeros de viaje, en lugar de un gran grupo de desconocidos. Así podéis hacer preguntas, tomaros vuestro tiempo y disfrutar de un ritmo mucho más personal.',
     },
   },
   {
@@ -1355,12 +1294,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Can I customize my tour?',
       fr: 'Puis-je personnaliser mon itinéraire ?',
-      ar: 'هل يمكنني تعديل أو تخصيص برنامج الجولة؟',
+      es: '¿Puedo personalizar mi visita?',
     },
     answer: {
       en: 'Yes. If you have specific places you want to visit, particular dietary preferences, or limited time, simply tell us before or upon booking. We will gladly adapt the route or schedule where possible.',
       fr: 'Absolument. Si vous avez des centres d’intérêt spécifiques ou des contraintes de temps, faites-le nous savoir et nous adapterons le parcours avec plaisir.',
-      ar: 'بالتأكيد! إذا كانت لديك أماكن محددة ترغب في رؤيتها، أو متطلبات خاصة بالوقت أو الطعام، أخبرنا وسنقوم بتكييف المسار بما يناسب تطلعاتك.',
+      es: 'Sí. Si quieres visitar lugares concretos, tienes preferencias alimentarias o dispones de poco tiempo, cuéntanoslo antes de reservar o al hacer la reserva. Adaptaremos la ruta o el horario siempre que sea posible.',
     },
   },
   {
@@ -1369,12 +1308,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'How can I book a tour or ask questions?',
       fr: 'Comment réserver ou poser une question ?',
-      ar: 'كيف يمكنني الحجز أو طرح استفسار؟',
+      es: '¿Cómo puedo reservar una visita o hacer una consulta?',
     },
     answer: {
       en: 'You can book through the online reservation form on our site, or reach out to us directly via WhatsApp or email. We are always ready to answer your questions and coordinate details.',
       fr: 'Vous pouvez réserver via le formulaire de notre site ou nous contacter directement sur WhatsApp pour une réponse rapide.',
-      ar: 'يمكنك الحجز بسهولة عبر نموذج الحجز في الموقع، أو مراسلتنا مباشرة عبر الواتساب أو البريد الإلكتروني وسنرد عليك بكل سرور لمساعدتك.',
+      es: 'Puedes reservar a través del formulario de nuestra web o contactar directamente con nosotros por WhatsApp o correo electrónico. Estamos disponibles para responder a tus preguntas y coordinar los detalles.',
     },
   },
   {
@@ -1383,12 +1322,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Can I book at short notice?',
       fr: 'Puis-je réserver à la dernière minute ?',
-      ar: 'هل تقبلون الحجوزات في وقت قصير أو في نفس اليوم؟',
+      es: '¿Puedo reservar con poca antelación?',
     },
     answer: {
       en: 'We always do our best to accommodate last-minute requests depending on guide and driver availability. For the widest choice of times and preferred language, we recommend booking a few days in advance.',
       fr: 'Nous faisons tout notre possible pour satisfaire les demandes de dernière minute selon la disponibilité de nos guides et véhicules.',
-      ar: 'نبذل قصارى جهدنا لتلبية الحجوزات السريعة حسب توفر المرشدين والسيارات، وننصح بالحجز المسبق لضمان الوقت واللغة المفضلة لديك.',
+      es: 'Hacemos todo lo posible por atender las reservas de última hora según la disponibilidad de guías y conductores. Para tener más opciones de horarios y del idioma que prefieras, recomendamos reservar con unos días de antelación.',
     },
   },
   {
@@ -1397,12 +1336,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Are your guides native to Fez and what languages do they speak?',
       fr: 'Vos guides sont-ils locaux et quelles langues parlent-ils ?',
-      ar: 'هل المرشدون من أبناء فاس وما هي اللغات التي يتحدثون بها؟',
+      es: '¿Vuestros guías son de Fez y qué idiomas hablan?',
     },
     answer: {
       en: 'Yes. We work with local guides who were born in and know Fez deeply. Depending on availability, our experiences can be conducted in English, French, and Spanish. Let us know if you require another language.',
       fr: 'Oui, nos guides sont natifs de Fès. Nous proposons des visites en anglais, français et espagnol, ainsi que d’autres langues sur demande.',
-      ar: 'نعم، جميع مرشدينا من أبناء فاس المقيمين بها. نوفر الجولات باللغات الإنجليزية، الفرنسية، والإسبانية، ولغات أخرى حسب التوفر.',
+      es: 'Sí. Trabajamos con guías locales nacidos en Fez que conocen la ciudad a fondo. Según la disponibilidad, nuestras experiencias pueden realizarse en inglés, francés y español. Si necesitas otro idioma, consúltanos.',
     },
   },
   {
@@ -1411,12 +1350,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Where do we meet for a Medina tour? Can you pick us up from our riad?',
       fr: 'Où se fait le rendez-vous ? Pouvez-vous venir à notre riad ?',
-      ar: 'أين نلتقي لبدء الجولة؟ وهل يمكنكم الحضور إلى الرياض؟',
+      es: '¿Dónde nos encontramos para visitar la medina? ¿Podéis recogernos en nuestro riad?',
     },
     answer: {
       en: 'Common meeting points include Bab Boujloud or Bab Rcif. If your riad is located inside the pedestrian Medina, we can often meet you directly at your riad door, or at the closest accessible gate where walking begins.',
       fr: 'Les points de rencontre habituels sont Bab Boujloud ou Bab Rcif. Si votre riad est dans la médina, votre guide peut venir vous y rejoindre directement.',
-      ar: 'نقاط الالتقاء المعتادة هي باب بوجلود أو باب الرصيف. إذا كان رياضكم داخل فاس البالي، يمكن للمرشد الحضور إلى باب الرياض مباشرة لبدء الجولة.',
+      es: 'Los puntos de encuentro habituales son Bab Boujloud o Bab Rcif. Si vuestro riad está dentro de la medina peatonal, a menudo podemos encontrarnos directamente en su puerta o en la puerta de la medina accesible más cercana, desde donde empieza el paseo.',
     },
   },
   {
@@ -1425,12 +1364,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Do you provide transportation for day trips?',
       fr: 'Fournissez-vous le transport pour les excursions ?',
-      ar: 'هل توفرون وسيلة النقل في الرحلات اليومية؟',
+      es: '¿Incluís el transporte en las excursiones de un día?',
     },
     answer: {
       en: 'Yes. All our day trips outside Fez (Chefchaouen, Meknes/Volubilis, Ifrane) include comfortable, private, air-conditioned vehicles with trusted professional drivers who pick you up and drop you off directly at your accommodation.',
       fr: 'Oui, toutes nos excursions incluent un véhicule privé moderne et climatisé avec chauffeur professionnel, avec prise en charge aller-retour à votre hôtel.',
-      ar: 'نعم، تشمل جميع رحلاتنا اليومية خارج فاس سيارات سياحية خاصة مكيفة ومريحة مع سائق محترف يتولى التوصيل من وإلى مكان إقامتكم.',
+      es: 'Sí. Todas nuestras excursiones fuera de Fez, a Chefchaouen, Meknes/Volubilis e Ifrane, incluyen vehículos privados cómodos y con aire acondicionado, con conductores profesionales de confianza que os recogen y os dejan directamente en vuestro alojamiento.',
     },
   },
   {
@@ -1439,12 +1378,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Is the Old Medina difficult to walk around?',
       fr: 'La médina est-elle difficile pour la marche ?',
-      ar: 'هل المشي في فاس العتيقة متعب أو شاق؟',
+      es: '¿Es difícil recorrer a pie la antigua medina?',
     },
     answer: {
       en: 'The Medina involves walking along pedestrian streets that include slight slopes, steps, and uneven stones. You do not need to be a hiker, but comfortable walking shoes are strongly recommended. Since tours are private, we can take as many breaks as you like!',
       fr: 'La médina comprend des ruelles pavées et quelques marches. De bonnes chaussures de marche sont recommandées, et nous adaptons le rythme à vos souhaits.',
-      ar: 'تتطلب المدينة العتيقة المشي في دروب مبلطة تضم بعض المنحدرات والدرجات. نوصي بارتداء حذاء مشي مريح، وبما أن الجولة خاصة يمكننا التوقف للراحة والشاي متى شئتم.',
+      es: 'En la medina se camina por calles peatonales con algunas cuestas, escalones y piedras irregulares. No hace falta ser senderista, pero recomendamos llevar calzado cómodo para caminar. Como las visitas son privadas, ¡podemos hacer tantas pausas como queráis!',
     },
   },
   {
@@ -1453,12 +1392,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'What food will we taste on the food tour, and can you accommodate dietary restrictions?',
       fr: 'Que mange-t-on lors du food tour et gérez-vous les allergies ?',
-      ar: 'ما هي الأكلات التي نتذوقها وهل تراعون الحساسية والخيارات الغذائية؟',
+      es: '¿Qué probaremos en la ruta gastronómica y podéis adaptarla a restricciones alimentarias?',
     },
     answer: {
       en: 'Tastings vary with seasonal markets and include Harcha, Baghrir, Chebakia, Sfenj doughnuts, Bissara soup, local goat cheeses, olives, seasonal fruits, and mint tea. Please inform us of any allergies or dietary restrictions (vegetarian, nut allergies, etc.) when booking.',
       fr: 'Vous dégusterez Harcha, Baghrir, Chebakia, Sfenj, soupe Bissara, fromages locaux et thé à la menthe. Veuillez nous signaler vos éventuelles allergies dès la réservation.',
-      ar: 'تشمل التذوقات الحرشة، البغرير، الشباكية، السفنج، البيصارة، أجبان الجبل، الزيتون والشاي. يرجى إخبارنا بأي حساسية غذائية لنكيف التذوق بما يناسبكم.',
+      es: 'Las degustaciones varían según los productos de temporada y pueden incluir Harcha, Baghrir, Chebakia, Sfenj, sopa Bissara, quesos de cabra locales, aceitunas, fruta de temporada y té a la menta. Al reservar, indícanos cualquier alergia o restricción alimentaria, como una dieta vegetariana o alergia a los frutos secos.',
     },
   },
   {
@@ -1467,12 +1406,12 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Which destinations can I visit on a day trip from Fez?',
       fr: 'Quelles sont les destinations possibles en excursion d’une journée ?',
-      ar: 'ما هي الوجهات التي يمكن زيارتها في رحلة يوم واحد من فاس؟',
+      es: '¿Qué destinos puedo visitar en una excursión de un día desde Fez?',
     },
     answer: {
       en: 'Our popular day trips include Chefchaouen, Meknes with Volubilis and Moulay Idriss, and Ifrane in the Middle Atlas. We can also create custom private itineraries based on your wishes.',
       fr: 'Nos excursions phares sont Chefchaouen, Meknès avec Volubilis et Moulay Idriss, et Ifrane dans le Moyen Atlas.',
-      ar: 'أشهر رحلاتنا اليومية هي شفشاون، ومكناس مع وليلي ومولاي إدريس، وإفران في الأطلس المتوسط، بالإضافة إلى أي مسار مخصص.',
+      es: 'Nuestras excursiones más populares incluyen Chefchaouen, Meknes con Volubilis y Moulay Idriss, e Ifrane en el Atlas Medio. También podemos preparar itinerarios privados a medida según tus preferencias.',
     },
   },
   {
@@ -1481,186 +1420,18 @@ export const FAQ_ITEMS: FaqItem[] = [
     question: {
       en: 'Do I need to carry cash in Fez?',
       fr: 'Dois-je avoir de l’argent liquide sur moi ?',
-      ar: 'هل من الضروري حمل مبالغ نقدية بالدرهم في فاس؟',
+      es: '¿Necesito llevar efectivo en Fez?',
     },
     answer: {
       en: 'Yes. Carrying Moroccan Dirhams (MAD) in cash is very useful for Medina souks, local food stalls, taxis, and tips, where card machines are rarely available. ATMs are easily found near major gates.',
       fr: 'Oui, les espèces en dirhams (MAD) sont indispensables pour les petits achats, les marchés, les taxis et les pourboires dans la médina.',
-      ar: 'نعم بالتأكيد، حمل النقود بالدرهم المغربي ضروري للدفع في دكاكين فاس البالي، أكلات الشارع، التاكسي، والإكراميات حيث لا تتوفر أجهزة بطاقات الدفع في معظم المحلات الشعبية.',
+      es: 'Sí. Llevar dírhams marroquíes (MAD) en efectivo es muy útil para los zocos de la medina, los puestos de comida, los taxis y las propinas, ya que rara vez hay datáfonos. Encontrarás cajeros fácilmente cerca de las puertas principales.',
     },
   },
 ];
 
 // 7. DEFAULT BLOG & IN-DEPTH ARTICLES
-export const DEFAULT_BLOG_POSTS: BlogPost[] = [
-  {
-    id: 'post-food-tasting',
-    slug: 'taste-fez-through-local-eyes',
-    title: {
-      en: 'Taste Fez Through Local Eyes: An Alley Safari of Street Food & Living Traditions',
-      fr: 'Goûtez Fès à travers des yeux locaux : safari gourmand dans la médina',
-      ar: 'تذوق فاس بعيون أبنائها: جولة بين أكلات الشارع والتقاليد الحية',
-    },
-    excerpt: {
-      en: 'To understand Fez, you should taste it. From morning Harcha and honey Baghrir to piping-hot Bissara and neighborhood bakeries.',
-      fr: 'Pour comprendre Fès, il faut la goûter ! De la Harcha matinale à la Bissara fumante et aux fours de quartier.',
-      ar: 'لفهم فاس الحقيقية تذوق طعامها: من حرشة الصباح وبغرير العسل إلى حساء البيصارة الساخن وأفران الحومة الشعبية.',
-    },
-    content: {
-      en: `Food in Fez is part of everyday life. It is found in small shops, bakeries, market stalls, traditional food places and family kitchens. It is the smell of bread coming from an oven, the sound of people ordering breakfast, the colours of spices in the market, a glass of Moroccan tea shared during a conversation, and small foods that people enjoy throughout the day.
-
-Our food tasting walk takes you into this everyday side of the Medina. This is not simply a tour where you sit down for one large meal; we walk through the Old Medina and stop along the way to discover and taste different foods, snacks, sweets and local products while learning how they are connected to life in Fez.
-
-Taste warm Harcha, honeycomb Baghrir, spicy Sfenj, freshly pressed olive oil, and steaming bowls of Bissara seasoned with cumin. Come hungry and leave with a true taste of Fez!`,
-      fr: `La gastronomie fassie se découvre dans les petites échoppes et les fours communaux. Rejoignez-nous pour une balade sensorielle à travers les saveurs authentiques de la médina.`,
-      ar: `الطعام في فاس أسلوب حياة ونبض يومي؛ لا تكتمل زيارة المدينة دون تذوق أطباقها الشعبية في دكاكينها الأصلية المليئة برائحة الخبز الطازج وزيت الزيتون والشاي المعطر بالأعشاب.`
-    },
-    coverImage: '/src/assets/images/real/food_tasting_walk_image1.jpg',
-    category: { en: 'Food & Culinary', fr: 'Gastronomie', ar: 'المطبخ والتذوق' },
-    author: 'Med — FezGuideTours',
-    date: '2026-09-28',
-    readTime: { en: '4 min read', fr: '4 min de lecture', ar: '4 دقائق' },
-    published: true,
-  },
-  {
-    id: 'post-chefchaouen-daytrip',
-    slug: 'chefchaouen-day-trip-guide',
-    title: {
-      en: 'Chefchaouen Day Trip: The Blue Pearl of Northern Morocco',
-      fr: 'Excursion à Chefchaouen : La Perle Bleue du Nord du Maroc',
-      ar: 'دليل رحلة شفشاون: أسرار اللؤلؤة الزرقاء في جبال الريف',
-    },
-    excerpt: {
-      en: 'Spend a day discovering Chefchaouen: blue-painted alleys, Plaza Uta el-Hammam, the Kasbah, and the mountain spring of Ras El Maa.',
-      fr: 'Une journée magique à Chefchaouen entre ruelles azurées, Kasbah historique et cascades de Ras El Maa.',
-      ar: 'اقضِ يوماً لا يُنسى في شفشاون: الدروب الزرقاء الخلابة، ساحة وطاء الحمام، القصبة الأثرية ومنبع رأس الماء.',
-    },
-    content: {
-      en: `Spend a day discovering Chefchaouen, the famous Blue City of northern Morocco, surrounded by the Rif Mountains.
-
-After leaving Fez in a comfortable private vehicle, the journey takes you through rolling Moroccan countryside before climbing into the Rif Mountains. Once in Chefchaouen, walk through the old town where blue-painted walls and traditional houses create an extraordinary atmosphere.
-
-Sit for a glass of Moroccan mint tea at Plaza Uta el-Hammam, visit the historic Kasbah, walk towards the mountain spring of Ras El Maa, and enjoy local handicrafts at your own relaxed pace.`,
-      fr: `Partez de Fès pour une échappée montagnarde inoubliable vers la féerique cité bleue de Chefchaouen.`,
-      ar: `رحلة رائعة من فاس نحو جبال الريف لاكتشاف مدينة شفشاون الشهيرة بزرقتها الساحرة وأجوائها الجبلية الهادئة والمميزة.`
-    },
-    coverImage: '/src/assets/images/real/daytrip_chefchaouen_image1.jpg',
-    category: { en: 'Day Trips', fr: 'Excursions', ar: 'رحلات واستكشاف' },
-    author: 'Med — FezGuideTours',
-    date: '2026-09-29',
-    readTime: { en: '5 min read', fr: '5 min de lecture', ar: '5 دقائق' },
-    published: true,
-  },
-  {
-    id: 'post-getting-around-fez',
-    slug: 'getting-around-fez-medina-gates-taxis',
-    title: {
-      en: 'Getting Around Fez: Walking, Medina Gates & Red Petit Taxis',
-      fr: 'Se Déplacer à Fès : Rues Piétonnes, Portes & Taxis Rouges',
-      ar: 'دليل التنقل في فاس: المشي، بوابات المدينة والتاكسي الأحمر',
-    },
-    excerpt: {
-      en: 'Everything you need to know about navigating the pedestrian Old Medina and using red Petit Taxis (10–20 MAD) with ease.',
-      fr: 'Tout ce qu’il faut savoir pour se déplacer facilement entre la médina piétonne et la Ville Nouvelle.',
-      ar: 'كل ما تحتاج معرفته عن التنقل داخل فاس البالي الخالية من السيارات وكيفية ركوب التاكسي الصغير بسهولة.',
-    },
-    content: {
-      en: `Getting around Fez is different from moving around a modern city. The Old Medina was built around walking, with narrow streets and pedestrian passages. Outside the Medina, red Petit Taxis are convenient, metered, and typically cost 10–20 MAD for local trips.
-
-Remember key gate names like Bab Boujloud, Bab Rcif, and Batha to make your pickup and drop-off effortless!`,
-      fr: `Comprenez les portes clés de la médina et le fonctionnement des petits taxis rouges pour vous déplacer comme un habitant.`,
-      ar: `تعرف على أهم أبواب فاس العتيقة وطريقة التعامل مع سيارات الأجرة الحمراء لتتنقل في المدينة بكل ثقة وراحة.`
-    },
-    coverImage: '/src/assets/images/real/tips_getting_around_image1.jpg',
-    category: { en: 'Travel Tips', fr: 'Conseils Voyage', ar: 'نصائح السفر' },
-    author: 'Med — FezGuideTours',
-    date: '2026-09-30',
-    readTime: { en: '3 min read', fr: '3 min de lecture', ar: '3 دقائق' },
-    published: true,
-  },
-];
 
 // 8. DEFAULT SITE SETTINGS
-export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  siteName: 'FezGuideTours',
-  phoneNumber: '+212 719-603009',
-  whatsappNumber: '212719603009',
-  email: 'fezguidetours1@gmail.com',
-  address: {
-    en: 'Bab Boujloud, Medina of Fez, 30110 Morocco',
-    fr: 'Bab Boujloud, Médina de Fès, 30110 Maroc',
-    ar: 'باب بوجلود، فاس البالي، 30110 المغرب',
-  },
-  licenseBadge: {
-    en: 'Local Native Hosts & Certified Medina Guides',
-    fr: 'Hôtes Natifs & Guides Locaux Agréés',
-    ar: 'فريق محلي من أبناء فاس ومرشدون معتمدون',
-  },
-  heroTagline: {
-    en: 'Fez Guide Tours — Discover the City Through Local Eyes',
-    fr: 'Fez Guide Tours — Découvrez la Ville à Travers des Yeux Locaux',
-    ar: 'فاس جايد تورز — اكتشف فاس بعيون أبنائها المحليين',
-  },
-  heroTitle: {
-    en: 'Discover Fez in a Simple, Comfortable and Personal Way',
-    fr: 'Découvrez Fès de Manière Simple, Confortable et Personnelle',
-    ar: 'اكتشف فاس بطريقة بسيطة، مريحة وتجربة خاصة بك',
-  },
-  heroSubtitle: {
-    en: 'We know the streets of the Medina, the local food, living traditions and everyday life. Private walking tours, food tastings, and relaxed day trips beyond the city.',
-    fr: 'Nous connaissons les ruelles de la Médina, les saveurs locales, les traditions vivantes et le quotidien. Balades guidées privées, dégustations et excursions.',
-    ar: 'نعرف دروب فاس البالي، مأكولاتنا الشعبية الأصيلة، تقاليدنا وتفاصيل الحياة اليومية. جولات خاصة مشياً على الأقدام، رحلات تذوق، ورحلات يومية مريحة.',
-  },
-  heroImage: '/images/real/about_us_image7.jpg',
-  socialInstagram: 'https://instagram.com/fezguidetours',
-  socialFacebook: 'https://facebook.com/fezguidetours',
-  socialTripadvisor: 'https://www.tripadvisor.com/Attraction_Review-g293733-d33349838-Reviews-Fez_Guide_Tours-Fez_Fez_Meknes.html',
-  googleMaps: 'https://maps.app.goo.gl/5aXiAV7FjS1W3qBj6',
-};
 
 // 9. DEFAULT CUSTOM PAGES
-export const DEFAULT_CUSTOM_PAGES: CustomPage[] = [
-  {
-    id: 'page-bespoke-itinerary',
-    slug: 'bespoke-morocco-experiences',
-    title: {
-      en: 'Bespoke Private Journeys from Fez',
-      fr: 'Voyages Sur Mesure au départ de Fès',
-      ar: 'رحلات خاصة مصممة حسب الطلب من فاس',
-    },
-    subtitle: {
-      en: 'Tailor-Made Multiday Routes & Specialized Cultural Visits',
-      fr: 'Circuits personnalisés de plusieurs jours et visites thématiques',
-      ar: 'مسارات متعددة الأيام وبرامج ثقافية مخصصة حسب رغبتكم',
-    },
-    heroImage: '/src/assets/images/real/daytrip_custom_image1.jpg',
-    content: {
-      en: `Have a specific interest or need multi-day arrangements starting from Fez? We organize custom private experiences tailored around your travel style. Whether you wish to explore the Middle Atlas, visit artisan ceramics workshops, take part in an authentic cooking class in a Medina home, or journey south toward the desert, we coordinate every detail with trusted local partners.`,
-      fr: `Vous avez un projet de voyage particulier ? Nous créons des circuits sur mesure au départ de Fès avec véhicules privés confortables et accompagnement local de confiance.`,
-      ar: `هل ترغب في برنامج سياحي خاص أو رحلة متعددة الأيام انطلاقاً من فاس؟ نقوم بتنسيق وتصميم رحلات متكاملة تناسب اهتماماتكم مع سيارات مريحة ومرشدين محليين موثوقين.`
-    },
-    highlights: {
-      en: [
-        'Personalized itinerary planning with Med and our local team',
-        'Comfortable air-conditioned private vehicles with dedicated drivers',
-        'Authentic Medina experiences (cooking workshops, artisan studio visits)',
-        'Flexible schedules adapted to your family, group, or solo travel needs'
-      ],
-      fr: [
-        'Conception d’itinéraire sur mesure avec Med et notre équipe',
-        'Véhicules privés confortables et climatisés avec chauffeur dédié',
-        'Expériences immersives (ateliers de cuisine, rencontres avec artisans)',
-        'Flexibilité totale adaptée aux familles, couples et voyageurs solos'
-      ],
-      ar: [
-        'تخطيط مسارات خاصة بالتشاور المباشر مع المؤسس وفريق العمل',
-        'سيارات سياحية حديثة ومكيفة مع سائقين محترفين مخصصين لكم',
-        'تجارب حية وأصيلة (دروس طبخ منزلي، زيارات ورشات الحرفيين الكبار)',
-        'مرونة تامة تناسب العائلات والأزواج والمسافرين المستقلين'
-      ]
-    },
-    showInNav: false,
-    published: true,
-    createdAt: '2026-10-01',
-  },
-];

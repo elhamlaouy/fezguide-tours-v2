@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Language, PageId, SectionPillar } from '../types';
 import { useCms } from '../context/CmsContext';
-import { MessageCircle, X, Send, Clock, CheckCircle2, ChevronUp } from 'lucide-react';
+import { localizedText, uiText } from '../cms/render-utils';
+import { FLOATING_COPY } from '../cms/ui-copy';
+import { X, Send, Clock, CheckCircle2 } from 'lucide-react';
 
 interface FloatingWhatsAppButtonProps {
   language: Language;
@@ -14,35 +16,37 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   currentPage,
   activePillar,
 }) => {
-  const { siteSettings, tours } = useCms();
+  const { siteSettings, publishedDocument } = useCms();
+  const contact = publishedDocument?.siteSettings ?? siteSettings;
+  const floatingText = (key: keyof typeof FLOATING_COPY) => publishedDocument ? uiText(publishedDocument, `ui.floating.${key}`, language, FLOATING_COPY[key]) : localizedText(FLOATING_COPY[key], language);
   const [isOpen, setIsOpen] = useState(false);
-  const [hasPrompted, setHasPrompted] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [customNote, setCustomNote] = useState('');
 
   // Clean WhatsApp phone digits
-  const rawNumber = siteSettings.whatsappNumber || '212719603009';
+  const rawNumber = contact.whatsappNumber;
   const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
 
   // Determine current contextual title
   const getContextTitle = () => {
+    const canonical = publishedDocument?.pages.find(page => page.id === (activePillar?.id ?? currentPage) || page.slug === currentPage);
+    if (canonical) return localizedText(canonical.title, language);
     if (activePillar) {
-      return activePillar.title[language] || activePillar.title.en;
+      return activePillar.title[language] || (language === 'es' ? '' : activePillar.title.en);
     }
     switch (currentPage) {
       case 'fez':
-        return language === 'ar' ? 'جولات فاس العتيقة' : language === 'fr' ? 'Visites de Fès' : 'Fez Medina Tours';
+        return language === 'es' ? "Visitas por la medina antigua de Fez" : language === 'fr' ? 'Visites de Fès' : 'Fez Medina Tours';
       case 'day-trips':
-        return language === 'ar' ? 'الرحلات اليومية الخاصة' : language === 'fr' ? 'Excursions d’un jour' : 'Day Trips from Fez';
+        return language === 'es' ? "Excursiones privadas de un día" : language === 'fr' ? 'Excursions d’un jour' : 'Day Trips from Fez';
       case 'food-tours':
-        return language === 'ar' ? 'جولات الأكل والتذوق الفاسي' : language === 'fr' ? 'Tours culinaires' : 'Fez Food & Tasting Tours';
+        return language === 'es' ? "Rutas gastronómicas y de degustación por Fez" : language === 'fr' ? 'Tours culinaires' : 'Fez Food & Tasting Tours';
       case 'travel-tips':
-        return language === 'ar' ? 'نصائح السفر وإرشادات فاس' : language === 'fr' ? 'Conseils de voyage' : 'Travel Tips & Advice';
+        return language === 'es' ? "Consejos de viaje y recomendaciones para Fez" : language === 'fr' ? 'Conseils de voyage' : 'Travel Tips & Advice';
       case 'about':
-        return language === 'ar' ? 'فريق المرشدين المحليين' : language === 'fr' ? 'Équipe locale' : 'About Our Guiding Team';
+        return language === 'es' ? "Equipo de guías locales" : language === 'fr' ? 'Équipe locale' : 'About Our Guiding Team';
       case 'home':
       default:
-        return language === 'ar' ? 'جولات فاس الخاصة' : language === 'fr' ? 'Visites privées de Fès' : 'Authentic Fez Tours';
+        return language === 'es' ? "Visitas privadas por Fez" : language === 'fr' ? 'Visites privées de Fès' : 'Authentic Fez Tours';
     }
   };
 
@@ -51,54 +55,30 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   // Quick preset inquiry templates
   const quickInquiries = [
     {
-      label: {
-        en: 'Check dates & availability',
-        fr: 'Vérifier disponibilités',
-        ar: 'التحقق من التواريخ المتاحة',
-      },
+      key: 'availability' as const,
       text: {
         en: `Hello Med! I would like to check availability for "${contextTitle}". Which dates work best?`,
         fr: `Bonjour Med ! J'aimerais vérifier vos disponibilités pour "${contextTitle}". Quelles sont les dates possibles ?`,
-        ar: `السلام عليكم، أود الاستفسار عن التواريخ المتاحة لجولة "${contextTitle}".`,
+        es: `Hola, me gustaría consultar las fechas disponibles para la visita "${contextTitle}".`,
       },
     },
     {
-      label: {
-        en: 'Custom private itinerary',
-        fr: 'Circuit privé sur mesure',
-        ar: 'برنامج خاص لمجموعتي',
-      },
+      key: 'customItinerary' as const,
       text: {
         en: `Hello! We are looking for a tailored private tour for our group in Fez. Could you suggest an itinerary?`,
         fr: `Bonjour ! Nous recherchons une visite privée personnalisée pour notre groupe à Fès. Pouvez-vous nous conseiller ?`,
-        ar: `مرحباً، نرغب في تنظيم جولة خاصة ومخصصة لعائلتنا/مجموعتنا في فاس. هل يمكنكم اقتراح برنامج مناسب؟`,
+        es: "¡Hola! Buscamos una visita privada a medida para nuestro grupo en Fez. ¿Podéis proponernos un itinerario?",
       },
     },
     {
-      label: {
-        en: 'Riad pickup & transport question',
-        fr: 'Prise en charge au riad',
-        ar: 'التوصيل من الرياض والنقل',
-      },
+      key: 'pickup' as const,
       text: {
         en: `Hello! I have a question regarding pickup at our riad/hotel in Fez for "${contextTitle}".`,
         fr: `Bonjour ! J'ai une question concernant la prise en charge à notre riad à Fès pour "${contextTitle}".`,
-        ar: `السلام عليكم، لدي استفسار بخصوص التوصيل من مقر إقامتنا بالرياض لجولة "${contextTitle}".`,
+        es: `Hola, tengo una consulta sobre la recogida en nuestro riad para la visita "${contextTitle}".`,
       },
     },
   ];
-
-  // Show a gentle preview badge 4 seconds after page load (once per session)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasPrompted && !isOpen) {
-        setShowTooltip(true);
-        setHasPrompted(true);
-      }
-    }, 4500);
-
-    return () => clearTimeout(timer);
-  }, [hasPrompted, isOpen]);
 
   // Construct target WhatsApp URL
   const buildWhatsAppUrl = (messageText?: string) => {
@@ -107,12 +87,12 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
       if (customNote.trim()) {
         text = customNote.trim();
       } else {
-        if (language === 'ar') {
-          text = `السلام عليكم ورحمة الله، أتواصل معكم عبر موقع FezGuideTours للاستفسار عن: "${contextTitle}". هل يمكن تزويدي بمزيد من التفاصيل والأسعار؟`;
+        if (language === 'es') {
+          text = `Hola, os contacto a través de ${contact.siteName} para consultar: "${contextTitle}". ¿Podéis darme más detalles y precios?`;
         } else if (language === 'fr') {
-          text = `Bonjour ! Je vous contacte via FezGuideTours au sujet de : "${contextTitle}". Pourriez-vous me donner plus de détails et tarifs ?`;
+          text = `Bonjour ! Je vous contacte via ${contact.siteName} au sujet de : "${contextTitle}". Pourriez-vous me donner plus de détails et tarifs ?`;
         } else {
-          text = `Hello! I am browsing FezGuideTours and would like to inquire in real-time about "${contextTitle}". Could you please share more details and availability?`;
+          text = `Hello! I am browsing ${contact.siteName} and would like to inquire in real-time about "${contextTitle}". Could you please share more details and availability?`;
         }
       }
     }
@@ -122,63 +102,13 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   const handleOpenWhatsApp = (customText?: string) => {
     const url = buildWhatsAppUrl(customText);
     window.open(url, '_blank', 'noopener,noreferrer');
-    setShowTooltip(false);
   };
 
   return (
     <div
-      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end rtl:right-auto rtl:left-5 rtl:sm:left-6 rtl:items-start select-none"
-      aria-label="Contact guide on WhatsApp"
+      className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end select-none"
+      aria-label={floatingText('contact')}
     >
-      {/* 1. Gentle Unobtrusive Proactive Tooltip */}
-      {showTooltip && !isOpen && (
-        <div className="mb-3 animate-bounce-subtle max-w-[280px] sm:max-w-xs bg-white text-[#1C2524] p-3 rounded-2xl shadow-xl border border-[#E7E2DA] flex items-start gap-2.5 relative">
-          <button
-            onClick={() => setShowTooltip(false)}
-            className="absolute top-2 right-2 text-[#8E9F9D] hover:text-[#1C2524] p-1 transition-colors"
-            aria-label="Close tooltip"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[#005F5A] border border-[#005F5A]/20">
-            <img
-              src="/images/real/about_us_image1.jpg"
-              alt="Med Local Guide"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="pr-4 space-y-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#005F5A]">
-              <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
-              <span>
-                {language === 'ar'
-                  ? 'مرشد محلي متصل الآن'
-                  : language === 'fr'
-                  ? 'Guide local en ligne'
-                  : 'Local Guide Online'}
-              </span>
-            </div>
-            <p className="text-xs text-[#445250] leading-snug">
-              {language === 'ar'
-                ? `هل لديك سؤال حول "${contextTitle}"؟ تواصل معي مباشرة عبر واتساب!`
-                : language === 'fr'
-                ? `Une question sur "${contextTitle}" ? Échangez directement avec un guide !`
-                : `Have a quick question about "${contextTitle}"? Ask a local guide on WhatsApp!`}
-            </p>
-            <button
-              onClick={() => {
-                setShowTooltip(false);
-                setIsOpen(true);
-              }}
-              className="mt-1 text-[11px] font-bold text-[#25D366] hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>{language === 'ar' ? 'ابدأ المحادثة' : language === 'fr' ? 'Discuter' : 'Chat now'}</span>
-              <ChevronUp className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* 2. Interactive Quick Inquiry Card (Expandable) */}
       {isOpen && (
         <div className="mb-3 w-[calc(100vw-2.5rem)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] overflow-hidden animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -189,7 +119,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
                 <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white/30 bg-[#1C2524] shadow-xs">
                   <img
                     src="/images/real/about_us_image1.jpg"
-                    alt="Med & Local Team"
+                    alt={language === 'es' ? "Med y el equipo local" : "Med & Local Team"}
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -198,17 +128,13 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
 
               <div>
                 <div className="flex items-center gap-1.5">
-                  <h3 className="font-bold text-sm leading-none">Med & Fez Guides</h3>
+                  <h3 className="font-bold text-sm leading-none">{floatingText('title')}</h3>
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#00A896]" />
                 </div>
                 <p className="text-[11px] text-[#D8E6E4] mt-1 flex items-center gap-1">
                   <Clock className="w-3 h-3 text-[#25D366]" />
                   <span>
-                    {language === 'ar'
-                      ? 'متاح الآن · يرد خلال دقائق'
-                      : language === 'fr'
-                      ? 'En ligne · Réponse en quelques minutes'
-                      : 'Online now · Replies in minutes'}
+                    {floatingText('responseStatus')}
                   </span>
                 </p>
               </div>
@@ -217,7 +143,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
             <button
               onClick={() => setIsOpen(false)}
               className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
-              aria-label="Close WhatsApp card"
+              aria-label={floatingText('closeCard')}
             >
               <X className="w-4 h-4" />
             </button>
@@ -226,7 +152,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
           {/* Context Banner */}
           <div className="bg-[#FAF8F5] px-4 py-2.5 border-b border-[#E7E2DA] text-[11px] text-[#52605E] flex items-center justify-between">
             <span className="truncate">
-              {language === 'ar' ? 'الاستفسار الحالي:' : language === 'fr' ? 'Votre sélection :' : 'Inquiry Context:'}{' '}
+              {floatingText('context')}{' '}
               <strong className="text-[#005F5A]">{contextTitle}</strong>
             </span>
           </div>
@@ -236,28 +162,24 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
             {/* Friendly Note */}
             <div className="p-3 rounded-2xl bg-[#E8F5E9] text-[#1B5E20] border border-[#C8E6C9] leading-relaxed">
               <p>
-                {language === 'ar'
-                  ? 'مرحباً بك في فاس! أنا والزملاء هنا للإجابة عن أي استفسار حول الجولات، المواقيت، أو ترتيب رحلات خاصة لعائلتك.'
-                  : language === 'fr'
-                  ? 'Marhaban ! Nous sommes à votre disposition pour toute question sur nos circuits, tarifs ou programmes sur mesure.'
-                  : 'Marhaban! We are here to answer your questions about tour details, flexible timings, or crafting custom itineraries.'}
+                {floatingText('welcome')}
               </p>
             </div>
 
             {/* Quick Inquiry Templates */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-bold text-[#718280] uppercase tracking-wider block">
-                {language === 'ar' ? 'استفسارات سريعة مقترحة:' : language === 'fr' ? 'Questions fréquentes :' : 'Quick Questions:'}
+                {floatingText('quickQuestions')}
               </span>
               <div className="space-y-1.5">
                 {quickInquiries.map((q, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleOpenWhatsApp(q.text[language])}
-                    className="w-full text-left rtl:text-right p-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F2ECE4] text-[#1C2524] transition-colors border border-[#E7E2DA] flex items-center justify-between group cursor-pointer"
+                    className="w-full text-left p-2.5 rounded-xl bg-[#FAF8F5] hover:bg-[#F2ECE4] text-[#1C2524] transition-colors border border-[#E7E2DA] flex items-center justify-between group cursor-pointer"
                   >
                     <span className="text-xs font-semibold group-hover:text-[#005F5A] transition-colors">
-                      {q.label[language]}
+                      {floatingText(q.key)}
                     </span>
                     <Send className="w-3 h-3 text-[#718280] group-hover:text-[#25D366] transition-colors shrink-0 ms-2" />
                   </button>
@@ -270,11 +192,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
               <textarea
                 rows={2}
                 placeholder={
-                  language === 'ar'
-                    ? 'اكتب سؤالك الخاص هنا...'
-                    : language === 'fr'
-                    ? 'Écrivez votre message personnalisé ici...'
-                    : 'Type your custom question here...'
+                  floatingText('notePlaceholder')
                 }
                 value={customNote}
                 onChange={(e) => setCustomNote(e.target.value)}
@@ -285,27 +203,19 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
             {/* Main Action Button */}
             <button
               onClick={() => handleOpenWhatsApp()}
-              className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+              className="w-full py-3 px-4 bg-[#117A3A] hover:bg-[#0F6932] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
             >
               {/* WhatsApp Official SVG Logo */}
               <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
                 <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
               </svg>
               <span>
-                {language === 'ar'
-                  ? 'محادثة فورية على واتساب'
-                  : language === 'fr'
-                  ? 'Discuter sur WhatsApp'
-                  : 'Start WhatsApp Chat'}
+                {floatingText('startChat')}
               </span>
             </button>
 
             <p className="text-[10px] text-center text-[#718280]">
-              {language === 'ar'
-                ? 'تواصل مباشر مع فريقنا في فاس · لا وسطاء · رد فوري'
-                : language === 'fr'
-                ? 'Discussion directe avec nos guides · Sans intermédiaire'
-                : 'Direct chat with native guides · No middleman · Fast response'}
+              {floatingText('footer')}
             </p>
           </div>
         </div>
@@ -313,18 +223,15 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
 
       {/* 3. Floating Action Trigger Button */}
       <button
-        onClick={() => {
-          setIsOpen(!isOpen);
-          setShowTooltip(false);
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         className={`group relative flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer active:scale-95 ${
           isOpen
             ? 'bg-[#15201F] text-white hover:bg-[#233130]'
-            : 'bg-[#25D366] text-white hover:bg-[#20BD5A]'
+            : 'bg-[#117A3A] text-white hover:bg-[#0F6932]'
         }`}
         aria-expanded={isOpen}
-        aria-label="Contact guide on WhatsApp"
-        title="Contact a local guide on WhatsApp"
+        aria-label={floatingText('contact')}
+        title={language === 'es' ? "Contactar con un guía local por WhatsApp" : "Contact a local guide on WhatsApp"}
       >
         {/* Pulsing Presence Ring when closed */}
         {!isOpen && (
@@ -342,13 +249,13 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
         {/* Label on desktop screens */}
         <span className="hidden sm:inline font-bold text-xs tracking-tight">
           {isOpen
-            ? language === 'ar'
-              ? 'إغلاق'
+            ? language === 'es'
+              ? "Cerrar"
               : language === 'fr'
               ? 'Fermer'
               : 'Close'
-            : language === 'ar'
-            ? 'تواصل عبر واتساب'
+            : language === 'es'
+            ? "Chatear por WhatsApp"
             : language === 'fr'
             ? 'Contact WhatsApp'
             : 'Chat on WhatsApp'}

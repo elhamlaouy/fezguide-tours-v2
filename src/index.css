@@ -3,7 +3,7 @@
 @layer base {
   :root {
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --font-arabic: 'Cairo', system-ui, -apple-system, sans-serif;
+
   }
 
   html {
@@ -14,10 +14,7 @@
     font-family: var(--font-sans);
   }
 
-  html[dir="rtl"],
-  [dir="rtl"] {
-    font-family: var(--font-arabic);
-  }
+
 }
 
 #tripadvisor-reviews { scroll-margin-top: 6rem; }

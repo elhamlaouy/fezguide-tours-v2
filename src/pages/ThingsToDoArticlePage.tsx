@@ -1,5 +1,8 @@
 import React from 'react';
+import { ApprovedSection, ApprovedSections } from '../cms/approved-content';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { Language, PageId } from '../types';
+import { useFezEditorial } from '../components/EditorialArticlePage';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { PageCrumbBar } from '../components/PageCrumbBar';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
@@ -32,6 +35,7 @@ const imageAlts = {
     'Terrasse de café en plein air éclairée la nuit à Fès',
     'Visiteurs posant devant une entrée décorée à Fès',
   ],
+  es: ["Calle animada de un zoco en la medina antigua de Fez", "Artesano trabajando en un taller tradicional de Fez", "Mercancías de colores colgadas sobre una calle comercial estrecha de Fez", "Vasos con bebidas sobre una mesa en Fez", "Calle y puerta tradicionales con ropa tendida en Fez", "Vista de los tejados apiñados de Fez", "Terraza de una cafetería al aire libre iluminada por la noche en Fez", "Visitantes posando ante una entrada decorada en Fez"]
 };
 
 const imageDimensions = [
@@ -72,18 +76,35 @@ const content = {
     back: 'Retour à Fès',
     cta: 'Explorez nos expériences à Fès',
   },
+  es: {
+    title: 'Qué hacer en Fez',
+    paragraphs: [
+      'En Fez hay mucho más que hacer que visitar sus monumentos famosos. La mejor manera de conocer la ciudad es recorrer sus calles, hablar con los vecinos, descubrir los oficios tradicionales, probar la comida local y tomarse el tiempo necesario para disfrutar de sus distintas facetas.',
+      'Empieza por explorar la medina antigua de Fez. Recorre sus callejuelas, descubre los zocos tradicionales, visita lugares históricos y detente a observar los detalles que te rodean. Cada zona de la medina tiene su propio ambiente, y a veces las mejores experiencias se encuentran lejos de las calles más turísticas.',
+      'Descubre los oficios tradicionales de Fez visitando talleres locales y observando a los artesanos mientras trabajan. Podrás conocer técnicas como el zellige, el trabajo del cuero, la carpintería, la metalistería y otros oficios que forman parte de la identidad de la ciudad desde hace generaciones.',
+      'Dedica tiempo a recorrer los zocos y mercados locales. Encontrarás especias, productos tradicionales marroquíes, piezas hechas a mano, alimentos y artículos de uso diario. Los zocos no son solo lugares donde comprar: también forman parte de la vida cotidiana de la medina.',
+      'La gastronomía es otra parte importante de la experiencia de Fez. Prueba platos tradicionales marroquíes, descubre los ingredientes locales y explora los sabores de la medina. Si quieres profundizar, un paseo de degustación con un guía local es una buena manera de conocer Fez a través de su cocina y de su cultura cotidiana.',
+      'Reserva un momento para descubrir el Mellah histórico y Fez Jdid. Recorre las calles del barrio judío, observa su arquitectura característica y conoce mejor el patrimonio judío, que constituye una parte importante de la historia de Fez.',
+      'Para cambiar de perspectiva, busca uno de los miradores panorámicos que rodean Fez. Contemplar la medina desde arriba te permite apreciar sus tejados, minaretes, murallas y el paisaje que la rodea de una manera completamente distinta.',
+      'Y, al terminar el día, descubre Fez de noche. Acércate a la ciudad nueva, disfruta de una cafetería o un restaurante, pasea por sus calles modernas y conoce el ambiente de la ciudad después de la puesta de sol.',
+      'Tanto si dispones de un día como de varios, la mejor forma de conocer Fez es combinar su historia con su vida cotidiana. Camina, prueba, explora, conoce a los vecinos y date tiempo para descubrir los lugares que hacen que Fez sea diferente.',
+    ],
+    back: 'Volver a Fez',
+    cta: 'Descubre nuestras experiencias en Fez',
+  },
 };
 
 export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = language === 'fr' ? content.fr : content.en;
-  const fallbackEnglish = language === 'ar';
-  const altCopy = language === 'fr' ? imageAlts.fr : imageAlts.en;
+  const cms = useFezEditorial('fez-things-to-do', language);
+  const source = content[language];
+  const copy = { ...source, title: cms.document ? cms.page?.title[cms.locale] ?? '' : source.title, paragraphs: source.paragraphs.map((paragraph, index) => cms.story(index === 0 ? 'introduction' : `story-${index}`, paragraph)) };
+  const altCopy = imageAlts[language];
 
   return (
-    <div className="bg-[#FAF8F5] pb-20" dir={fallbackEnglish ? 'ltr' : undefined}>
+    <div className="bg-[#FAF8F5] pb-20">
       <PageCrumbBar
         language={language}
-        parentLabel={language === 'ar' ? 'فاس' : language === 'fr' ? 'Fès' : 'Fez'}
+        parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
         onParent={onBack}
@@ -92,32 +113,35 @@ export const ThingsToDoArticlePage: React.FC<ThingsToDoArticlePageProps> = ({ la
       <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{copy.title}</h1>
-          <p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p>
+          <ApprovedSection id="introduction"><p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p></ApprovedSection>
         </header>
 
-        {copy.paragraphs.slice(1).map((paragraph, index) => {
+        {cms.orderGroups(copy.paragraphs.slice(1).map((paragraph, index) => ({ paragraph, index })), ({ index }) => [`story-${index + 1}`, `gallery-${index + 1}`]).map(({ paragraph, index }) => {
           const imageIndex = index;
           return (
             <section key={index} className="space-y-7">
-              <p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p>
-              <figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
+              <ApprovedSections>
+              <ApprovedSection id={`story-${index + 1}`}><p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p></ApprovedSection>
+              {cms.images(`gallery-${imageIndex + 1}`, [{ src: `/images/fez-things-to-do/things-${String(imageIndex + 1).padStart(2, '0')}.jpg`, alt: altCopy[imageIndex], width: imageDimensions[imageIndex][0], height: imageDimensions[imageIndex][1] }]).map(image => <ApprovedSection id={`gallery-${imageIndex + 1}`} key={image.src}><figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
                 <img
-                  src={`/images/fez-things-to-do/things-${String(imageIndex + 1).padStart(2, '0')}.jpg`}
-                  alt={altCopy[imageIndex]}
-                  width={imageDimensions[imageIndex][0]}
-                  height={imageDimensions[imageIndex][1]}
+                  {...responsiveImageProps(image.src, 'min(1024px, calc(100vw - 2rem))', true)}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
                   loading={imageIndex === 0 ? 'eager' : 'lazy'}
                   decoding="async"
                   className="block w-auto h-auto max-w-full max-h-[620px] object-contain"
                 />
-              </figure>
+              </figure></ApprovedSection>)}
+              </ApprovedSections>
             </section>
           );
         })}
 
-        <FezToursCtaSection language={fallbackEnglish ? 'en' : language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} onNavigate={onNavigate} />
 
-        <TripadvisorReviewsSection language={language === 'fr' ? 'fr' : 'en'} />
+        <TripadvisorReviewsSection language={language} />
       </article>
     </div>
   );
