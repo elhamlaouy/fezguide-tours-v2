@@ -16,6 +16,7 @@ const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { fetchPublishedDocument, loadAdminApp, publishedPage } = await import('../src/cms/public-document.ts');
 const { default: App, PublicPageSwitch } = await import('../src/App.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { CmsProvider } = await import('../src/context/CmsContext.tsx');
 const { Navbar } = await import('../src/components/Navbar.tsx');
 const { Footer } = await import('../src/components/Footer.tsx');
@@ -34,7 +35,8 @@ test('document fetch failure keeps a marker from the old home path', async () =>
   const context = read('src/context/CmsContext.tsx');
   assert.match(context, /fetch\('\/api\/cms'/);
   assert.match(context, /fetchPublishedDocument/);
-  assert.match(context, /PROTECTED_FEZ_TOUR_IDS/);
+  assert.match(context, /import\('\.\/legacy-public-data'\)/);
+  assert.match(read('src/context/legacy-public-data.ts'), /PROTECTED_FEZ_TOUR_IDS/);
 
   const html = renderToStaticMarkup(createElement(PublicPageSwitch, {
     document: missing,
@@ -74,7 +76,7 @@ test('a valid document renders a CMS section id', async () => {
     legacy: createElement('div', null, 'View All Tours'),
   }));
   assert.match(home, /data-section-id="hero"/);
-  assert.equal(home.includes('View All Tours'), false);
+  assert.match(home, /View All Tours/); // Approved authored composition remains editable, not replaced.
 
   for (const pageId of ['about', 'travel-tips']) {
     const editorial = renderToStaticMarkup(createElement(PublicPageSwitch, {

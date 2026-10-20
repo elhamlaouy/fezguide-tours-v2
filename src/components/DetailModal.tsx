@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SectionPillar, Language } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { X, Check, Clock, MapPin, Users, Calendar, MessageCircle, ShieldCheck } from 'lucide-react';
 

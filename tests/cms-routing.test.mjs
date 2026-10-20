@@ -55,6 +55,7 @@ test('mounted public shell tracks locale URLs, CMS-only navigation and popstate 
   const { act, createElement } = await import('react');
   const { createRoot } = await import('react-dom/client');
   const { default: App } = await import('../src/App.tsx');
+  await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
   const document = createCmsSeed();
   document.navigation.push({ id: 'route-test', label: { en: 'Route test', fr: 'Route test', es: 'Route test' }, enabled: true, pageId: 'page-bespoke-itinerary' });
   const originalFetch = globalThis.fetch;
@@ -68,13 +69,13 @@ test('mounted public shell tracks locale URLs, CMS-only navigation and popstate 
     assert.match(host.querySelector('main').textContent, /Fès|guides|Guides/);
     await act(async () => { [...host.querySelectorAll('nav button')].find(button => button.textContent.trim() === 'Route test').click(); });
     assert.equal(window.location.pathname, '/fr/bespoke-morocco-experiences');
-    assert.ok(host.querySelector('article.cms-page'));
+    assert.ok(host.querySelector('h1'));
     assert.match(host.querySelector('h1').textContent, /Voyages Sur Mesure/);
     assert.equal(window.document.title, document.pages.find(page => page.id === 'page-bespoke-itinerary').seo.title.fr);
     assert.equal(window.document.querySelector('link[rel="canonical"]').href, 'https://fezguidetours.elhamlaouy.workers.dev/fr/bespoke-morocco-experiences');
     await act(async () => { window.history.back(); await new Promise(resolve => setTimeout(resolve, 10)); });
     assert.equal(window.location.pathname, '/fr/about');
-    assert.equal(host.querySelector('article.cms-page').lang, 'fr');
+    assert.equal(host.querySelector('[data-section-id]').lang, 'fr');
     await act(async () => { window.history.forward(); await new Promise(resolve => setTimeout(resolve, 10)); });
     assert.equal(window.location.pathname, '/fr/bespoke-morocco-experiences');
     assert.match(host.querySelector('h1').textContent, /Voyages Sur Mesure/);

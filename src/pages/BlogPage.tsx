@@ -1,22 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { Language, BlogPost } from '../types';
 import { useCms } from '../context/CmsContext';
+import { ApprovedSection, ApprovedSections, ApprovedContentProvider, useApprovedContent } from '../cms/approved-content';
+import { visibleLink } from '../cms/render-utils';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { BookOpen, Calendar, Clock, User, ArrowRight, X, ChevronRight } from 'lucide-react';
 
 interface BlogPageProps {
   language: Language;
+  initialPostId?: string;
   onBookTour: (tourTitle?: string) => void;
 }
 
-export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
+export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initialPostId }) => {
   const { blogPosts } = useCms();
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const { document, section } = useApprovedContent('blog');
+  const hero = section('hero', 'hero');
+  const backgroundPage=document?.pages.find(page=>page.id==='blog');
+  const background=(node:React.ReactNode)=>document && initialPostId && backgroundPage ? <ApprovedContentProvider document={document} page={backgroundPage} language={language} annotate={false}>{node}</ApprovedContentProvider> : node;
+  const HeroHeading=initialPostId ? 'h2' : 'h1';
+  const postsSection = section('posts', 'cardGrid');
+  const blank = { en: '', fr: '', es: '' };
+  const imageSource = (mediaId: string | undefined) => document?.media.find(media => media.id === mediaId)?.src;
+  const projectPost = (post: BlogPost): BlogPost => {
+    if (!document) return post;
+    const page = document.pages.find(page => page.id === post.id);
+    const cover = page?.sections.find(section => section.id === 'cover' && section.type === 'gallery');
+    const content = page?.sections.find(section => section.id === 'content' && section.type === 'richText');
+    const excerpt = page?.sections.find(section => section.id === 'excerpt' && section.type === 'richText');
+    const body = (blocks: Extract<NonNullable<typeof content>, { type: 'richText' }>['blocks']) => Object.fromEntries(['en', 'fr', 'es'].map(locale => [locale, blocks.map(block => 'text' in block ? block.text[locale as Language] : block.items[locale as Language].join('\n')).join('\n\n')])) as BlogPost['content'];
+    return { ...post, title: page?.title ?? blank,
+      coverImage: cover?.type === 'gallery' && cover.enabled ? imageSource(cover.images[0]?.mediaId) ?? '' : '',
+      content: content?.type === 'richText' && content.enabled ? body(content.blocks) : blank,
+      excerpt: excerpt?.type === 'richText' ? excerpt.enabled ? body(excerpt.blocks) : blank : post.excerpt };
+  };
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(initialPostId ?? null);
+  const selectedRecord = (document?.blogPosts ?? blogPosts).find(post => post.id === selectedPostId && post.published !== false && (!document || document.pages.some(page => page.id === post.id && page.enabled)));
+  const selectedPost = selectedRecord ? projectPost(selectedRecord) : null;
+  const selectedPage = document?.pages.find(page => page.id === selectedPostId);
+  const selectedCover = selectedPage?.sections.find(section => section.id === 'cover' && section.type === 'gallery');
+  const selectedCoverAlt = selectedCover?.type === 'gallery' ? selectedCover.images[0]?.alt[language] ?? '' : selectedPost?.title[language] ?? '';
+  useEffect(() => { setSelectedPostId(initialPostId ?? null); }, [initialPostId]);
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && selectedPost) {
-        setSelectedPost(null);
+        setSelectedPostId(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -24,7 +54,12 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
   }, [selectedPost]);
 
 
-  const publishedPosts = blogPosts.filter((p) => p.published !== false);
+  const canonicalPosts = (document?.blogPosts ?? blogPosts).filter(post => post.published !== false && (!document || document.pages.some(page => page.id === post.id && page.enabled)));
+  const publishedPosts = document ? (postsSection?.cards ?? []).flatMap(card => {
+    const record = canonicalPosts.find(post => post.id === card.pageId);
+    if (!record) return [];
+    return [{ ...projectPost(record), title: card.title, excerpt: card.description, coverImage: imageSource(card.image?.mediaId) ?? '', coverAlt: card.image?.alt[language] ?? '' }];
+  }) : canonicalPosts.map(post => ({ ...post, coverAlt: post.title[language] }));
 
   const categories = [
     'all',
@@ -50,39 +85,35 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
   };
 
   return (
-    <div className="space-y-16 pb-20">
+    <div className="space-y-16 pb-20" lang={language} dir="ltr">
       {/* Hero Header */}
-      <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
-        <img
-          src="/images/real/fez_history_culture_image1.jpg"
-          alt={language === 'es' ? "Blog de viajes de Fez" : "Fez Travel Blog"}
+      {background(<ApprovedSection id="hero"><section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
+        {(!document || hero?.image) && (<img
+          {...responsiveImageProps((document ? imageSource(hero?.image?.mediaId) : ("/images/real/fez_history_culture_image1.jpg")) ?? '', '100vw', true)}
+          alt={document ? hero?.image?.alt[language] ?? '' : (language === 'es' ? "Blog de viajes de Fez" : "Fez Travel Blog")}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        />)}
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <BookOpen className="w-4 h-4 text-[#005F5A]" />
-              <span>{language === 'es' ? "Diario de FezGuideTours" : "FezGuideTours Journal"}</span>
+              <span>{document ? hero?.eyebrow?.[language] ?? '' : (language === 'es' ? "Diario de FezGuideTours" : "FezGuideTours Journal")}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
-              {header.title[language]}
-            </h1>
+            <HeroHeading className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">{document ? hero?.title?.[language] ?? '' : (header.title[language])}</HeroHeading>
 
-            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {header.subtitle[language]}
-            </p>
+            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">{document ? hero?.description?.[language] ?? '' : (header.subtitle[language])}</p>
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>)}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Category Filters */}
-        {categories.length > 2 && (
+        {(!document || postsSection?.enabled) && categories.length > 2 && (
           <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-white rounded-xl border border-[#E7E2DA] max-w-xl mx-auto shadow-xs">
             {categories.map((cat, idx) => (
               <button
@@ -94,14 +125,14 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                     : 'text-[#445250] hover:text-[#005F5A]'
                 }`}
               >
-                {cat === 'all' ? 'All Articles' : cat}
+                {cat === 'all' ? language === 'es' ? 'Todos los artículos' : language === 'fr' ? 'Tous les articles' : 'All Articles' : cat}
               </button>
             ))}
           </div>
         )}
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {background(<ApprovedSection id="posts"><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.map((post) => (
             <article
               key={post.id}
@@ -110,8 +141,8 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
               {/* Cover Image */}
               <div className="relative aspect-16/10 w-full bg-[#1C2524] overflow-hidden">
                 <img
-                  src={post.coverImage}
-                  alt={post.title[language]}
+                  {...responsiveImageProps(post.coverImage, '(min-width: 1024px) 33vw, 100vw', true)}
+                  alt={post.coverAlt}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -151,7 +182,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                   </span>
 
                   <button
-                    onClick={() => setSelectedPost(post)}
+                    onClick={() => setSelectedPostId(post.id)}
                     className="text-xs font-bold text-[#005F5A] hover:text-[#C84B31] flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>
@@ -164,7 +195,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
               </div>
             </article>
           ))}
-        </div>
+        </div></ApprovedSection>)}
       </div>
 
       {/* Reader Modal */}
@@ -173,13 +204,13 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
           role="dialog"
           aria-modal="true"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedPost(null);
+            if (e.target === e.currentTarget) setSelectedPostId(null);
           }}
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs overflow-y-auto"
         >
           <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] overflow-hidden my-8 text-[#1C2524]">
             <button
-              onClick={() => setSelectedPost(null)}
+              onClick={() => setSelectedPostId(null)}
               className="absolute top-4 right-4 z-10 p-2 bg-black/40 hover:bg-black/60 text-white rounded-full transition-colors cursor-pointer"
               aria-label={language === 'es' ? "Cerrar artículo" : "Close article"}
             >
@@ -188,9 +219,9 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
 
             {/* Header Image */}
             <div className="relative h-64 sm:h-80 w-full bg-[#1C2524]">
-              <img
-                src={selectedPost.coverImage}
-                alt={selectedPost.title[language]}
+              <img data-section-id={initialPostId && selectedCover?.enabled ? 'cover' : undefined} data-section-type={initialPostId && selectedCover?.enabled ? 'gallery' : undefined}
+                {...responsiveImageProps(selectedPost.coverImage, '100vw', true)}
+                alt={selectedCoverAlt}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
@@ -211,7 +242,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
             </div>
 
             {/* Prose Content */}
-            <div className="p-6 sm:p-10 space-y-6">
+            <div className="p-6 sm:p-10 space-y-6" data-section-id={initialPostId && selectedPage?.sections.some(section => section.id==='content' && section.enabled) ? 'content' : undefined} data-section-type={initialPostId ? 'richText' : undefined}>
               <p className="text-base font-medium text-[#2A3735] leading-relaxed italic border-l-4 border-[#005F5A] pl-4">
                 {selectedPost.excerpt[language]}
               </p>
@@ -231,7 +262,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour }) => {
                 </div>
                 <button
                   onClick={() => {
-                    setSelectedPost(null);
+                    setSelectedPostId(null);
                     onBookTour();
                   }}
                   className="py-2.5 px-5 bg-[#C84B31] hover:bg-[#B33D25] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"

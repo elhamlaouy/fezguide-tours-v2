@@ -12,12 +12,13 @@ import { BookingModal } from './components/BookingModal';
 import { DetailModal } from './components/DetailModal';
 import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
 import type { CmsDocument } from './cms/schema';
+import { approvedThemeActive } from './cms/approved-content';
 import { PageRenderer } from './cms/PageRenderer';
 import { pageLocaleAvailable, themeStyle } from './cms/render-utils';
 import './cms/site-theme.css';
 import { pagePath, resolveRoute } from './cms/routing';
 import { applyRouteSeo } from './cms/seo';
-import { isAdminPath, loadAdminApp, publishedPage, type AdminAppComponent } from './cms/public-document';
+import { isAdminPath, loadAdminApp, publishedPage, requiresDocumentNavigation, snapshotContainsRoute, type AdminAppComponent } from './cms/public-document';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -72,6 +73,8 @@ export function PublicPageSwitch({
   const page = document ? publishedPage(document, pageId, experienceId) : undefined;
   if (!document) return legacy;
   if (!page || !pageLocaleAvailable(document, page, language)) return <section className="cms-page-header" role="status"><h1>404 — {language === 'fr' ? 'Page introuvable' : language === 'es' ? 'Página no encontrada' : 'Page not found'}</h1></section>;
+  // Never render a summary-only body as a deliberate deletion while leaving a scope.
+  if (!snapshotContainsRoute(document, { pageId, page, language })) return <p role="status">{language === 'fr' ? 'Chargement…' : language === 'es' ? 'Cargando…' : 'Loading…'}</p>;
   return (
     <PageRenderer
       document={document}
@@ -85,8 +88,8 @@ export function PublicPageSwitch({
 
 function AppContent() {
   const { tours, customPages, publishedDocument } = useCms();
-  const [currentPage, setCurrentPage] = useState<PageId>(() => typeof window === 'undefined' ? 'home' : resolveRoute(new URL(window.location.href)).pageId);
-  const [language, setLanguage] = useState<Language>(() => typeof window === 'undefined' ? 'en' : resolveRoute(new URL(window.location.href)).language);
+  const [currentPage, setCurrentPage] = useState<PageId>(() => typeof window === 'undefined' ? 'home' : resolveRoute(new URL(window.location.href), publishedDocument).pageId);
+  const [language, setLanguage] = useState<Language>(() => typeof window === 'undefined' ? 'en' : resolveRoute(new URL(window.location.href), publishedDocument).language);
   const [selectedExperience, setSelectedExperience] = useState<SectionPillar | null>(null);
   const [selectedPillar, setSelectedPillar] = useState<SectionPillar | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -118,7 +121,13 @@ function AppContent() {
         window.history.pushState(null, '', lastLocation.current);
         return;
       }
-      const route = resolveRoute(new URL(window.location.href), publishedDocument);
+      const url = new URL(window.location.href);
+      if (requiresDocumentNavigation(publishedDocument, url)) {
+        // A history traversal must replace this entry, not create a Back/Forward loop.
+        window.location.replace(url.href);
+        return;
+      }
+      const route = resolveRoute(url, publishedDocument);
       setPathname(readPathname());
       setLanguage(route.language);
       const experience = tours.find(tour => tour.id === (route.experienceId ?? route.page?.id ?? route.pageId));
@@ -147,6 +156,12 @@ function AppContent() {
     url.pathname = path;
     for (const key of ['page', 'experience', 'tour', 'lang', 'language']) url.searchParams.delete(key);
     url.hash = '';
+    if (requiresDocumentNavigation(publishedDocument, url)) {
+      // ponytail: ordinary Worker HTML preserves one publication revision per response;
+      // no extra API, partial-document merge, or client-side revision state machine.
+      window.location.assign(`${url.pathname}${url.search}`);
+      return;
+    }
     window.history.pushState(null, '', `${url.pathname}${url.search}`);
     lastLocation.current = window.location.href;
     setPathname(url.pathname);
@@ -339,11 +354,11 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1C2524] transition-colors" data-cms-site={publishedDocument ? "true" : undefined} data-button-variant={publishedDocument?.theme.buttonVariant} data-card-variant={publishedDocument?.theme.cardVariant} style={publishedDocument ? themeStyle(publishedDocument.theme) : undefined}>
+    <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#1C2524] transition-colors" data-cms-site={publishedDocument ? "true" : undefined} data-cms-themed={publishedDocument ? String(approvedThemeActive(publishedDocument.theme)) : undefined} data-button-variant={publishedDocument?.theme.buttonVariant} data-card-variant={publishedDocument?.theme.cardVariant} style={publishedDocument ? themeStyle(publishedDocument.theme) : undefined}>
       {/* Top Bar Navigation */}
       <Navbar
         currentPage={currentPage}
-        activeCategory={selectedExperience?.pageId}
+        activeCategory={selectedExperience?.pageId ?? publishedDocument?.pages.find(page => page.id === currentPage || page.slug === currentPage)?.parentId}
         language={language}
         document={publishedDocument}
         onNavigate={handleNavigatePage}

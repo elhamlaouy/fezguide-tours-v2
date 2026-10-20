@@ -1,12 +1,9 @@
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import type { Localized } from './schema';
 import { BOOKING_COPY } from './booking-copy';
 
 export const FLOATING_COPY = {
  contact: { en: 'Contact guide on WhatsApp', fr: 'Contacter le guide sur WhatsApp', es: 'Contactar con el guía por WhatsApp' },
- closeTooltip: { en: 'Close tooltip', fr: 'Fermer le message', es: 'Cerrar aviso' },
- contactStatus: { en: 'Contact a local guide', fr: 'Contactez un guide local', es: 'Contacta con un guía local' },
- chatNow: { en: 'Chat now', fr: 'Discuter', es: 'Chatear ahora' },
  title: { en: 'Med & Fez Guides', fr: 'Med et les guides de Fès', es: 'Med y los guías de Fez' },
  responseStatus: { en: 'Send your question on WhatsApp', fr: 'Envoyez votre question sur WhatsApp', es: 'Envía tu consulta por WhatsApp' },
  closeCard: { en: 'Close WhatsApp card', fr: 'Fermer la fenêtre WhatsApp', es: 'Cerrar tarjeta de WhatsApp' },

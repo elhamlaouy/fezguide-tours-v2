@@ -11,7 +11,7 @@ const email = 'fezguidetours1@gmail.com';
 const googleMaps = 'https://maps.app.goo.gl/5aXiAV7FjS1W3qBj6';
 
 test('contact defaults and generator use the approved phone, email, and Google Maps URL', () => {
-  for (const path of ['src/data/translations.ts', 'scripts/generate_translations.py']) {
+  for (const path of ['src/data/shared-ui.ts', 'scripts/generate_translations.py']) {
     const source = read(path);
     assert.match(source, new RegExp(phone));
     assert.match(source, new RegExp(email.replace('.', '\\.')));
@@ -36,7 +36,7 @@ test('no source fallback can restore the old phone number', () => {
 });
 
 test('CMS data cannot restore stale public contact details', () => {
-  const context = read('src/context/CmsContext.tsx');
+  const context = read('src/context/legacy-public-data.ts');
   assert.ok(context.includes('phoneNumber: DEFAULT_SITE_SETTINGS.phoneNumber'));
   assert.ok(context.includes('whatsappNumber: DEFAULT_SITE_SETTINGS.whatsappNumber'));
   assert.ok(context.includes('email: DEFAULT_SITE_SETTINGS.email'));

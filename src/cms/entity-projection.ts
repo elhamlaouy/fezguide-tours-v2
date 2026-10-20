@@ -65,7 +65,7 @@ export function referencedMediaUrls(document: CmsDocument): Set<string> {
 }
 
 /** Authoring-time, last writer wins at the changed field/locale only. Imports and rendering never reapply source defaults. */
-export function syncEntityEdits(before: CmsDocument, after: CmsDocument): CmsDocument {
+export function syncEntityEdits(before: CmsDocument, after: CmsDocument, options: { pricingOnly?: boolean } = {}): CmsDocument {
   // Stable library IDs identify source replacements; raw-URL consumers must follow them too.
   const replacements = new Map<string, string>();
   for (const media of after.media) {
@@ -88,6 +88,17 @@ export function syncEntityEdits(before: CmsDocument, after: CmsDocument): CmsDoc
   for (const post of after.blogPosts) image(after, post.coverImage, post.title);
   for (const member of after.teamMembers) if (member.avatarUrl) image(after, member.avatarUrl);
   if (after.siteSettings.heroImage) image(after, after.siteSettings.heroImage);
+  after = { ...after, products: after.products.map(product => {
+    const previous = before.products.find(item => item.id === product.id);
+    const price = product.price;
+    if (!price || !changed(previous?.price, price) || typeof price.amount !== 'number' || !Number.isFinite(price.amount) || price.amount < 0 || price.amount > 1000000) return product;
+    const field = `price${price.currency}` as 'priceEUR' | 'priceMAD' | 'priceUSD';
+    const priorField = previous?.price ? `price${previous.price.currency}` as typeof field : undefined;
+    const priorMirror = priorField ? previous?.practicalInfo?.[priorField] : undefined;
+    // An existing disagreement needs an explicit choice (a caller may supply the chosen mirror too).
+    if (previous?.price && priorMirror !== undefined && priorMirror !== previous.price.amount && product.practicalInfo?.[field] !== price.amount) return product;
+    return { ...product, practicalInfo: { ...product.practicalInfo, [field]: price.amount } };
+  }) };
   let pages = after.pages;
   for (const product of after.products) {
     const previous = before.products.find(item => item.id === product.id);
@@ -120,12 +131,21 @@ export function syncEntityEdits(before: CmsDocument, after: CmsDocument): CmsDoc
       if (changed(previous?.galleryImages?.map(replace), product.galleryImages)) next = sectionEdit(next, 'gallery', { id: 'gallery', type: 'gallery', variant: 'carousel', enabled: true, images: [] }, section => ({ ...section, images: (product.galleryImages ?? []).map(src => image(after, src, src === product.image ? product.imageAlt : undefined)).filter((item): item is CmsImage => Boolean(item)) }));
       const factFields = ['duration', 'groupSize', 'departure', 'priceMAD', 'priceEUR', 'priceUSD'] as const;
       const titles = [label('Duration', 'Durée', 'Duración'), label('Format', 'Format', 'Formato'), label('Meeting / Pickup', 'Départ', 'Punto de encuentro / Recogida'), label('Price (MAD)', 'Prix (MAD)', 'Precio (MAD)'), label('Price (EUR)', 'Prix (EUR)', 'Precio (EUR)'), label('Price (USD)', 'Prix (USD)', 'Precio (USD)')];
-      if (factFields.some(field => changed(previous?.practicalInfo?.[field], product.practicalInfo?.[field]))) {
+      const priceOnlyChange = (options.pricingOnly || changed(previous?.price, product.price)) && !factFields.slice(0, 3).some(field => changed(previous?.practicalInfo?.[field], product.practicalInfo?.[field]));
+      if ((changed(previous?.price, product.price) || factFields.some(field => changed(previous?.practicalInfo?.[field], product.practicalInfo?.[field]))) && (!priceOnlyChange || next.sections.some(section => section.id === 'facts'))) {
         next = sectionEdit(next, 'facts', { id: 'facts', type: 'practicalInfo', variant: 'facts', enabled: true, items: [] }, section => {
           const items = section.items.slice();
           factFields.forEach((field, index) => {
             const old = previous?.practicalInfo?.[field]; const value = product.practicalInfo?.[field];
-            if (!changed(old, value)) return;
+            const canonicalChanged = field === `price${product.price?.currency}` && changed(previous?.price, product.price);
+            if (!changed(old, value) && !canonicalChanged) return;
+            if (index >= 3 && (options.pricingOnly || changed(previous?.price, product.price))) {
+              // Main-price edits update only established numeric rows; never invent facts or overwrite prose.
+              const priorAmounts = [old, ...(field === `price${previous?.price?.currency}` ? [previous?.price?.amount] : [])].filter(value => typeof value === 'number');
+              const numeric = items.map((item, slot) => ({ item, slot })).filter(({ item }) => locales.some(locale => item.title[locale] === titles[index][locale]) && priorAmounts.some(amount => locales.every(locale => item.description[locale] === `${amount} ${field.slice(5)}`)));
+              for (const { slot } of numeric) items[slot] = { ...items[slot], description: value === undefined ? empty() : label(`${value} ${field.slice(5)}`, `${value} ${field.slice(5)}`, `${value} ${field.slice(5)}`) };
+              return;
+            }
             const oldDescription = typeof old === 'number' ? label(`${old} ${field.slice(5)}`, `${old} ${field.slice(5)}`, `${old} ${field.slice(5)}`) : old;
             // Match prior semantics, not owner-controlled order. If both title and value were customized, append instead of guessing.
             const descriptions = items.map((item, slot) => ({ item, slot })).filter(({ item }) => oldDescription && locales.some(locale => Boolean(oldDescription[locale])) && locales.every(locale => item.description[locale] === oldDescription[locale]));

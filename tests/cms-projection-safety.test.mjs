@@ -11,6 +11,7 @@ const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { setEditorPath } = await import('../src/cms/editor-controls.ts');
 const projection = await import('../src/cms/entity-projection.ts');
 const { validateCmsDocument } = await import('../src/cms/schema.ts');

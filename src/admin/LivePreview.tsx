@@ -3,11 +3,14 @@ import { createPortal } from 'react-dom';
 import type { Language } from '../types';
 import type { CmsDocument, CmsPage } from '../cms/schema';
 import { localizedText, themeStyle } from '../cms/render-utils';
+import { approvedThemeActive } from '../cms/approved-content';
 import { PageRenderer } from '../cms/PageRenderer';
+import { formatPrice } from '../cms/SectionRenderer';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { CmsPreviewProvider } from '../context/CmsContext';
 import './live-preview.css';
+import { workspaceText } from './editor-workspace';
 
 export interface LivePreviewProps {
   document: CmsDocument;
@@ -15,6 +18,8 @@ export interface LivePreviewProps {
   language: Language;
   selectedSectionId?: string;
   onSelectSection: (id: string) => void;
+  onEditPrice?: (productId: string) => void;
+  revealPrice?: boolean;
   onNavigate: (pageId: string) => void;
   onLanguageChange?: (language: Language) => void;
   device: 'desktop' | 'mobile';
@@ -30,6 +35,8 @@ const SECTION_TYPES = ['hero', 'richText', 'cardGrid', 'productGrid', 'gallery',
 
 // Static editor-only rules: no draft values are serialized into HTML, CSS, or URLs.
 const FRAME_CSS = `
+  .cms-preview-price-edit { display: inline-block; margin: 6px 0; padding: 6px 10px; background: #005f5a; color: white; border: 1px solid #fff; border-radius: 5px; font: 600 13px/1.4 system-ui,sans-serif; cursor: pointer; }
+  .cms-preview-price-edit:focus-visible { outline: 3px solid #427dce; outline-offset: 2px; }
   html { margin: 0; scroll-behavior: auto !important; overflow-y: auto; }
   body { margin: 0; min-width: 0; }
   .cms-preview-select [data-section-id] { position: relative; cursor: pointer; outline-offset: -3px; }
@@ -44,16 +51,18 @@ const FRAME_CSS = `
   }
 `;
 
-export function LivePreview({ document: model, page, language, selectedSectionId, onSelectSection, onNavigate, onLanguageChange, device, onDeviceChange }: LivePreviewProps) {
+export function LivePreview({ document: model, page, language, selectedSectionId, onSelectSection, onEditPrice, revealPrice = false, onNavigate, onLanguageChange, device, onDeviceChange }: LivePreviewProps) {
   const labels = LABELS[language];
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [mount, setMount] = useState<HTMLElement | null>(null);
   const [size, setSize] = useState({ width: 0, height: 520 });
   const [selecting, setSelecting] = useState(true);
-  const viewportWidth = device === 'mobile' ? 390 : 1280;
-  const scale = size.width > 0 ? Math.min(1, size.width / viewportWidth) : 0;
+  const viewportWidth = device === 'mobile' ? 390 : (size.width > 0 ? Math.min(1280, Math.max(320, Math.round(size.width))) : 1280);
+  const scale = size.width > 0 ? Math.min(1, size.width / viewportWidth) : 1;
   const frameHeight = scale > 0 ? Math.ceil(size.height / scale) : size.height;
+  const pageProduct = page.productId ? model.products.find(item => item.id === page.productId) : undefined;
+  const priceLabel = pageProduct ? formatPrice(pageProduct, language) : '';
 
   const initializeFrame = useCallback(() => {
     const frame = iframeRef.current;
@@ -126,24 +135,65 @@ export function LivePreview({ document: model, page, language, selectedSectionId
     }
   }, [mount, page, language, labels, device, selectedSectionId, selecting]);
 
-  // Follow a chosen part once; ordinary keystrokes must not reset the owner's preview scroll.
   useLayoutEffect(() => {
-    if (!mount || !selectedSectionId) return;
+    if (!mount || !selecting || !onEditPrice) return;
+    const buttons: HTMLButtonElement[] = [];
+    for (const element of mount.querySelectorAll<HTMLElement>('[data-price-product-id]')) {
+      const id = element.dataset.priceProductId;
+      if (!id || !model.products.some(product => product.id === id)) continue;
+      const button = mount.ownerDocument.createElement('button');
+      button.type = 'button'; button.dataset.editPrice = id;
+      button.className = 'cms-preview-price-edit';
+      button.textContent = workspaceText('editPrice', language);
+      // Keep shortcuts outside product-card buttons: no nested interactive controls.
+      (element.closest('button') ?? element).after(button);
+      buttons.push(button);
+    }
+    return () => buttons.forEach(button => button.remove());
+  }, [mount, page, model, language, selecting, onEditPrice]);
+
+  useLayoutEffect(() => {
+    const stage = viewportRef.current;
+    const frame = iframeRef.current;
+    if (!stage || !frame) return;
+    const onWheel = (event: WheelEvent) => {
+      const view = frame.contentWindow;
+      if (!view) return;
+      view.scrollBy(0, event.deltaY);
+      event.preventDefault();
+    };
+    stage.addEventListener('wheel', onWheel, { passive: false });
+    return () => stage.removeEventListener('wheel', onWheel);
+  }, [mount]);
+
+  // Follow a chosen part once; a pricing edit reveals the price instead of leaving it below the fold.
+  useLayoutEffect(() => {
+    if (!mount || revealPrice || !selectedSectionId) return;
     const selected = [...mount.querySelectorAll<HTMLElement>('[data-section-id]')].find(element => element.dataset.sectionId === selectedSectionId);
     const view = mount.ownerDocument.defaultView;
     if (selected && view) view.scrollTo({ top: Math.max(0, selected.getBoundingClientRect().top + view.scrollY - 80), behavior: 'auto' });
-  }, [mount, selectedSectionId, page.id, device]);
+  }, [mount, selectedSectionId, page.id, device, revealPrice]);
+
+  useLayoutEffect(() => {
+    if (!mount || !revealPrice) return;
+    const price = mount.querySelector<HTMLElement>('[data-price-product-id]');
+    const view = mount.ownerDocument.defaultView;
+    if (price && view) view.scrollTo({ top: Math.max(0, price.getBoundingClientRect().top + view.scrollY - 24), behavior: 'auto' });
+  }, [mount, revealPrice, page.id, priceLabel]);
 
   const selectSection = (event: MouseEvent | KeyboardEvent) => {
     const target = event.target as Element;
     const section = target.closest?.<HTMLElement>('[data-section-id]');
     if (!selecting) {
       // Browse can exercise internal navigation and accordions, never external destinations.
-      if (target.closest?.('a, form')) { event.preventDefault(); event.stopPropagation(); }
+      if (target.closest?.('a, form, [data-contact-action], [data-action="book"]')) { event.preventDefault(); event.stopPropagation(); }
       return;
     }
     event.preventDefault();
     event.stopPropagation();
+    const priceId = target.closest?.<HTMLElement>('[data-edit-price], [data-price-product-id]')?.dataset;
+    const productId = priceId?.editPrice ?? priceId?.priceProductId;
+    if (productId && onEditPrice && model.products.some(product => product.id === productId)) { onEditPrice(productId); return; }
     const id = section?.dataset.sectionId;
     if (id && page.sections.some(item => item.id === id)) onSelectSection(id);
   };
@@ -159,6 +209,7 @@ export function LivePreview({ document: model, page, language, selectedSectionId
         {(['desktop', 'mobile'] as const).map(value => <button type="button" name={`preview-${value}`} key={value} aria-pressed={device === value} onClick={() => onDeviceChange(value)}>{labels[value]}</button>)}
       </div>
       <span className="cms-live-preview-scale">{viewportWidth}px · {labels.fit}{scale > 0 ? ` ${Math.round(scale * 100)}%` : ''}</span>
+      {priceLabel ? <strong className="cms-live-preview-price" data-preview-price>{priceLabel}</strong> : null}
     </div>
     <div className="cms-live-preview-tools">
       <div className="cms-live-preview-modes" role="group" aria-label={labels.preview}>
@@ -174,11 +225,11 @@ export function LivePreview({ document: model, page, language, selectedSectionId
         </div>
       </div>
     </div>
-    {mount && createPortal(<div data-cms-site data-button-variant={model.theme.buttonVariant} data-card-variant={model.theme.cardVariant} className={selecting ? 'cms-preview-select' : 'cms-preview-browse'} style={themeStyle(model.theme)} onClickCapture={selectSection} onAuxClickCapture={selectSection} onSubmitCapture={event => event.preventDefault()} onKeyDownCapture={event => {
+    {mount && createPortal(<div data-cms-site data-cms-themed={String(approvedThemeActive(model.theme))} data-button-variant={model.theme.buttonVariant} data-card-variant={model.theme.cardVariant} className={selecting ? 'cms-preview-select' : 'cms-preview-browse'} style={themeStyle(model.theme)} onClickCapture={selectSection} onAuxClickCapture={selectSection} onSubmitCapture={event => event.preventDefault()} onKeyDownCapture={event => {
       if (selecting && (event.key === 'Enter' || event.key === ' ')) selectSection(event);
     }}>
       <CmsPreviewProvider document={model}>
-        <Navbar document={model} currentPage={page.id} language={language} onNavigate={navigate} onLanguageChange={next => onLanguageChange?.(next)} onOpenBooking={() => {}} />
+        <Navbar document={model} currentPage={page.id} activeCategory={page.parentId} language={language} onNavigate={navigate} onLanguageChange={next => onLanguageChange?.(next)} onOpenBooking={() => {}} />
         <PageRenderer document={model} page={page} language={language} onNavigate={navigate} onBook={() => {}} />
         <Footer document={model} language={language} onNavigate={navigate} />
       </CmsPreviewProvider>

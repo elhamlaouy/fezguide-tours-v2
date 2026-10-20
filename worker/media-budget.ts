@@ -3,6 +3,11 @@ export const MEDIA_BUDGET = { maxBytes: 256 * 1024 * 1024, maxObjects: 500, iden
 export async function reserveUpload(db: CmsD1Database, actor: string, bytes: number, limits = MEDIA_BUDGET): Promise<string> {
  if (!actor || actor.length > 256 || !Number.isSafeInteger(bytes) || bytes < 1) throw new CmsError(400, 'invalid_upload_reservation');
  const id = crypto.randomUUID(), now = Math.floor(Date.now() / 1000);
+ // Prune at most one rate-window allowance; never discard current charges or possible R2 writes.
+ const pruned = await db.prepare(`DELETE FROM cms_upload_reservations WHERE id IN
+ (SELECT id FROM cms_upload_reservations WHERE state='released' AND bytes=0 AND object_key IS NULL AND created_at<? LIMIT ?)`)
+ .bind(now-limits.windowSeconds,limits.identityUploads).run();
+ if (!pruned.success) throw new CmsError(503, 'media_budget_unavailable');
  // One conditional write is the authority: concurrent requests cannot both take the last slot.
  const result = await db.prepare(`INSERT INTO cms_upload_reservations(id,actor,created_at,bytes,state)
  SELECT ?,?,?,?,'pending' WHERE

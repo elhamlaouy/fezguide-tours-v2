@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { LivePreview } from './LivePreview';
+import { PriceEditor, PRICE_CURRENCIES, type PriceChange } from './PriceEditor';
 import { validateCmsDocument, type CmsDocument, type CmsPage, type CmsSection } from '../cms/schema';
 import {
   AdminApiError, loadAdminContent, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
@@ -328,8 +329,10 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [importing, setImporting] = useState(false);
-  const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>(() => typeof window !== 'undefined' && window.innerWidth < 1000 ? 'mobile' : 'desktop');
-  const [workspace, setWorkspace] = useState<Workspace>('sections');
+  const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>('desktop');
+  const [workspace, setWorkspace] = useState<Workspace | 'pricing'>('sections');
+  const [pricingProductId, setPricingProductId] = useState('');
+  const [pricingPending, setPricingPending] = useState(false);
   const [layout, setLayout] = useState<EditorLayout>('split');
   const [editorWidth, setEditorWidth] = useState(40);
   const [pageSearch, setPageSearch] = useState('');
@@ -435,6 +438,20 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   }
   function edit(update: (current: CmsDocument) => CmsDocument) {
     setDraft(current => current ? update(current) : current);
+  }
+  function changePrice(id: string, change: PriceChange) {
+    if (busyRef.current || uploading || importing) return;
+    edit(current => {
+      const product = current.products.find(item => item.id === id);
+      if (!product) return current;
+      const practicalInfo = { ...product.practicalInfo };
+      for (const currency of PRICE_CURRENCIES) {
+        if (currency === change.price.currency) practicalInfo[`price${currency}`] = change.price.amount;
+        else if (change.equivalents[currency] === undefined) delete practicalInfo[`price${currency}`];
+        else practicalInfo[`price${currency}`] = change.equivalents[currency];
+      }
+      return syncEntityEdits(current, { ...current, products: current.products.map(item => item.id === id ? { ...item, price: change.price, practicalInfo } : item) }, { pricingOnly: true });
+    });
   }
   function editPath(path: string, value: string) {
     edit(current => setEditorPath(current, path.split('.'), value) as CmsDocument);
@@ -590,7 +607,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
 
   const page = draft?.pages.find(item => item.id === selectedPageId) ?? draft?.pages[0];
   const section = page?.sections.find(item => item.id === selectedSectionId) ?? page?.sections[0];
-  const dirty = draft ? JSON.stringify(draft) !== savedJson.current : false;
+  const dirty = pricingPending || (draft ? JSON.stringify(draft) !== savedJson.current : false);
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => { if (dirty || uploading || importing || busy) { event.preventDefault(); event.returnValue = ''; } };
     const historyGuard = (event: Event) => {
@@ -603,6 +620,12 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const leave = () => { if (!uploading && !importing && !busy && (!dirty || window.confirm(editorLabel('discard', language)))) onClose(); };
   const preview = draft && page ? previewModel(draft, page) : null;
   const visiblePhotos = draft?.media.filter(item => `${item.alt[locale]} ${item.id}`.toLocaleLowerCase().includes(photoSearch.toLocaleLowerCase())) ?? [];
+  const openPricing = (id: string) => {
+    if (busyRef.current || uploading || importing) return;
+    if (id !== pricingProductId && pricingPending && !window.confirm(editorLabel('discard', language))) return;
+    if (id !== pricingProductId) setPricingPending(false);
+    setPricingProductId(id); setWorkspace('pricing'); setLayout('split');
+  };
   const choosePage = (id: string) => { setSelectedPageId(id); setSelectedSectionId(''); setWorkspace('sections'); setSectionPanel('content'); };
   const chooseSection = (id: string) => {
     setSelectedSectionId(id); setWorkspace('sections'); setSectionPanel('content');
@@ -642,8 +665,8 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
         </div>
         <div className="cms-admin-actions">
           <span className={dirty ? "cms-draft-state is-dirty" : "cms-draft-state"} role="status">{w(dirty ? 'unsaved' : 'saved')}</span>
-          <button type="button" name="save-draft" disabled={busy || uploading || importing || !draft} onClick={() => void run(async () => { await persist(); })}>{translate('Save draft')}</button>
-          <button type="button" name="publish" disabled={busy || uploading || importing || !draft} onClick={() => void run(async () => {
+          <button type="button" name="save-draft" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => { await persist(); })}>{translate('Save draft')}</button>
+          <button type="button" name="publish" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => {
             const saved = await persist();
             if (!saved) return;
             try { rememberWrite(await publishAdminDraft(saved.version), 'Published revision'); }
@@ -661,12 +684,14 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             {draft?.pages.map(item => <option key={item.id} value={item.id}>{item.id === 'home' ? ({ en: 'Home', fr: 'Accueil', es: 'Inicio' }[language]) : labelOf(item, language)}</option>)}
           </select>
         </label>
+        {page?.productId && <button type="button" name="edit-page-pricing" onClick={() => openPricing(page.productId!)}>{w('pricing')}</button>}
         <div className="cms-view-switch" role="group" aria-label={w('preview')}>
           {(['split','editor','preview'] as const).map(mode => <button key={mode} type="button" name={`view-${mode}`} aria-pressed={layout === mode} onClick={() => setLayout(mode)}>{w(mode)}</button>)}
         </div>
         <label className="cms-space-control" hidden={layout !== 'split'}>{w('editorWidth')}<input name="editor-width" type="range" min="28" max="58" value={editorWidth} onChange={event => setEditorWidth(Number(event.target.value))} /></label>
       </div>
       <p className="cms-first-step">{w('intro')}</p>
+      {pricingPending && <p className="cms-admin-notice" role="status">{w('pendingPrice')} <button type="button" name="return-to-pricing" onClick={() => { setWorkspace('pricing'); setLayout('split'); }}>{w('pricing')}</button></p>}
       {conflict && <p className="cms-admin-alert" data-admin-conflict role="alert">{translate(conflict)}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}
       {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => <li key={error}>{editorError(error, language)}</li>)}</ul>}
@@ -704,6 +729,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                 <button type="button" key={lang} role="tab" data-locale={lang} aria-selected={locale === lang} onClick={() => setLocale(lang)}>{lang === 'es' ? 'Español (España)' : lang}</button>
               ))}
             </div>
+            {pricingProductId && <div hidden={workspace !== 'pricing'}><PriceEditor key={pricingProductId} document={draft} productId={pricingProductId} language={language} disabled={busy || uploading || importing} onChange={changePrice} onPendingChange={setPricingPending} /></div>}
             <div className="cms-page-settings" hidden={workspace !== 'page'}>
             <label className="cms-admin-check">
               <input type="checkbox" data-flag="page-enabled" checked={page.enabled} onChange={event => edit(current => mapPage(current, page.id, item => ({ ...item, enabled: event.target.checked })))} />
@@ -844,7 +870,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             <div className="cms-global-fields">
               {Object.entries(GLOBAL_FIELDS).map(([key, spec]) => <details key={key} hidden={key === 'theme' ? workspace !== 'appearance' : key === 'media' ? workspace !== 'photos' : ['siteSettings','navigation','footer'].includes(key) ? workspace !== 'settings' : workspace !== 'content'} open={key === 'theme' || key === 'siteSettings'}><summary>{editorLabel(key, language)}</summary>
                 {key === 'reviews' && <p>{editorLabel('reviewHelp', language)}</p>}
-                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !['heroTitle','heroTagline','heroSubtitle','heroImage'].includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} />
+                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !['heroTitle','heroTagline','heroSubtitle','heroImage'].includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} onEditPrice={openPricing} />
                 {key === 'siteSettings' && <details className="cms-legacy-settings"><summary>{w('legacyHero')}</summary><p>{w('legacyHeroHelp')}</p><dl>{(['heroTitle','heroTagline','heroSubtitle','heroImage'] as const).map(field => <div key={field}><dt>{editorLabel(field, language)}</dt><dd>{typeof draft.siteSettings[field] === 'string' ? draft.siteSettings[field] as string : (draft.siteSettings[field] as Record<string,string> | undefined)?.[locale]}</dd></div>)}</dl></details>}
               </details>)}
               <details hidden={workspace !== 'settings'}><summary>{editorLabel('uiCopy', language)} · {w('advancedTab')}</summary>
@@ -863,7 +889,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                 }}>{editorLabel('add', language)}</button>
                 </details>
               </details>
-              <div hidden={workspace !== 'history'}><DraftTransfer document={draft} language={language} disabled={busy || uploading || importing} onBusyChange={setImporting} onError={setErrors} onImport={next => { applyValidated(next); }} /></div>
+              <div hidden={workspace !== 'history'}><DraftTransfer document={draft} language={language} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onImport={next => { applyValidated(next); }} /></div>
 
             </div>
             <fieldset hidden={workspace !== 'history'}>
@@ -880,7 +906,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                 {translate('Revision id')}
                 <input name="rollback-revision" inputMode="numeric" value={rollbackId} onChange={event => setRollbackId(event.target.value)} />
               </label>
-              <button type="button" name="rollback" disabled={busy || uploading || importing} onClick={() => void run(async () => {
+              <button type="button" name="rollback" disabled={busy || uploading || importing || pricingPending} onClick={() => void run(async () => {
                 const revision = Number(rollbackId);
                 if (!Number.isSafeInteger(revision) || revision < 1) {
                   setErrors(['revision: enter a revision id']);
@@ -901,7 +927,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
           </div>
           <div className="cms-admin-preview">
             {!page.enabled && <p className="cms-admin-note">{translate('Unpublished page. This preview is not public.')}</p>}
-            {preview && <LivePreview document={preview.document} page={preview.page} language={locale} selectedSectionId={section?.id} onSelectSection={id => { setLayout('split'); chooseSection(id); }} onNavigate={choosePage} onLanguageChange={setLocale} device={previewSize} onDeviceChange={setPreviewSize} />}
+            {preview && <LivePreview document={preview.document} page={preview.page} language={locale} selectedSectionId={section?.id} onSelectSection={id => { setLayout('split'); chooseSection(id); }} onEditPrice={openPricing} revealPrice={workspace === 'pricing'} onNavigate={choosePage} onLanguageChange={setLocale} device={previewSize} onDeviceChange={setPreviewSize} />}
           </div>
         </div>
       )}

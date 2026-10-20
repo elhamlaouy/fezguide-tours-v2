@@ -11,6 +11,12 @@ import {
 } from 'lucide-react';
 import { Language, PageId } from '../types';
 import { useCms } from '../context/CmsContext';
+import { formatPrice } from '../cms/SectionRenderer';
+import { businessContactHref } from '../cms/business-contact';
+import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
+import { contentLanguage as pageLanguage, localizedText, resolveImage } from '../cms/render-utils';
+import { responsiveImageProps } from '../cms/optimized-image';
+import type { Localized } from '../cms/schema';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 import { PageCrumbBar } from '../components/PageCrumbBar';
 
@@ -265,17 +271,60 @@ const itinerary = [
 
 export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, onNavigate, onBookTour }) => {
   const { siteSettings } = useCms();
-  const text = copy[language];
-  const contentLanguage = language;
+  const { document, page, section } = useApprovedContent('our-fez-tours');
+  const contentLanguage = page ? pageLanguage(page, language) : language;
+  const read = (value?: Partial<Localized>) => value?.[contentLanguage] ?? localizedText(value, contentLanguage);
+  const paragraphs = (id: string) => section(id, 'richText')?.blocks.flatMap(block => block.type === 'list' ? block.items[contentLanguage] : [read(block.text)]).filter(Boolean) ?? [];
+  const header = section('header', 'hero'), gallery = section('gallery', 'gallery'), facts = section('facts', 'practicalInfo'), booking = section('booking', 'cta');
+  const product = document?.products.find(item => item.id === 'our-fez-tours');
+  const price = product ? formatPrice(product, language) : '';
+  const amount = product?.price ? (product.price.currency === 'EUR' ? `€${product.price.amount}` : product.price.currency === 'USD' ? `$${product.price.amount}` : `${product.price.amount} MAD`) : '';
+  const equivalents = product ? (['MAD', 'EUR', 'USD'] as const).filter(currency => currency !== product.price?.currency).flatMap(currency => {
+    const value = product.practicalInfo?.[`price${currency}`];
+    return value === undefined ? [] : [currency === 'EUR' ? `≈ €${value}` : currency === 'USD' ? `≈ $${value}` : `≈ ${value} MAD`];
+  }).join(' · ') : document ? '' : '≈ 1,900 MAD · ≈ $191';
+  const original = copy[language];
+  const heading = (id: string, key: 'title' | 'eyebrow') => read(page?.sections.find(item => item.id === id)?.[key]);
+  const text = document ? {
+    ...original,
+    title: read(header?.title),
+    lead: read(header?.description),
+    galleryLabel: read(gallery?.title),
+    detailsLabel: read(facts?.title),
+    overviewTitle: heading('overview', 'title'),
+    overviewLabel: heading('overview', 'eyebrow'),
+    includedTitle: heading('included', 'title'),
+    includedLabel: heading('included', 'eyebrow'),
+    meetingTitle: heading('meeting', 'title'),
+    meetingLabel: heading('meeting', 'eyebrow'),
+    itineraryTitle: heading('itinerary', 'title'),
+    itineraryLabel: heading('itinerary', 'eyebrow'),
+    extraTitle: heading('extra', 'title'),
+    extraLabel: heading('extra', 'eyebrow'),
+    cancelTitle: heading('cancel', 'title'),
+    cancelLabel: heading('cancel', 'eyebrow'),
+    overview: paragraphs('overview'),
+    meeting: paragraphs('meeting'),
+    extra: paragraphs('extra'),
+    included: section('included', 'inclusions')?.included[contentLanguage] ?? [],
+    excluded: section('included', 'inclusions')?.excluded[contentLanguage] ?? [],
+    cancel: paragraphs('cancel').join('\n\n'),
+    priceLabel: read(booking?.title),
+    estimate: read(booking?.description),
+    book: document.uiCopy['ui.common.bookNow']?.[contentLanguage] ?? original.book
+  } : original;
+  const images = document ? (gallery?.images.flatMap(image => { const resolved = resolveImage(document, image, contentLanguage); return resolved ? [resolved] : []; }) ?? []) : galleryImages.map(image => ({ ...image, alt: image.alt[contentLanguage], objectPosition: undefined }));
+  const tourStops = document ? section('itinerary', 'itinerary')?.stops ?? [] : itinerary.map(stop => ({ time: stop.time, title: { en: stop.title, fr: stop.title, es: stop.titleEs }, description: { en: stop.en, fr: stop.fr, es: stop.es }, badge: { en: stop.ticket === 'paid' ? original.notIncluded : stop.ticket === 'pass' ? original.passBy : original.free, fr: stop.ticket === 'paid' ? original.notIncluded : stop.ticket === 'pass' ? original.passBy : original.free, es: stop.ticket === 'paid' ? original.notIncluded : stop.ticket === 'pass' ? original.passBy : original.free } }));
+  const factItems = document ? facts?.items ?? [] : [
+    { title: { [language]: text.durationLabel }, description: { [language]: text.duration } },
+    { title: { [language]: text.formatLabel }, description: { [language]: text.format } },
+    { title: { [language]: text.pickupLabel }, description: { [language]: text.pickup } },
+    { title: { [language]: text.languagesLabel }, description: { [language]: text.languages } }
+  ];
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const whatsappNumber = (siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '');
-  const whatsappText = language === 'es'
-    ? 'Hola Fez Guide Tours, me gustaría reservar la visita privada a pie por la medina de Fez a 170 € por persona. ¿Podéis indicarme las fechas disponibles?'
-    : language === 'fr'
-    ? 'Bonjour Fez Guide Tours ! Je souhaite réserver la visite privée de la médina de Fès à 170 € par personne. Pouvez-vous me communiquer les disponibilités ?'
-    : 'Hello Fez Guide Tours! I would like to book the private Fez Medina walking tour at €170 per person. Could you share availability?';
-  const activeImage = galleryImages[activeImageIndex];
-  const ticketLabel = (ticket: string) => ticket === 'paid' ? text.notIncluded : ticket === 'pass' ? text.passBy : text.free;
+  const whatsappLink = booking?.links.find(link => link.enabled && link.href?.includes('wa.me/'));
+  const whatsappHref = document ? (whatsappLink?.href ? businessContactHref(document, whatsappLink.href) : undefined) : `https://wa.me/${siteSettings.whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(language === 'es' ? 'Hola Fez Guide Tours' : language === 'fr' ? 'Bonjour Fez Guide Tours' : 'Hello Fez Guide Tours')}`;
+  const activeImage = images[Math.min(activeImageIndex, Math.max(0, images.length - 1))];
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen pb-24" dir="ltr">
@@ -288,32 +337,33 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 space-y-8 sm:space-y-10">
-        <header className="space-y-3">
+        <ApprovedSection id="header"><header className="space-y-3">
           <h1 id="our-fez-tour-title" className="text-2xl sm:text-4xl lg:text-5xl font-extrabold text-[#005F5A] tracking-tight leading-tight text-balance">
             {text.title}
           </h1>
           <p className="text-sm sm:text-base text-[#52605E] max-w-3xl leading-relaxed">{text.lead}</p>
-        </header>
+        </header></ApprovedSection>
 
-        <section id="our-fez-tour-gallery" aria-label={text.galleryLabel} className="space-y-3">
+        <ApprovedSection id="gallery"><section id="our-fez-tour-gallery" aria-label={text.galleryLabel} className="space-y-3">
           <div className="relative w-full rounded-3xl overflow-hidden bg-[#15201F] shadow-md border border-[#E7E2DA] flex items-center justify-center">
-            <img
-              src={activeImage.src}
-              alt={activeImage.alt[contentLanguage]}
-              width={activeImage.width}
-              height={activeImage.height}
+            {activeImage && <img
+              {...responsiveImageProps(activeImage.src ?? '', '(max-width: 768px) 92vw, 768px', true)}
+              alt={activeImage?.alt ?? ''}
+              width={activeImage?.width}
+              height={activeImage?.height}
+              style={{ objectPosition: activeImage?.objectPosition }}
               className="max-h-[72vh] w-auto max-w-full object-contain"
               loading="eager"
-            />
+            />}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 text-white text-xs sm:text-sm">
-              <span className="min-w-0 font-semibold bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg">{activeImage.alt[contentLanguage]}</span>
+              <span className="min-w-0 font-semibold bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg">{activeImage?.alt}</span>
               <span className="shrink-0 font-medium bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg tabular-nums">
-                {activeImageIndex + 1} / {galleryImages.length}
+                {activeImageIndex + 1} / {images.length}
               </span>
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-none" aria-label={text.galleryLabel}>
-            {galleryImages.map((image, index) => (
+            {images.map((image, index) => (
               <button
                 key={image.src}
                 type="button"
@@ -326,38 +376,30 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
                     : 'border-transparent opacity-70 hover:opacity-100 active:scale-[0.97]'
                 }`}
               >
-                <img src={image.src} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img {...responsiveImageProps(image.src, "80px")} alt="" style={{ objectPosition: image.objectPosition }} className="w-full h-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
-        </section>
+        </section></ApprovedSection>
 
-        <section
+        <ApprovedSection id="facts"><section
           id="our-fez-tour-details"
           aria-label={text.detailsLabel}
           className="grid grid-cols-1 min-[480px]:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 p-5 sm:p-6 bg-white rounded-2xl border border-[#E7E2DA] shadow-sm"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#005F5A]/10 text-[#005F5A] flex items-center justify-center shrink-0"><Clock className="w-5 h-5" /></div>
-            <div><span className="text-[11px] text-[#718280] font-medium block">{text.durationLabel}</span><span className="text-xs sm:text-sm font-bold text-[#1C2524]">{text.duration}</span></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#C84B31]/10 text-[#C84B31] flex items-center justify-center shrink-0"><Users className="w-5 h-5" /></div>
-            <div><span className="text-[11px] text-[#718280] font-medium block">{text.formatLabel}</span><span className="text-xs sm:text-sm font-bold text-[#1C2524]">{text.format}</span></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#00A896]/10 text-[#00A896] flex items-center justify-center shrink-0"><MapPin className="w-5 h-5" /></div>
-            <div className="min-w-0"><span className="text-[11px] text-[#718280] font-medium block">{text.pickupLabel}</span><span className="text-xs sm:text-sm font-bold text-[#1C2524]">{text.pickup}</span></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#E07A5F]/10 text-[#E07A5F] flex items-center justify-center shrink-0"><Sparkles className="w-5 h-5" /></div>
-            <div><span className="text-[11px] text-[#718280] font-medium block">{text.languagesLabel}</span><span className="text-xs sm:text-sm font-bold text-[#1C2524]">{text.languages}</span></div>
-          </div>
-        </section>
+          {factItems.map((fact, index) => {
+            const Icon = [Clock, Users, MapPin, Sparkles][index % 4];
+            const color = ['bg-[#005F5A]/10 text-[#005F5A]', 'bg-[#C84B31]/10 text-[#C84B31]', 'bg-[#00A896]/10 text-[#00A896]', 'bg-[#E07A5F]/10 text-[#E07A5F]'][index % 4];
+            return <div key={index} className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center shrink-0`}><Icon className="w-5 h-5" /></div>
+              <div className={index === 2 ? 'min-w-0' : undefined}><span className="text-[11px] text-[#718280] font-medium block">{read(fact.title)}</span><span className="text-xs sm:text-sm font-bold text-[#1C2524]">{read(fact.description)}</span></div>
+            </div>;
+          })}
+        </section></ApprovedSection>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          <div className="lg:col-span-8 space-y-8">
-            <section id="our-fez-tour-overview" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-5">
+          <div className="lg:col-span-8 space-y-8"><ApprovedSections>
+            <ApprovedSection id="overview"><section id="our-fez-tour-overview" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-5">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.overviewLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.overviewTitle}</h2>
@@ -365,9 +407,9 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
               {text.overview.map((paragraph) => (
                 <p key={paragraph} className="text-sm text-[#445250] leading-relaxed">{paragraph}</p>
               ))}
-            </section>
+            </section></ApprovedSection>
 
-            <section id="our-fez-tour-included" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-6">
+            <ApprovedSection id="included"><section id="our-fez-tour-included" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.includedLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.includedTitle}</h2>
@@ -390,9 +432,9 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
                   </ul>
                 </div>
               </div>
-            </section>
+            </section></ApprovedSection>
 
-            <section id="our-fez-tour-meeting" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-4">
+            <ApprovedSection id="meeting"><section id="our-fez-tour-meeting" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-4">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.meetingLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.meetingTitle}</h2>
@@ -400,30 +442,30 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
               {text.meeting.map((paragraph) => (
                 <p key={paragraph} className="text-sm text-[#445250] leading-relaxed">{paragraph}</p>
               ))}
-            </section>
+            </section></ApprovedSection>
 
-            <section id="our-fez-tour-itinerary" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-6">
+            <ApprovedSection id="itinerary"><section id="our-fez-tour-itinerary" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-6">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.itineraryLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.itineraryTitle}</h2>
               </div>
               <ol className="relative pl-6 border-l-2 border-[#005F5A]/20 space-y-7">
-                {itinerary.map((stop, index) => (
-                  <li key={language === 'es' ? stop.titleEs : stop.title} className="relative space-y-1.5">
+                {tourStops.map((stop, index) => (
+                  <li key={index} className="relative space-y-1.5">
                     <span className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-white border-4 border-[#005F5A]" />
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-[11px] font-bold text-[#005F5A] bg-[#005F5A]/10 px-2 py-0.5 rounded-md">{index + 1}</span>
                       {stop.time && <span className="text-[11px] font-bold text-[#52605E]">{stop.time}</span>}
-                      <span className="text-[10px] font-bold text-[#C84B31] bg-[#C84B31]/10 px-2 py-0.5 rounded-md">{ticketLabel(stop.ticket)}</span>
+                      <span className="text-[10px] font-bold text-[#C84B31] bg-[#C84B31]/10 px-2 py-0.5 rounded-md">{read(stop.badge)}</span>
                     </div>
-                    <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">{language === 'es' ? stop.titleEs : stop.title}</h3>
-                    <p className="text-xs text-[#52605E] leading-relaxed">{stop[contentLanguage]}</p>
+                    <h3 className="text-sm sm:text-base font-bold text-[#1C2524]">{read(stop.title)}</h3>
+                    <p className="text-xs text-[#52605E] leading-relaxed">{read(stop.description)}</p>
                   </li>
                 ))}
               </ol>
-            </section>
+            </section></ApprovedSection>
 
-            <section id="our-fez-tour-extra" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-4">
+            <ApprovedSection id="extra"><section id="our-fez-tour-extra" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-4">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.extraLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.extraTitle}</h2>
@@ -433,47 +475,48 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
                   <li key={item} className="text-xs text-[#445250] leading-relaxed">{item}</li>
                 ))}
               </ul>
-            </section>
+            </section></ApprovedSection>
 
-            <section id="our-fez-tour-cancel" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-3">
+            <ApprovedSection id="cancel"><section id="our-fez-tour-cancel" className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-3">
               <div className="space-y-2">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{text.cancelLabel}</span>
                 <h2 className="text-xl sm:text-2xl font-extrabold text-[#1C2524]">{text.cancelTitle}</h2>
               </div>
               <p className="text-sm text-[#445250] leading-relaxed">{text.cancel}</p>
-            </section>
-          </div>
+            </section></ApprovedSection>
+          </ApprovedSections></div>
 
-          <aside id="our-fez-tour-booking" className="lg:col-span-4 lg:sticky lg:top-24 bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-5">
-            <div className="rounded-2xl border border-[#D0EBE5] bg-[#F0F8F6] p-5 space-y-2">
+          <ApprovedSection id="booking"><aside id="our-fez-tour-booking" className="lg:col-span-4 lg:sticky lg:top-24 bg-white rounded-3xl p-6 sm:p-8 border border-[#E7E2DA] shadow-sm space-y-5">
+            <div data-price-product-id={product?.id} className="rounded-2xl border border-[#D0EBE5] bg-[#F0F8F6] p-5 space-y-2">
               <span className="text-xs font-bold uppercase tracking-wider text-[#52605E]">{text.priceLabel}</span>
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <strong className="text-4xl font-extrabold text-[#005F5A]">€170</strong>
-                <span className="text-sm font-bold text-[#445250]">{text.perPerson}</span>
+                <strong className="text-4xl font-extrabold text-[#005F5A]">{document ? amount : '€170'}</strong>{' '}
+                <span className="text-sm font-bold text-[#445250]">{document ? price.slice(amount.length).trim() : text.perPerson}</span>
               </div>
-              <p className="text-sm font-semibold text-[#52605E]">≈ 1,900 MAD · ≈ $191</p>
+              <p className="text-sm font-semibold text-[#52605E]">{equivalents}</p>
               <p className="text-[11px] text-[#718280]">{text.estimate}</p>
             </div>
             <div className="space-y-3">
               <button
+                data-action="book" data-cms-product-id={product?.id} data-product-id={product?.id}
                 onClick={() => onBookTour(text.title)}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#005F5A] focus-visible:ring-offset-2 transition-colors cursor-pointer"
               >
                 <Calendar className="w-4 h-4" /> {text.book}
               </button>
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`}
+                href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#20BD5A] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#005F5A] focus-visible:ring-offset-2 transition-colors"
               >
-                <MessageCircle className="w-4 h-4" /> {text.whatsapp}
+                <MessageCircle className="w-4 h-4" /> {document ? read(whatsappLink?.label) : text.whatsapp}
               </a>
             </div>
-          </aside>
+          </aside></ApprovedSection>
         </div>
 
-        <TripadvisorReviewsSection language={language} />
+        <ApprovedSection id="reviews"><TripadvisorReviewsSection language={language} /></ApprovedSection>
       </main>
     </div>
   );

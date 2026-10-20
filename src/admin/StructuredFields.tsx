@@ -3,12 +3,14 @@ import { blockFields, editorDefault, nextEditorId, setEditorPath, type EditorFie
 import type { CmsDocument } from '../cms/schema';
 import type { Language } from '../types';
 import { editorLabel } from './editor-labels';
+import { workspaceText } from './editor-workspace';
 
 interface Props {
   spec: EditorField; value: unknown; path: string; document: CmsDocument;
   language: Language; locale: Language; onChange: (value: unknown) => void;
   onRemove?: (path: string, value: unknown) => void;
   onAdd?: (path: string) => boolean;
+  onEditPrice?: (productId: string) => void;
 }
 export function StructuredFields(props: Props): React.JSX.Element {
   const { spec, value, path, document, language, locale, onChange } = props;
@@ -18,6 +20,11 @@ export function StructuredFields(props: Props): React.JSX.Element {
   const shellLink = shellLinkMatch ? (shellLinkMatch[1] === 'navigation' ? document.navigation : document.footer.links)[Number(shellLinkMatch[2])] : undefined;
   const labelAttributes = shellLink ? { [shellLinkMatch![1] === 'navigation' ? 'data-nav-label' : 'data-footer-label']: shellLink.id } : {};
   const pageAttributes = shellLink ? { [shellLinkMatch![1] === 'navigation' ? 'data-nav-target' : 'data-footer-page']: shellLink.id } : {};
+  const pricePath = /^products\.([^.]+)\.(price$|practicalInfo\.price(?:EUR|MAD|USD)$)/.exec(path);
+  if (props.onEditPrice && pricePath) {
+    const product = /^\d+$/.test(pricePath[1]) ? document.products[Number(pricePath[1])] : document.products.find(item => item.id === pricePath[1]);
+    return <div data-price-readonly={path}><p>{label}: {typeof value === 'number' ? value : value && typeof value === 'object' ? `${(value as {amount: number}).amount} ${(value as {currency: string}).currency}` : '—'}</p><button type="button" data-open-pricing={product?.id} onClick={() => { if (product) props.onEditPrice?.(product.id); }}>{workspaceText('pricing', language)}</button><details><summary>{workspaceText('priceAdvanced', language)}</summary><pre>{JSON.stringify(value, null, 2) ?? '—'}</pre></details></div>;
+  }
   if (spec.optional && value === undefined) return <div className="cms-optional"><button type="button" data-enable={path} onClick={() => onChange(editorDefault(spec, document))}>{t('enableField')}: {label}</button></div>;
   const optionalRemove = spec.optional ? <details className="cms-field-options"><summary>{t('fieldOptions')}</summary><button type="button" data-unset={path} onClick={() => onChange(undefined)}>{t('remove')}: {label}</button></details> : null;
   if (spec.type === 'object') {
@@ -82,6 +89,6 @@ export function StructuredFields(props: Props): React.JSX.Element {
     const options = spec.type === 'reference' && spec.collection ? document[spec.collection].map(item => item.id) : [...(spec.options ?? [])];
     return <div><label>{label}<select {...inputPath} {...(path.endsWith('.pageId') ? pageAttributes : {})} value={String(value ?? '')} onChange={event => { if (options.includes(event.target.value)) onChange(event.target.value); }}>{!value && <option value="" disabled>{t('noValue')}</option>}{!options.includes(String(value ?? '')) && value ? <option value={String(value)}>{String(value)}</option> : null}{options.map(option => <option key={option} value={option}>{spec.type === 'enum' ? t(option) : option}</option>)}</select></label>{optionalRemove}</div>;
   }
-  if (spec.type === 'number') return <div><label>{label}<input {...inputPath} type="number" min={spec.min} max={spec.max} step={spec.step} value={typeof value === 'number' ? value : ''} onChange={event => onChange(event.target.value === '' ? undefined : Number(event.target.value))} /></label>{optionalRemove}</div>;
+  if (spec.type === 'number') return <div><label>{label}<input {...inputPath} type="number" min={spec.min} max={spec.max} step={spec.step} value={typeof value === 'number' ? value : ''} onChange={event => onChange(event.target.value === '' ? '' : Number(event.target.value))} /></label>{optionalRemove}</div>;
   return <div><label>{label}<input {...inputPath} type={path.startsWith('theme.colors.') ? 'color' : 'text'} readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>{spec.type === 'mediaUrl' && <label>{t('mediaId')}<select data-url-picker={path} value={document.media.some(m => m.src === value) ? String(value) : ''} onChange={event => { if (event.target.value) onChange(event.target.value); }}><option value="">{t('noValue')}</option>{document.media.map(media => <option key={media.id} value={media.src}>{media.alt[locale] || media.id}</option>)}</select></label>}{optionalRemove}</div>;
 }

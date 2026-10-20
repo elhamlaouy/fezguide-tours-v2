@@ -1,5 +1,5 @@
 import type { CmsDocument } from './schema';
-import { DEFAULT_SITE_SETTINGS } from '../data/translations';
+import { DEFAULT_SITE_SETTINGS } from '../data/shared-ui';
 
 /** Keep inherited business targets in sync; custom destinations and query text remain owner-authored. */
 export function businessContactHref(document: CmsDocument, href: string): string {

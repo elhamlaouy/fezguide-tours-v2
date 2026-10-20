@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Language, SectionPillar } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
+import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
+import { visibleLink } from '../cms/render-utils';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { Compass } from 'lucide-react';
@@ -18,6 +21,14 @@ export const FezPage: React.FC<FezPageProps> = ({
   onBookTour,
 }) => {
   const { tours } = useCms();
+  const { document, section } = useApprovedContent('fez');
+  const hero = section('hero', 'hero');
+  const overview = section('overview', 'cardGrid');
+  const gallery = section('gallery', 'gallery');
+  const benefits = section('introduction', 'benefits');
+  const introduction = section('introduction', 'richText');
+  const blank = { en: '', fr: '', es: '' };
+  const imageSource = (mediaId: string | undefined) => document?.media.find(media => media.id === mediaId)?.src;
   const [activeFilter, setActiveFilter] = useState<'all' | string>('all');
 
   const pageHeaders = {
@@ -33,7 +44,12 @@ export const FezPage: React.FC<FezPageProps> = ({
     },
   };
 
-  const fezPillars = tours.filter((t) => t.pageId === 'fez' && t.published !== false);
+  const fezPillars: SectionPillar[] = document ? (overview?.cards ?? []).flatMap(card => {
+    const target = tours.find(tour => tour.id === card.pageId && tour.published !== false);
+    if (!target) return [];
+    return [{ ...target, title: card.title, subtitle: card.badge ?? blank, shortDescription: card.description,
+      image: imageSource(card.image?.mediaId) ?? '', imageAlt: card.image?.alt ?? blank }];
+  }) : tours.filter((t) => t.pageId === 'fez' && t.published !== false);
 
   const filteredPillars =
     activeFilter === 'all'
@@ -43,38 +59,37 @@ export const FezPage: React.FC<FezPageProps> = ({
   return (
     <div className="space-y-16 pb-20">
       {/* Header Banner */}
-      <section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
-        <img
-          src="/images/real/fez_explore_medina_image1.jpg"
-          alt={language === 'es' ? "Puertas y tejados de la medina de Fez" : "Medina of Fez gates and rooftops"}
+      <ApprovedSection id="hero"><section className="relative bg-[#1C2524] py-12 sm:py-20 overflow-hidden">
+        {(!document || hero?.image) && (<img
+          {...responsiveImageProps((document ? imageSource(hero?.image?.mediaId) : ("/images/real/fez_explore_medina_image1.jpg")) ?? '', '100vw', true)}
+          alt={document ? hero?.image?.alt[language] ?? '' : (language === 'es' ? "Puertas y tejados de la medina de Fez" : "Medina of Fez gates and rooftops")}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        />)}
         <div className="absolute inset-0 bg-black/20" />
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/30 backdrop-blur-md rounded-3xl p-8 sm:p-12 shadow-xl border border-white/40 text-center space-y-4">
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <Compass className="w-4 h-4 text-[#005F5A]" />
-              <span>{language === 'es' ? "Fes el-Bali · Fes Jdid y Mellah · Patrimonio vivo" : "Fes el-Bali \u00b7 Fes Jdid & Mellah \u00b7 Living Heritage"}</span>
+              <span>{document ? hero?.eyebrow?.[language] ?? '' : (language === 'es' ? "Fes el-Bali · Fes Jdid y Mellah · Patrimonio vivo" : "Fes el-Bali \u00b7 Fes Jdid & Mellah \u00b7 Living Heritage")}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">
-              {pageHeaders.title[language]}
-            </h1>
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#005F5A] text-balance drop-shadow-xs">{document ? hero?.title?.[language] ?? '' : (pageHeaders.title[language])}</h1>
 
-            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {pageHeaders.subtitle[language]}
-            </p>
+            <p className="text-sm sm:text-base text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">{document ? hero?.description?.[language] ?? '' : (pageHeaders.subtitle[language])}</p>
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12"><ApprovedSections>
         {/* Narrative Introduction from Google Drive */}
-        <div className="bg-white rounded-3xl border border-[#E7E2DA] p-6 sm:p-10 shadow-xs">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm text-[#4E5B59] leading-relaxed">
+        <ApprovedSection id="introduction"><div className="bg-white rounded-3xl border border-[#E7E2DA] p-6 sm:p-10 shadow-xs">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm text-[#4E5B59] leading-relaxed">{document ? (benefits?.items ?? []).map((item, index) => (<div key={index} className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-2">
+              <span className="font-bold text-[#005F5A] block uppercase text-xs tracking-wider">{item.title[language]}</span>
+              <p>{item.description[language]}</p>
+            </div>)) : (<>
             <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#E7E2DA] space-y-2">
               <span className="font-bold text-[#005F5A] block uppercase text-xs tracking-wider">
                 {language === 'es' ? "Fes el-Bali (medina antigua)" : 'Fes el-Bali (Old Medina)'}
@@ -105,11 +120,11 @@ export const FezPage: React.FC<FezPageProps> = ({
                   : 'Panoramic hillside viewpoints over the rooftops and minarets of the Medina, and lively New City cafés to experience Fez at night.'}
               </p>
             </div>
-          </div>
-        </div>
+          </>)}</div>
+        </div></ApprovedSection>
 
         {/* Interactive Segmented Filter Control */}
-        <div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-white rounded-xl border border-[#E7E2DA] max-w-2xl mx-auto shadow-xs">
+        {(!document || overview?.enabled) && (<div className="flex flex-wrap items-center justify-center gap-2 p-1.5 bg-white rounded-xl border border-[#E7E2DA] max-w-2xl mx-auto shadow-xs">
           <button
             onClick={() => setActiveFilter('all')}
             className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
@@ -133,10 +148,10 @@ export const FezPage: React.FC<FezPageProps> = ({
               {p.title[language]}
             </button>
           ))}
-        </div>
+        </div>)}
 
         {/* Experiences Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+        <ApprovedSection id="overview"><div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
           {filteredPillars.map((pillar) => (
             <SectionCard
               key={pillar.id}
@@ -146,7 +161,7 @@ export const FezPage: React.FC<FezPageProps> = ({
               onBookTour={() => onBookTour(pillar.title[language])}
             />
           ))}
-        </div>
+        </div></ApprovedSection>
 
         <FezToursCtaSection
           language={language}
@@ -157,23 +172,17 @@ export const FezPage: React.FC<FezPageProps> = ({
         />
 
         {/* Authentic Medina Photo Gallery */}
-        <div className="space-y-6 pt-6">
+        <ApprovedSection id="gallery"><div className="space-y-6 pt-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              {language === 'es' ? "Galería del patrimonio vivo" : 'Living Heritage Gallery'}
-            </span>
-            <h3 className="text-2xl font-bold text-[#005F5A]">
-              {language === 'es' ? "Escenas reales de las calles de Fez" : 'Real Scenes From the Streets of Fez'}
-            </h3>
-            <p className="text-xs text-[#52605E]">
-              {language === 'es'
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : (language === 'es' ? "Galería del patrimonio vivo" : 'Living Heritage Gallery')}</span>
+            <h3 className="text-2xl font-bold text-[#005F5A]">{document ? gallery?.title?.[language] ?? '' : (language === 'es' ? "Escenas reales de las calles de Fez" : 'Real Scenes From the Streets of Fez')}</h3>
+            <p className="text-xs text-[#52605E]">{document && gallery?.description !== undefined ? gallery.description[language] : (language === 'es'
                 ? "Fotografías auténticas de talleres artesanales, puertas y rincones tranquilos."
-                : 'Authentic photos of craftsman workshops, gates, and quiet corners.'}
-            </p>
+                : 'Authentic photos of craftsman workshops, gates, and quiet corners.')}</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
+            {(document ? (gallery?.images ?? []).map(image => ({ src: imageSource(image.mediaId), alt: image.alt[language], caption: image.caption?.[language] ?? '' })) : [
               {
                 src: '/images/real/fez_explore_medina_image2.jpg',
                 alt: language === 'es' ? 'Pasadizo estrecho de la medina' : 'Narrow Medina passage',
@@ -194,7 +203,7 @@ export const FezPage: React.FC<FezPageProps> = ({
                 alt: language === 'es' ? 'Vista panorámica de los tejados' : 'Panoramic rooftop view',
                 caption: language === 'es' ? "Panorámica de los tejados" : 'Panoramic rooftops',
               },
-            ].map((item, idx) => (
+            ]).map((item, idx) => (
               <div
                 key={idx}
                 className="group relative aspect-4/3 rounded-2xl overflow-hidden border border-[#E7E2DA] shadow-xs bg-[#1C2524]"
@@ -211,10 +220,10 @@ export const FezPage: React.FC<FezPageProps> = ({
               </div>
             ))}
           </div>
-        </div>
+        </div></ApprovedSection>
 
 
-      </div>
+      </ApprovedSections></div>
     </div>
   );
 };

@@ -1,158 +1,4760 @@
 {
-  "/images/about/drivers-01.webp": "/images/optimized/9edf45e66b7e812aa850.webp",
-  "/images/about/drivers-02.webp": "/images/optimized/be4889ba3067418418cd.webp",
-  "/images/about/drivers-03.webp": "/images/optimized/af082fb11a5d0d3190c3.webp",
-  "/images/about/drivers-04.webp": "/images/optimized/4f844a1ef365340ddc70.webp",
-  "/images/about/drivers-05.webp": "/images/optimized/64fae9c751a723900884.webp",
-  "/images/about/guides-01.webp": "/images/optimized/c0f5e4000c9d88a20215.webp",
-  "/images/about/guides-02.webp": "/images/optimized/a123730302f6babad0c6.webp",
-  "/images/about/guides-03.webp": "/images/optimized/cc1a952be3ec41542068.webp",
-  "/images/about/guides-04.webp": "/images/optimized/8d754285d64e0f18ddda.webp",
-  "/images/about/med.webp": "/images/optimized/af9ca108e8d9c0f2aeb4.webp",
-  "/images/chefchaouen_daytrip_1790709699413.jpg": "/images/optimized/2c93b49af4328c8f4007.webp",
-  "/images/daytrip-chefchaouen/blue-alley.webp": "/images/optimized/927dde74e2ab89c01d0e.webp",
-  "/images/daytrip-custom/group-viewpoint.webp": "/images/optimized/789198c1ac8b631f4c13.webp",
-  "/images/daytrip-ifrane/macaques.webp": "/images/optimized/9aecb50412dccb15cdd9.webp",
-  "/images/daytrip-ifrane/mountain-countryside.webp": "/images/optimized/f6f43ee1c01a2806431d.webp",
-  "/images/daytrip-ifrane/stone-lion.webp": "/images/optimized/4c208ca8051e15e58d50.webp",
-  "/images/daytrip-meknes/bab-mansour.webp": "/images/optimized/6742225b8d08bc9baa5e.webp",
-  "/images/daytrip-meknes/city-walls.webp": "/images/optimized/6a90421ac32aa9a07f19.webp",
-  "/images/daytrip-meknes/historic-doorway.webp": "/images/optimized/5397f7788a41c0338506.webp",
-  "/images/daytrip-meknes/moulay-idriss.webp": "/images/optimized/6b78b09592ffe1f567b1.webp",
-  "/images/daytrip-meknes/volubilis-mosaic.webp": "/images/optimized/9cb738aaf1413d3c95c2.webp",
-  "/images/fez-history/history-01.jpg": "/images/optimized/9ec62f2f444b0e35162c.webp",
-  "/images/fez-history/history-02.jpg": "/images/optimized/b6e8794ddf02aaccc1e1.webp",
-  "/images/fez-history/history-05.jpg": "/images/optimized/fc4737d8830e79377695.webp",
-  "/images/fez-history/history-08.jpg": "/images/optimized/2050b017de30648fc78e.webp",
-  "/images/fez-history/history-09.jpg": "/images/optimized/7e2f123df4ac0861c4e1.webp",
-  "/images/fez-history/history-12.jpg": "/images/optimized/cc1c05834d50b3869b94.webp",
-  "/images/fez-history/history-14.jpg": "/images/optimized/ed1e7a6b908d9284e4e8.webp",
-  "/images/fez-medina/medina-01.jpg": "/images/optimized/7289be405fcf17dc5843.webp",
-  "/images/fez-medina/medina-02.jpg": "/images/optimized/6eac7d602d75b83df93d.webp",
-  "/images/fez-medina/medina-03.jpg": "/images/optimized/7b2e159c7d44e230527a.webp",
-  "/images/fez-medina/medina-05.jpg": "/images/optimized/c448db3ffc3decf61886.webp",
-  "/images/fez-medina/medina-07.jpg": "/images/optimized/22e87cbf1c7ffee7de5f.webp",
-  "/images/fez-medina/medina-11.jpg": "/images/optimized/c28b9ae797e83134e33a.webp",
-  "/images/fez-medina/medina-12.jpg": "/images/optimized/899000427cc58a25eb53.webp",
-  "/images/fez-medina/medina-13.jpg": "/images/optimized/83aee6968ae2833945ab.webp",
-  "/images/fez-things-to-do/things-01.jpg": "/images/optimized/dfab31a786a688baae6f.webp",
-  "/images/fez-things-to-do/things-02.jpg": "/images/optimized/52c9e99dedee9cc60f09.webp",
-  "/images/fez-things-to-do/things-05.jpg": "/images/optimized/fa3822fdfdf835e2da15.webp",
-  "/images/fez-things-to-do/things-06.jpg": "/images/optimized/51b0248c018547a614d4.webp",
-  "/images/fez-things-to-do/things-08.jpg": "/images/optimized/3f7c4b1ab6de303d6975.webp",
-  "/images/fez_medina_bread_alley_walk_1791028852376.jpg": "/images/optimized/07ae71393fd79c4af008.webp",
-  "/images/fez_spice_souk_attarine_1791028863908.jpg": "/images/optimized/437a4eef51128da2a75d.webp",
-  "/images/fez_tannery_chouara_1790709709409.jpg": "/images/optimized/673f7ebc95f421fa0b84.webp",
-  "/images/food-culture-life/cook-pot.webp": "/images/optimized/41f8061787017c386dab.webp",
-  "/images/food-culture-life/family-table.webp": "/images/optimized/e08fb289e08739a1b7db.webp",
-  "/images/food-culture-life/flatbread.webp": "/images/optimized/6c19f4b8cecb492e6614.webp",
-  "/images/food-culture-life/fried-snack.webp": "/images/optimized/f5ef74aba6d2d4994075.webp",
-  "/images/food-culture-life/produce-stall.webp": "/images/optimized/839f48bc60c91811c5d7.webp",
-  "/images/food-culture-life/sweets-shop.webp": "/images/optimized/74b1373894769ac94e73.webp",
-  "/images/food-culture-life/tea-tray.webp": "/images/optimized/a6ecc68ed1e44fb078e9.webp",
-  "/images/food-culture-life/vegetable-market.webp": "/images/optimized/3bcbd84d65c9a399adac.webp",
-  "/images/food-markets-souks/communal-oven.webp": "/images/optimized/36b238d040d1fbb5175d.webp",
-  "/images/food-markets-souks/greens-market.webp": "/images/optimized/c9374fadbc6f2dc41f68.webp",
-  "/images/food-markets-souks/onion-prep.webp": "/images/optimized/8b9739fcc142ec15bb08.webp",
-  "/images/food-markets-souks/pepper-stall.webp": "/images/optimized/69d00ce497d647a55baa.webp",
-  "/images/food-markets-souks/shop-doorway.webp": "/images/optimized/af67483d03a600e257d3.webp",
-  "/images/food-markets-souks/souk-lane.webp": "/images/optimized/03cdbbc14f04b024cca2.webp",
-  "/images/food-markets-souks/spice-tins.webp": "/images/optimized/6be71ebb6390cd6f9125.webp",
-  "/images/food-markets-souks/squash-seller.webp": "/images/optimized/3a20648fb5dfe8e1f183.webp",
-  "/images/food-tasting-walk/medina-lane.webp": "/images/optimized/7086d90ec2cfb7f8b561.webp",
-  "/images/food-tasting-walk/mint-tea.webp": "/images/optimized/e8d6d36fb0ac90cf3eff.webp",
-  "/images/food-tasting-walk/pastries-tea.webp": "/images/optimized/3c5f94d6e59a2a7bbe5b.webp",
-  "/images/food-tasting-walk/street-sandwich.webp": "/images/optimized/239c12050efe2dd13b55.webp",
-  "/images/food-tasting-walk/tasting-table.webp": "/images/optimized/adbc23b9707ef57a1bd3.webp",
-  "/images/food-tasting-walk/wood-oven.webp": "/images/optimized/2e10320040253ff6a6a1.webp",
-  "/images/food-traditional-fassi/herb-prep.webp": "/images/optimized/cdbba709125f283a7e88.webp",
-  "/images/food-traditional-fassi/market-lane.webp": "/images/optimized/03cdbbc14f04b024cca2.webp",
-  "/images/food-traditional-fassi/meal-table.webp": "/images/optimized/de780b1a4d94f3e01e48.webp",
-  "/images/food-traditional-fassi/pastilla.webp": "/images/optimized/445f20357120b4f85f45.webp",
-  "/images/food-traditional-fassi/salad-spices.webp": "/images/optimized/bf5033efda78e8acb77f.webp",
-  "/images/food-traditional-fassi/tagine-table.webp": "/images/optimized/f1ccbf8004ba236ecd82.webp",
-  "/images/food_couscous_seven_vegetables_1791028373287.jpg": "/images/optimized/530db2cc92c3513e4c54.webp",
-  "/images/food_street_tasting_tagine_1791028349470.jpg": "/images/optimized/a8829f5dd09e99824e03.webp",
-  "/images/food_traditional_fassi_feast_1791028361535.jpg": "/images/optimized/a0d59e9912dd01568d39.webp",
-  "/images/hero_fez_medina_1790709688133.jpg": "/images/optimized/15c9286bc42543f3ae30.webp",
-  "/images/meknes_volubilis_roman_1790709730115.jpg": "/images/optimized/a04ad6561cca884d23b0.webp",
-  "/images/moroccan_food_tasting_1790709719867.jpg": "/images/optimized/9c29930daf6c3a20ac7c.webp",
-  "/images/our-fez-tours/01.webp": "/images/optimized/f44b75ad1a8a9f780d8f.webp",
-  "/images/our-fez-tours/02.webp": "/images/optimized/de367c514bd1f878c431.webp",
-  "/images/our-fez-tours/03.webp": "/images/optimized/a75cb5595ffa8462971a.webp",
-  "/images/our-fez-tours/04.webp": "/images/optimized/f2d997cd18285b9be979.webp",
-  "/images/our-fez-tours/05.webp": "/images/optimized/ed38dcc79dc9b4ba0672.webp",
-  "/images/our-fez-tours/06.webp": "/images/optimized/2489738223a410e9b9ea.webp",
-  "/images/our-fez-tours/07.webp": "/images/optimized/4fffec41fc077eba427b.webp",
-  "/images/our-fez-tours/08.webp": "/images/optimized/5a05673ea49ed4712357.webp",
-  "/images/real/about_us_image1.jpg": "/images/optimized/ed25e01c817a4b37d3ce.webp",
-  "/images/real/about_us_image10.jpg": "/images/optimized/842f73b39df82d5404f7.webp",
-  "/images/real/about_us_image2.jpg": "/images/optimized/3e3355ae33b00bae4c2b.webp",
-  "/images/real/about_us_image3.jpg": "/images/optimized/4dfe513659d3ed2ea6e8.webp",
-  "/images/real/about_us_image4.jpg": "/images/optimized/be619331dd6a7f5765f6.webp",
-  "/images/real/about_us_image5.jpg": "/images/optimized/b57ce04c1a8e6eb77ab8.webp",
-  "/images/real/about_us_image7.jpg": "/images/optimized/b0e0041a37ca4aa6b153.webp",
-  "/images/real/about_us_image8.jpg": "/images/optimized/d37c57a627235560bc6a.webp",
-  "/images/real/about_us_image9.jpg": "/images/optimized/1e8189447a1cc3162b10.webp",
-  "/images/real/daytrip_chefchaouen_image1.jpg": "/images/optimized/d14410e7cc9171001af0.webp",
-  "/images/real/daytrip_custom_image1.jpg": "/images/optimized/4e4846c4ba576ced30f5.webp",
-  "/images/real/daytrip_ifrane_image1.jpg": "/images/optimized/a693c17dc353043d6424.webp",
-  "/images/real/daytrip_ifrane_image2.jpg": "/images/optimized/76a0543730239a12d742.webp",
-  "/images/real/daytrip_ifrane_image3.jpg": "/images/optimized/9638ef36785e502936b1.webp",
-  "/images/real/daytrip_meknes_image1.jpg": "/images/optimized/e28b711461c08f94eca8.webp",
-  "/images/real/daytrip_meknes_image2.jpg": "/images/optimized/a085ca6c68f669a0211e.webp",
-  "/images/real/daytrip_meknes_image3.jpg": "/images/optimized/cd7bb580a1b6f55d7ab4.webp",
-  "/images/real/daytrip_meknes_image4.jpg": "/images/optimized/83700980ebd42bad383e.webp",
-  "/images/real/daytrip_meknes_image5.jpg": "/images/optimized/5e8f8520cbea4f18adf2.webp",
-  "/images/real/fez_explore_medina_image1.jpg": "/images/optimized/96e8eb343a91a4335429.webp",
-  "/images/real/fez_explore_medina_image11.jpg": "/images/optimized/c28b9ae797e83134e33a.webp",
-  "/images/real/fez_explore_medina_image14.jpg": "/images/optimized/22e87cbf1c7ffee7de5f.webp",
-  "/images/real/fez_explore_medina_image4.jpg": "/images/optimized/861194bcb26064e0e211.webp",
-  "/images/real/fez_explore_medina_image5.jpg": "/images/optimized/2e63685cc94cb44245cb.webp",
-  "/images/real/fez_explore_medina_image6.jpg": "/images/optimized/c448db3ffc3decf61886.webp",
-  "/images/real/fez_explore_medina_image8.jpg": "/images/optimized/6aa0453b783c14de133f.webp",
-  "/images/real/fez_explore_medina_image9.jpg": "/images/optimized/6bcac1f19f59d5817d1e.webp",
-  "/images/real/fez_history_culture_image1.jpg": "/images/optimized/73794c0e0aea062a7e0a.webp",
-  "/images/real/fez_history_culture_image11.jpg": "/images/optimized/6e252a3f8f9b721d089d.webp",
-  "/images/real/fez_history_culture_image12.jpg": "/images/optimized/59725616cd6d9479c69d.webp",
-  "/images/real/fez_history_culture_image13.jpg": "/images/optimized/487448aa5f2024f38f5f.webp",
-  "/images/real/fez_history_culture_image2.jpg": "/images/optimized/92f66d837d2c1f08086f.webp",
-  "/images/real/fez_things_to_do_image1.jpg": "/images/optimized/5088af9fae028f101235.webp",
-  "/images/real/fez_things_to_do_image2.jpg": "/images/optimized/9bdf03df1f0839be85cb.webp",
-  "/images/real/fez_things_to_do_image3.jpg": "/images/optimized/f78a6094201a7fe92c23.webp",
-  "/images/real/fez_things_to_do_image4.jpg": "/images/optimized/d37c57a627235560bc6a.webp",
-  "/images/real/fez_things_to_do_image7.jpg": "/images/optimized/01304e6b711ddac1de64.webp",
-  "/images/real/fez_things_to_do_image8.jpg": "/images/optimized/6fb3b493cdbc2a36df0e.webp",
-  "/images/real/food_couscous_plate.jpg": "/images/optimized/530db2cc92c3513e4c54.webp",
-  "/images/real/food_culture_life_image1.jpg": "/images/optimized/e2bf7254273d12993349.webp",
-  "/images/real/food_feast_board.jpg": "/images/optimized/a0d59e9912dd01568d39.webp",
-  "/images/real/food_markets_souks_image1.jpg": "/images/optimized/437a4eef51128da2a75d.webp",
-  "/images/real/food_medina_walk.jpg": "/images/optimized/07ae71393fd79c4af008.webp",
-  "/images/real/food_spice_souk.jpg": "/images/optimized/437a4eef51128da2a75d.webp",
-  "/images/real/food_tagine_table.jpg": "/images/optimized/a8829f5dd09e99824e03.webp",
-  "/images/real/food_tasting_walk_image1.jpg": "/images/optimized/07ae71393fd79c4af008.webp",
-  "/images/real/food_traditional_fassi_image1.jpg": "/images/optimized/94456979c8d95ca9d18e.webp",
-  "/images/real/tips_getting_around_image1.jpg": "/images/optimized/1bbf9fef404c9417920d.webp",
-  "/images/real/tips_plan_trip_image1.jpg": "/images/optimized/e8b5a26bb170f341aa5a.webp",
-  "/images/real/tips_practical_image1.jpg": "/images/optimized/aceebab32e21f75e23d8.webp",
-  "/images/tips-getting-around/bab-boujloud-night.webp": "/images/optimized/e79034fc4ea789045c4a.webp",
-  "/images/tips-getting-around/bab-rcif.webp": "/images/optimized/3ab40a0a1cfc16e18644.webp",
-  "/images/tips-getting-around/city-gate.webp": "/images/optimized/059c22bc85074bc39748.webp",
-  "/images/tips-getting-around/hexagonal-sign.webp": "/images/optimized/0cd6792ab6359f4b2668.webp",
-  "/images/tips-getting-around/medina-walker.webp": "/images/optimized/42a96fcafe0bffdea4ac.webp",
-  "/images/tips-getting-around/mule-load.webp": "/images/optimized/f0cbd598b9bae2f13130.webp",
-  "/images/tips-getting-around/new-city-road.webp": "/images/optimized/55d5cf620af69e664d22.webp",
-  "/images/tips-getting-around/square-sign.webp": "/images/optimized/a631a1ea498a48150175.webp",
-  "/images/tips-getting-around/talaa-souk.webp": "/images/optimized/e3bd5056ec91f27aaec3.webp",
-  "/images/tips-plan-trip/bab-boujloud.webp": "/images/optimized/0ba14758c6e2ecb669d9.webp",
-  "/images/tips-plan-trip/medina-alley.webp": "/images/optimized/9e1aa51081de77ba1693.webp",
-  "/images/tips-plan-trip/medina-view.webp": "/images/optimized/fdc8546fbfe9119c9a44.webp",
-  "/images/tips-plan-trip/new-city-road.webp": "/images/optimized/55d5cf620af69e664d22.webp",
-  "/images/tips-plan-trip/night-view.webp": "/images/optimized/042febd3d7580bc4202f.webp",
-  "/images/tips-plan-trip/riad-courtyard.webp": "/images/optimized/2b91052392ef46ea3f8c.webp",
-  "/images/tips-plan-trip/rooftops.webp": "/images/optimized/669e250a01e13e2ee822.webp",
-  "/images/tips-plan-trip/souk-lane.webp": "/images/optimized/b8fa7f23b1b91fbd2809.webp",
-  "/images/tips-practical/craftsman.webp": "/images/optimized/e8a2477b4d7857aa3e58.webp",
-  "/images/tips-practical/medina-steps.webp": "/images/optimized/75fe286e33939c342a36.webp",
-  "/images/tips-practical/spice-shop.webp": "/images/optimized/af67483d03a600e257d3.webp"
+  "/images/about/drivers-01.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "a3a2299a4f459b307f53e1fe310b17a67a097c172c1cfec178c3bb568911bb30",
+    "candidates": [
+      {
+        "src": "/images/optimized/7b185be6023b77ce9e1c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4b1e24e4b2d3e23afb9d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/1eb6495c3e26ff9aa3f1.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9edf45e66b7e812aa850.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/about/drivers-02.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "f3e4f9404b0f554efc5a27db20235a6ea5fa69e9478505d5bf98b96b81816914",
+    "candidates": [
+      {
+        "src": "/images/optimized/34eef083f2e0f0ec7639.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5dc1ba6614ca96233c56.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/93e98d9eb19fa4ed289f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/be4889ba3067418418cd.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/about/drivers-03.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "81702067dcab3fcd96ddc5adc7a867264f7b2597a4743d93d965e9878c258cf9",
+    "candidates": [
+      {
+        "src": "/images/optimized/28a4f3f46ed4d589ab35.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/3a8127af3a788e87ac2c.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/e0765caf611a4711a1de.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/af082fb11a5d0d3190c3.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/about/drivers-04.webp": {
+    "width": 750,
+    "height": 421,
+    "sourceHash": "bfdc86d2ac55595a5e5ea503d4298468bca973e512fe970f26b4239c8b701cdf",
+    "candidates": [
+      {
+        "src": "/images/optimized/dbfb62850b14ccea2492.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9f07fcb2dc661967281f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8ea61c11637bd8bd974a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/4f844a1ef365340ddc70.webp",
+        "width": 750
+      }
+    ]
+  },
+  "/images/about/drivers-05.webp": {
+    "width": 800,
+    "height": 593,
+    "sourceHash": "2280d1e0d2854fc286fe978b7950db96a00ad42300a780a22d8b17170ae0d889",
+    "candidates": [
+      {
+        "src": "/images/optimized/178c7bf229abe3c9b180.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/00f0822c3b9e8fe6bc38.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/0c9b8516761130918b51.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/64fae9c751a723900884.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/about/guides-01.webp": {
+    "width": 1600,
+    "height": 1200,
+    "sourceHash": "8a8ebbb1c787822c9eaf67725c74a0846042a966262045621949593fa94a97c7",
+    "candidates": [
+      {
+        "src": "/images/optimized/4a62dc9116b73d043d2a.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b4c1b4f430f33155c766.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/657f1dd705d0eb371eda.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/d7c259d86ac1a82b3e3f.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/1e324850efd86c04d006.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/c0f5e4000c9d88a20215.webp",
+        "width": 1600
+      }
+    ]
+  },
+  "/images/about/guides-02.webp": {
+    "width": 1536,
+    "height": 2048,
+    "sourceHash": "f9f7ab6a498691bd5f2cff71d3d367d0887ccde24bd938d74bb55762f9ea27ae",
+    "candidates": [
+      {
+        "src": "/images/optimized/be8f4b1ae9d8af693ca7.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/19cfe29aa8ed98a8a83f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/148f86d4f4d587b4a61e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/04d9cc783e86c12fed6e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/d31a7be2324a4bb7e72e.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a123730302f6babad0c6.webp",
+        "width": 1536
+      }
+    ]
+  },
+  "/images/about/guides-03.webp": {
+    "width": 2048,
+    "height": 1536,
+    "sourceHash": "f7df8f4a1b7b542b0b73bfcfcb1a13abeddbf63fae9ac45f9f702abbe59960b1",
+    "candidates": [
+      {
+        "src": "/images/optimized/076a63f97fbb80474e21.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4cebcf32fd4fb8b2fe33.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/068e621662e9fc55efde.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5bffcc7f1daf76d21eab.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/cfe25b18c955bf0c44e1.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/cc1a952be3ec41542068.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/3d5eebb31a9768cc3ffa.webp",
+        "width": 2048
+      }
+    ]
+  },
+  "/images/about/guides-04.webp": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "9fb854d5ef9c6b052d92adfe667ad6de69dd72104d14a25b4652590b6529f656",
+    "candidates": [
+      {
+        "src": "/images/optimized/b08da9f3bb1c8f0648b6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/720381c7987c08c3801c.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/aedf5528d563fe0d1974.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/dabe3abfcdca42bec377.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/8d754285d64e0f18ddda.webp",
+        "width": 975
+      }
+    ]
+  },
+  "/images/about/med.webp": {
+    "width": 1440,
+    "height": 1440,
+    "sourceHash": "349059ad608f38f1f81ba4e3f462c6a6018b2c57362719ede311466751c15f6f",
+    "candidates": [
+      {
+        "src": "/images/optimized/76afcaf1a8ac52f2dae6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/30ad422b968121ec2c0f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6f15b2c7f8e7c2b88f47.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9f002299355718d4fbad.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/6b6f28fb1a864de0b055.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/af9ca108e8d9c0f2aeb4.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/images/chefchaouen_daytrip_1790709699413.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "3b1fd954fc1aec15c2d9345c6debf8d5d129b4a430bb18ba7006dd5705070f94",
+    "candidates": [
+      {
+        "src": "/images/optimized/f81358022ae1181feddb.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/823030850642c79f1c6f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/acc33171afb42bd9e90e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6e5681dbe83ec1ecab5e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/2c93b49af4328c8f4007.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/daytrip-chefchaouen/blue-alley.webp": {
+    "width": 1100,
+    "height": 733,
+    "sourceHash": "f775c98189df8c31f91dbae8eda4512e304f9d53613a40a055dc72edf6857cbd",
+    "candidates": [
+      {
+        "src": "/images/optimized/ace4bba09e5837037c04.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4b19e32c38ad2b3c20e5.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/917064ca1cd1a0f618c6.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/bb9cf021114c19f581af.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/927dde74e2ab89c01d0e.webp",
+        "width": 1100
+      }
+    ]
+  },
+  "/images/daytrip-custom/group-viewpoint.webp": {
+    "width": 1152,
+    "height": 2048,
+    "sourceHash": "1b6c4f3ffb32f6bf1b5a2e676e0feacb1fb352dad78868712329b768c37e8647",
+    "candidates": [
+      {
+        "src": "/images/optimized/bab6ec1635fc000b8d6b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2c08e6fa1016a2c78e6f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/657b5a97560143b59435.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/4ce76e89f9c36f230225.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/789198c1ac8b631f4c13.webp",
+        "width": 1152
+      }
+    ]
+  },
+  "/images/daytrip-ifrane/macaques.webp": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "36019e53c75a98272ab82689595e2fb27ef2b14c4c4beb05745ec0854df749dc",
+    "candidates": [
+      {
+        "src": "/images/optimized/f3141f74965c45751dec.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5b0bcdc65e1eacf55e14.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bffed0beaea842cb4248.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9aecb50412dccb15cdd9.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-ifrane/mountain-countryside.webp": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "e1a3f312e13f2063ad7b3948b8fb5a2a53222e8e091c04dcb6420b6b22d3a413",
+    "candidates": [
+      {
+        "src": "/images/optimized/f6451131685fee649aef.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/870e2466c1404d70ad6b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fc8b76297f227cf7754c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f6f43ee1c01a2806431d.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-ifrane/stone-lion.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "569fe1190fd3f3206663c9fd73ae601859bace823c0c77e683a31551b0034c34",
+    "candidates": [
+      {
+        "src": "/images/optimized/4cf5a31948203d1a9f9e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/d8b06542a89812349871.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/e2236d0a4a4b896529d3.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/4c208ca8051e15e58d50.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-meknes/bab-mansour.webp": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "baff717089d05de80d5481153ae1bdf7a4bc96ce5ee5abff0bd7186d66176b21",
+    "candidates": [
+      {
+        "src": "/images/optimized/78accbafe59dd4ee562a.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/21fb66fba718f9ed7abb.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a1e2d27439a6d2f9917a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6742225b8d08bc9baa5e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-meknes/city-walls.webp": {
+    "width": 800,
+    "height": 530,
+    "sourceHash": "077cdc9ae18fbe6866b9077914144c3cf7529723d58f3169ee0e7bcf4d450162",
+    "candidates": [
+      {
+        "src": "/images/optimized/2e534469750f42fdadcf.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a4d9d231b8dc1386a691.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/02334a86a9d8bb22d3b7.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6a90421ac32aa9a07f19.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-meknes/historic-doorway.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "b3b22c36b61992994cf1a4902ef6deee344f59f343f4098007fd906f13e845e3",
+    "candidates": [
+      {
+        "src": "/images/optimized/bfbdd967716a549cf6b9.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1c64cf9fb623a68b26c1.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fecfc797a0bc6d56cd4e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5397f7788a41c0338506.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-meknes/moulay-idriss.webp": {
+    "width": 800,
+    "height": 632,
+    "sourceHash": "8fd728f7fee4781400789c1cf40e46786c47d49a5033206ca7ed104e0fd3ef7b",
+    "candidates": [
+      {
+        "src": "/images/optimized/40848909c24267651af9.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5682593ad9bfa9e75e8e.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a1dfb053ea68400607eb.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6b78b09592ffe1f567b1.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/daytrip-meknes/volubilis-mosaic.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "b9232a7b0f633e4d14f8cd8fca31140c991556b97cd5356d958d0773a7f52360",
+    "candidates": [
+      {
+        "src": "/images/optimized/d86fae7529642668a501.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/6b37379323ef0c5d189a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7831045ccbc52de0c543.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9cb738aaf1413d3c95c2.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-history/history-01.jpg": {
+    "width": 1080,
+    "height": 1440,
+    "sourceHash": "e8ffc988ac9f7cbb4f2b07fed2bdca190bf72f892dd54c1a2f9dd86531e80d19",
+    "candidates": [
+      {
+        "src": "/images/optimized/01dcf0a8d1b94b849275.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4a8b570967791ffa05fb.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7daa2cb4032ad7e0ef99.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a26eaa6e48cef92afc36.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/9ec62f2f444b0e35162c.webp",
+        "width": 1080
+      }
+    ]
+  },
+  "/images/fez-history/history-02.jpg": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "8278e94f388db0f5f4b3a8bfcc57232c8778cbe1b00a35540ffe2f8267a8793a",
+    "candidates": [
+      {
+        "src": "/images/optimized/c1c595342fba3bb74eef.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0b2359c95b9f9f1a041f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/0f5a27975191612c4335.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/b6e8794ddf02aaccc1e1.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-history/history-03.jpg": {
+    "width": 1365,
+    "height": 1820,
+    "sourceHash": "7f361695393c609db56ef54e49f26c003a390197944515b6962b2db92c7e0f97",
+    "candidates": [
+      {
+        "src": "/images/optimized/dfbe803a035cfff3fafe.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a0f3d3bd3f86467f0027.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/958ecb2cf05130da1784.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/82265fe079d535c2bb8a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/d164d2e07f4a635707bb.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-history/history-03.jpg",
+        "width": 1365
+      }
+    ]
+  },
+  "/images/fez-history/history-04.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "f1051b3a5c2ed00dbe2d2cad86be616970c6572ec6b90f59cf1dddc9153946ac",
+    "candidates": [
+      {
+        "src": "/images/optimized/93986177848f9f11872c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/10c10006cfb322bf53e0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/522a0843707266cc6586.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/8198f6bbe04794e2bcc4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-04.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/fez-history/history-05.jpg": {
+    "width": 1536,
+    "height": 2048,
+    "sourceHash": "03fe2602ab12c794ff446b398dd2ea07b9126ac5365d4aedfd524e6f4beaf86b",
+    "candidates": [
+      {
+        "src": "/images/optimized/f41894b85b4e468f6e8c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/177b35dd4265e112bee3.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fb3c0d1ff054e9f54300.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e342b9d5fee8139d2ab2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/8a7a9dbdbf31f6805555.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/fc4737d8830e79377695.webp",
+        "width": 1536
+      }
+    ]
+  },
+  "/images/fez-history/history-06.jpg": {
+    "width": 1536,
+    "height": 2048,
+    "sourceHash": "c6fc1ffc056519936b14da0bcad1081d1a632c514c4760b821c43edd38806a5a",
+    "candidates": [
+      {
+        "src": "/images/optimized/006ac76c1bfa8a64bcfd.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/19c360c3c2fc48455868.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/88abb5abfcf22bc9962f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/65e9cfc406cc06b20328.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/4f13b3432648ef06a9bd.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-history/history-06.jpg",
+        "width": 1536
+      }
+    ]
+  },
+  "/images/fez-history/history-07.jpg": {
+    "width": 1364,
+    "height": 908,
+    "sourceHash": "6423df0623b6229319c713b45a00c3a446df7cd254cde8080601ee20217ac265",
+    "candidates": [
+      {
+        "src": "/images/optimized/ef0932c271df69ba8c77.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/8a9f37fda11d05b17283.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/73b918eca03a75d1f028.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/b1e9748c411c4ed25e8a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/8222c131ea47fe72d1b2.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-history/history-07.jpg",
+        "width": 1364
+      }
+    ]
+  },
+  "/images/fez-history/history-08.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "4e84382781bd68964f40f3b9c1292f10dbdcf1776234e2becf8a7a68777b0d3d",
+    "candidates": [
+      {
+        "src": "/images/optimized/560833e3cb7dc696d0af.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5e8810bb1d08b5328a1b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5643dfcd079bd77095f9.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/2050b017de30648fc78e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-history/history-09.jpg": {
+    "width": 800,
+    "height": 1200,
+    "sourceHash": "311679718791124aec1a84e810a1483def3b3aa0e36f9b8236bdb5e04ef2d1bd",
+    "candidates": [
+      {
+        "src": "/images/optimized/6fa5dc4812118e27a7d1.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1aaad397605be0204cf5.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/190db32ea406dd6e237b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7e2f123df4ac0861c4e1.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-history/history-10.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "5f7b34fe9eff6f3c23ccc525e333a74cdcbe4ba1f9e93fded59a5d36af8d6ade",
+    "candidates": [
+      {
+        "src": "/images/optimized/24c3de730caa7d300827.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/d6fde724d075fcd9f552.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/cf0662949602b77e58b7.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/cf83a7d6d461804521aa.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-10.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/fez-history/history-11.jpg": {
+    "width": 1733,
+    "height": 1300,
+    "sourceHash": "0c0d5f31701747d1c75ddc2292012ad6523973af8b7d47b205319b371deb14fa",
+    "candidates": [
+      {
+        "src": "/images/optimized/e1a42036de320f95003c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0d552d9ff6c94a2923c9.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/af3a4fca93eeafdcde48.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6c23a41c89d44b1bd9b3.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/54056c532b6c3cb3b269.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/c535357d7d4ff96d804a.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/fez-history/history-11.jpg",
+        "width": 1733
+      }
+    ]
+  },
+  "/images/fez-history/history-12.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "a97071874621a00470d9b24bfc261ec95b6382cb2a5bd786f0aa823a165233cc",
+    "candidates": [
+      {
+        "src": "/images/optimized/cc8ee8a547be2a9e86fe.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1287bb51e4628f0151ca.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fa56c66d35095374742f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/cc1c05834d50b3869b94.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-history/history-13.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "358ef7b4964d774228efd8c1d150c93293b3c46a941c401e7f4b4022b771a99a",
+    "candidates": [
+      {
+        "src": "/images/optimized/bac1d6caacee22943fb6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9cc6f4d0125c749ce9f7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3cef047743379477d062.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/17372989f74b5008fac2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-13.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/fez-history/history-14.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "bc7aaaf66954aaf5d5c79d3cd072e507ef713531a08e6ae5c0f55b969786b712",
+    "candidates": [
+      {
+        "src": "/images/optimized/bf0bf60987cd8792dcce.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f2fd7fc97d4553d53359.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/617dbd7c7a2f468dc974.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a3f97fd897769293a5aa.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/ed1e7a6b908d9284e4e8.webp",
+        "width": 975
+      }
+    ]
+  },
+  "/images/fez-medina/medina-01.jpg": {
+    "width": 1152,
+    "height": 2048,
+    "sourceHash": "3eac494732206b13ad630e41db98c23ce8d6f82f228545ee17faff6b7060c19f",
+    "candidates": [
+      {
+        "src": "/images/optimized/6f5e5bc64df35538afde.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f8693f714fffdb39ca4e.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8cd42cdb2f4596b52cab.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/08d4b87ca0d1e32584d4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/7289be405fcf17dc5843.webp",
+        "width": 1152
+      }
+    ]
+  },
+  "/images/fez-medina/medina-02.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "b91b4bab53ab21b8a958c18c514d9171e69d7812d43c6b0d4688771b1aced1c5",
+    "candidates": [
+      {
+        "src": "/images/optimized/1ab90290c098574dc27e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5be7a459c10530ff6e80.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fca8fc66cb4ebcce8832.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6eac7d602d75b83df93d.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-medina/medina-03.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "c2c4fb233a4e50893f8571db1441418640c3fd2305f7610a2462bf4c4360ddd5",
+    "candidates": [
+      {
+        "src": "/images/optimized/b720d2ac1473fd414cce.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/591f32199b2a858460c7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/174e4a4fafdb47a0a3d8.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7b2e159c7d44e230527a.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-medina/medina-04.jpg": {
+    "width": 1280,
+    "height": 1917,
+    "sourceHash": "441b4c5539cfb739d7401bf1471ba545a8bb0946b3868027ecbab795f51a4cfb",
+    "candidates": [
+      {
+        "src": "/images/optimized/f1a3b7ecd8e31cfa4741.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a1bbb324341ff0602f47.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/42f8faa5511a0cd4d9df.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/08c1cda54a2a6888244a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/214aa98e205afebab599.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-04.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/fez-medina/medina-05.jpg": {
+    "width": 1280,
+    "height": 1920,
+    "sourceHash": "e0191961528113f0450b979cd1ea9ab49c4b31c86e888c15bca11173e6a65d79",
+    "candidates": [
+      {
+        "src": "/images/optimized/f0f38e387e2c7f89ff18.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/39618626ee458221a928.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d1ce771603e509fcd414.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/989a4b2b1156be450f6d.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/485a29ce993b96359805.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/c448db3ffc3decf61886.webp",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/fez-medina/medina-06.jpg": {
+    "width": 1280,
+    "height": 721,
+    "sourceHash": "a7832927891e7fc16f5638e76d1c9c27e71c0e2ec7286535ebd6edebb0a6132d",
+    "candidates": [
+      {
+        "src": "/images/optimized/4c5d1f49b119a953079c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0ec213afd585bb93e95b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4906a88a909da598686c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5814fcd3d70681281cf2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/5b72920f4f182e63f3af.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-06.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/fez-medina/medina-07.jpg": {
+    "width": 1280,
+    "height": 1920,
+    "sourceHash": "979328d6a89e2a30204ff3b98b888fe74a7015821bb75a11c1436d6416c25bb3",
+    "candidates": [
+      {
+        "src": "/images/optimized/47bd9fc047d2d04cd7b0.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e8f2cd55f2d4702dd0a2.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2849f536407b567e73dc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/fd8ee43d0d9c177e0744.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/1c40d336769051ffae76.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/22e87cbf1c7ffee7de5f.webp",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/fez-medina/medina-08.jpg": {
+    "width": 600,
+    "height": 1300,
+    "sourceHash": "e21049cd996069a2024632bb152f46c44d49dfa117fd1722a46b548046889bb5",
+    "candidates": [
+      {
+        "src": "/images/optimized/090e3e6f8a01ae1cbf81.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/dc8095c065e15642aafc.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/fez-medina/medina-08.jpg",
+        "width": 600
+      }
+    ]
+  },
+  "/images/fez-medina/medina-09.jpg": {
+    "width": 978,
+    "height": 1300,
+    "sourceHash": "d0931f0f15e0d656705957ec509636076c8aa57c847a5745af023e72a8aab3a1",
+    "candidates": [
+      {
+        "src": "/images/optimized/d2fc2573ba3067d80c19.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f803ed89f94593e4c395.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d36a980a01fbe7b54b99.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a7aea7deadc2fd27d1da.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-medina/medina-09.jpg",
+        "width": 978
+      }
+    ]
+  },
+  "/images/fez-medina/medina-10.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "358ef7b4964d774228efd8c1d150c93293b3c46a941c401e7f4b4022b771a99a",
+    "candidates": [
+      {
+        "src": "/images/optimized/bac1d6caacee22943fb6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9cc6f4d0125c749ce9f7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3cef047743379477d062.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/17372989f74b5008fac2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-13.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/fez-medina/medina-11.jpg": {
+    "width": 1110,
+    "height": 833,
+    "sourceHash": "dbb768e6e0a5e70daf8b0e9f7ee197f3bb8431da9e55d99c5c7c262353ee327f",
+    "candidates": [
+      {
+        "src": "/images/optimized/1d8a7a0df2bc67c534e6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a56bfba2bf18e86464aa.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/42410b7748eeb0ae225d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/39cdd5b57fa73e1a59b4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/c28b9ae797e83134e33a.webp",
+        "width": 1110
+      }
+    ]
+  },
+  "/images/fez-medina/medina-12.jpg": {
+    "width": 2048,
+    "height": 957,
+    "sourceHash": "ef74727cf62372e9085dfd6486aa5d909364f983fb6ca1c7b9e61ba72d36d386",
+    "candidates": [
+      {
+        "src": "/images/optimized/7f6e7647f10828d7436c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/40a8b9201eadbd08e09b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/f015adc0e926fb0781a0.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/245d1ba1008c4896b303.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/813fd4db3f6ad5490bcd.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/899000427cc58a25eb53.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/90ceb40be3ce0bd41d56.webp",
+        "width": 2048
+      }
+    ]
+  },
+  "/images/fez-medina/medina-13.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "9222c3c9aba2fec562416e7596511daefa89de582243efb8571bf3b981e99723",
+    "candidates": [
+      {
+        "src": "/images/optimized/d08495bc87b0ccd486b6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5cd648941edc60a24908.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/50a628f4d15324c269bf.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/83aee6968ae2833945ab.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-medina/medina-14.jpg": {
+    "width": 1280,
+    "height": 852,
+    "sourceHash": "34e0efc680722e754f8bf7c08b4472f352b31e88aebe4b6db179632d3c318ef2",
+    "candidates": [
+      {
+        "src": "/images/optimized/6119bf7415eb9b37f1b2.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4147cbce4af1bb2b8bc6.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/752062b6bd8c1905b8af.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f114f4180439370705bb.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/f34fd6c874c2d5204a80.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-14.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-01.jpg": {
+    "width": 800,
+    "height": 1200,
+    "sourceHash": "7af79f20797e2edd3924d72050da06e7985b794596e58087839e142dc8e063fc",
+    "candidates": [
+      {
+        "src": "/images/optimized/9e5ca3636c5f9c9cb52e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9d35569e2d30b9bb0865.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6adf5e0e5b3a783335dc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/dfab31a786a688baae6f.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-02.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "b4e0a61b999125769fb29f4c1a2885356fb7f91127f7b793e73ef74b781efde2",
+    "candidates": [
+      {
+        "src": "/images/optimized/d82083b7daa2c5fcfb1e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2e0127797102fea96b41.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d4513c6224c6e1861791.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/52c9e99dedee9cc60f09.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-03.jpg": {
+    "width": 978,
+    "height": 1300,
+    "sourceHash": "d0931f0f15e0d656705957ec509636076c8aa57c847a5745af023e72a8aab3a1",
+    "candidates": [
+      {
+        "src": "/images/optimized/d2fc2573ba3067d80c19.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f803ed89f94593e4c395.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d36a980a01fbe7b54b99.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a7aea7deadc2fd27d1da.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-medina/medina-09.jpg",
+        "width": 978
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-04.jpg": {
+    "width": 1536,
+    "height": 2048,
+    "sourceHash": "7ee340d79816229c66b6c0b39b0058ca8a91e51acd9c1b65a5a5d397c052e09c",
+    "candidates": [
+      {
+        "src": "/images/optimized/561a499613304bcddda5.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7e12c1651a4f84ec09e6.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/22b09d6248cd16ca9ab6.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/87ee06fdf71b0763a39f.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/6f6d618bcb9abd6a2280.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-things-to-do/things-04.jpg",
+        "width": 1536
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-05.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "be4d0d10a7fd0e9a3d47a6b55e4cb3ca56396658de1fe2133133974bbe86db1e",
+    "candidates": [
+      {
+        "src": "/images/optimized/ed7ae155b7d0f33fb1f3.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/874d9e33922355ee8d51.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/578b06726f699db9371b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/fa3822fdfdf835e2da15.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-06.jpg": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "2f2e0d940afe683f20e3a9160ce58dd83fa8f7acaf042a4f381ebf269639c66c",
+    "candidates": [
+      {
+        "src": "/images/optimized/7cf0e9ac6d23b84d5e95.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b77e4aca0f885b9f2a6d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/703014b2677a4af6f2e3.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/51b0248c018547a614d4.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-07.jpg": {
+    "width": 1080,
+    "height": 1350,
+    "sourceHash": "fb494f92ecf18a0c2007f41c7bc8c9ebf8533ad364bc57467f564a15dcffcb11",
+    "candidates": [
+      {
+        "src": "/images/optimized/795b318d42843f654e32.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5e53b87422844c8e4947.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/526d4523870b650eb863.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/389fdad6a6a4adf205d7.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-things-to-do/things-07.jpg",
+        "width": 1080
+      }
+    ]
+  },
+  "/images/fez-things-to-do/things-08.jpg": {
+    "width": 2048,
+    "height": 1536,
+    "sourceHash": "1a7610919252d37ea8a5674a0999ed75d7b1527c34f69193be113fa8873d75fb",
+    "candidates": [
+      {
+        "src": "/images/optimized/7e802e4e81c483f8a70f.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1c2d2244f9bd7ed9ed37.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9fb3d9bc045dd24680e6.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/06d1b64f274e535778d2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/0337f5ebf369878e0b74.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/3f7c4b1ab6de303d6975.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/fez-things-to-do/things-08.jpg",
+        "width": 2048
+      }
+    ]
+  },
+  "/images/fez_medina_bread_alley_walk_1791028852376.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "a4e948a38bcfb36ce8f90128caa8db432a58ae7757795a40d03c33b638b09bef",
+    "candidates": [
+      {
+        "src": "/images/optimized/dbd98e925d9bf5ac3c61.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c5c459ce3787f244e477.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6d7e73ab1f913265233e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/576bb0c71a3ea116b41e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/07ae71393fd79c4af008.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/fez_spice_souk_attarine_1791028863908.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "dec5494e1810a763176ca03d2c3445226d7b418ba96e785b5dc71f2f8b2dadae",
+    "candidates": [
+      {
+        "src": "/images/optimized/b5d9d5337116cc04e2ae.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f212be3b299fe02fd56f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2ad00b9dc33a0a9de108.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/bd13b28d751332aab512.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/437a4eef51128da2a75d.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/fez_tannery_chouara_1790709709409.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "ac1fdd22ca6f1a33f3b849ab327a03f6f9466a72ae1810ba95a8d51006c4ec2e",
+    "candidates": [
+      {
+        "src": "/images/optimized/83d3f70e4e111c4282fc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/687de951f133d329906a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/93c584e25e0f30f29a9c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/87c99bc0e9b82708db0f.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/673f7ebc95f421fa0b84.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/food-culture-life/cook-pot.webp": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "2d60ed388e5487e31575f9e686c2c3905233a927c10e30c132e5fd6152aa7f80",
+    "candidates": [
+      {
+        "src": "/images/optimized/ea89a020e652b5412aa9.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1a2dc325fa790f78d81b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a092bb411f687fd69737.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/41f8061787017c386dab.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/family-table.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "c5a0cd70887694ba2a117d58b84bbd3ba53fc7f9d673f24010258be9cd709660",
+    "candidates": [
+      {
+        "src": "/images/optimized/b839b297506ac527fc6b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/642f4f3f68c3235046ac.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a9c7c4fc6d3fdf202d65.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e08fb289e08739a1b7db.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/flatbread.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "5e79a4b82037d086f97c0f9c4b0fe5a9ca83324bb865a0065cdd680d5f03a26c",
+    "candidates": [
+      {
+        "src": "/images/optimized/d20e751450eb6b8bc8bf.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/75586b6602f95be50d57.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b07111bcb1e3dbac5fee.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6c19f4b8cecb492e6614.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/fried-snack.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "bed2089fae9bb39ed91a1a9e9775549d28192434756ab0ae0735983c54ebab56",
+    "candidates": [
+      {
+        "src": "/images/optimized/3724a4130193fd1ed926.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2aebd92e34a5290e03bb.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/cf18ca952dabef41aefe.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f5ef74aba6d2d4994075.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/produce-stall.webp": {
+    "width": 800,
+    "height": 450,
+    "sourceHash": "7731af95d073e103cf251405b06c4499144805d816025e61fa3af7e69f5d58b6",
+    "candidates": [
+      {
+        "src": "/images/optimized/284611961af24272b869.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/656294f4ee227c43c750.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b8198e04e94f41f0faa9.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/839f48bc60c91811c5d7.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/sweets-shop.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "43e0e40b57419694487db721dc678a39831f556c9c3754e36e8f3d1d76782ea8",
+    "candidates": [
+      {
+        "src": "/images/optimized/3fbe5ac2a5166d05eb0d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a44b37fcd79012333ba0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8ae1d5d4923628bd4e5d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/74b1373894769ac94e73.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/tea-tray.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "22182b78cd819b43e9b0ee6b5b9de679fa6cccfd4a9c49c96dc4d19319cb5c25",
+    "candidates": [
+      {
+        "src": "/images/optimized/f97f2de5350f42d507ba.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7de7bb22b8c2917ae338.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/1f06aa7ef626d5f2407f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a6ecc68ed1e44fb078e9.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-culture-life/vegetable-market.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "13600961dc5d3fbe8e46900139920eba51fe1b2f856180f4323d7cb9276e36b7",
+    "candidates": [
+      {
+        "src": "/images/optimized/ee2a6b439c7125612f7b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a0f9d2f90ab116314f9c.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/af40b5664c52f1583ba0.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3bcbd84d65c9a399adac.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/communal-oven.webp": {
+    "width": 800,
+    "height": 1421,
+    "sourceHash": "122bbbd1852a57722dce449f13576a048480cec313c951e08541880d0186a9dd",
+    "candidates": [
+      {
+        "src": "/images/optimized/7b2ef0f24b612b266d60.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5dd919236e9286b9c3f5.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b152832f981dcf233770.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/36b238d040d1fbb5175d.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/greens-market.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "c4d9e15149d0edace0b437c76f695b4b68166886929c056b4fb1a83bdb29971f",
+    "candidates": [
+      {
+        "src": "/images/optimized/cd6277b10b14a7285304.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/bcffc9dee07da6742be9.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5826474ab7850b331a0d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/c9374fadbc6f2dc41f68.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/onion-prep.webp": {
+    "width": 800,
+    "height": 455,
+    "sourceHash": "723396991bad8a244d6881879ef715513fbef13cb5c7eb4c083be5530bcbaeee",
+    "candidates": [
+      {
+        "src": "/images/optimized/744d9fa0b46c57addacc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b58a22b19f0074714b15.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/e56de5ea1f023b0b74ab.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/8b9739fcc142ec15bb08.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/pepper-stall.webp": {
+    "width": 800,
+    "height": 903,
+    "sourceHash": "f8949d4a679fa53599316382cd9343e79415079155f7fcb0c14868795cef16d8",
+    "candidates": [
+      {
+        "src": "/images/optimized/5029c73f44c2ac4818dc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/8329da147fc12d7a2728.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9c25485f38988b017c1c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/69d00ce497d647a55baa.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/shop-doorway.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "e34f6115c8f84b5e04b86bbb8eecf8eee5faa828bf981efabbcbe2c03c1143c7",
+    "candidates": [
+      {
+        "src": "/images/optimized/37881882461fe2257a18.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4c489e2cebab1bcb6259.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/356fb486757e713e7acc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/af67483d03a600e257d3.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/souk-lane.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "dd5e8e58f37708ed280e6a781db1e8de900666936e73b81051f7f99fd6074def",
+    "candidates": [
+      {
+        "src": "/images/optimized/d6f0980fb42437e60de0.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ac2dd18318812361b802.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bad023d33126f79aeb23.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/03cdbbc14f04b024cca2.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/spice-tins.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "c029e05bcc614b0d8cfdcae730bf2da455113d57b797fb70c59c811a3d37d3ae",
+    "candidates": [
+      {
+        "src": "/images/optimized/d0d63d17ae53782ce330.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0fe0fcdf7bd4bddd8c80.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2e93b48cda324c893d11.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6be71ebb6390cd6f9125.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-markets-souks/squash-seller.webp": {
+    "width": 800,
+    "height": 1200,
+    "sourceHash": "bf1da4085fd0b400458a3df28cfdd34b2867f589ed7067b32562b55ad93eaf3a",
+    "candidates": [
+      {
+        "src": "/images/optimized/28da83a53d80a52748b2.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2f2f49e7945b981a54db.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/f1be9106b08646ab5927.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3a20648fb5dfe8e1f183.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-tasting-walk/medina-lane.webp": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "1bf7bcb1e46434899930a216953bf08511f82f03b602f0c8417b61fa1a979be2",
+    "candidates": [
+      {
+        "src": "/images/optimized/7a11683fb9c83f9dd1b9.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/564e40027fcd1c4eec9a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5a80bae47b40aca870f8.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6bbfcf454c9274329681.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/7086d90ec2cfb7f8b561.webp",
+        "width": 975
+      }
+    ]
+  },
+  "/images/food-tasting-walk/mint-tea.webp": {
+    "width": 731,
+    "height": 1300,
+    "sourceHash": "843e1b4c0d4212fd7146d30067fedde1a84e08b133b1d1a9c2b956a525efdf54",
+    "candidates": [
+      {
+        "src": "/images/optimized/4ec500092b439570d04f.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/176750a20a6a4741f56d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/942d83ec6d13865c8a56.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e8d6d36fb0ac90cf3eff.webp",
+        "width": 731
+      }
+    ]
+  },
+  "/images/food-tasting-walk/pastries-tea.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "5b3f198be56686c9d135307478c071db982226be3ef84cfcf963ad626fbb35ca",
+    "candidates": [
+      {
+        "src": "/images/optimized/447b7f73408fa35104f9.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/6b59d7e61ad631c169d9.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8b07e18535cb70df64a9.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3c5f94d6e59a2a7bbe5b.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-tasting-walk/street-sandwich.webp": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "dcc9842f9baec47385ce7bc9c66c242c3fac98bdd4bd547ce07e5fc775018a24",
+    "candidates": [
+      {
+        "src": "/images/optimized/0d4c6d312a43109a9906.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e8594c1b389d5fff4134.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/dff0ba5209396ef8b996.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/1613ccd6ba42757bab0c.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/239c12050efe2dd13b55.webp",
+        "width": 975
+      }
+    ]
+  },
+  "/images/food-tasting-walk/tasting-table.webp": {
+    "width": 719,
+    "height": 480,
+    "sourceHash": "aad50ff0c8efbc6c0801f620b306d88b7897eef3e29cd2538161120e9b697803",
+    "candidates": [
+      {
+        "src": "/images/optimized/afe23726974109b9e5d1.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ecf02c68b1f0f8f78dc2.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/457061a71f7c33464539.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/adbc23b9707ef57a1bd3.webp",
+        "width": 719
+      }
+    ]
+  },
+  "/images/food-tasting-walk/wood-oven.webp": {
+    "width": 720,
+    "height": 480,
+    "sourceHash": "7de1e6bafa77af00793b21d8570f95be6ba5f6336e4525d6208de60648f0cdcb",
+    "candidates": [
+      {
+        "src": "/images/optimized/5edf8cfaf12aca22d947.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/78354db89a4ebfb72f78.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8d995545af4bf97277b2.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/2e10320040253ff6a6a1.webp",
+        "width": 720
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/herb-prep.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "6c353d27bc949ce7d913fcd573a39a96f4ff48dad033788796d77a7382bc9f47",
+    "candidates": [
+      {
+        "src": "/images/optimized/1638e47fa7cef656dd29.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ae96581aa14a3d1d4315.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/848a6dd716f115b4835b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/cdbba709125f283a7e88.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/market-lane.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "dd5e8e58f37708ed280e6a781db1e8de900666936e73b81051f7f99fd6074def",
+    "candidates": [
+      {
+        "src": "/images/optimized/d6f0980fb42437e60de0.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ac2dd18318812361b802.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bad023d33126f79aeb23.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/03cdbbc14f04b024cca2.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/meal-table.webp": {
+    "width": 800,
+    "height": 379,
+    "sourceHash": "378b6d09d3f462529c4b8d3af5072009ce1ed532ed7548014c9b8bff43b17c55",
+    "candidates": [
+      {
+        "src": "/images/optimized/dc90eafb6785f2f01fc1.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/004d28bd46e0eac6b7c6.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/14a063743723a3f8bd2d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/de780b1a4d94f3e01e48.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/pastilla.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "a733b419b379890e22813120afd6490e9dd5dae5f5d297e1e7c830b09224dd3a",
+    "candidates": [
+      {
+        "src": "/images/optimized/45a31af8a52b039f0c11.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/80851d52b0793a600fb0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/64852fee017fc26cfc72.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/445f20357120b4f85f45.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/salad-spices.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "2b066fb0e5bffe78e68a317ee0232b91b9abf175d5932325fbd083021d049e29",
+    "candidates": [
+      {
+        "src": "/images/optimized/2ef46cd5c4e8b457038b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1fc4d8ca5f9a07640247.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/49010a38c7f691699b79.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/bf5033efda78e8acb77f.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food-traditional-fassi/tagine-table.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "482594a1fbc7d2b1859112db393bf4f192ca4a525474a5f8ae40a6abd2289c35",
+    "candidates": [
+      {
+        "src": "/images/optimized/8f703c28d777cb803059.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/30d1b4fcc7319f420d4a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2159bb1ab186bf74619e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f1ccbf8004ba236ecd82.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/food_couscous_seven_vegetables_1791028373287.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "2feacb051902e974d1e453dc92d2d54d927ab8ef0784504223cfd54e418099cf",
+    "candidates": [
+      {
+        "src": "/images/optimized/a0430685c095226e1746.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9f741f9c092f80147d3d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/c359709c12a0256ae011.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7a16209ed32f2c4388f4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/61b17cc07b859c7251ee.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/530db2cc92c3513e4c54.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/food_street_tasting_tagine_1791028349470.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "31678ccede3780a24f445ecced6da249a891d9e777c043905bf6078e8128f70a",
+    "candidates": [
+      {
+        "src": "/images/optimized/5f52ee73567afd4dcd11.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/061f9c47898c69897a52.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/1ae4b40d9a35e7175bd5.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/75ecffc01ba7d830bb94.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/e821915219fd115462bd.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a8829f5dd09e99824e03.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/food_traditional_fassi_feast_1791028361535.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "711efa38324d3e3279981d9ac7bae09713b35f6126522f88213f68279172cae6",
+    "candidates": [
+      {
+        "src": "/images/optimized/efa08b841615a9a163b8.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/bdba0f5f8d565a5f4926.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3f586ca7b1bf0c535310.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9ebfc58b15afe3ec1291.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/4c596ad02b208ef3934d.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a0d59e9912dd01568d39.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/hero_fez_medina_1790709688133.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "d42576e8f288e5fe2fe4abaefb3a6ab413afb56a3a511c6bf1799cb9a60f0dd1",
+    "candidates": [
+      {
+        "src": "/images/optimized/e9f5078552b0a0cdea61.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4badd648ea8825850851.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b4a2db8767b418befc88.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/c446f7139104b42e8d67.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/20fbbe338e5605629a6c.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/15c9286bc42543f3ae30.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/meknes_volubilis_roman_1790709730115.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "912d8fef222a713cca351a4fe42fff88b24ac52ce030939e67a74433772ba299",
+    "candidates": [
+      {
+        "src": "/images/optimized/73db8f75d98bd9e43a16.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/eb8a2f8821fe767bd14f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4d9138846baec4902804.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3c51887efa35da867386.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/a04ad6561cca884d23b0.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/moroccan_food_tasting_1790709719867.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "a754130eceb1c8bcfd405642c6387f87d5c8087aacc0a5251c9150555e83b035",
+    "candidates": [
+      {
+        "src": "/images/optimized/8b81761e8a814dcd19f5.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/89bd085dbf813f1dff94.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/ca25bff23c62365d436d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7d81ad65e1cd930607dc.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/9c29930daf6c3a20ac7c.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/01.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "0fdec7a15ee292460bd99f7cf228f57405cba12612bf7f0f2c285e5f5ed144b1",
+    "candidates": [
+      {
+        "src": "/images/optimized/f4f9267f94d964c2727c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5244cc7f3fe48fc538a4.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/252c51a9c8814708962f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/16cd2eb22689cfdf4c7f.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/f44b75ad1a8a9f780d8f.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/02.webp": {
+    "width": 1536,
+    "height": 2048,
+    "sourceHash": "06eaf9688ddeca47cdd7e144131bf183d1ade8e3ed01096faa27437811605337",
+    "candidates": [
+      {
+        "src": "/images/optimized/6836836d2626ac695a61.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9332bbac3a7740775cca.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b60a4819bd7d41d581aa.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/541b36444036f439302d.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/35bf815c459e014b0e8c.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/de367c514bd1f878c431.webp",
+        "width": 1536
+      }
+    ]
+  },
+  "/images/our-fez-tours/03.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "18872603e61498894bfed630b37c0402b67f8cfd68a1ff4d468624b10a8d4787",
+    "candidates": [
+      {
+        "src": "/images/optimized/25979d3aac4f922a2f91.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a4e919008b70babdf94f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/21a75cf77a995d4204e7.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f550abc5a1b81772c76d.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/a75cb5595ffa8462971a.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/04.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "a2edb4293ef44e5b9ca89ec8d638a60f6912bfe3fd3f5d39089b5a0a9767d190",
+    "candidates": [
+      {
+        "src": "/images/optimized/e1d6a423eab80dc8e948.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4659e85c744fceeb4129.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fbf9f2cf5ed6251d9125.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/1366ec63f57b4be796b7.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/f2d997cd18285b9be979.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/05.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "a35663d8a259fb4913ee26dd9070a0fb0a414d52252531451934b41a0529944b",
+    "candidates": [
+      {
+        "src": "/images/optimized/8982d009c9760bdf113e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c7ba7d4d6d1299580185.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3180e6455859ce02d1dd.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/2a6de3c565b14feeb938.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/ed38dcc79dc9b4ba0672.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/06.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "5455a2b0fa10e3eca34e4a719b3f9848ecd000ebfa6c500a2166412b5e75417a",
+    "candidates": [
+      {
+        "src": "/images/optimized/cc33f2eae6a2c03fcdba.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1c075adb7a39c4e76827.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9a97414db5750b9e4366.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/050b54e3cf29678bebce.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/2489738223a410e9b9ea.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/07.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "6d92f1f7ed3a65ad52358423d1da21689238102facfeede7025b756e0c07eb34",
+    "candidates": [
+      {
+        "src": "/images/optimized/91b12f682c24ec4424b6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4e1165b3ba4e81a0f8fc.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9477283b1277bf621d56.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/8587ddc908418c1e9e32.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/4fffec41fc077eba427b.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/our-fez-tours/08.webp": {
+    "width": 1200,
+    "height": 1600,
+    "sourceHash": "9d596f9f5533ad41800229b3985056f2ad89b0f269eb2d7a7b9aa88643558927",
+    "candidates": [
+      {
+        "src": "/images/optimized/a2765f615a86ca5c5441.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0933b6d81880d8576f45.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bc058d2f462731ec8eea.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5d990a4b0eba11efd9f0.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/5a05673ea49ed4712357.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/about_us_image1.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "c2797d299f43d22fdbfbe5669492041457da80d9a96aacee983261881c4b2661",
+    "candidates": [
+      {
+        "src": "/images/optimized/7a5c09cb0160a3d3de32.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/869ac3c01030b25442ac.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4d48c139667fb44cf786.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/ed25e01c817a4b37d3ce.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/about_us_image10.jpg": {
+    "width": 1440,
+    "height": 1440,
+    "sourceHash": "ac5f0f3db70c0da569327a3236244e9047cd4e3b07f902f801f4e630b94156d8",
+    "candidates": [
+      {
+        "src": "/images/optimized/5267ea2a4089c30e19c0.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/79acaea5055c2c6fa0c0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/0acb5b1e1bc0010f772b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/089d13f079d4b4a89ebc.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/074d2742cfc5e9896a61.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/842f73b39df82d5404f7.webp",
+        "width": 1440
+      }
+    ]
+  },
+  "/images/real/about_us_image2.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "7ebcd2762438de2e9ddf8008b50b4c744668dfb36d8beb9b9fc426b619b98075",
+    "candidates": [
+      {
+        "src": "/images/optimized/f21dc4ed7ab736c6011d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0b90714a09d5d0d25756.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/eaaf73239a3b26da961e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3e3355ae33b00bae4c2b.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/about_us_image3.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "d6eb3176bc73c7b3db00fb2543c788e9051f32080465c664e0e2cf7129718d7f",
+    "candidates": [
+      {
+        "src": "/images/optimized/c304edc725b5dea44d16.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/acfff3092ffb5d9bc1e0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/83b51a77e1d22edf65f2.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/4dfe513659d3ed2ea6e8.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/about_us_image4.jpg": {
+    "width": 800,
+    "height": 593,
+    "sourceHash": "45f08358c41595e6615837e6dadda934a73529391d8a38021c77d822603f9b93",
+    "candidates": [
+      {
+        "src": "/images/optimized/112df9503c8f92212904.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f9f2ee82a7faf2b7680f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/ed18613fb775379c3686.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/be619331dd6a7f5765f6.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/about_us_image5.jpg": {
+    "width": 1500,
+    "height": 1999,
+    "sourceHash": "a63cef62f72714dd1d4010d596c8dacbdfa3f092650190b1b85c3ac55bf42053",
+    "candidates": [
+      {
+        "src": "/images/optimized/a5e941dc07563a612129.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f2ea3ad620ca506dd006.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/004dbdcc9f569458c4a8.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/c62cbb851a3f4e6ead58.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/5d43e34f354c0e5024e5.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/b57ce04c1a8e6eb77ab8.webp",
+        "width": 1500
+      }
+    ]
+  },
+  "/images/real/about_us_image6.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "de506a9a6144d01f74570712de7a944068ce6ec9e02c13e3580df5f8a829e3ce",
+    "candidates": [
+      {
+        "src": "/images/optimized/ecab1017fb345076acb5.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/84b8b7fad03422da8142.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a314d2715e6e9d06a632.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/c602b077300a19d939df.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/real/about_us_image6.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/real/about_us_image7.jpg": {
+    "width": 1600,
+    "height": 1200,
+    "sourceHash": "324f5407cb1e6c22e71e317ea62eaaf8e09e7080157636c74b6091cfd9058ebe",
+    "candidates": [
+      {
+        "src": "/images/optimized/b60f834f65b1ce5676dc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/91518777d160321b5797.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/aae9864c3a66804244c5.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/b83de5e590d9c28be739.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/51db776f5125bdb076a8.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/b0e0041a37ca4aa6b153.webp",
+        "width": 1600
+      }
+    ]
+  },
+  "/images/real/about_us_image8.jpg": {
+    "width": 1999,
+    "height": 1500,
+    "sourceHash": "595080c7bcf080b8297599c567d6e9793569e800a4fbf2d7b205c1511975e0f4",
+    "candidates": [
+      {
+        "src": "/images/optimized/a6df3b8fa75bc8c5dde2.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f05d916ff82406695c38.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7399746ae88683ce2008.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3a8d3ed9154acc8005a1.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/44f960998be14b85322e.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/d37c57a627235560bc6a.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/47688ed8cf12ddf53a7e.webp",
+        "width": 1999
+      }
+    ]
+  },
+  "/images/real/about_us_image9.jpg": {
+    "width": 750,
+    "height": 421,
+    "sourceHash": "a8f02e6f795cad3dbb31c1cf9e1c9966205fa64599ddaeda0ca934b5bcb22d2f",
+    "candidates": [
+      {
+        "src": "/images/optimized/890659feb3bb338a34e3.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/030d4175affdf7321526.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4870114bd0d658bc8264.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/1e8189447a1cc3162b10.webp",
+        "width": 750
+      }
+    ]
+  },
+  "/images/real/daytrip_chefchaouen_image1.jpg": {
+    "width": 1100,
+    "height": 733,
+    "sourceHash": "4792122ef5bad0c0040b251022f9586ec3c047d76f457c874cbd3e1abc48fa26",
+    "candidates": [
+      {
+        "src": "/images/optimized/ebe54c4a00367549dca6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ca30f7874094fb28d439.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d81e55dc8cd613e0f7db.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5e2028a9480407576ffe.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/d14410e7cc9171001af0.webp",
+        "width": 1100
+      }
+    ]
+  },
+  "/images/real/daytrip_custom_image1.jpg": {
+    "width": 1125,
+    "height": 1999,
+    "sourceHash": "cbe2fb370d563ffc0649466870a387f3045d0c95e274a9bbf42ab97664268239",
+    "candidates": [
+      {
+        "src": "/images/optimized/b516b87b4b873da4de75.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b15fa758d50cbd99ee78.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/0010a0e469db7f48bf7b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7525b69353818c84c0bb.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/4e4846c4ba576ced30f5.webp",
+        "width": 1125
+      }
+    ]
+  },
+  "/images/real/daytrip_ifrane_image1.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "8b86834942b389b426579203ef4392006b5222dc718d5d606a8aac98f15b98c1",
+    "candidates": [
+      {
+        "src": "/images/optimized/3d4460b14136f16d4f5d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e7d3dead2f0aaa3330a7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/f774ba8ebf6dc815618b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a693c17dc353043d6424.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_ifrane_image2.jpg": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "0c5ba3fbb9d0b8b9aa5803dbda6ed3041afc8cbf3f4599035212f4ba9ee1b7b4",
+    "candidates": [
+      {
+        "src": "/images/optimized/173954c1c2be564b1a4b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0735c6376842f418d1e8.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/560695385fd3607847c4.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/76a0543730239a12d742.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_ifrane_image3.jpg": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "f3e9292920ce8b76b660f1d2e67f0731186c6b3e9936c204344a963001c63f83",
+    "candidates": [
+      {
+        "src": "/images/optimized/b698bfe8137f86ac944d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/75ad36d6e4d2d2a94421.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/0b2f8461fde222c5d52a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9638ef36785e502936b1.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_meknes_image1.jpg": {
+    "width": 800,
+    "height": 632,
+    "sourceHash": "db9098413c1370cfda42120c7dcc9cd8a47c9d965ec2f7e8e7f43873defdabab",
+    "candidates": [
+      {
+        "src": "/images/optimized/35bd5ea930f808f30efa.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/19817e4c328ffedeffe1.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/81bf965bfa4caad85224.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e28b711461c08f94eca8.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_meknes_image2.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "b2a1eb20d6318f75483c2371e6d766f7115fb4bf0f984031f4b9afa58ed59138",
+    "candidates": [
+      {
+        "src": "/images/optimized/60ae9e48c65a652b4987.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7aae098356d0e868d417.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/33d5bd979195e6da1836.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a085ca6c68f669a0211e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_meknes_image3.jpg": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "71017ce60f98590e6380d1dc077eca8a318318aecbcad830b5b7134038c15089",
+    "candidates": [
+      {
+        "src": "/images/optimized/5fa8bbca5da0dad0a938.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7d94dd19af55ec8a2a98.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2871d0055eee74d2c5b3.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/cd7bb580a1b6f55d7ab4.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_meknes_image4.jpg": {
+    "width": 800,
+    "height": 530,
+    "sourceHash": "d5a70ec67dfcfcb041aae03edc6b95f931c3f178a76678f5331870d8001495e8",
+    "candidates": [
+      {
+        "src": "/images/optimized/29ed535d936a2b7480c1.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5eb18642e7759505d76a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8608a1bcae7aa090b67a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/83700980ebd42bad383e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/daytrip_meknes_image5.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "eb6e34891710d5ea6dddcbace405b7bf694308352a375395064ef9b79dd3ce58",
+    "candidates": [
+      {
+        "src": "/images/optimized/80dfb8f2e4d34d1ddc62.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5de4658e2f2813bee19e.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5f8b0c07fe2e832c55a6.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5e8f8520cbea4f18adf2.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image1.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "d8feb065595152f0cc49f9ed401a031c23317aef2edbaa04d8d5f8a30bf63384",
+    "candidates": [
+      {
+        "src": "/images/optimized/d6dc374861e0d5339153.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/173b18ef7287e963c779.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7642f7173996d04c2163.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/96e8eb343a91a4335429.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image10.jpg": {
+    "width": 1280,
+    "height": 1917,
+    "sourceHash": "441b4c5539cfb739d7401bf1471ba545a8bb0946b3868027ecbab795f51a4cfb",
+    "candidates": [
+      {
+        "src": "/images/optimized/f1a3b7ecd8e31cfa4741.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a1bbb324341ff0602f47.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/42f8faa5511a0cd4d9df.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/08c1cda54a2a6888244a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/214aa98e205afebab599.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-04.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image11.jpg": {
+    "width": 1110,
+    "height": 833,
+    "sourceHash": "dbb768e6e0a5e70daf8b0e9f7ee197f3bb8431da9e55d99c5c7c262353ee327f",
+    "candidates": [
+      {
+        "src": "/images/optimized/1d8a7a0df2bc67c534e6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/a56bfba2bf18e86464aa.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/42410b7748eeb0ae225d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/39cdd5b57fa73e1a59b4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/c28b9ae797e83134e33a.webp",
+        "width": 1110
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image12.jpg": {
+    "width": 600,
+    "height": 1300,
+    "sourceHash": "e21049cd996069a2024632bb152f46c44d49dfa117fd1722a46b548046889bb5",
+    "candidates": [
+      {
+        "src": "/images/optimized/090e3e6f8a01ae1cbf81.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/dc8095c065e15642aafc.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/fez-medina/medina-08.jpg",
+        "width": 600
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image13.jpg": {
+    "width": 978,
+    "height": 1300,
+    "sourceHash": "d0931f0f15e0d656705957ec509636076c8aa57c847a5745af023e72a8aab3a1",
+    "candidates": [
+      {
+        "src": "/images/optimized/d2fc2573ba3067d80c19.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f803ed89f94593e4c395.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d36a980a01fbe7b54b99.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a7aea7deadc2fd27d1da.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-medina/medina-09.jpg",
+        "width": 978
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image14.jpg": {
+    "width": 1280,
+    "height": 1920,
+    "sourceHash": "979328d6a89e2a30204ff3b98b888fe74a7015821bb75a11c1436d6416c25bb3",
+    "candidates": [
+      {
+        "src": "/images/optimized/47bd9fc047d2d04cd7b0.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e8f2cd55f2d4702dd0a2.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2849f536407b567e73dc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/fd8ee43d0d9c177e0744.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/1c40d336769051ffae76.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/22e87cbf1c7ffee7de5f.webp",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image2.jpg": {
+    "width": 1280,
+    "height": 852,
+    "sourceHash": "34e0efc680722e754f8bf7c08b4472f352b31e88aebe4b6db179632d3c318ef2",
+    "candidates": [
+      {
+        "src": "/images/optimized/6119bf7415eb9b37f1b2.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4147cbce4af1bb2b8bc6.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/752062b6bd8c1905b8af.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f114f4180439370705bb.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/f34fd6c874c2d5204a80.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-14.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image3.jpg": {
+    "width": 1280,
+    "height": 721,
+    "sourceHash": "a7832927891e7fc16f5638e76d1c9c27e71c0e2ec7286535ebd6edebb0a6132d",
+    "candidates": [
+      {
+        "src": "/images/optimized/4c5d1f49b119a953079c.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0ec213afd585bb93e95b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4906a88a909da598686c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5814fcd3d70681281cf2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/5b72920f4f182e63f3af.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/fez-medina/medina-06.jpg",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image4.jpg": {
+    "width": 1125,
+    "height": 1999,
+    "sourceHash": "8b8625cdffacfc6cf975fc1d779a21c55c9fab9d851eff70fe39033f9942a029",
+    "candidates": [
+      {
+        "src": "/images/optimized/9e2a99a9fbbe024cdf1f.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9b4c632d02b9c6f82341.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/b775b0e42ccc204c9d35.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/13dcf9bc198df82722a5.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/861194bcb26064e0e211.webp",
+        "width": 1125
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image5.jpg": {
+    "width": 1999,
+    "height": 935,
+    "sourceHash": "81d0e370c5176ac743c641704a3bcc2e11d9176ae1d365f0887765cab4b7fbfc",
+    "candidates": [
+      {
+        "src": "/images/optimized/5d52597f2a541a4c582a.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/18e1822c669c17872dbf.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/60b4b01ff5eb473cb6d6.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/09441b90bd95472f44d1.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/7d233e6d0a432af7369a.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/2e63685cc94cb44245cb.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/801518ea4cded09e393b.webp",
+        "width": 1999
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image6.jpg": {
+    "width": 1280,
+    "height": 1920,
+    "sourceHash": "e0191961528113f0450b979cd1ea9ab49c4b31c86e888c15bca11173e6a65d79",
+    "candidates": [
+      {
+        "src": "/images/optimized/f0f38e387e2c7f89ff18.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/39618626ee458221a928.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d1ce771603e509fcd414.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/989a4b2b1156be450f6d.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/485a29ce993b96359805.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/c448db3ffc3decf61886.webp",
+        "width": 1280
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image7.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "358ef7b4964d774228efd8c1d150c93293b3c46a941c401e7f4b4022b771a99a",
+    "candidates": [
+      {
+        "src": "/images/optimized/bac1d6caacee22943fb6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9cc6f4d0125c749ce9f7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3cef047743379477d062.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/17372989f74b5008fac2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-13.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image8.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "8867099c3bd4d4213f15624976aee8f4a255875d9821699379f5a23434636d17",
+    "candidates": [
+      {
+        "src": "/images/optimized/7a8c015539467754ad6e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/166630136b328165585f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/357329cd95b407577876.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6aa0453b783c14de133f.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_explore_medina_image9.jpg": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "7c179317c0e4ac68a29a12fc221f514a3da6f6118a3cd65840685893f6cc0c7a",
+    "candidates": [
+      {
+        "src": "/images/optimized/bc938cda36647dfe7379.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/fd97f4b80fa6e89a7800.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/44292ae90c10dff795fb.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6bcac1f19f59d5817d1e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image1.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "4cb5bd5ddb5acb5e0e9779a7ca2219640d11c8501dd25b28dcae3e6a301971e0",
+    "candidates": [
+      {
+        "src": "/images/optimized/cc6bb98fd83aff7e3f2a.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/d2c035b2db89b47dd189.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/c1ad5c25772d7fe186b9.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/73794c0e0aea062a7e0a.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image10.jpg": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "358ef7b4964d774228efd8c1d150c93293b3c46a941c401e7f4b4022b771a99a",
+    "candidates": [
+      {
+        "src": "/images/optimized/bac1d6caacee22943fb6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9cc6f4d0125c749ce9f7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3cef047743379477d062.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/17372989f74b5008fac2.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-history/history-13.jpg",
+        "width": 975
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image11.jpg": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "a241ee97d30da662668502b9c8a664711e7f91467e803fb93e02f2d79c155b8a",
+    "candidates": [
+      {
+        "src": "/images/optimized/222f2c4edce9bfd71e92.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/58b1c709c4ee07e934cf.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bb8cf313132c6f2026f7.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6e252a3f8f9b721d089d.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image12.jpg": {
+    "width": 1500,
+    "height": 1999,
+    "sourceHash": "6be1136a7eec66aeef7793e2b6fec5472a2c7a28bf858ff46e07087856e4305f",
+    "candidates": [
+      {
+        "src": "/images/optimized/1c98f91e94d77aab3f1b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/250490581c34bd384541.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/832f700c033096a85fc2.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e9751f2238ac366917e3.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/57b6e92b5c452ab47a13.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/59725616cd6d9479c69d.webp",
+        "width": 1500
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image13.jpg": {
+    "width": 1080,
+    "height": 1440,
+    "sourceHash": "52112d278d2696f02f8815157810123c1510cba7d86e0d80cf17c0b2b24e4e24",
+    "candidates": [
+      {
+        "src": "/images/optimized/1fe04fbf325091154104.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ca2c0aae591e7754178e.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fa42f46e5e0d4c33255f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/0d66b12d8ca81d04743c.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/487448aa5f2024f38f5f.webp",
+        "width": 1080
+      }
+    ]
+  },
+  "/images/real/fez_history_culture_image2.jpg": {
+    "width": 1200,
+    "height": 800,
+    "sourceHash": "5e21cc6823c90a59c049cf89691d685b742b661c77fe38ea7d9661363947b480",
+    "candidates": [
+      {
+        "src": "/images/optimized/07f824a8e28f2293fedc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/823bc898cb62f25a1bd7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/03c5c53594007a0ea50b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/ca7c4639a035adc48011.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/92f66d837d2c1f08086f.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image1.jpg": {
+    "width": 800,
+    "height": 1200,
+    "sourceHash": "d206ac37df7bb250efaa33fac5218abaed23ccef79a5ce2d1abfaba79e28e4a3",
+    "candidates": [
+      {
+        "src": "/images/optimized/880d9e361d6ef3f6723e.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/109b60b3f4178b624264.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/8b470cc8bb10b7e87f8c.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/5088af9fae028f101235.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image2.jpg": {
+    "width": 1500,
+    "height": 1999,
+    "sourceHash": "58cefa9f890615b84b7dcdd8655e3034f379eb0fdaf8c4ae8871f35af3a83b9b",
+    "candidates": [
+      {
+        "src": "/images/optimized/aab073fcede624a0e8ea.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e24b68abdc438238371b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9ffac5f852f8df6eeaf4.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/67065cf30bd2e3a79da4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/793abfdbac851845e1e8.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/9bdf03df1f0839be85cb.webp",
+        "width": 1500
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image3.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "b6a3556c266c48a8ee4b20150be72a33ace1f9d3ab921923a04952ec4a9be8bf",
+    "candidates": [
+      {
+        "src": "/images/optimized/72b3780e21aafa16944f.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2eae2d5af5860c4e47e0.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5c70dabe86f876e72f7f.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f78a6094201a7fe92c23.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image4.jpg": {
+    "width": 1999,
+    "height": 1500,
+    "sourceHash": "595080c7bcf080b8297599c567d6e9793569e800a4fbf2d7b205c1511975e0f4",
+    "candidates": [
+      {
+        "src": "/images/optimized/a6df3b8fa75bc8c5dde2.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f05d916ff82406695c38.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7399746ae88683ce2008.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3a8d3ed9154acc8005a1.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/44f960998be14b85322e.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/d37c57a627235560bc6a.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/47688ed8cf12ddf53a7e.webp",
+        "width": 1999
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image5.jpg": {
+    "width": 978,
+    "height": 1300,
+    "sourceHash": "d0931f0f15e0d656705957ec509636076c8aa57c847a5745af023e72a8aab3a1",
+    "candidates": [
+      {
+        "src": "/images/optimized/d2fc2573ba3067d80c19.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f803ed89f94593e4c395.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d36a980a01fbe7b54b99.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a7aea7deadc2fd27d1da.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-medina/medina-09.jpg",
+        "width": 978
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image6.jpg": {
+    "width": 1080,
+    "height": 1350,
+    "sourceHash": "fb494f92ecf18a0c2007f41c7bc8c9ebf8533ad364bc57467f564a15dcffcb11",
+    "candidates": [
+      {
+        "src": "/images/optimized/795b318d42843f654e32.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/5e53b87422844c8e4947.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/526d4523870b650eb863.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/389fdad6a6a4adf205d7.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/fez-things-to-do/things-07.jpg",
+        "width": 1080
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image7.jpg": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "653b90040f86e14af042d5ba1ef05f92b17476888bc4de700470f3369427dcc3",
+    "candidates": [
+      {
+        "src": "/images/optimized/4518120678593d95da69.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/790f0bbc87968d72040a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/aeb885f9ecc23e4f2f80.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/01304e6b711ddac1de64.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/fez_things_to_do_image8.jpg": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "8aae088c1a0f95075017b7f7237a772af01bc6e3ddc9f74af505d8fa6f91ded7",
+    "candidates": [
+      {
+        "src": "/images/optimized/f8bd65219d891a7acbfc.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/ed2ceeaa54ab0c43878b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/fbb819a8aacf1802b787.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6fb3b493cdbc2a36df0e.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/real/food_couscous_plate.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "2feacb051902e974d1e453dc92d2d54d927ab8ef0784504223cfd54e418099cf",
+    "candidates": [
+      {
+        "src": "/images/optimized/a0430685c095226e1746.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9f741f9c092f80147d3d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/c359709c12a0256ae011.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/7a16209ed32f2c4388f4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/61b17cc07b859c7251ee.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/530db2cc92c3513e4c54.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/real/food_culture_life_image1.jpg": {
+    "width": 1200,
+    "height": 798,
+    "sourceHash": "a18a283f7fbe60901446257dd2dcc5843a34848b0910bb94a4b0306a36e2e5d3",
+    "candidates": [
+      {
+        "src": "/images/optimized/041e21ed4ec9beba86cd.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7e283c311a0a318f9871.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4a304a70c67ec2bd436d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/a5ec3bb06ec7d19edcce.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/e2bf7254273d12993349.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/food_feast_board.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "711efa38324d3e3279981d9ac7bae09713b35f6126522f88213f68279172cae6",
+    "candidates": [
+      {
+        "src": "/images/optimized/efa08b841615a9a163b8.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/bdba0f5f8d565a5f4926.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/3f586ca7b1bf0c535310.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9ebfc58b15afe3ec1291.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/4c596ad02b208ef3934d.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a0d59e9912dd01568d39.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/real/food_markets_souks_image1.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "dec5494e1810a763176ca03d2c3445226d7b418ba96e785b5dc71f2f8b2dadae",
+    "candidates": [
+      {
+        "src": "/images/optimized/b5d9d5337116cc04e2ae.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f212be3b299fe02fd56f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2ad00b9dc33a0a9de108.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/bd13b28d751332aab512.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/437a4eef51128da2a75d.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/food_medina_walk.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "a4e948a38bcfb36ce8f90128caa8db432a58ae7757795a40d03c33b638b09bef",
+    "candidates": [
+      {
+        "src": "/images/optimized/dbd98e925d9bf5ac3c61.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c5c459ce3787f244e477.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6d7e73ab1f913265233e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/576bb0c71a3ea116b41e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/07ae71393fd79c4af008.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/food_spice_souk.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "dec5494e1810a763176ca03d2c3445226d7b418ba96e785b5dc71f2f8b2dadae",
+    "candidates": [
+      {
+        "src": "/images/optimized/b5d9d5337116cc04e2ae.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/f212be3b299fe02fd56f.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2ad00b9dc33a0a9de108.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/bd13b28d751332aab512.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/437a4eef51128da2a75d.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/food_tagine_table.jpg": {
+    "width": 1376,
+    "height": 768,
+    "sourceHash": "31678ccede3780a24f445ecced6da249a891d9e777c043905bf6078e8128f70a",
+    "candidates": [
+      {
+        "src": "/images/optimized/5f52ee73567afd4dcd11.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/061f9c47898c69897a52.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/1ae4b40d9a35e7175bd5.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/75ecffc01ba7d830bb94.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/e821915219fd115462bd.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a8829f5dd09e99824e03.webp",
+        "width": 1376
+      }
+    ]
+  },
+  "/images/real/food_tasting_walk_image1.jpg": {
+    "width": 1200,
+    "height": 896,
+    "sourceHash": "a4e948a38bcfb36ce8f90128caa8db432a58ae7757795a40d03c33b638b09bef",
+    "candidates": [
+      {
+        "src": "/images/optimized/dbd98e925d9bf5ac3c61.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c5c459ce3787f244e477.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6d7e73ab1f913265233e.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/576bb0c71a3ea116b41e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/07ae71393fd79c4af008.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/food_traditional_fassi_image1.jpg": {
+    "width": 1200,
+    "height": 950,
+    "sourceHash": "d3bb5b9cbfdd2e9bea344916cf7ffcb60c5a430f9cde800a784efb3b05b4ea6a",
+    "candidates": [
+      {
+        "src": "/images/optimized/3ae60d90f8f777f80b1f.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/73dd0e25a76fad0628d4.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/ad55a613e815dcc1c523.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6085ddad774a72885d2a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/94456979c8d95ca9d18e.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/tips_getting_around_image1.jpg": {
+    "width": 1200,
+    "height": 800,
+    "sourceHash": "0f36853833fab8e6dad1e4a7fdb5c687a43c91000d8af02250beeff20c11237d",
+    "candidates": [
+      {
+        "src": "/images/optimized/e088dec41e5f03bc73e6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9731e396f1d5a83e5a3d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/990cb936654919718cad.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/6060ef8c4ea5e7da73fd.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/1bbf9fef404c9417920d.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/tips_plan_trip_image1.jpg": {
+    "width": 1200,
+    "height": 795,
+    "sourceHash": "20de27ca23af8b40c90d13aff19f25b4df039a83ee08f2069fa3eab3b1d1d436",
+    "candidates": [
+      {
+        "src": "/images/optimized/91367691aae177636049.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/2943ad204b859c4378d7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5d492149c4d22aa27e49.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/fa13d8a8321036bffa3e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/e8b5a26bb170f341aa5a.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/real/tips_practical_image1.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "sourceHash": "83fae4c07f0fd8dca54fed3106574cb944d1836725301da91fcd6337305c1f54",
+    "candidates": [
+      {
+        "src": "/images/optimized/f61a230415725498435b.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/0f08852b6eea1b7d6811.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/9eb60e392cdf5202d55d.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9ba37f01430d0b5b0825.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/aceebab32e21f75e23d8.webp",
+        "width": 1200
+      }
+    ]
+  },
+  "/images/tips-getting-around/bab-boujloud-night.webp": {
+    "width": 1364,
+    "height": 908,
+    "sourceHash": "382d3d7ae915b75c2542cc0770c26cb2f832a8673445c354a43c0025cb3c8453",
+    "candidates": [
+      {
+        "src": "/images/optimized/9c9a206827763a6d3457.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/419cc273d89846836c74.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/2681c9164f25f99f5831.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/c4a81f964b7e3f47d69e.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/f69d87e2e78766481652.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/e79034fc4ea789045c4a.webp",
+        "width": 1364
+      }
+    ]
+  },
+  "/images/tips-getting-around/bab-rcif.webp": {
+    "width": 800,
+    "height": 1646,
+    "sourceHash": "15b31f1ae7a69e96193d922913b62393ed80b6ba1c8926b9a28b50168c273828",
+    "candidates": [
+      {
+        "src": "/images/optimized/992c75f0680d07d048ce.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/fe271c97b861bbc0ef9b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/e4d9142bd36375b1d835.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/3ab40a0a1cfc16e18644.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-getting-around/city-gate.webp": {
+    "width": 800,
+    "height": 1423,
+    "sourceHash": "7101fe7cd8853203f486737b5f406027012d011172b3f70ff8172c33bdb6cdf5",
+    "candidates": [
+      {
+        "src": "/images/optimized/ce57368ccfd57939ee74.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/bc69fb5733c8ca81684d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a80e5140603ae85ddbe5.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/059c22bc85074bc39748.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-getting-around/hexagonal-sign.webp": {
+    "width": 1542,
+    "height": 2048,
+    "sourceHash": "b3ec8bb57e070d135698f3e27a81a4c081cdddc1911a72931a9c7815506fbcf9",
+    "candidates": [
+      {
+        "src": "/images/optimized/0940a4cfcb968984b6af.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b2d07da092bcd47ace60.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/bbd67ea9ba447e2556d2.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/db4ab627867f8e991be4.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/c53933ac7c4bc04d19ea.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/0cd6792ab6359f4b2668.webp",
+        "width": 1542
+      }
+    ]
+  },
+  "/images/tips-getting-around/medina-walker.webp": {
+    "width": 800,
+    "height": 1422,
+    "sourceHash": "518c556452b713c21a9a1cde8c808723cf95b7ca55a1f29ebed1768cde316f88",
+    "candidates": [
+      {
+        "src": "/images/optimized/9220ada2af864519eb5d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4254f8400e4b23559de7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/d80ec1325d42534ec04b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/42a96fcafe0bffdea4ac.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-getting-around/mule-load.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "fca8f9bca8042a4484e5ba9c7bb6e5df97332c406e798c080e7fce5a6cb1b630",
+    "candidates": [
+      {
+        "src": "/images/optimized/4045d3a03ec131679621.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7250c193031af0c3d84d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/f12e9cad10af9ac489ce.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/f0cbd598b9bae2f13130.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-getting-around/new-city-road.webp": {
+    "width": 941,
+    "height": 1671,
+    "sourceHash": "c29a8b981369eb242a53149228f95a7100c13855e4570655ffa77f967d8aed13",
+    "candidates": [
+      {
+        "src": "/images/optimized/cd2a064d62de89d899e6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c972dd73229933d102a3.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5a09f8944b5c4e48313a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/0cff3dfc3afe38f30edf.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/55d5cf620af69e664d22.webp",
+        "width": 941
+      }
+    ]
+  },
+  "/images/tips-getting-around/square-sign.webp": {
+    "width": 2048,
+    "height": 1542,
+    "sourceHash": "9e9db08475e15934334899fc5c3565268f26caa6c5957dbaac6afa0e33060d38",
+    "candidates": [
+      {
+        "src": "/images/optimized/c03060097249734ff382.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/24e6f3c8c80e2650f8b1.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/96b26a00f6948f6c12bc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e99107078519974a816b.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/31b43c1a518d11cae134.webp",
+        "width": 1200
+      },
+      {
+        "src": "/images/optimized/a631a1ea498a48150175.webp",
+        "width": 1600
+      },
+      {
+        "src": "/images/optimized/aa6c031b511e1419ee36.webp",
+        "width": 2048
+      }
+    ]
+  },
+  "/images/tips-getting-around/talaa-souk.webp": {
+    "width": 978,
+    "height": 1300,
+    "sourceHash": "62a2ebf41dae04f2c69469ced1083d184c7185a15fb24a06817748856053f30c",
+    "candidates": [
+      {
+        "src": "/images/optimized/403be439292e265375ab.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/dbd5a5f56523407c923b.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/7ae783acb3c68811aaf0.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/aef44ccf80d09934010b.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/e3bd5056ec91f27aaec3.webp",
+        "width": 978
+      }
+    ]
+  },
+  "/images/tips-plan-trip/bab-boujloud.webp": {
+    "width": 800,
+    "height": 800,
+    "sourceHash": "31f7f2c60bf9442a423d23e34f73afb70c2aa32fe751d607c4f1d8e80ed2d3e9",
+    "candidates": [
+      {
+        "src": "/images/optimized/9e4bfc58281ec7ad6cbe.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/9de95e5be26669b98ca9.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/c4320718e3bacb6541fc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/0ba14758c6e2ecb669d9.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-plan-trip/medina-alley.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "f674698b17ac1e738d3b460a8eaf2d9d8d3fa432753d36f7304f01ff572c590f",
+    "candidates": [
+      {
+        "src": "/images/optimized/e20bc6ab421ea525cc52.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c7edb2d526c539852d2e.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/987e23943e43aa43c1a0.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/9e1aa51081de77ba1693.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-plan-trip/medina-view.webp": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "c0c0f0f1b8506dead75be948e2f4c8677c3382503add272f115dccf000a54b12",
+    "candidates": [
+      {
+        "src": "/images/optimized/81262a3a796e0f77262d.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/7b43f5a42406d82c9f3a.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/4d0ae1c85bc93690ca81.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/fdc8546fbfe9119c9a44.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-plan-trip/new-city-road.webp": {
+    "width": 941,
+    "height": 1671,
+    "sourceHash": "c29a8b981369eb242a53149228f95a7100c13855e4570655ffa77f967d8aed13",
+    "candidates": [
+      {
+        "src": "/images/optimized/cd2a064d62de89d899e6.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/c972dd73229933d102a3.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5a09f8944b5c4e48313a.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/0cff3dfc3afe38f30edf.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/55d5cf620af69e664d22.webp",
+        "width": 941
+      }
+    ]
+  },
+  "/images/tips-plan-trip/night-view.webp": {
+    "width": 1080,
+    "height": 810,
+    "sourceHash": "e66324537e70a76349f3f0f30c54c73d4114d57e5177f124344791d34f6a4bf5",
+    "candidates": [
+      {
+        "src": "/images/optimized/03703bd7557a72ab3980.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/b5cf8cb0ff4bb72e6fa7.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a37e779fd77c4c91a371.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/378f134283df6323609a.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/042febd3d7580bc4202f.webp",
+        "width": 1080
+      }
+    ]
+  },
+  "/images/tips-plan-trip/riad-courtyard.webp": {
+    "width": 800,
+    "height": 1067,
+    "sourceHash": "01dc299954271fdc9c2b76bbd8d0822cff691acf88933043f2360a4d07e80f72",
+    "candidates": [
+      {
+        "src": "/images/optimized/d5ea3f4c521398146af7.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/03bca2d131580e4ce805.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/74a4792b14d3a53d2d73.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/2b91052392ef46ea3f8c.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-plan-trip/rooftops.webp": {
+    "width": 800,
+    "height": 533,
+    "sourceHash": "d016c2cd6adcc8db90d0bd8a283652d6a29d49e7901f8cb50d5d4ab30e414749",
+    "candidates": [
+      {
+        "src": "/images/optimized/e01e1943a52447f68745.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4ffdce8a4cdd8d346e40.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/a79ec7ee96e7423b5877.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/669e250a01e13e2ee822.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-plan-trip/souk-lane.webp": {
+    "width": 800,
+    "height": 1200,
+    "sourceHash": "bb1cff1db2d5b519b3d4739e8ae7f1bae54dfbda9fea1ea02f16a9492bf9980a",
+    "candidates": [
+      {
+        "src": "/images/optimized/447af939b9536308df66.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/e82e7e89782dd3945ac6.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/6341ba44c07d78531363.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/b8fa7f23b1b91fbd2809.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-practical/craftsman.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "ff079c4af72de2442bba7f91fea76426efc2846541d40ef3207dfab2afd8c443",
+    "candidates": [
+      {
+        "src": "/images/optimized/14018b3480542b03e566.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/1a77ca2f0bc9b8eb666d.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/5d3086db4f13b1c91113.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/e8a2477b4d7857aa3e58.webp",
+        "width": 800
+      }
+    ]
+  },
+  "/images/tips-practical/medina-steps.webp": {
+    "width": 975,
+    "height": 1300,
+    "sourceHash": "dd73ff30af62ed6dbfd05fee590bc8b0c294ef7f549fb66856626b84a951ba3a",
+    "candidates": [
+      {
+        "src": "/images/optimized/9c4b0d90f126619db2a4.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/3fa7ff2d2f1dfa70a998.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/49f4918646f67686530b.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/d1de800822d02e1a6fca.webp",
+        "width": 800
+      },
+      {
+        "src": "/images/optimized/75fe286e33939c342a36.webp",
+        "width": 975
+      }
+    ]
+  },
+  "/images/tips-practical/spice-shop.webp": {
+    "width": 800,
+    "height": 600,
+    "sourceHash": "e34f6115c8f84b5e04b86bbb8eecf8eee5faa828bf981efabbcbe2c03c1143c7",
+    "candidates": [
+      {
+        "src": "/images/optimized/37881882461fe2257a18.webp",
+        "width": 320
+      },
+      {
+        "src": "/images/optimized/4c489e2cebab1bcb6259.webp",
+        "width": 480
+      },
+      {
+        "src": "/images/optimized/356fb486757e713e7acc.webp",
+        "width": 640
+      },
+      {
+        "src": "/images/optimized/af67483d03a600e257d3.webp",
+        "width": 800
+      }
+    ]
+  }
 }

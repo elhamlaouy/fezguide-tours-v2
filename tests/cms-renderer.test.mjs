@@ -15,6 +15,7 @@ const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 
 const SECTION_TYPES = ['hero', 'richText', 'cardGrid', 'productGrid', 'gallery', 'benefits', 'cta', 'reviews', 'faq', 'team', 'itinerary', 'inclusions', 'practicalInfo', 'contact'];
 const text = (en, fr = en, es = en) => ({ en, fr, es });
@@ -51,28 +52,25 @@ test('approved seed pages render their enabled sections in document order in eve
   }
 });
 
-test('seed variants keep their approved layouts', () => {
+test('seed routes retain the authored hosted layouts rather than generic CMS replacements', () => {
   const document = createCmsSeed();
   const html = id => render(document, document.pages.find(page => page.id === id));
   const home = html('home');
   assert.match(home, /data-section-id="hero"[^>]*data-variant="banner"/);
-  assert.match(home, /cms-hero-banner/);
-  assert.match(home, /cms-benefits-strip/);
-  assert.match(home, /cms-card-grid-overview/);
-  assert.match(home, /cms-card-grid-featured/);
-  assert.match(home, /cms-reviews-marquee/);
-  assert.match(home, /cms-contact-banner/);
+  assert.match(home, /min-h-\[580px\]/);
+  assert.match(home, /lg:min-h-\[660px\]/);
+  assert.match(home, /backdrop-blur-md/);
+  assert.doesNotMatch(home, /cms-hero-banner/);
   const product = html('our-fez-tours');
-  assert.match(product, /cms-hero-minimal/);
-  assert.match(product, /cms-gallery-carousel/);
-  assert.match(product, /cms-facts-facts/);
-  assert.match(product, /cms-inclusions-columns/);
-  assert.match(product, /cms-itinerary-timeline/);
-  assert.match(product, /cms-cta-booking/);
-  assert.match(html('fez'), /cms-cta-split/);
-  assert.match(html('fez'), /cms-gallery-grid/);
-  assert.match(html('travel-tips'), /cms-facts-panel/);
-  assert.match(html('about'), /cms-prose-story/);
+  assert.match(product, /id="our-fez-tour-gallery"/);
+  assert.match(product, /id="our-fez-tour-booking"/);
+  assert.match(product, /lg:sticky lg:top-24/);
+  assert.match(product, /id="our-fez-tour-itinerary"/);
+  assert.doesNotMatch(product, /cms-gallery-carousel|cms-cta-booking/);
+  for (const id of ['fez', 'travel-tips', 'about']) {
+    assert.match(html(id), /data-section-id=/);
+    assert.doesNotMatch(html(id), /cms-hero-banner|cms-prose-story/);
+  }
 });
 
 test('every section type renders from document data', () => {

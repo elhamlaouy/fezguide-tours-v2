@@ -1,6 +1,6 @@
 import React from 'react';
 import { Language, PageId } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { Logo } from './Logo';
 import { businessContactHref } from '../cms/business-contact';
 import { useCms } from '../context/CmsContext';

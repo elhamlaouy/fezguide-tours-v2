@@ -52,23 +52,23 @@ beforeEach(async () => {
 });
 after(async () => { if (root) await act(async () => root.unmount()); await window.happyDOM.close(); });
 
-test('a fitted isolated desktop viewport responds to the available 320px and 900px, without rerendering a duplicate page', async () => {
+test('a fitted preview uses the available width at full size, so page data is not shrunk out of view', async () => {
   await render();
   assert.equal(frame().getAttribute('sandbox'), 'allow-same-origin');
   assert.equal(frame().hasAttribute('src'), false);
   assert.equal(frame().hasAttribute('srcdoc'), false);
   assert.match(frame().title, /Live preview.*Desktop/);
-  assert.equal(frame().width, '1280');
-  assert.equal(frame().style.transform, 'scale(0.703125)');
+  assert.equal(frame().width, '900');
+  assert.equal(frame().style.transform, 'scale(1)');
   assert.equal(document.querySelector('.cms-page'), null);
   assert.match(inside('h1').textContent, /Preview title/);
   await act(async () => { for (const observer of observers) observer.callback([{ contentRect: { width: 320, height: 500 } }]); });
-  assert.equal(frame().style.width, '1280px');
-  assert.equal(frame().style.transform, 'scale(0.25)');
-  assert.equal(frame().height, '2000');
+  assert.equal(frame().style.width, '320px');
+  assert.equal(frame().style.transform, 'scale(1)');
+  assert.equal(frame().height, '500');
   assert.equal(document.querySelector('.cms-live-preview-fitted').style.width, '320px');
   await act(async () => { for (const observer of observers) observer.callback([{ contentRect: { width: 900, height: 500 } }]); });
-  assert.equal(frame().style.transform, 'scale(0.703125)');
+  assert.equal(frame().style.transform, 'scale(1)');
   assert.equal(document.querySelector('.cms-live-preview-fitted').style.width, '900px');
   await click(document.querySelector('[name="preview-mobile"]'));
   assert.equal(document.querySelector('[data-preview]').dataset.previewSize, 'mobile');

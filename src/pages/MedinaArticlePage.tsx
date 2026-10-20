@@ -1,5 +1,8 @@
 import React from 'react';
+import { ApprovedSection, ApprovedSections } from '../cms/approved-content';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { Language, PageId } from '../types';
+import { useFezEditorial } from '../components/EditorialArticlePage';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { PageCrumbBar } from '../components/PageCrumbBar';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
@@ -94,7 +97,9 @@ const imageAlts = [
 const spanishImageAlts = ["Calle de un mercado tradicional de la medina de Fez con banderas marroquíes", "Calle de la zona moderna de Fez", "Plaza pública y vida cotidiana en Fez", "Artesano trabajando en un taller tradicional de Fez", "Artesano dando forma al metal a mano en Fez", "Artesanos trabajando juntos en un taller de Fez", "Artesano local del cuero en la medina", "Puerta histórica a la entrada de la medina de Fez", "Pasaje comercial estrecho dentro de la medina de Fez", "Arquitectura histórica y patio en Fez", "Panadería tradicional y comida local en Fez", "Vista panorámica de los tejados de Fez", "Fuente y luces de la Ciudad Nueva de Fez por la noche"];
 
 export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = content[language];
+  const cms = useFezEditorial('fez-explore-medina', language);
+  const source = content[language];
+  const copy = { ...source, title: cms.document ? cms.page?.title[cms.locale] ?? '' : source.title, paragraphs: source.paragraphs.map((paragraph, index) => cms.story(index === 0 ? 'introduction' : `story-${index}`, paragraph)) };
 
   return (
     <div className="bg-[#FAF8F5] pb-20">
@@ -109,29 +114,34 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
       <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{copy.title}</h1>
-          <p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p>
+          <ApprovedSection id="introduction"><p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p></ApprovedSection>
         </header>
 
-        {imageGroups.map((images, index) => (
+        {cms.orderGroups(imageGroups.map((sourceImages, index) => ({ sourceImages, index })), ({ index }) => [`gallery-${index + 1}`, `story-${index + 1}`]).map(({ sourceImages, index }) => {
+          const images = cms.images(`gallery-${index + 1}`, sourceImages.map((src, imageIndex) => ({ src, alt: (language === 'es' ? spanishImageAlts : imageAlts)[imageGroups.slice(0, index).flat().length + imageIndex] })));
+          return (
           <section key={index} className="space-y-7">
-            <div className={`grid gap-4 ${index === 7 ? 'max-w-[800px] mx-auto' : ''} ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}>
-              {images.map((src, imageIndex) => (
-                <div key={src} className={`overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm ${images.length === 1 ? 'max-h-[620px]' : 'aspect-4/3'}`}>
+            <ApprovedSections>
+            <ApprovedSection id={`gallery-${index + 1}`}><div className={`grid gap-4 ${index === 7 ? 'max-w-[800px] mx-auto' : ''} ${images.length === 1 ? 'grid-cols-1' : images.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2 lg:grid-cols-4'}`}>
+              {images.map((image) => (
+                <div key={image.src} className={`overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm ${images.length === 1 ? 'max-h-[620px]' : 'aspect-4/3'}`}>
                   <img
-                    src={src}
-                    alt={(language === 'es' ? spanishImageAlts : imageAlts)[imageGroups.slice(0, index).flat().length + imageIndex]}
+                    {...responsiveImageProps(image.src, 'min(1024px, calc(100vw - 2rem))', true)}
+                    alt={image.alt}
+                    style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
                     loading={index === 0 ? 'eager' : 'lazy'}
                     decoding="async"
                     className={`w-full h-full ${images.length === 1 ? 'object-contain bg-[#1C2524]' : 'object-cover'}`}
                   />
                 </div>
               ))}
-            </div>
-            {index < copy.paragraphs.length - 1 && <p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{copy.paragraphs[index + 1]}</p>}
+            </div></ApprovedSection>
+            {index < copy.paragraphs.length - 1 && <ApprovedSection id={`story-${index + 1}`}><p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{copy.paragraphs[index + 1]}</p></ApprovedSection>}
+            </ApprovedSections>
           </section>
-        ))}
+        );})}
 
-        <FezToursCtaSection language={language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} onNavigate={onNavigate} />
 
         <TripadvisorReviewsSection language={language} />
       </article>

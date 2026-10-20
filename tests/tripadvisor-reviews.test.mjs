@@ -8,7 +8,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const home = readFileSync(resolve(root, 'src/pages/HomePage.tsx'), 'utf8');
 const reviews = readFileSync(resolve(root, 'src/components/TripadvisorReviewsSection.tsx'), 'utf8');
 const css = readFileSync(resolve(root, 'src/index.css'), 'utf8');
-const translations = readFileSync(resolve(root, 'src/data/translations.ts'), 'utf8');
+const translations = readFileSync(resolve(root, 'src/data/shared-ui.ts'), 'utf8');
 
 const listing = 'https://www.tripadvisor.com/Attraction_Review-g293733-d33349838-Reviews-Fez_Guide_Tours-Fez_Fez_Meknes.html';
 
@@ -29,7 +29,7 @@ test('Tripadvisor cards form an accessible looping marquee', () => {
   assert.match(reviews, /id="tripadvisor-reviews"/);
   assert.match(reviews, /tripadvisor-marquee/);
   assert.match(reviews, /tripadvisor-track/);
-  assert.match(reviews, /\[tripadvisorReviews, tripadvisorReviews\]/);
+  assert.match(reviews, /\[reviews, reviews\]/);
   assert.match(reviews, /aria-hidden=\{duplicate\}/);
   assert.match(css, /#tripadvisor-reviews\s*\{[^}]*scroll-margin-top:/s);
   assert.match(css, /@keyframes tripadvisor-scroll/);

@@ -1,6 +1,9 @@
 import React from 'react';
 import { SectionPillar, Language } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
+import { useApprovedContent } from '../cms/approved-content';
+import { formatPrice } from '../cms/SectionRenderer';
+import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { Clock, Calendar, Compass } from 'lucide-react';
 
 interface SectionCardProps {
@@ -8,6 +11,7 @@ interface SectionCardProps {
   language: Language;
   onExplore: (pillar: SectionPillar) => void;
   onBookTour: (tourTitle: string) => void;
+  imageSizes?: string;
 }
 
 export const SectionCard: React.FC<SectionCardProps> = ({
@@ -15,7 +19,11 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   language,
   onExplore,
   onBookTour,
+  imageSizes,
 }) => {
+  const { document, page } = useApprovedContent();
+  const product = document?.products.find(item => item.id === pillar.id && item.published !== false);
+  const livePrice = product?.price ? formatPrice(product, language) : '';
   const isArticle = pillar.kind === 'article' || pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
   const isFezOverviewCard = pillar.pageId === 'fez' && (
     isArticle || pillar.id === 'our-fez-tours'
@@ -56,7 +64,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
         aria-label={pillar.title[language]}
       >
         <img
-          src={pillar.image}
+          {...responsiveImageProps(pillar.image, imageSizes ?? authoredCardImageSizes(pillar.image, page?.id ?? pillar.pageId))}
+          loading="lazy"
+          decoding="async"
           alt={pillar.imageAlt[language]}
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
@@ -72,7 +82,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
               {pillar.practicalInfo.duration[language]}
             </span>
           )}
-          {pillar.id === 'our-fez-tours' ? (
+          {document ? (livePrice && <span data-price-product-id={product!.id} className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">{livePrice}</span>) : pillar.id === 'our-fez-tours' ? (
             <span className="font-bold drop-shadow-xs tabular-nums bg-black/40 backdrop-blur-xs px-2 py-0.5 rounded-md">
               €170 / {language === 'es' ? 'persona' : language === 'fr' ? 'personne' : 'person'}
             </span>

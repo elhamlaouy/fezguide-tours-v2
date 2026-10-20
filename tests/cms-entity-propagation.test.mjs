@@ -11,6 +11,7 @@ const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { setEditorPath } = await import('../src/cms/editor-controls.ts');
 const text = value => ({ en: value, fr: value, es: value });
 const render = (doc, id, language = 'en') => renderToStaticMarkup(createElement(PageRenderer, {

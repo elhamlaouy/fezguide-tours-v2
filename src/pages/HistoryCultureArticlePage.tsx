@@ -1,5 +1,8 @@
 import React from 'react';
+import { ApprovedSection, ApprovedSections } from '../cms/approved-content';
+import { responsiveImageProps } from '../cms/optimized-image';
 import { Language, PageId } from '../types';
+import { useFezEditorial } from '../components/EditorialArticlePage';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
 import { PageCrumbBar } from '../components/PageCrumbBar';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
@@ -131,7 +134,9 @@ const content = {
 };
 
 export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
-  const copy = content[language];
+  const cms = useFezEditorial('fez-history-landmarks', language);
+  const source = content[language];
+  const copy = { ...source, title: cms.document ? cms.page?.title[cms.locale] ?? '' : source.title, paragraphs: source.paragraphs.map((paragraph, index) => cms.story(index === 0 ? 'introduction' : `story-${index}`, paragraph)) };
   const altCopy = imageAlts[language];
 
   return (
@@ -147,44 +152,48 @@ export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps>
       <article className="editorial-story-page max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 space-y-12 sm:space-y-16">
         <header className="max-w-3xl space-y-5">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-[#005F5A]">{copy.title}</h1>
-          <p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p>
+          <ApprovedSection id="introduction"><p className="text-base sm:text-lg leading-relaxed text-[#445250]">{copy.paragraphs[0]}</p></ApprovedSection>
         </header>
 
-        <figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
+        {cms.images('gallery-1', [{ src: '/images/fez-history/history-01.jpg', alt: altCopy[0], width: imageDimensions[0][0], height: imageDimensions[0][1] }]).map(image => <ApprovedSection id="gallery-1" key={image.src}><figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
           <img
-            src="/images/fez-history/history-01.jpg"
-            alt={altCopy[0]}
-            width={imageDimensions[0][0]}
-            height={imageDimensions[0][1]}
+            {...responsiveImageProps(image.src, 'min(1024px, calc(100vw - 2rem))', true)}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
             loading="eager"
             decoding="async"
             className="block w-auto h-auto max-w-full max-h-[620px] object-contain"
           />
-        </figure>
+        </figure></ApprovedSection>)}
 
-        {copy.paragraphs.slice(1).map((paragraph, index) => {
+        {cms.orderGroups(copy.paragraphs.slice(1).map((paragraph, index) => ({ paragraph, index })), ({ index }) => [`story-${index + 1}`, `gallery-${copy.imageAfter[index + 1]}`]).map(({ paragraph, index }) => {
           const imageIndex = copy.imageAfter[index + 1];
           return (
             <section key={index} className="space-y-7">
-              <p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p>
+              <ApprovedSections>
+              <ApprovedSection id={`story-${index + 1}`}><p className="editorial-story-copy max-w-3xl mx-auto text-sm sm:text-base leading-8 text-[#445250]">{paragraph}</p></ApprovedSection>
               {imageIndex !== null && imageIndex !== undefined && (
-                <figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
+                cms.images(`gallery-${imageIndex}`, [{ src: `/images/fez-history/history-${String(imageIndex).padStart(2, '0')}.jpg`, alt: altCopy[imageIndex - 1], width: imageDimensions[imageIndex - 1][0], height: imageDimensions[imageIndex - 1][1] }]).map(image => <ApprovedSection id={`gallery-${imageIndex}`} key={image.src}><figure className="mx-auto w-fit max-w-full overflow-hidden rounded-2xl border border-[#E7E2DA] bg-[#1C2524] shadow-sm">
                   <img
-                    src={`/images/fez-history/history-${String(imageIndex).padStart(2, '0')}.jpg`}
-                    alt={altCopy[imageIndex - 1]}
-                    width={imageDimensions[imageIndex - 1][0]}
-                    height={imageDimensions[imageIndex - 1][1]}
+                    {...responsiveImageProps(image.src, 'min(1024px, calc(100vw - 2rem))', true)}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
                     loading={imageIndex === 1 ? 'eager' : 'lazy'}
                     decoding="async"
                     className="block w-auto h-auto max-w-full max-h-[620px] object-contain"
                   />
-                </figure>
+                </figure></ApprovedSection>)
               )}
+              </ApprovedSections>
             </section>
           );
         })}
 
-        <FezToursCtaSection language={language} onExploreTours={onExploreTours} />
+        <FezToursCtaSection language={language} onExploreTours={onExploreTours} onNavigate={onNavigate} />
 
         <TripadvisorReviewsSection language={language} />
       </article>

@@ -11,6 +11,7 @@ registerHooks({ load(url, context, nextLoad) {
 const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { Window } = await import('happy-dom');
 const css = readFileSync(new URL('../src/cms/cms-renderer.css', import.meta.url), 'utf8');
@@ -18,7 +19,7 @@ const css = readFileSync(new URL('../src/cms/cms-renderer.css', import.meta.url)
 test('edited theme fields affect actual renderer styles including booking buttons and card shadows', async () => {
   const document = createCmsSeed();
   document.theme = { colors: { primary: '#112233', accent: '#abcdef', background: '#eeeeee', text: '#334455' }, font: 'inter', fontScale: 1.3, containerWidth: 1100, spacing: 'generous', radius: 'square', buttonVariant: 'outline', cardVariant: 'flat' };
-  const page = document.pages.find(page => page.id === 'our-fez-tours');
+  const page = { ...document.pages.find(page => page.id === 'our-fez-tours'), id: 'theme-fixture' }; // Generic new-page theme contract; originals keep their authored markup.
   const html = renderToStaticMarkup(createElement(PageRenderer, { document, page, language: 'en', onNavigate() {}, onBook() {} }));
   const window = new Window({ settings: { disableCSSFileLoading: true } });
   try {

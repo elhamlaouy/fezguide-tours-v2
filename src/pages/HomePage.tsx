@@ -1,7 +1,12 @@
+import { businessContactHref } from '../cms/business-contact';
+import { pagePath } from '../cms/routing';
 import React from 'react';
 import { Language, PageId, SectionPillar } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
+import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
+import { visibleLink, resolveImage } from '../cms/render-utils';
+import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 import {
@@ -31,12 +36,28 @@ export const HomePage: React.FC<HomePageProps> = ({
   onBookTour,
 }) => {
   const { tours, siteSettings } = useCms();
+  const { document, section } = useApprovedContent('home');
+  const hero = section('hero', 'hero');
+  const trust = section('trust', 'benefits');
+  const quick = section('quick-navigation', 'cardGrid');
+  const featured = section('featured', 'cardGrid');
+  const benefits = section('why-choose-us', 'benefits');
+  const contact = section('contact', 'contact');
+  const blank = { en: '', fr: '', es: '' };
+  const imageSource = (mediaId: string | undefined) => document && mediaId ? resolveImage(document, {mediaId, alt:blank}, language)?.src : undefined;
+  const heroLinks = document ? (hero?.links ?? []).filter(link => visibleLink(document, link)) : [];
+  const heroSource = document ? imageSource(hero?.image?.mediaId) : (siteSettings?.heroImage || '/images/real/about_us_image7.jpg');
   const tHero = UI_TEXT.hero;
   const tHomeNav = UI_TEXT.homeQuickNav;
 
   // Selected top featured tours from live CMS store
   const publishedTours = tours.filter((t) => t.published !== false);
-  const featuredPillars: SectionPillar[] = publishedTours.filter((tour) => tour.id !== 'our-fez-tours').slice(0, 6);
+  const featuredPillars: SectionPillar[] = document ? (featured?.cards ?? []).flatMap(card => {
+    const target = publishedTours.find(tour => tour.id === card.pageId);
+    if (!target) return [];
+    return [{ ...target, title: card.title, subtitle: card.badge ?? blank, shortDescription: card.description,
+      image: imageSource(card.image?.mediaId) ?? '', imageAlt: card.image?.alt ?? blank }];
+  }) : publishedTours.filter((tour) => tour.id !== 'our-fez-tours').slice(0, 6);
 
   // Quick links to the five core sections.
   const quickSections = [
@@ -133,16 +154,19 @@ export const HomePage: React.FC<HomePageProps> = ({
   ];
 
   return (
-    <div className="space-y-20 pb-16">
+    <div className="space-y-20 pb-16"><ApprovedSections>
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#1C2524] overflow-hidden py-12 sm:py-16">
+      <ApprovedSection id="hero"><section className="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center bg-[#1C2524] overflow-hidden py-12 sm:py-16">
         {/* Background Image - 100% sharp and clear across the entire above-the-fold section */}
-        <img
-          src={siteSettings?.heroImage || '/images/real/about_us_image7.jpg'}
-          alt={language === 'es' ? "Grupo de visitantes ante Bab Boujloud con un guía local oficial" : "Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide"}
+        {heroSource && <img
+          {...responsiveImageProps(heroSource, '100vw', true)}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          alt={document ? hero?.image?.alt[language] ?? '' : (language === 'es' ? 'Grupo de visitantes ante Bab Boujloud con un guía local oficial' : 'Authentic Fez Tour Group in front of Bab Boujloud with local licensed guide')}
           referrerPolicy="no-referrer"
           className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        />}
         {/* Subtle, uniform tint for contrast without any bottom blur or foggy fade */}
         <div className="absolute inset-0 bg-black/20" />
 
@@ -152,39 +176,42 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* Tagline kicker */}
             <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#C84B31] bg-white/70 px-3.5 py-1 rounded-full border border-white/50 backdrop-blur-xs shadow-xs">
               <MapPin className="w-4 h-4 text-[#005F5A]" />
-              <span>{siteSettings?.heroTagline?.[language] || tHero.tagline[language]}</span>
+              <span>{document ? hero?.eyebrow?.[language] ?? '' : (siteSettings?.heroTagline?.[language] || tHero.tagline[language])}</span>
             </div>
 
             {/* Big Main Title - Logo Brand Green #005F5A */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-[#005F5A] max-w-3xl mx-auto text-balance drop-shadow-xs">
-              {siteSettings?.heroTitle?.[language] || tHero.title[language]}
+              {document ? hero?.title?.[language] ?? '' : (siteSettings?.heroTitle?.[language] || tHero.title[language])}
             </h1>
 
             {/* Subtitle - Sharp, high-contrast readable text */}
             <p className="text-base sm:text-lg text-[#15201F] font-semibold max-w-2xl mx-auto leading-relaxed drop-shadow-xs">
-              {siteSettings?.heroSubtitle?.[language] || tHero.subtitle[language]}
+              {document ? hero?.description?.[language] ?? '' : (siteSettings?.heroSubtitle?.[language] || tHero.subtitle[language])}
             </p>
 
             {/* Action CTAs */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button
-                onClick={() => onNavigate('fez')}
+              {(!document || heroLinks[0]) && (<button
+                onClick={() => heroLinks[0]?.pageId ? onNavigate(heroLinks[0].pageId!) : heroLinks[0]?.href ? window.location.assign(heroLinks[0].href!) : onNavigate('fez')}
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-sm rounded-xl shadow-lg ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
                 <Compass className="w-4 h-4" />
-                <span>{tHero.ctaExplore[language]}</span>
-              </button>
-              <button
-                onClick={() => onNavigate('day-trips')}
+                <span>{document ? heroLinks[0]?.label[language] ?? '' : tHero.ctaExplore[language]}</span>
+              </button>)}
+              {(!document || heroLinks[1]) && (<button
+                onClick={() => heroLinks[1]?.pageId ? onNavigate(heroLinks[1].pageId!) : heroLinks[1]?.href ? window.location.assign(heroLinks[1].href!) : onNavigate('day-trips')}
                 className="w-full sm:w-auto px-8 py-3.5 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-sm rounded-xl shadow-md ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
                 <MapPin className="w-4 h-4 text-[#E6F4F2]" />
-                <span>{tHero.ctaDayTrips[language]}</span>
-              </button>
+                <span>{document ? heroLinks[1]?.label[language] ?? '' : tHero.ctaDayTrips[language]}</span>
+              </button>)}
             </div>
 
             {/* Trust Row */}
-            <div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">
+            <ApprovedSection id="trust"><div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">{document ? (trust?.items ?? []).map((item, index) => { const Icon = [ShieldCheck, Star, Clock][index] ?? ShieldCheck; return (<div key={index} className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
+                <Icon className={`w-4 h-4 ${index === 1 ? 'text-[#E07A5F] fill-current' : 'text-[#005F5A]'}`} />
+                <span>{item.title[language]}{item.description[language] && <span>{item.description[language]}</span>}</span>
+              </div>); }) : (<>
               <div className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
                 <ShieldCheck className="w-4 h-4 text-[#005F5A]" />
                 <span>{language === 'es' ? "Autorizados por el Ministerio de Turismo #FEZ-2849" : "Ministry of Tourism Licensed #FEZ-2849"}</span>
@@ -197,27 +224,25 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <Clock className="w-4 h-4 text-[#005F5A]" />
                 <span>{language === 'es' ? 'Asistencia por WhatsApp las 24 horas' : '24/7 WhatsApp Assistance'}</span>
               </div>
-            </div>
+            </>)}</div></ApprovedSection>
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* 2. THE 5 CORE DEPARTMENTS QUICK ACCESS (Fez, Day Trips, Food Tours, Travel Tips and About Us) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <ApprovedSection id="quick-navigation"><section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-            FezGuideTours Ecosystem
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
-            {tHomeNav.title[language]}
-          </h2>
-          <p className="text-xs sm:text-sm text-[#52605E] leading-relaxed">
-            {tHomeNav.subtitle[language]}
-          </p>
+          <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document ? quick?.eyebrow?.[language] ?? '' : ("FezGuideTours Ecosystem")}</span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">{document ? quick?.title?.[language] ?? '' : (tHomeNav.title[language])}</h2>
+          <p className="text-xs sm:text-sm text-[#52605E] leading-relaxed">{document ? quick?.description?.[language] ?? '' : (tHomeNav.subtitle[language])}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {quickSections.map((sec) => {
+          {(document ? (quick?.cards ?? []).filter(card => !card.pageId || document.pages.some(page => page.id === card.pageId && page.enabled)).map(card => ({
+            id: card.pageId ?? card.id, title: card.title, desc: card.description, badge: card.badge ?? blank,
+            image: imageSource(card.image?.mediaId), alt: card.image?.alt ?? blank,
+            icon: quickSections.find(source => source.id === card.pageId)?.icon ?? Compass,
+          })) : quickSections.map(card => ({ ...card, alt: card.title }))).map((sec) => {
             const Icon = sec.icon;
             return (
               <div
@@ -233,8 +258,10 @@ export const HomePage: React.FC<HomePageProps> = ({
                 {/* Visual Thumbnail */}
                 <div className="relative h-44 w-full bg-[#1C2524] overflow-hidden">
                   <img
-                    src={sec.image}
-                    alt={sec.title[language]}
+                    {...responsiveImageProps(sec.image ?? '', authoredCardImageSizes(sec.image ?? '', 'quick-navigation'))}
+                    loading="lazy"
+                    decoding="async"
+                    alt={sec.alt[language]}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -267,18 +294,14 @@ export const HomePage: React.FC<HomePageProps> = ({
             );
           })}
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* 3. FEATURED EXPERIENCES & TOURS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <ApprovedSection id="featured"><section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-[#E7E2DA] pb-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">
-              Handcrafted Itineraries
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight mt-1">
-              Top Featured Medina Tours & Excursions
-            </h2>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{document ? featured?.eyebrow?.[language] ?? '' : ("Handcrafted Itineraries")}</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight mt-1">{document ? featured?.title?.[language] ?? '' : ("Top Featured Medina Tours & Excursions")}</h2>
           </div>
           <button
             onClick={() => onNavigate('fez')}
@@ -295,31 +318,26 @@ export const HomePage: React.FC<HomePageProps> = ({
             <SectionCard
               key={pillar.id}
               pillar={pillar}
+              imageSizes={authoredCardImageSizes(pillar.image, 'home')}
               language={language}
               onExplore={onExplore}
               onBookTour={onBookTour}
             />
           ))}
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* 4. WHY CHOOSE FEZGUIDETOURS */}
-      <section className="bg-[#FAF8F5] py-16 border-y border-[#E7E2DA]">
+      <ApprovedSection id="why-choose-us"><section className="bg-[#FAF8F5] py-16 border-y border-[#E7E2DA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto space-y-2 mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">
-              The Local Difference
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
-              Why Discerning Travelers Choose Us
-            </h2>
-            <p className="text-xs sm:text-sm text-[#52605E]">
-              We eliminate the stress of the medina so you can savor every historical moment.
-            </p>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document ? benefits?.eyebrow?.[language] ?? '' : ("The Local Difference")}</span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">{document ? benefits?.title?.[language] ?? '' : ("Why Discerning Travelers Choose Us")}</h2>
+            <p className="text-xs sm:text-sm text-[#52605E]">{document ? benefits?.description?.[language] ?? '' : ("We eliminate the stress of the medina so you can savor every historical moment.")}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {whyChooseUs.map((item, idx) => {
+            {(document ? (benefits?.items ?? []).map((item, index) => ({ title: item.title, desc: item.description, icon: whyChooseUs[index]?.icon ?? Compass })) : whyChooseUs).map((item, idx) => {
               const Icon = item.icon;
               return (
                 <div
@@ -340,29 +358,25 @@ export const HomePage: React.FC<HomePageProps> = ({
             })}
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>
 
       {/* 5. REAL TRIPADVISOR REVIEWS */}
-      <TripadvisorReviewsSection language={language} />
+      <ApprovedSection id="reviews"><TripadvisorReviewsSection language={language} /></ApprovedSection>
 
       {/* 6. CALL TO ACTION BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ApprovedSection id="contact"><section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#005F5A] rounded-3xl p-8 sm:p-12 text-white text-center space-y-6 shadow-xl relative overflow-hidden">
           <div className="max-w-2xl mx-auto space-y-3">
-            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-              {language === 'es'
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">{document ? contact?.title?.[language] ?? '' : (language === 'es'
                 ? "¿Listos para descubrir Fez con un guía local oficial?"
                 : language === 'fr'
                 ? 'Prêt à explorer Fès avec un guide officiel ?'
-                : 'Ready to Explore Fez with an Official Local Guide?'}
-            </h2>
-            <p className="text-xs sm:text-sm text-[#D4ECE9] leading-relaxed">
-              {language === 'es'
+                : 'Ready to Explore Fez with an Official Local Guide?')}</h2>
+            <p className="text-xs sm:text-sm text-[#D4ECE9] leading-relaxed">{document ? contact?.description?.[language] ?? '' : (language === 'es'
                 ? "Reservad hoy en línea con cancelación flexible gratuita, o contactad directamente con nuestro equipo por WhatsApp para organizar una visita privada a medida."
                 : language === 'fr'
                 ? 'Réservez en ligne avec annulation flexible, ou écrivez-nous sur WhatsApp pour une visite sur mesure.'
-                : 'Book online today with free flexible cancellation, or chat with our team directly on WhatsApp for custom private requests.'}
-            </p>
+                : 'Book online today with free flexible cancellation, or chat with our team directly on WhatsApp for custom private requests.')}</p>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <button
@@ -371,7 +385,12 @@ export const HomePage: React.FC<HomePageProps> = ({
             >
               {UI_TEXT.common.bookNow[language]}
             </button>
-            <a
+            {document ? (contact?.links ?? []).filter(link => visibleLink(document, link)).map(link => (<a key={link.id}
+              href={link.href ? businessContactHref(document, link.href) : link.pageId ? pagePath(document, link.pageId, language) : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-8 py-3.5 bg-white text-[#005F5A] hover:bg-[#FAF8F5] font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-colors"
+            >{link.label[language]}</a>)) : (<a
               href={`https://wa.me/${(siteSettings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
                 language === 'es'
                   ? 'Hola, me gustaría organizar una visita en Fez con vosotros a través de FezGuideTours.'
@@ -388,11 +407,11 @@ export const HomePage: React.FC<HomePageProps> = ({
                 : language === 'fr'
                 ? `WhatsApp (${siteSettings.phoneNumber})`
                 : `WhatsApp Us (${siteSettings.phoneNumber})`}
-            </a>
+            </a>)}
           </div>
         </div>
-      </section>
+      </section></ApprovedSection>
 
-    </div>
+    </ApprovedSections></div>
   );
 };

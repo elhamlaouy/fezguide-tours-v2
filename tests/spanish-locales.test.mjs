@@ -14,6 +14,7 @@ const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 const { AdminApp } = await import('../src/admin/AdminApp.tsx');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { CmsProvider } = await import('../src/context/CmsContext.tsx');
 const { EDITORIAL_ARTICLES } = await import('../src/data/editorialArticles.ts');
 const { FEZ_PILLARS, DAY_TRIPS_PILLARS, FOOD_TOURS_PILLARS } = await import('../src/data/translations.ts');

@@ -48,7 +48,7 @@ test('Our Fez Tours is a fourth Fez card and a €170 per-person product page', 
   const fezPage = read('src/pages/FezPage.tsx');
   const product = read('src/pages/OurFezToursPage.tsx');
   const app = read('src/App.tsx');
-  const context = read('src/context/CmsContext.tsx');
+  const context = read('src/context/legacy-public-data.ts');
 
   assert.match(translations, /id: 'our-fez-tours'/);
   assert.match(translations, /priceEUR: 170/);
@@ -266,7 +266,7 @@ test('History, Culture & Landmarks uses the supplied Google Doc story and local 
   const article = read('src/pages/HistoryCultureArticlePage.tsx');
   const translations = read('src/data/translations.ts');
   const generator = read('scripts/generate_translations.py');
-  const context = read('src/context/CmsContext.tsx');
+  const context = read('src/context/legacy-public-data.ts');
   const card = read('src/components/SectionCard.tsx');
   const app = read('src/App.tsx');
 
@@ -325,7 +325,7 @@ test('Things to Do in Fez uses the supplied Google Doc as an editorial guide', (
   const article = read('src/pages/ThingsToDoArticlePage.tsx');
   const translations = read('src/data/translations.ts');
   const generator = read('scripts/generate_translations.py');
-  const context = read('src/context/CmsContext.tsx');
+  const context = read('src/context/legacy-public-data.ts');
   const card = read('src/components/SectionCard.tsx');
   const app = read('src/App.tsx');
   const translationStart = translations.indexOf("id: 'fez-things-to-do'");

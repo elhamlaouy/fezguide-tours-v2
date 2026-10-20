@@ -6,6 +6,7 @@ register();
 registerHooks({ load(url, context, nextLoad) { if (url.endsWith('.css')) return { format: 'module', source: 'export default "";', shortCircuit: true }; return nextLoad(url, context); } });
 const { Window } = await import('happy-dom');
 const window = new Window({ url: 'https://fez.example/' });
+test.after(async () => { await window.happyDOM.close(); });
 for (const [key, value] of Object.entries({ window, document: window.document, navigator: window.navigator })) Object.defineProperty(globalThis, key, { configurable: true, writable: true, value });
 for (const key of Object.getOwnPropertyNames(window)) if (!(key in globalThis) && typeof window[key] === 'function' && /^[A-Z]/.test(key)) globalThis[key] = window[key];
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
@@ -20,6 +21,7 @@ const { BookingModal } = await import('../src/components/BookingModal.tsx');
 const { FloatingWhatsAppButton } = await import('../src/components/FloatingWhatsAppButton.tsx');
 const { CmsPreviewProvider } = await import('../src/context/CmsContext.tsx');
 const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { businessContactHref } = await import('../src/cms/business-contact.ts');
 const { validateCmsDocument } = await import('../src/cms/schema.ts');
 const { contentLanguage } = await import('../src/cms/render-utils.ts');
@@ -98,6 +100,46 @@ test('floating chat consumes canonical contact context brand and effective edita
     assert.ok(url.searchParams.get('text').includes('CANONICAL BRAND'));assert.ok(url.searchParams.get('text').includes('CANONICAL CONTEXT'));
     assert.equal(opened[0][2],'noopener,noreferrer');
   }finally{window.open=original;await act(async()=>root.unmount());host.remove();}
+});
+
+test('floating chat stays closed without an automatic message after the old prompt delay in every locale', async t => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  for (const language of ['en', 'fr', 'es']) {
+    const doc = createCmsSeed();
+    const host = document.createElement('div'); document.body.append(host); const root = createRoot(host);
+    try {
+      await act(async () => root.render(createElement(CmsPreviewProvider, { document: doc }, createElement(FloatingWhatsAppButton, { language, currentPage: 'home' }))));
+      await act(async () => t.mock.timers.tick(5000));
+      assert.equal(host.querySelectorAll('button').length, 1, `${language}: no automatic tooltip or extra action`);
+      const trigger = host.querySelector('button');
+      assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+      assert.ok(trigger.getAttribute('aria-label'));
+      await act(async () => trigger.click());
+      assert.equal(trigger.getAttribute('aria-expanded'), 'true', `${language}: deliberate opening still works`);
+      assert.ok(host.querySelector('textarea'));
+    } finally { await act(async () => root.unmount()); host.remove(); }
+  }
+});
+
+test('floating WhatsApp text meets AA contrast in closed and expanded actions', async () => {
+  const luminance = hex => {
+    const channels = hex.match(/../g).map(value => parseInt(value, 16) / 255).map(value => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+    return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+  };
+  const checkWhiteText = button => {
+    assert.ok(button.classList.contains('text-white'));
+    const colors = [...button.className.matchAll(/(?:^|[\s:])bg-\[#([a-f\d]{6})\]/gi)].map(match => match[1]);
+    assert.ok(colors.length >= 2, 'normal and hover backgrounds are checked');
+    for (const color of colors) assert.ok(1.05 / (luminance(color) + 0.05) >= 4.5, `white text on #${color} must reach 4.5:1`);
+  };
+  const host = document.createElement('div'); document.body.append(host); const root = createRoot(host);
+  try {
+    await act(async () => root.render(createElement(CmsPreviewProvider, { document: createCmsSeed() }, createElement(FloatingWhatsAppButton, { language: 'en', currentPage: 'home' }))));
+    const trigger = host.querySelector('button[aria-expanded]'); checkWhiteText(trigger);
+    await act(async () => trigger.click()); checkWhiteText(trigger);
+    const action = [...host.querySelectorAll('button')].find(button => button.textContent.includes('Start WhatsApp Chat'));
+    assert.ok(action); checkWhiteText(action);
+  } finally { await act(async () => root.unmount()); host.remove(); }
 });
 
 test('team portraits consume focal points and raw URL-only references cannot be removed',()=>{

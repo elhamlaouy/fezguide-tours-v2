@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Language } from '../types';
-import { UI_TEXT } from '../data/translations';
+import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { localizedText, publicProduct, uiText } from '../cms/render-utils';
 import { BOOKING_COPY } from '../cms/booking-copy';

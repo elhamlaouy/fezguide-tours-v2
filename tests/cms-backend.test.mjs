@@ -440,6 +440,90 @@ async function apiFixture(validateDocument = validate) {
   return { db, handler, env, token, headers, call };
 }
 
+test('SQL payloads remain bound data and hostile revision/version values cannot alter schema or other rows', async () => {
+  const { validateCmsDocument } = await import('../src/cms/schema.ts');
+  const { createCmsSeed } = await import('../src/cms/seed.ts');
+  const { db, env, call } = await apiFixture(validateCmsDocument);
+  try {
+    const payload = "editor'; DROP TABLE cms_documents; --";
+    const schema = () => db.sqlite.prepare("SELECT name, sql FROM sqlite_master WHERE type IN ('table','trigger','index') ORDER BY name").all();
+    const before = schema();
+    const seed = createCmsSeed();
+    seed.pages.find(page => page.id === 'home').title.en = payload;
+    const token = await signedToken({ sub: payload });
+    env.ACCESS_ALLOWED_SUBJECTS = payload;
+    const headers = { 'Cf-Access-Jwt-Assertion': token };
+    assert.equal((await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed }, headers)).status, 200);
+    const saved = db.sqlite.prepare('SELECT actor, document FROM cms_revisions WHERE version = 1').get();
+    assert.equal(saved.actor, payload, 'signed, allowlisted actor is stored literally');
+    assert.equal(JSON.parse(saved.document).pages.find(page => page.id === 'home').title.en, payload);
+    for (const value of ["1 OR 1=1", "1; DROP TABLE cms_revisions; --", "1 UNION SELECT 1"]) {
+      assert.equal((await call('/api/admin/content/publish', 'POST', { expectedVersion: value }, headers)).status, 400);
+      assert.equal((await call('/api/admin/content/revisions?limit=' + encodeURIComponent(value), 'GET', undefined, headers)).status, 400);
+      assert.equal((await call('/api/admin/content/rollback', 'POST', { expectedVersion: 1, revision: value }, headers)).status, 400);
+    }
+    assert.deepEqual(schema(), before, 'no schema changes');
+    assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM cms_revisions').get().n, 1);
+    const state = db.sqlite.prepare('SELECT * FROM cms_documents').get();
+    assert.equal(state.version, 1);
+    assert.equal(state.published_revision, null);
+  } finally { db.sqlite.close(); }
+});
+
+test('CORS preflight and cross-origin responses never grant readable credentialed access or cross-site writes', async () => {
+  const { validateCmsDocument } = await import('../src/cms/schema.ts');
+  const { createCmsSeed } = await import('../src/cms/seed.ts');
+  const { db, call, handler, env } = await apiFixture(validateCmsDocument);
+  const noCors = response => {
+    assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
+    assert.equal(response.headers.get('Access-Control-Allow-Credentials'), null);
+    assert.equal(response.headers.get('Access-Control-Allow-Headers'), null);
+    assert.equal(response.headers.get('Access-Control-Allow-Methods'), null);
+  };
+  try {
+    for (const origin of ['https://example.test', 'https://hostile.example.test', 'null']) {
+      const preflightHeaders = { Origin: origin, 'Access-Control-Request-Method': 'PUT', 'Access-Control-Request-Headers': 'content-type, cf-access-jwt-assertion' };
+      const anonymous = await handler(new Request('https://example.test/api/admin/content/draft', { method: 'OPTIONS', headers: preflightHeaders }), env);
+      assert.equal(anonymous.status, 401); noCors(anonymous);
+      const signed = await call('/api/admin/content/draft', 'OPTIONS', undefined, preflightHeaders);
+      assert.equal(signed.status, origin === 'https://example.test' ? 405 : 403); noCors(signed);
+      const read = await call('/api/cms/document', 'GET', undefined, { Origin: origin });
+      assert.equal(read.status, 200); noCors(read);
+      const privateRead = await call('/api/admin/content', 'GET', undefined, { Origin: origin });
+      assert.equal(privateRead.status, 200); noCors(privateRead);
+    }
+    const seed = createCmsSeed();
+    for (const origin of ['https://hostile.example.test', 'null']) {
+      const response = await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed }, { Origin: origin });
+      assert.equal(response.status, 403); noCors(response);
+    }
+    assert.equal(db.sqlite.prepare('SELECT version FROM cms_documents').get().version, 0);
+    const valid = await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed }, { Origin: 'https://example.test' });
+    assert.equal(valid.status, 200); noCors(valid);
+  } finally { db.sqlite.close(); }
+});
+
+test('userId tenantId role and isAdmin spoofing cannot select authorization or recorded actor', async () => {
+  const { validateCmsDocument } = await import('../src/cms/schema.ts');
+  const { createCmsSeed } = await import('../src/cms/seed.ts');
+  const { db, call } = await apiFixture(validateCmsDocument);
+  try {
+    const seed = createCmsSeed();
+    for (const [key, value] of Object.entries({ userId: 'other-user', tenantId: 'other-site', role: 'admin', isAdmin: true })) {
+      const envelope = await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed, [key]: value });
+      assert.equal(envelope.status, 400, `reject envelope ${key}`);
+      const nested = await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: { ...seed, [key]: value } });
+      assert.equal(nested.status, 422, `reject document ${key}`);
+    }
+    const forgedRole = await signedToken({ sub: 'unapproved', userId: 'editor', tenantId: 'site', role: 'admin', isAdmin: true });
+    assert.equal((await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed }, { 'Cf-Access-Jwt-Assertion': forgedRole })).status, 401);
+    assert.equal(db.sqlite.prepare('SELECT version FROM cms_documents').get().version, 0);
+    assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM cms_revisions').get().n, 0);
+    assert.equal((await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed })).status, 200);
+    assert.equal(db.sqlite.prepare('SELECT actor FROM cms_revisions WHERE version = 1').get().actor, 'editor');
+  } finally { db.sqlite.close(); }
+});
+
 test('API method/media/schema guards reject before database changes and keep errors generic', async () => {
   const fixture = await apiFixture();
   const { call, db, handler, token } = fixture;

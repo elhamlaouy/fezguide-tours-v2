@@ -1,5 +1,5 @@
 import { businessContactHref } from './business-contact';
-import { optimizedImageSrc } from './optimized-image';
+import { imageSizes, responsiveImageProps } from './optimized-image';
 import type { ReactNode } from 'react';
 import type { Language } from '../types';
 import type { CmsDocument, CmsImage, CmsLink, CmsPage, CmsProduct, CmsSection, Localized } from './schema';
@@ -62,7 +62,7 @@ export function visibleBookingProduct(document: CmsDocument, page: CmsPage, sect
   return publicProduct(document, section.productId)?.id;
 }
 
-function formatPrice(product: CmsProduct, language: Language): string {
+export function formatPrice(product: CmsProduct, language: Language): string {
   const price = product.price;
   if (!price || typeof price.amount !== 'number' || !Number.isFinite(price.amount)) return '';
   const amount = price.currency === 'EUR' ? `€${price.amount}` : price.currency === 'USD' ? `$${price.amount}` : price.currency === 'MAD' ? `${price.amount} MAD` : '';
@@ -83,13 +83,13 @@ function mediaFromSrc(document: CmsDocument, src: string | undefined, language: 
   return media ? resolveImage(document, { mediaId: media.id, alt: alt ?? media.alt, ...(media.caption ? { caption: media.caption } : {}) }, language) : undefined;
 }
 
-function CmsImg({ document, image, language, eager, className }: { document: CmsDocument; image?: CmsImage; language: Language; eager?: boolean; className?: string }) {
+function CmsImg({ document, image, language, eager, className, sizes }: { document: CmsDocument; image?: CmsImage; language: Language; eager?: boolean; className?: string; sizes?: string }) {
   const media = image ? resolveImage(document, image, language) : undefined;
   if (!media) return null;
   return (
     <img
       className={media.portrait ? `cms-img cms-img-portrait ${className ?? ''}` : `cms-img ${className ?? ''}`}
-      src={media.src} srcSet={optimizedImageSrc(media.src) !== media.src ? `${optimizedImageSrc(media.src)} 1x` : undefined}
+      {...responsiveImageProps(media.src, sizes ?? imageSizes(document.theme.containerWidth), Boolean(eager || className?.includes('cms-cover')))}
       alt={media.alt}
       width={media.width}
       height={media.height}
@@ -156,12 +156,12 @@ function Hero(props: SectionRendererProps) {
     </>
   );
   if (section.variant === 'split') {
-    return <div className="cms-split"><div className="cms-hero-copy">{copy}</div><CmsImg document={document} image={section.image} language={language} eager className="cms-cover" /></div>;
+    return <div className="cms-split"><div className="cms-hero-copy">{copy}</div><CmsImg document={document} image={section.image} language={language} eager sizes={imageSizes(document.theme.containerWidth, 'split')} className="cms-cover" /></div>;
   }
   if (section.variant === 'minimal') return <div className="cms-hero-copy">{copy}</div>;
   return (
     <>
-      <CmsImg document={document} image={section.image} language={language} eager className="cms-cover" />
+      <CmsImg document={document} image={section.image} language={language} eager sizes={imageSizes(document.theme.containerWidth, 'banner')} className="cms-cover" />
       <div className="cms-hero-scrim" aria-hidden="true" />
       <div className="cms-hero-card">{copy}</div>
     </>
@@ -194,13 +194,13 @@ function RichText({ document, section, language, titleTag }: SectionRendererProp
   );
 }
 
-function CardFace({ document, image, language, badge, title, description }: { document: CmsDocument; image?: CmsImage; language: Language; badge?: Localized; title: Localized; description: Localized }) {
+function CardFace({ document, image, language, badge, title, description, sizes }: { document: CmsDocument; image?: CmsImage; language: Language; badge?: Localized; title: Localized; description: Localized; sizes: string }) {
   const kicker = localizedText(badge, language);
   const heading = localizedText(title, language);
   const copy = localizedText(description, language);
   return (
     <>
-      <CmsImg document={document} image={image} language={language} />
+      <CmsImg document={document} image={image} language={language} sizes={sizes} />
       <span className="cms-card-body">
         {kicker ? <span className="cms-eyebrow">{kicker}</span> : null}
         {heading ? <span className="cms-card-title">{heading}</span> : null}
@@ -218,7 +218,7 @@ function CardGrid({ document, section, language, titleTag, onNavigate }: Section
       <Heading section={section} language={language} titleTag={titleTag} id={domId(section.id) ? `${section.id}-title` : undefined} />
       <div className="cms-cards">
         {cards.map(card => {
-          const face = <><CardFace document={document} image={card.image} language={language} badge={card.badge} title={card.title} description={card.description} />{blogMetadata(document, card.pageId, language) && <span className="cms-meta">{blogMetadata(document, card.pageId, language)}</span>}</>;
+          const face = <><CardFace document={document} image={card.image} language={language} sizes={imageSizes(document.theme.containerWidth, 'card', cards.length, section.variant === 'featured', card.image ? resolveImage(document, card.image, language)?.src : undefined)} badge={card.badge} title={card.title} description={card.description} />{blogMetadata(document, card.pageId, language) && <span className="cms-meta">{blogMetadata(document, card.pageId, language)}</span>}</>;
           return card.pageId
             ? <button key={card.id} type="button" className="cms-card" data-page-id={card.pageId} onClick={() => onNavigate(card.pageId!)}>{face}</button>
             : <article key={card.id} className="cms-card">{face}</article>;
@@ -230,23 +230,28 @@ function CardGrid({ document, section, language, titleTag, onNavigate }: Section
 
 function ProductGrid({ document, section, language, titleTag, onNavigate }: SectionRendererProps) {
   if (section.type !== 'productGrid') return null;
+  const products = section.productIds.map(id => publicProduct(document, id)).filter(product => product !== undefined).filter(product => {
+    const target = productPage(document, product);
+    return target && pageLocaleAvailable(document, target, language);
+  });
   return (
     <>
       <Heading section={section} language={language} titleTag={titleTag} id={domId(section.id) ? `${section.id}-title` : undefined} />
       <div className="cms-cards">
-        {section.productIds.map(id => publicProduct(document, id)).filter(product => product !== undefined).map(product => {
+        {products.map(product => {
           const target = productPage(document, product);
           if (!target || !pageLocaleAvailable(document, target, language)) return null;
           const image = mediaFromSrc(document, product.image, language, product.imageAlt);
+          const sizes = imageSizes(document.theme.containerWidth, 'card', products.length, section.variant === 'featured', image?.src);
           const price = formatPrice(product, language);
           return (
             <button key={product.id} type="button" className="cms-card cms-product-card" data-page-id={target.id} data-product-id={product.id} onClick={() => onNavigate(target.id)}>
-              {image ? <img className={image.portrait ? 'cms-img cms-img-portrait' : 'cms-img'} src={image.src} alt={image.alt} width={image.width} height={image.height} style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : null}
+              {image ? <img className={image.portrait ? 'cms-img cms-img-portrait' : 'cms-img'} {...responsiveImageProps(image.src, sizes)} alt={image.alt} width={image.width} height={image.height} style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : null}
               <span className="cms-card-body">
                 {localizedText(product.subtitle, language) ? <span className="cms-eyebrow">{localizedText(product.subtitle, language)}</span> : null}
                 <span className="cms-card-title">{localizedText(product.title, language)}</span>
                 <span className="cms-card-copy">{localizedText(product.shortDescription, language)}</span>
-                {price ? <span className="cms-price">{price}</span> : null}
+                {price ? <span className="cms-price" data-price-product-id={product.id}>{price}</span> : null}
               </span>
             </button>
           );
@@ -267,7 +272,7 @@ function Gallery({ document, section, language, titleTag }: SectionRendererProps
           if (!media) return null;
           return (
             <figure key={`${image.mediaId}-${index}`} className={media.portrait ? 'cms-frame cms-frame-portrait' : 'cms-frame'}>
-              <img src={media.src} srcSet={optimizedImageSrc(media.src) !== media.src ? `${optimizedImageSrc(media.src)} 1x` : undefined} alt={media.alt} width={media.width} height={media.height} style={media.objectPosition ? { objectPosition: media.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+              <img {...responsiveImageProps(media.src, imageSizes(document.theme.containerWidth), true)} alt={media.alt} width={media.width} height={media.height} style={media.objectPosition ? { objectPosition: media.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" />
               {media.caption ? <figcaption>{media.caption}</figcaption> : null}
             </figure>
           );
@@ -305,7 +310,7 @@ function Cta(props: SectionRendererProps) {
       {section.variant === 'split' ? <CmsImg document={document} image={section.image} language={language} className="cms-cover" /> : null}
       <div className="cms-cta-copy">
         <Heading section={section} language={language} titleTag={titleTag} id={domId(section.id) ? `${section.id}-title` : undefined} />
-        {price ? <p className="cms-price"><strong>{price}</strong></p> : null}
+        {price ? <p className="cms-price" data-price-product-id={product?.id}><strong>{price}</strong></p> : null}
         <Actions document={document} links={section.links} language={language} onNavigate={onNavigate} />
         {productId ? (
           <button type="button" className="cms-button cms-button-book" data-action="book" data-product-id={productId} onClick={() => onBook(productId)}>
@@ -373,7 +378,7 @@ function Team({ document, section, language, titleTag }: SectionRendererProps) {
           const image = mediaFromSrc(document, member.avatarUrl, language, { en: member.name, fr: member.name, es: member.name });
           return (
             <article key={member.id} className="cms-member">
-              {image ? <img className="cms-avatar" src={image.src} alt={image.alt} width={image.width} height={image.height} style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : null}
+              {image ? <img className="cms-avatar" {...responsiveImageProps(image.src, imageSizes(document.theme.containerWidth))} alt={image.alt} width={image.width} height={image.height} style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : null}
               <div>
                 <h3>{member.name}</h3>
                 <p className="cms-eyebrow">{localizedText(member.role, language)}</p>

@@ -40,6 +40,7 @@ const React = await import('react');
 const { createRoot } = await import('react-dom/client');
 const { act, createElement } = React;
 const { AdminApp } = await import('../src/admin/AdminApp.tsx');
+await (await import('../src/cms/ApprovedPageRenderer.tsx')).preloadApprovedLayouts();
 const { validateCmsDocument } = await import('../src/cms/schema.ts');
 const { DEFAULT_SITE_SETTINGS } = await import('../src/data/translations.ts');
 
@@ -88,6 +89,10 @@ const content = (doc, version = 2) => ({ version, draftRevision: version, publis
 
 let root;
 let calls;
+test.after(async () => {
+  if (root) await act(async () => root.unmount());
+  await window.happyDOM.close();
+});
 function installFetch(handler) {
   calls = [];
   const fetchMock = async (input, init = {}) => {
@@ -733,10 +738,11 @@ serial('entity creation keeps product graph valid and referenced page removal hi
   await render();
   assert.equal(document.querySelector('[name="remove-page"]').disabled, true);
   await click('[data-add="products"]');
-  await click('[data-enable="products.0.price"]');
-  await typeInto('[data-path="products.0.price.amount"]', '170');
-  await choose('[data-path="products.0.price.currency"]', 'EUR');
-  await choose('[data-path="products.0.price.basis"]', 'person');
+  await click('[data-open-pricing="experience"]');
+  await typeInto('[name="price-amount"]', '170');
+  await choose('[name="price-currency"]', 'EUR');
+  await choose('[name="price-basis"]', 'person');
+  await click('[name="apply-price"]');
   await click('[data-page="experience"]');
   await click('[name="remove-page"]');
   assert.ok(document.querySelector('[data-page="experience"]'), 'referenced detail retained');
@@ -956,8 +962,17 @@ serial('photo metadata shows one editable language and keeps optional fields col
 
 serial('custom product prose visibly warns that its independently formatted page section is detached', async () => {
   const { createCmsSeed } = await import('../src/cms/seed.ts');
-  const doc=createCmsSeed(),index=doc.products.findIndex(product=>product.id==='our-fez-tours');
+  const doc=createCmsSeed(),product=doc.products.find(product=>product.id==='our-fez-tours');
+  // This notice needs one genuine linked product, not the unrelated media-heavy site library.
+  const kept=new Set(['home','fez','our-fez-tours']);
+  doc.pages=doc.pages.filter(page=>kept.has(page.id)).map(page=>({...page,sections:page.id==='our-fez-tours'?page.sections.filter(section=>section.id==='overview'):[]}));
+  doc.products=[product];const index=0;
+  doc.navigation=doc.navigation.filter(link=>!link.pageId||kept.has(link.pageId));doc.footer.links=doc.footer.links.filter(link=>!link.pageId||kept.has(link.pageId));
+  doc.editorialEntries=[];doc.blogPosts=[];doc.teamMembers=[];doc.faqs=[];doc.reviews=[];
+  const sources=new Set([product.image,...(product.galleryImages??[])]);doc.media=doc.media.filter(media=>sources.has(media.src));
+  doc.legacy={...doc.legacy,tours:doc.legacy.tours.filter(tour=>tour.id===product.id),customPages:[],blogPosts:[],teamMembers:[],faqs:[]};
   doc.pages.find(page=>page.id==='our-fez-tours').sections.find(section=>section.id==='overview').blocks=[{type:'list',items:text(['Owner custom list'])}];
+  assert.equal(validateCmsDocument(doc).valid,true,'focused fixture retains the real validated relationship');
   installFetch(({url})=>url.endsWith('/revisions')?{body:{revisions:[]}}:{body:content(doc)});
   await render();await click('[data-workspace-tab="content"]');
   const notice=document.querySelector(`[data-projection-notice="products.${index}.fullDescription"]`);

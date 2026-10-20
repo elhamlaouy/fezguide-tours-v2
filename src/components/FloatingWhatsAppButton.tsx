@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Language, PageId, SectionPillar } from '../types';
 import { useCms } from '../context/CmsContext';
 import { localizedText, uiText } from '../cms/render-utils';
 import { FLOATING_COPY } from '../cms/ui-copy';
-import { MessageCircle, X, Send, Clock, CheckCircle2, ChevronUp } from 'lucide-react';
+import { X, Send, Clock, CheckCircle2 } from 'lucide-react';
 
 interface FloatingWhatsAppButtonProps {
   language: Language;
@@ -16,12 +16,10 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   currentPage,
   activePillar,
 }) => {
-  const { siteSettings, tours, publishedDocument } = useCms();
+  const { siteSettings, publishedDocument } = useCms();
   const contact = publishedDocument?.siteSettings ?? siteSettings;
   const floatingText = (key: keyof typeof FLOATING_COPY) => publishedDocument ? uiText(publishedDocument, `ui.floating.${key}`, language, FLOATING_COPY[key]) : localizedText(FLOATING_COPY[key], language);
   const [isOpen, setIsOpen] = useState(false);
-  const [hasPrompted, setHasPrompted] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [customNote, setCustomNote] = useState('');
 
   // Clean WhatsApp phone digits
@@ -82,18 +80,6 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
     },
   ];
 
-  // Show a gentle preview badge 4 seconds after page load (once per session)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!hasPrompted && !isOpen) {
-        setShowTooltip(true);
-        setHasPrompted(true);
-      }
-    }, 4500);
-
-    return () => clearTimeout(timer);
-  }, [hasPrompted, isOpen]);
-
   // Construct target WhatsApp URL
   const buildWhatsAppUrl = (messageText?: string) => {
     let text = messageText;
@@ -116,7 +102,6 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
   const handleOpenWhatsApp = (customText?: string) => {
     const url = buildWhatsAppUrl(customText);
     window.open(url, '_blank', 'noopener,noreferrer');
-    setShowTooltip(false);
   };
 
   return (
@@ -124,51 +109,6 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
       className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end select-none"
       aria-label={floatingText('contact')}
     >
-      {/* 1. Gentle Unobtrusive Proactive Tooltip */}
-      {showTooltip && !isOpen && (
-        <div className="mb-3 animate-bounce-subtle max-w-[280px] sm:max-w-xs bg-white text-[#1C2524] p-3 rounded-2xl shadow-xl border border-[#E7E2DA] flex items-start gap-2.5 relative">
-          <button
-            onClick={() => setShowTooltip(false)}
-            className="absolute top-2 right-2 text-[#8E9F9D] hover:text-[#1C2524] p-1 transition-colors"
-            aria-label={floatingText('closeTooltip')}
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-[#005F5A] border border-[#005F5A]/20">
-            <img
-              src="/images/real/about_us_image1.jpg"
-              alt={language === 'es' ? "Med, guía local" : "Med Local Guide"}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="pr-4 space-y-1">
-            <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#005F5A]">
-              <span className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
-              <span>
-                {floatingText('contactStatus')}
-              </span>
-            </div>
-            <p className="text-xs text-[#445250] leading-snug">
-              {language === 'es'
-                ? `¿Tienes alguna pregunta sobre "${contextTitle}"? ¡Contacta conmigo por WhatsApp!`
-                : language === 'fr'
-                ? `Une question sur "${contextTitle}" ? Échangez directement avec un guide !`
-                : `Have a quick question about "${contextTitle}"? Ask a local guide on WhatsApp!`}
-            </p>
-            <button
-              onClick={() => {
-                setShowTooltip(false);
-                setIsOpen(true);
-              }}
-              className="mt-1 text-[11px] font-bold text-[#117A3A] hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>{floatingText('chatNow')}</span>
-              <ChevronUp className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* 2. Interactive Quick Inquiry Card (Expandable) */}
       {isOpen && (
         <div className="mb-3 w-[calc(100vw-2.5rem)] sm:w-96 bg-white rounded-3xl shadow-2xl border border-[#E7E2DA] overflow-hidden animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -263,7 +203,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
             {/* Main Action Button */}
             <button
               onClick={() => handleOpenWhatsApp()}
-              className="w-full py-3 px-4 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+              className="w-full py-3 px-4 bg-[#117A3A] hover:bg-[#0F6932] text-white font-bold text-xs sm:text-sm rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
             >
               {/* WhatsApp Official SVG Logo */}
               <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
@@ -283,14 +223,11 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
 
       {/* 3. Floating Action Trigger Button */}
       <button
-        onClick={() => {
-          setIsOpen(!isOpen);
-          setShowTooltip(false);
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         className={`group relative flex items-center gap-2.5 p-3.5 sm:px-4 sm:py-3.5 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer active:scale-95 ${
           isOpen
             ? 'bg-[#15201F] text-white hover:bg-[#233130]'
-            : 'bg-[#25D366] text-white hover:bg-[#20BD5A]'
+            : 'bg-[#117A3A] text-white hover:bg-[#0F6932]'
         }`}
         aria-expanded={isOpen}
         aria-label={floatingText('contact')}

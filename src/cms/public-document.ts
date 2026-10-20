@@ -3,6 +3,18 @@ import type { CmsDocument, CmsLink, CmsPage } from './schema';
 import type { Language } from '../types';
 import { isSafeCmsUrl, validateCmsDocument } from './schema';
 import { localizedText, visibleLink, pageLocaleAvailable } from './render-utils';
+import { resolveRoute, type PublicRoute } from './routing';
+
+// Scope metadata exists only for validated Worker HTML, never API/editor documents.
+type SnapshotScope = { version: 1; pageId: string | null; language: Language };
+const snapshotScopes = new WeakMap<CmsDocument, SnapshotScope>();
+export function snapshotContainsRoute(document: CmsDocument, route: PublicRoute): boolean {
+  const scope = snapshotScopes.get(document);
+  return !scope || scope.language === route.language && scope.pageId === (route.page?.id ?? null);
+}
+export function requiresDocumentNavigation(document: CmsDocument | null, url: URL): boolean {
+  return Boolean(document && snapshotScopes.has(document) && (isAdminPath(url.pathname) || !snapshotContainsRoute(document, resolveRoute(url, document))));
+}
 
 export const CMS_DOCUMENT_PATH = '/api/cms/document';
 
@@ -66,7 +78,20 @@ export function readPublishedSnapshot(): CmsDocument | null {
   if (typeof document === 'undefined') return null;
   try {
     const embedded = document.getElementById('cms-published-document')?.textContent;
-    return embedded ? validPublishedDocument(JSON.parse(embedded)) : null;
+    if (!embedded) return null;
+    const value = JSON.parse(embedded);
+    // Old, complete HTML documents remain compatible. Envelopes fail closed:
+    // never reinterpret an unknown/broken scope as an unrestricted partial SPA.
+    if (!value || typeof value !== 'object' || !('scope' in value)) return validPublishedDocument(value);
+    const scope = value.scope;
+    if (Object.keys(value).sort().join(',') !== 'document,scope' || !scope || typeof scope !== 'object' ||
+        Object.keys(scope).sort().join(',') !== 'language,pageId,version' || scope.version !== 1 ||
+        !['en', 'fr', 'es'].includes(scope.language) || !(scope.pageId === null || typeof scope.pageId === 'string')) return null;
+    const parsed = validPublishedDocument(value.document);
+    if (!parsed || typeof window === 'undefined') return null;
+    if (scope.pageId !== null && !parsed.pages.some(page => page.id === scope.pageId && pageLocaleAvailable(parsed, page, scope.language))) return null;
+    snapshotScopes.set(parsed, scope);
+    return requiresDocumentNavigation(parsed, new URL(window.location.href)) ? null : parsed;
   } catch { return null; }
 }
 
