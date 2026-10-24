@@ -19,7 +19,7 @@ registerTsx();
 register(pathToFileURL(loaderPath));
 
 const { Window } = await import('happy-dom');
-let window = new Window({ url: 'https://fez.example/admin' });
+let window = new Window({ url: 'https://fez.example/admin', settings: { enableIframePageLoading: true } });
 const assign = (key, value) => {
   try { globalThis[key] = value; }
   catch { Object.defineProperty(globalThis, key, { configurable: true, writable: true, value }); }
@@ -55,7 +55,7 @@ test.afterEach(async () => {
   if (root) { await act(async () => root.unmount()); root = null; }
   await window.happyDOM.close();
   // Isolate each mounted editor and its iframe lifecycle, not just its React root.
-  window = new Window({ url: 'https://fez.example/admin' });
+  window = new Window({ url: 'https://fez.example/admin', settings: { enableIframePageLoading: true } });
   assign('window', window); assign('document', window.document); assign('navigator', window.navigator);
   assign('getComputedStyle', window.getComputedStyle.bind(window));
   assign('requestAnimationFrame', window.requestAnimationFrame.bind(window));

@@ -1,0 +1,46 @@
+# Isolated CMS candidate — EDITOR Worker (protected app host)
+# Deploy target: candidate editor on the exact saved Access host only; no test aliases.
+# Bound exclusively to NEW isolated resources; never touches production/old-preview D1/R2 or vars.
+name = "fezguidetours-cms-candidate-app"
+main = "worker/app.ts"
+compatibility_date = "2026-10-01"
+workers_dev = false
+preview_urls = false
+account_id = "417f3820605485ace5bdbb9576452f42"
+routes = [{ pattern = "app.fezguidetours.com", custom_domain = true }]
+
+[[d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms-candidate-20261024"
+database_id = "8b82c07d-273d-459f-abc2-1dbb2f81e586"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-candidate-media-20261024"
+
+[images]
+binding = "CMS_IMAGES"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/*", "!/assets/*", "!/images/*", "!/fonts/*", "!/favicon.svg"]
+
+[vars]
+# Both Workers pin the PUBLIC test origin; the editor hostname is not a publication origin.
+CANONICAL_ORIGIN = "https://fezguidetours-cms-candidate-public.elhamlaouy.workers.dev"
+ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
+# Exact saved new Access app757cd74c-101d-47bb-aac0-99282d693d1f;
+# evidence: candidate-access-custom-host-readback.json. Not a successful login proof.
+ACCESS_AUD = "fd4ff16b847e4719028d2c3f43834df2034356c623d3e9f8a210e8592b365ce6"
+ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
+# app.ts does not invoke the public limiter; authenticated staged calls use durable D1 budgets.
+# Saved custom-host policy is verified; deployed edge enforcement/login remain separate gates.
+CMS_PROCESSING_MODE = "staged-v1"
+CMS_PUBLIC_DELIVERY_ORIGIN = "https://fezguidetours-cms-candidate-public.elhamlaouy.workers.dev"
+CMS_VALIDATION_POLICY = "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab"
+CMS_RENDERER_ID = "ad70decb5754943e8c24250fbf3fb38d10912851e02bed3a411f40c0a671d876"
+CMS_ASSET_ID = "2a33181ad5382544e8d9a9ffa83cec1340986f051808fc2e7eaa1a30b3e6a496"
+CMS_SHELL_ID = "25aac7cf54eefe4a0ea754a78aefd65fda0a46a41325b8f3301befbc470e423a"

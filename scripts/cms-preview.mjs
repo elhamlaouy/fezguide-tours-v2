@@ -26,10 +26,15 @@ export function previewRequestAllowed(req,port) {
  if(['iframe','frame','object','embed'].includes(req.headers['sec-fetch-dest']))return false;
  return ['GET','HEAD'].includes(req.method)||origins.includes(req.headers.origin);
 }
-async function wranglerPath() {
+export async function wranglerPath() {
  if(process.env.CMS_PREVIEW_WRANGLER){await access(process.env.CMS_PREVIEW_WRANGLER);return process.env.CMS_PREVIEW_WRANGLER;}
  const require=createRequire(import.meta.url);
- try {return require.resolve('wrangler/bin/wrangler.js');}catch{}
+ try {
+  // Wrangler exports its manifest, but not the bin/wrangler.js subpath.
+  const executable=path.join(path.dirname(require.resolve('wrangler/package.json')),'bin/wrangler.js');
+  await access(executable);
+  return executable;
+ }catch{}
  const cache=path.join(os.homedir(),'.npm','_npx');
  for(const dir of await readdir(cache).catch(()=>[])) {
   const candidate=path.join(cache,dir,'node_modules/wrangler');

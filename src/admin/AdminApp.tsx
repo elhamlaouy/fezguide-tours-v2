@@ -4,16 +4,18 @@ import { PriceEditor, PRICE_CURRENCIES, type PriceChange } from './PriceEditor';
 import { validateCmsDocument, type CmsDocument, type CmsPage, type CmsSection } from '../cms/schema';
 import {
   AdminApiError, loadAdminContent, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
-  type AdminContent, type AdminRevision, type AdminWriteResult,
+  type AdminContent, type AdminRevision, type AdminWriteResult, type AdminProgress,
 } from './admin-api';
 import { MediaUpload } from './MediaUpload';
 import { StructuredFields } from './StructuredFields';
 import { DraftTransfer } from './DraftTransfer';
+import { RecoveryTools } from './RecoveryTools';
 import { SUPPORTED_UI_COPY } from '../cms/ui-copy';
 import { WORKSPACES, workspaceText, friendlySection, type Workspace, type EditorLayout } from './editor-workspace';
 import { editorLabel, FRENCH_ADMIN_LABELS } from './editor-labels';
 import { GLOBAL_FIELDS, PAGE_FIELDS, sectionFields, editorDefault, nextEditorId, setEditorPath, removeEditorPage } from '../cms/editor-controls';
 import { syncEntityEdits } from '../cms/entity-projection';
+import { copyEditorPage } from '../cms/page-authoring';
 import './admin.css';
 
 const SPANISH_LABELS: Record<string, string> = {
@@ -119,13 +121,35 @@ const SPANISH_LABELS: Record<string, string> = {
 
 const LOCALES = ['en', 'fr', 'es'] as const;
 type Locale = typeof LOCALES[number];
+const PROGRESS_LABELS: Record<Locale, Record<AdminProgress['phase'], string>> = {
+  en: { hash: 'Checking draft', upload: 'Uploading draft', prepare: 'Preparing publication', commit: 'Committing revision', retry: 'Rate limited; waiting to retry' },
+  fr: { hash: 'Vérification du brouillon', upload: 'Envoi du brouillon', prepare: 'Préparation de la publication', commit: 'Enregistrement de la révision', retry: 'Limite atteinte ; nouvelle tentative en attente' },
+  es: { hash: 'Comprobando borrador', upload: 'Enviando borrador', prepare: 'Preparando publicación', commit: 'Confirmando revisión', retry: 'Límite alcanzado; esperando para reintentar' },
+};
 const SECTION_TYPES = ['hero', 'richText', 'cardGrid', 'productGrid', 'gallery', 'benefits', 'cta', 'reviews', 'faq', 'team', 'itinerary', 'inclusions', 'practicalInfo', 'contact'] as const;
 const FONTS = ['system', 'inter', 'noto-sans'] as const;
 const SPACING = ['compact', 'comfortable', 'generous'] as const;
 const RADII = ['square', 'rounded', 'pill'] as const;
-const RESERVED_SLUGS = new Set(['admin', 'api', 'assets', 'media']);
+const RESERVED_SLUGS = new Set(['admin', 'api', 'assets', 'media', 'ar']);
+const NEW_PAGE_LABELS: Record<string, Record<Locale, string>> = {
+  newPage: { en: 'New page', fr: 'Nouvelle page', es: 'Nueva página' },
+  mode: { en: 'Start from', fr: 'Commencer avec', es: 'Empezar desde' },
+  starter: { en: 'Starter template', fr: 'Modèle de départ', es: 'Plantilla inicial' },
+  blank: { en: 'Blank page', fr: 'Page vide', es: 'Página en blanco' },
+  copy: { en: 'Copy existing page', fr: 'Copier une page existante', es: 'Copiar una página existente' },
+  template: { en: 'Template', fr: 'Modèle', es: 'Plantilla' },
+  landing: { en: 'Landing — header', fr: 'Présentation — en-tête', es: 'Presentación — cabecera' },
+  editorial: { en: 'Editorial — story', fr: 'Éditorial — récit', es: 'Editorial — historia' },
+  source: { en: 'Source page', fr: 'Page source', es: 'Página de origen' },
+  safety: { en: 'Created locally, disabled and unsaved. Enable it in Page settings when ready; save and publish are separate actions.', fr: 'Créée localement, désactivée et non enregistrée. Activez-la dans les paramètres de page une fois prête ; enregistrer et publier sont des actions distinctes.', es: 'Se crea localmente, deshabilitada y sin guardar. Actívala en los ajustes de página cuando esté lista; guardar y publicar son acciones distintas.' },
+};
 
 export function editorError(error: string, language: Locale): string {
+  if (error === 'staged_operation_failed') return {
+    en: 'Operation could not be confirmed. Your edits are kept in this editor. Check the connection or session. For a conflict or uncertain commit, export your draft before reloading to check the current revision.',
+    fr: 'L’opération n’a pas pu être confirmée. Vos modifications sont conservées dans cet éditeur. Vérifiez la connexion ou la session. En cas de conflit ou de validation incertaine, exportez le brouillon avant de recharger pour vérifier la révision actuelle.',
+    es: 'No se ha podido confirmar la operación. Tus cambios se conservan en este editor. Comprueba la conexión o la sesión. Si hay un conflicto o una confirmación incierta, exporta el borrador antes de recargar para comprobar la revisión actual.',
+  }[language];
   if (language === 'en') return error;
   if (language === 'fr') {
     const separator = error.indexOf(': ');
@@ -183,6 +207,11 @@ export function editorError(error: string, language: Locale): string {
 }
 
 interface Notice { version: number; label: string }
+
+function operationErrors(error: unknown, fallback: string): string[] {
+  if (!(error instanceof AdminApiError)) return [fallback];
+  return error.preserveDraft && error.code !== 'staged_operation_failed' ? ['staged_operation_failed', error.code] : [error.code];
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value);
@@ -327,6 +356,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const [revisions, setRevisions] = useState<AdminRevision[]>([]);
   const [rollbackId, setRollbackId] = useState('');
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<AdminProgress | null>(null);
   const [uploading, setUploading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [previewSize, setPreviewSize] = useState<'desktop' | 'mobile'>('desktop');
@@ -346,6 +376,11 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const [locale, setLocale] = useState<Locale>(language);
   const [sectionType, setSectionType] = useState<CmsSection['type']>('hero');
   const [newPageId, setNewPageId] = useState('');
+  const [newPageOpen, setNewPageOpen] = useState(false);
+  const [newPageMode, setNewPageMode] = useState<'starter' | 'blank' | 'copy'>('starter');
+  const [newPageTemplate, setNewPageTemplate] = useState<'landing' | 'editorial'>('landing');
+  const [copyPageId, setCopyPageId] = useState('');
+  const np = (key: string) => NEW_PAGE_LABELS[key][language];
   const [showInNav, setShowInNav] = useState(false);
   const versionRef = useRef(0);
   const savedJson = useRef('');
@@ -415,16 +450,16 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       return { version: versionRef.current, draftRevision: versionRef.current, published: false };
     }
     try {
-      const saved = await saveAdminDraft(versionRef.current, result.document);
+      const saved = await saveAdminDraft(versionRef.current, result.document, setProgress);
       savedJson.current = JSON.stringify(result.document);
       rememberWrite(saved, 'Saved revision');
       return saved;
     } catch (error) {
-      if (error instanceof AdminApiError && error.status === 409) {
+      if (error instanceof AdminApiError && error.status === 409 && !error.preserveDraft) {
         await failConflict();
         return null;
       }
-      setErrors([error instanceof AdminApiError ? error.code : 'save_failed']);
+      setErrors(operationErrors(error, 'save_failed'));
       return null;
     }
   }, [failConflict, rememberWrite]);
@@ -433,8 +468,9 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     if (busyRef.current || uploading || importing) return;
     busyRef.current = true;
     setBusy(true);
+    setProgress(null);
     try { await action(); }
-    finally { busyRef.current = false; setBusy(false); }
+    finally { busyRef.current = false; setBusy(false); setProgress(null); }
   }
   function edit(update: (current: CmsDocument) => CmsDocument) {
     setDraft(current => current ? update(current) : current);
@@ -498,19 +534,22 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     if (RESERVED_SLUGS.has(id)) { setErrors(['page id: reserved slug']); return; }
     if (current.pages.some(item => item.id === id || item.slug === id)) { setErrors(['page id: already used']); return; }
     const title = { en: id, fr: id, es: id };
-    const hero = blankSection('hero', 'hero');
-    hero.title = title;
+    const sections = newPageMode === 'blank' ? [] : [blankSection(newPageTemplate === 'editorial' ? 'richText' : 'hero', newPageTemplate === 'editorial' ? 'story' : 'hero')];
+    if (sections[0]) sections[0].title = title;
     const created: CmsPage = {
-      id, slug: id, kind: 'landing', enabled: true, title,
-      seo: { title, description: { en: '', fr: '', es: '' } },
-      sections: [hero],
+      id, slug: id, kind: newPageMode === 'starter' ? newPageTemplate : 'landing', enabled: false, title,
+      seo: { title, description: { en: '', fr: '', es: '' } }, sections,
     };
+    const source = current.pages.find(item => item.id === (copyPageId || selectedPageId));
+    if (newPageMode === 'copy' && !source) return;
+    const next = newPageMode === 'copy' && source ? copyEditorPage(current, source, id) : { ...current, pages: [...current.pages, created] };
     const navigation = showInNav
-      ? [...current.navigation, { id: uniqueId(current.navigation.map(link => link.id), `nav-${id}`), pageId: id, label: title, enabled: true }]
+      ? [...current.navigation, { id: uniqueId(current.navigation.map(link => link.id), `nav-${id}`), pageId: id, label: next.pages.at(-1)!.title, enabled: true }]
       : current.navigation;
-    if (!applyValidated({ ...current, pages: [...current.pages, created], navigation })) return;
+    if (!applyValidated({ ...next, navigation })) return;
     setSelectedPageId(id);
-    setSelectedSectionId('hero');
+    setSelectedSectionId('');
+    setWorkspace('sections');
     setNewPageId('');
     setShowInNav(false);
   }
@@ -585,13 +624,8 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   }
   function duplicatePage() {
     if (!draft || !page || !window.confirm(editorLabel('duplicatePage', language))) return;
-    const id = nextEditorId(draft.pages, `${page.id}-copy`);
-    const copy = structuredClone(page); copy.id = id; copy.slug = id; copy.enabled = false;
-    delete copy.seo.canonical;
-    const product = draft.products.find(item => item.id === page.id);
-    if (product) { copy.productId = id; copy.sections = copy.sections.map(s => s.type === 'cta' && s.productId === product.id ? { ...s, productId: id } : s); }
-    const products = product ? [...draft.products, { ...structuredClone(product), id, published: false }] : draft.products;
-    if (applyValidated({ ...draft, products, pages: [...draft.pages, copy] })) { setSelectedPageId(id); setSelectedSectionId(''); }
+    const id = uniqueId([...draft.pages.flatMap(item => [item.id, item.slug]), ...draft.products.map(item => item.id)], `${page.id}-copy`);
+    if (applyValidated(copyEditorPage(draft, page, id))) { setSelectedPageId(id); setSelectedSectionId(''); }
   }
   function removePage() {
     if (!draft || !page || !window.confirm(`${editorLabel('confirmRemove', language)} ${editorLabel('hiddenReferenced', language)}`)) return;
@@ -669,10 +703,10 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
           <button type="button" name="publish" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => {
             const saved = await persist();
             if (!saved) return;
-            try { rememberWrite(await publishAdminDraft(saved.version), 'Published revision'); }
+            try { rememberWrite(await publishAdminDraft(saved.version, setProgress), 'Published revision'); }
             catch (error) {
-              if (error instanceof AdminApiError && error.status === 409) await failConflict();
-              else setErrors([error instanceof AdminApiError ? error.code : 'publish_failed']);
+              if (error instanceof AdminApiError && error.status === 409 && !error.preserveDraft) await failConflict();
+              else setErrors(operationErrors(error, 'publish_failed'));
             }
           })}>{translate('Publish')}</button>
           <button type="button" onClick={leave}>{translate('Close')}</button>
@@ -684,15 +718,33 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             {draft?.pages.map(item => <option key={item.id} value={item.id}>{item.id === 'home' ? ({ en: 'Home', fr: 'Accueil', es: 'Inicio' }[language]) : labelOf(item, language)}</option>)}
           </select>
         </label>
+        <button type="button" name="new-page" aria-expanded={newPageOpen} aria-controls="cms-new-page" disabled={!draft || busy || uploading || importing || pricingPending} onClick={() => setNewPageOpen(open => !open)}>{np('newPage')}</button>
         {page?.productId && <button type="button" name="edit-page-pricing" onClick={() => openPricing(page.productId!)}>{w('pricing')}</button>}
         <div className="cms-view-switch" role="group" aria-label={w('preview')}>
           {(['split','editor','preview'] as const).map(mode => <button key={mode} type="button" name={`view-${mode}`} aria-pressed={layout === mode} onClick={() => setLayout(mode)}>{w(mode)}</button>)}
         </div>
         <label className="cms-space-control" hidden={layout !== 'split'}>{w('editorWidth')}<input name="editor-width" type="range" min="28" max="58" value={editorWidth} onChange={event => setEditorWidth(Number(event.target.value))} /></label>
       </div>
+      <fieldset id="cms-new-page" className="cms-admin-create" hidden={!newPageOpen} disabled={!draft || busy || uploading || importing || pricingPending}>
+        <legend>{np('newPage')}</legend>
+        <label>{np('mode')}<select name="new-page-mode" value={newPageMode} onChange={event => setNewPageMode(event.target.value as typeof newPageMode)}>
+          {(['starter', 'blank', 'copy'] as const).map(mode => <option key={mode} value={mode}>{np(mode)}</option>)}
+        </select></label>
+        {newPageMode === 'starter' && <label>{np('template')}<select name="new-page-template" value={newPageTemplate} onChange={event => setNewPageTemplate(event.target.value as typeof newPageTemplate)}>
+          {(['landing', 'editorial'] as const).map(template => <option key={template} value={template}>{np(template)}</option>)}
+        </select></label>}
+        {newPageMode === 'copy' && <label>{np('source')}<select name="copy-page-source" value={copyPageId || page?.id || ''} onChange={event => setCopyPageId(event.target.value)}>
+          {draft?.pages.map(item => <option key={item.id} value={item.id}>{labelOf(item, language)}</option>)}
+        </select></label>}
+        <label>{translate('New page id')}<input name="new-page-id" value={newPageId} autoComplete="off" spellCheck={false} onChange={event => setNewPageId(event.target.value)} /></label>
+        <label className="cms-admin-check"><input type="checkbox" name="show-in-navigation" checked={showInNav} onChange={event => setShowInNav(event.target.checked)} />{translate('Show in navigation')}</label>
+        <p>{np('safety')}</p>
+        <button type="button" name="add-page" onClick={addPage}>{translate('Add page')}</button>
+      </fieldset>
       <p className="cms-first-step">{w('intro')}</p>
       {pricingPending && <p className="cms-admin-notice" role="status">{w('pendingPrice')} <button type="button" name="return-to-pricing" onClick={() => { setWorkspace('pricing'); setLayout('split'); }}>{w('pricing')}</button></p>}
       {conflict && <p className="cms-admin-alert" data-admin-conflict role="alert">{translate(conflict)}</p>}
+      {progress && <p className="cms-admin-notice" data-admin-progress role="status" aria-live="polite">{PROGRESS_LABELS[language][progress.phase]}… {progress.done}/{progress.total}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}
       {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => <li key={error}>{editorError(error, language)}</li>)}</ul>}
       {!draft || !page ? <p>{translate('No draft is stored yet.')}</p> : (
@@ -709,17 +761,6 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                 {labelOf(item, language)}{item.enabled ? '' : translate(' (unpublished)')}
               </button>
             ))}
-            <div className="cms-admin-create">
-              <label>
-                {translate('New page id')}
-                <input name="new-page-id" value={newPageId} autoComplete="off" spellCheck={false} onChange={event => setNewPageId(event.target.value)} />
-              </label>
-              <label className="cms-admin-check">
-                <input type="checkbox" name="show-in-navigation" checked={showInNav} onChange={event => setShowInNav(event.target.checked)} />
-                {translate('Show in navigation')}
-              </label>
-              <button type="button" name="add-page" onClick={addPage}>{translate('Add page')}</button>
-            </div>
           </nav>
           </details>
           <div className="cms-admin-editor">
@@ -889,7 +930,13 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                 }}>{editorLabel('add', language)}</button>
                 </details>
               </details>
-              <div hidden={workspace !== 'history'}><DraftTransfer document={draft} language={language} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onImport={next => { applyValidated(next); }} /></div>
+              <div hidden={workspace !== 'history'}>
+                <DraftTransfer document={draft} language={language} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onImport={next => { applyValidated(next); }} />
+                <RecoveryTools language={language} document={draft} version={version} dirty={dirty} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onRestored={async result=>{
+                  try { const content=await loadAdminContent(); if(content.version<result.version)throw new Error('recovery_readback_failed'); applyContent(content); setRevisions(await loadAdminRevisions()); setNotice({version:result.version,label:'Restored private revision'}); }
+                  catch(error){setErrors(['staged_operation_failed',error instanceof AdminApiError?error.code:'recovery_readback_failed']);}
+                }} />
+              </div>
 
             </div>
             <fieldset hidden={workspace !== 'history'}>
@@ -913,13 +960,22 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
                   return;
                 }
                 try {
-                  const result = await rollbackAdminRevision(versionRef.current, revision);
+                  const result = await rollbackAdminRevision(versionRef.current, revision, setProgress);
                   rememberWrite(result, 'Rolled back as revision');
-                  applyContent(await loadAdminContent());
+                  // The confirmed server draft is now the rollback target, not the
+                  // displayed document. Only successful readback can reestablish a baseline.
+                  savedJson.current = '';
+                  // Commit is confirmed; a refresh failure must never enter conflict reload
+                  // recovery and replace the owner's still-mounted working document.
+                  try { applyContent(await loadAdminContent()); }
+                  catch (error) {
+                    setErrors(['staged_operation_failed', error instanceof AdminApiError ? error.code : 'load_failed']);
+                    return;
+                  }
                   setNotice({ version: result.version, label: 'Rolled back as revision' });
                 } catch (error) {
-                  if (error instanceof AdminApiError && error.status === 409) await failConflict();
-                  else setErrors([error instanceof AdminApiError ? error.code : 'rollback_failed']);
+                  if (error instanceof AdminApiError && error.status === 409 && !error.preserveDraft) await failConflict();
+                  else setErrors(operationErrors(error, 'rollback_failed'));
                 }
               })}>{translate('Rollback')}</button>
             </fieldset>

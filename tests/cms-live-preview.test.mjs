@@ -9,7 +9,9 @@ registerHooks({ load(url, context, nextLoad) {
   return nextLoad(url, context);
 } });
 const { Window } = await import('happy-dom');
-const window = new Window({ url: 'https://fez.example/admin' });
+// happy-dom 21 opts out of iframe browsing contexts by default, even for blank frames.
+// Enable that emulator feature only; production sandbox and script evaluation stay unchanged.
+const window = new Window({ url: 'https://fez.example/admin', settings: { enableIframePageLoading: true } });
 const assign = (key, value) => Object.defineProperty(globalThis, key, { configurable: true, writable: true, value });
 for (const key of ['window', 'document', 'navigator']) assign(key, key === 'window' ? window : window[key]);
 for (const key of Object.getOwnPropertyNames(window)) {

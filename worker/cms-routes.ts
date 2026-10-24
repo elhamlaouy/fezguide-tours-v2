@@ -4,9 +4,23 @@ import { MEDIA_KEY_PATTERN, uploadMedia, serveMedia, publishedMediaReferenced, t
 import { createAccessVerifier, type AccessVerifierOptions, type CmsAccessEnv } from './cms-auth';
 import { CmsError, CmsStore, MAX_DOCUMENT_BYTES, requireVersion, type CmsD1Database, type CmsDocumentValidator } from './cms-store';
 
-export interface CmsRoutesEnv extends CmsAccessEnv, CmsMediaEnv { CMS_DB?: CmsD1Database }
+import { stagedCmsResponse } from './cms-staged-routes';
+export interface CmsRoutesEnv extends CmsAccessEnv, CmsMediaEnv {
+  CMS_DB?: CmsD1Database;
+  CMS_PROCESSING_MODE?: string;
+  CMS_PREPARATION_MODE?: string;
+  CMS_VALIDATION_POLICY?: string;
+  CMS_RENDERER_ID?: string;
+  CMS_SLUG_REDIRECTS?: string;
+  CMS_ASSET_ID?: string;
+  CMS_SHELL_ID?: string;
+  CANONICAL_ORIGIN?: string;
+  CMS_PUBLIC_DELIVERY_ORIGIN?: string;
+  ASSETS?: { fetch(request: Request): Promise<Response> };
+}
 export interface CmsHandlerOptions { validateDocument: CmsDocumentValidator; access?: AccessVerifierOptions }
 export const MAX_CMS_REQUEST_BYTES = MAX_DOCUMENT_BYTES + 4096;
+import { createPublicProjectionContext, projectPublicValue, publicMediaReferences, keepPublicMedia } from './cms-projection-parts';
 const DOCUMENT_FIELDS = ['schemaVersion', 'siteSettings', 'theme', 'navigation', 'footer', 'uiCopy', 'pages',
   'products', 'editorialEntries', 'blogPosts', 'teamMembers', 'faqs', 'media', 'reviews', 'legacy'] as const;
 const LEGACY_FIELDS = ['tours', 'customPages', 'blogPosts', 'teamMembers', 'faqs', 'siteSettings'] as const;
@@ -17,65 +31,17 @@ function pick(value: object, fields: readonly string[]) {
 }
 type PublicRecord = Record<string, unknown>;
 const records = (value: unknown): PublicRecord[] => Array.isArray(value) ? value : [];
-const hidden = (value: PublicRecord) => value.enabled === false || value.published === false;
 export function publicCmsDocument(value: object) {
   const result = pick(value, DOCUMENT_FIELDS);
   if (result.legacy && typeof result.legacy === 'object' && !Array.isArray(result.legacy)) result.legacy = pick(result.legacy, LEGACY_FIELDS);
   else delete result.legacy;
-  const legacy = (result.legacy ?? {}) as PublicRecord;
-  const pages = records(result.pages);
-  const products = records(result.products);
-  const copies = [...records(result.blogPosts), ...records(legacy.blogPosts), ...records(legacy.customPages), ...records(legacy.tours)];
-  // A hidden entity remains hidden in every copy, even when its other flags disagree.
-  // Products' pageId is often a category, not their detail page: never hide that category.
-  const pageIds = new Set([...pages, ...products, ...copies].filter(hidden).map(record => record.id));
-  const productIds = new Set([...products, ...records(legacy.tours)].filter(hidden).map(record => record.id));
-  let changed = true;
-  while (changed) {
-    const size = pageIds.size + productIds.size;
-    for (const page of pages) {
-      if (pageIds.has(page.parentId) || productIds.has(page.productId)) pageIds.add(page.id);
-    }
-    for (const product of products) {
-      if (pageIds.has(product.id) || pageIds.has(product.pageId)) productIds.add(product.id);
-    }
-    for (const copy of copies) {
-      if (pageIds.has(copy.id) || pageIds.has(copy.pageId) || productIds.has(copy.id)) pageIds.add(copy.id);
-    }
-    changed = size !== pageIds.size + productIds.size;
-  }
-  const reviewIds = new Set(records(result.reviews).filter(hidden).map(record => record.id));
-  function project(child: unknown, field = ''): unknown {
-    if (Array.isArray(child)) {
-      const ids = field === 'productIds' ? productIds : field === 'reviewIds' ? reviewIds : null;
-      return child.filter(item => !ids?.has(item)).map(item => project(item, field)).filter(item => item !== undefined);
-    }
-    if (!child || typeof child !== 'object') return child;
-    const record = child as PublicRecord;
-    if (hidden(record) || pageIds.has(record.pageId) || productIds.has(record.productId) ||
-      (['pages', 'tours', 'customPages', 'blogPosts'].includes(field) && pageIds.has(record.id)) ||
-      (['products', 'tours'].includes(field) && productIds.has(record.id))) return undefined;
-    return Object.fromEntries(Object.entries(record).map(([key, item]) => [key, project(item, key)]));
-  }
-  const projected = project(result) as PublicRecord;
+  const context = createPublicProjectionContext(result);
+  const projected = projectPublicValue(result, context) as PublicRecord;
   // Keep the public media library, but exclude metadata used only by hidden content.
-  const media = records(result.media);
-  const mediaSources = new Map(media.map(record => [record.src, record.id]));
-  function mediaReferences(child: unknown, ids = new Set<unknown>()): Set<unknown> {
-    if (Array.isArray(child)) child.forEach(item => mediaReferences(item, ids));
-    else if (child && typeof child === 'object') {
-      for (const [key, item] of Object.entries(child)) {
-        if (key === 'media') continue;
-        if (key === 'mediaId') ids.add(item);
-        mediaReferences(item, ids);
-      }
-    } else if (mediaSources.has(child)) ids.add(mediaSources.get(child));
-    return ids;
-  }
   if (Array.isArray(result.media)) {
-    const originalIds = mediaReferences(result);
-    const publicIds = mediaReferences(projected);
-    projected.media = media.filter(record => !originalIds.has(record.id) || publicIds.has(record.id));
+    const originalIds = publicMediaReferences(result, context);
+    const publicIds = publicMediaReferences(projected, context);
+    projected.media = records(result.media).filter(record => keepPublicMedia(record.id, originalIds, publicIds));
   }
   return projected;
 }
@@ -167,10 +133,22 @@ export function createCmsHandler(options: CmsHandlerOptions) {
     }
     // Custom metadata header prevents simple cross-origin form uploads; Fetch Metadata
     // additionally rejects cross-site browser writes even when Origin is omitted.
-    if (path === '/api/admin/media' && request.method === 'POST' && request.headers.get('sec-fetch-site') === 'cross-site') return json({ error: 'forbidden_origin' }, 403);
+    const stagedWrite = (env.CMS_PROCESSING_MODE === 'staged-v1' || env.CMS_PREPARATION_MODE === 'bootstrap-v1') && admin && !['GET', 'HEAD'].includes(request.method);
+    if (((path === '/api/admin/media' && request.method === 'POST') || stagedWrite) && request.headers.get('sec-fetch-site') === 'cross-site') return json({ error: 'forbidden_origin' }, 403);
     const mediaPrefix = publicMedia ? '/media/' : '/api/admin/media/';
     const mediaKey = path.startsWith(mediaPrefix) ? path.slice(mediaPrefix.length) : null;
     if (mediaKey !== null && !MEDIA_KEY_PATTERN.test(mediaKey)) return json({ error: 'not_found' }, 404);
+    const fullStaged = env.CMS_PROCESSING_MODE === 'staged-v1';
+    if (fullStaged || (env.CMS_PREPARATION_MODE === 'bootstrap-v1' && admin)) {
+      try {
+        const response = await stagedCmsResponse(request, env, identity?.subject ?? null, { json, requestJson, exactFields, queryNumber }, !fullStaged);
+        if (response) return response;
+      } catch (error) {
+        const response = error instanceof CmsError ? json({ error: error.code }, error.status) : json({ error: 'cms_unavailable' }, 503);
+        if (error instanceof CmsError && error.retryAfter) response.headers.set('Retry-After', String(error.retryAfter));
+        return response;
+      }
+    }
     const revisionMatch = /^\/api\/admin\/content\/revisions\/([1-9]\d{0,15})$/.exec(path);
     const methods: Record<string, string> = {
       '/api/cms': 'GET', '/api/cms/document': 'GET', '/api/admin/content': 'GET',

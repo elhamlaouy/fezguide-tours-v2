@@ -77,6 +77,7 @@
 .cms-section-panels button:last-child{font-size:.66rem;color:var(--cms-muted)}
 .cms-focused-section>.cms-section-fields>fieldset,.cms-focused-section [data-section-fields]>fieldset{border:0;padding:0;margin-top:.3rem}
 .cms-focused-section [data-section-fields]>fieldset>legend{display:none}
+.cms-admin .cms-recovery-tools{border:1px solid var(--cms-line);border-radius:9px;padding:.8rem;margin:.8rem 0;background:#f8fafb}.cms-recovery-tools>h3{margin:.1rem 0 .55rem}.cms-recovery-tools>p{font-size:.73rem;color:var(--cms-muted);margin:.45rem 0}.cms-recovery-tools>button{margin:.2rem .3rem .4rem 0;font-size:.74rem}.cms-recovery-tools label{margin:.5rem 0}.cms-recovery-tools hr{border:0;border-top:1px solid var(--cms-line);margin:.8rem 0}
 .cms-photo-picker{border:1px solid var(--cms-line);border-radius:9px;padding:.8rem;margin-top:1rem}
 .cms-admin-media{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:0;margin:.65rem 0}
 .cms-admin-media button{display:flex;flex-direction:column;padding:4px;width:100%;height:100%;gap:.3rem;border-radius:7px;font-size:.66rem}

@@ -1,0 +1,34 @@
+import React,{useState} from 'react';
+import type {CmsDocument} from '../cms/schema';
+import {downloadPortableBackup,openBackup,restorePortableArchive,unusedFileReport,type PortableArchive,type RecoveryProgress} from './recovery-api';
+import type {AdminWriteResult} from './admin-api';
+
+type Language='en'|'fr'|'es';
+const COPY:Record<Language,Record<string,string>>={
+ en:{title:'Recovery',backup:'Download saved history + photos',backupHelp:'This backs up saved revisions and stored photos. It does not include unsaved editor changes.',choose:'Verify a backup file',revision:'Revision to restore',restore:'Restore as a private draft',restoreHelp:'Adds one new private revision. It does not publish, overwrite history, or delete files.',confirm:'Restore this saved revision as a new private draft? The current public version will not change.',scan:'Check for unused files',scanHelp:'Read-only advisory scan. Review candidates before any separate cleanup decision.',scanResult:'Read-only report complete. No files deleted.',restored:'Private draft restored. The public version was not changed.',invalid:'Could not verify this backup or complete recovery.',noRevision:'No restorable revision in this file.'},
+ fr:{title:'Récupération',backup:'Télécharger l’historique et les photos',backupHelp:'Sauvegarde les révisions enregistrées et les photos. Les modifications non enregistrées ne sont pas incluses.',choose:'Vérifier un fichier de sauvegarde',revision:'Révision à restaurer',restore:'Restaurer comme brouillon privé',restoreHelp:'Ajoute une nouvelle révision privée. Ne publie pas, ne remplace pas l’historique et ne supprime aucun fichier.',confirm:'Restaurer cette révision comme nouveau brouillon privé ? La version publique ne changera pas.',scan:'Rechercher les fichiers inutilisés',scanHelp:'Analyse consultative en lecture seule. Examiner les fichiers avant toute décision séparée de nettoyage.',scanResult:'Rapport en lecture seule terminé. Aucun fichier supprimé.',restored:'Brouillon privé restauré. La version publique n’a pas changé.',invalid:'Impossible de vérifier cette sauvegarde ou de terminer la récupération.',noRevision:'Aucune révision restaurable dans ce fichier.'},
+ es:{title:'Recuperación',backup:'Descargar historial guardado y fotos',backupHelp:'Guarda las revisiones y fotos almacenadas. No incluye cambios sin guardar del editor.',choose:'Verificar un archivo de copia de seguridad',revision:'Revisión que restaurar',restore:'Restaurar como borrador privado',restoreHelp:'Añade una revisión privada nueva. No publica, no sobrescribe el historial ni elimina archivos.',confirm:'¿Restaurar esta revisión como un nuevo borrador privado? La versión pública no cambiará.',scan:'Buscar archivos sin uso',scanHelp:'Análisis consultivo de solo lectura. Revisa los candidatos antes de decidir por separado cualquier limpieza.',scanResult:'Informe de solo lectura completado. No se eliminó ningún archivo.',restored:'Borrador privado restaurado. La versión pública no cambió.',invalid:'No se pudo verificar la copia de seguridad o completar la recuperación.',noRevision:'No hay revisiones que se puedan restaurar en este archivo.'},
+};
+function download(blob:Blob,name:string){const url=URL.createObjectURL(blob),link=window.document.createElement('a');link.href=url;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(url),0);}
+export function RecoveryTools({language,document,version,dirty,disabled,onBusyChange,onRestored,onError}:{language:Language;document:CmsDocument;version:number;dirty:boolean;disabled:boolean;onBusyChange:(busy:boolean)=>void;onRestored:(result:AdminWriteResult)=>Promise<void>;onError:(errors:string[])=>void}):React.JSX.Element{
+ const t=(key:string)=>COPY[language][key]??key;
+ const [archive,setArchive]=useState<PortableArchive|null>(null),[revision,setRevision]=useState(''),[working,setWorking]=useState(false),[message,setMessage]=useState(''),[problem,setProblem]=useState('');
+ const busy=working||disabled;
+ async function run(work:(progress:RecoveryProgress)=>Promise<void>){if(busy)return;setWorking(true);setProblem('');onBusyChange(true);try{await work(setMessage);}catch(error){const code=error instanceof Error?error.message:'recovery_failed';setProblem(code);onError([code]);}finally{setWorking(false);onBusyChange(false);}}
+ return <section className="cms-recovery-tools" aria-labelledby="cms-recovery-title">
+  <h3 id="cms-recovery-title">{t('title')}</h3>
+  <p>{t('backupHelp')}</p>
+  <button type="button" name="download-backup" disabled={busy} onClick={()=>void run(async progress=>{const blob=await downloadPortableBackup(progress);download(blob,'fez-guide-tours-backup.fezcms');setMessage(`Backup complete · ${Math.round(blob.size/1024)} KB`);})}>{t('backup')}</button>
+  <label>{t('choose')}<input name="backup-file" type="file" accept=".fezcms,application/octet-stream" disabled={busy} onChange={event=>{const file=event.currentTarget.files?.[0];event.currentTarget.value='';if(!file)return;void run(async progress=>{const opened=await openBackup(file,progress);setArchive(opened);const versions=opened.header.entries.filter(entry=>entry.type==='revision');setRevision(String(opened.header.source.draftRevision??versions.at(-1)?.version??''));setMessage(`${versions.length} revisions verified · ${opened.header.entries.filter(entry=>entry.type==='media').length} photos verified`);});}} /></label>
+  {archive&&<>
+   {archive.header.entries.filter(entry=>entry.type==='revision').length===0?<p>{t('noRevision')}</p>:<label>{t('revision')}<select name="restore-revision" value={revision} disabled={busy} onChange={event=>setRevision(event.target.value)}>{archive.header.entries.filter(entry=>entry.type==='revision').map(entry=><option key={entry.version} value={entry.version}>Revision {entry.version} · {entry.kind} · {entry.created_at}</option>)}</select></label>}
+   <p>{t('restoreHelp')}</p>
+   <button type="button" name="restore-archive" disabled={busy||dirty||!revision} onClick={()=>{if(!window.confirm(t('confirm')))return;void run(async progress=>{const result=await restorePortableArchive(archive,Number(revision),version,document,progress);await onRestored(result);setMessage(t('restored'));});}}>{t('restore')}</button>
+  </>}
+  <hr />
+  <p>{t('scanHelp')}</p>
+  <button type="button" name="scan-orphans" disabled={busy} onClick={()=>void run(async progress=>{const report=await unusedFileReport(progress);setMessage(`${t('scanResult')} ${report.scanned} checked · ${report.candidates.length} candidates.`);if(report.candidates.length)download(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),'fez-guide-tours-unused-file-report.json');})}>{t('scan')}</button>
+  {message&&<p role="status" aria-live="polite">{message}</p>}{problem&&<p role="alert">{t('invalid')} ({problem})</p>}
+  {working&&<p role="status" aria-live="polite">{message||t('title')}…</p>}
+ </section>;
+}

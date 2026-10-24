@@ -61,6 +61,9 @@ export interface CmsDocument {
 export type CmsValidationResult = { valid: true; errors: string[]; document: CmsDocument } | { valid: false; errors: string[] };
 
 type Check = (value: unknown, path: string, errors: string[]) => void;
+// Keep part admission tied to the exact same check functions and collection limits.
+const objectFields = new WeakMap<Check, Record<string, Check>>();
+const arrayItems = new WeakMap<Check, { check: Check; max: number }>();
 const fail = (errors: string[], path: string, message: string) => { if (errors.length < CMS_LIMITS.errors) errors.push(`${path}: ${message}`); };
 const str = (max: number = CMS_LIMITS.text, pattern?: RegExp): Check => (v, p, e) => {
   if (typeof v !== 'string' || v.length > max || (pattern && !pattern.test(v))) fail(e, p, 'invalid or oversized string');
@@ -72,15 +75,23 @@ const number = (min: number, max: number, integer = false): Check => (v, p, e) =
 };
 const choice = (...values: (string | number)[]): Check => (v, p, e) => { if (!values.includes(v as string)) fail(e, p, 'unsupported value'); };
 const optional = (check: Check): Check => (v, p, e) => { if (v !== undefined) check(v, p, e); };
-const obj = (fields: Record<string, Check>): Check => (v, p, e) => {
+const obj = (fields: Record<string, Check>): Check => {
+  const check: Check = (v, p, e) => {
   if (!v || typeof v !== 'object' || Array.isArray(v)) { fail(e, p, 'expected object'); return; }
   const record = v as Record<string, unknown>;
   for (const key of Object.keys(record)) if (!Object.hasOwn(fields, key)) fail(e, `${p}.${key}`, 'unknown field');
   for (const [key, check] of Object.entries(fields)) check(record[key], `${p}.${key}`, e);
+  };
+  objectFields.set(check, fields);
+  return check;
 };
-const array = (check: Check, max: number = CMS_LIMITS.items): Check => (v, p, e) => {
-  if (!Array.isArray(v) || v.length > max) { fail(e, p, 'expected bounded array'); return; }
-  v.forEach((item, i) => check(item, `${p}[${i}]`, e));
+const array = (check: Check, max: number = CMS_LIMITS.items): Check => {
+  const collection: Check = (v, p, e) => {
+    if (!Array.isArray(v) || v.length > max) { fail(e, p, 'expected bounded array'); return; }
+    v.forEach((item, i) => check(item, `${p}[${i}]`, e));
+  };
+  arrayItems.set(collection, { check, max });
+  return collection;
 };
 const localized = (check: Check = str()): Check => obj({ en: check, fr: check, es: check });
 const copy = localized();
@@ -196,6 +207,57 @@ const documentCheck = obj({
   legacy: obj({ tours: array(pillar, CMS_LIMITS.pages), customPages: array(customPage), blogPosts: array(blog), teamMembers: array(team), faqs: array(faq), siteSettings }),
 });
 
+export interface CmsPart { kind: string; index: number; key?: string; value: unknown }
+export type CmsPartValidationResult = { valid: true; errors: string[] } | { valid: false; errors: string[] };
+const rootFields = objectFields.get(documentCheck)!;
+const partChecks: Record<string, Check> = { ...rootFields };
+delete partChecks.legacy;
+for (const [name, check] of Object.entries(objectFields.get(rootFields.legacy)!)) partChecks[`legacy.${name}`] = check;
+export const CMS_PART_FIELDS: Readonly<Record<string, { max: number; collection: boolean; depth: number }>> = Object.freeze(Object.fromEntries(
+  Object.entries(partChecks).map(([kind, check]) => [kind, Object.freeze({
+    max: kind === 'uiCopy' ? CMS_LIMITS.uiCopy : arrayItems.get(check)?.max ?? 1,
+    collection: kind === 'uiCopy' || arrayItems.has(check),
+    depth: (kind.startsWith('legacy.') ? 2 : 1) + (arrayItems.has(check) || kind === 'uiCopy' ? 1 : 0),
+  })]),
+));
+const manifestCheck = obj(Object.fromEntries(Object.entries(CMS_PART_FIELDS).map(([kind, spec]) => [kind, number(spec.collection ? 0 : 1, spec.max, true)])));
+
+/** Envelope/position checks only: also usable for already-admitted reference summaries. */
+export function isCmsPartEnvelope(value: unknown): value is CmsPart {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value))) return false;
+  const descriptors = Object.getOwnPropertyDescriptors(value);
+  if (Reflect.ownKeys(value).some(key => typeof key !== 'string' || !['kind', 'index', 'key', 'value'].includes(key))) return false;
+  if (Object.values(descriptors).some(d => !d.enumerable || d.get || d.set)) return false;
+  if (!['kind', 'index', 'value'].every(key => Object.hasOwn(descriptors, key))) return false;
+  const part = value as CmsPart;
+  if (typeof part.kind !== 'string' || !Number.isInteger(part.index) || part.index < 0) return false;
+  if (part.kind === 'manifest') return part.index === 0 && !Object.hasOwn(part, 'key');
+  if (!Object.hasOwn(CMS_PART_FIELDS, part.kind) || part.index >= CMS_PART_FIELDS[part.kind].max) return false;
+  if (part.kind !== 'uiCopy') return !Object.hasOwn(part, 'key');
+  return typeof part.key === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,159}$/.test(part.key) && !['__proto__', 'constructor', 'prototype'].includes(part.key);
+}
+
+/** Admit exactly one real field item at its original full-document JSON depth. */
+export function validateCmsPart(part: CmsPart): CmsPartValidationResult {
+  const errors: string[] = [];
+  try {
+    if (!isCmsPartEnvelope(part)) return { valid: false, errors: ['part: invalid kind, index, key or envelope'] };
+    if (part.kind === 'manifest') {
+      if (!isJson(part.value)) return { valid: false, errors: ['manifest: expected safe JSON data'] };
+      manifestCheck(part.value, 'manifest', errors);
+    } else {
+      const spec = CMS_PART_FIELDS[part.kind];
+      // The dictionary wrapper is intentional: poison keys must not disappear via object assignment.
+      const value = part.kind === 'uiCopy' ? { [part.key!]: part.value } : part.value;
+      if (!isJson(value, new Set(), spec.depth - (part.kind === 'uiCopy' ? 1 : 0))) return { valid: false, errors: ['document: expected safe JSON data'] };
+      const field = partChecks[part.kind];
+      if (part.kind === 'uiCopy') field(value, 'document.uiCopy', errors);
+      else (arrayItems.get(field)?.check ?? field)(value, `document.${part.kind}${spec.collection ? `[${part.index}]` : ''}`, errors);
+    }
+    return errors.length ? { valid: false, errors } : { valid: true, errors: [] };
+  } catch { return { valid: false, errors: ['part: invalid input'] }; }
+}
+
 /** Reject non-JSON objects, dangerous keys and recursion before any field traversal. */
 function isJson(value: unknown, ancestors = new Set<object>(), depth = 0): boolean {
   if (depth > 30) return false;
@@ -213,15 +275,9 @@ function isJson(value: unknown, ancestors = new Set<object>(), depth = 0): boole
   return true;
 }
 
-/** Pure validation: never merges source defaults into an editor's valid document. */
-export function validateCmsDocument(value: unknown): CmsValidationResult {
+/** Relationship-only validation. Call only after real field admission (or on trusted reference summaries). */
+export function validateCmsRelationships(value: CmsDocument): string[] {
   const errors: string[] = [];
-  try {
-    if (!isJson(value)) return { valid: false, errors: ['document: expected safe JSON data'] };
-    const encoded = JSON.stringify(value);
-    if (encoded.length > CMS_LIMITS.bytes || new TextEncoder().encode(encoded).length > CMS_LIMITS.bytes) return { valid: false, errors: ['document: exceeds byte limit'] };
-    documentCheck(value, 'document', errors);
-    if (errors.length) return { valid: false, errors };
     const d = value as CmsDocument;
     const unique = (values: string[], path: string) => { if (new Set(values).size !== values.length) fail(errors, path, 'duplicate identifier'); };
     const ids = (items: { id: string }[], path: string) => { unique(items.map(i => i.id), path); return new Set(items.map(i => i.id)); };
@@ -273,10 +329,10 @@ export function validateCmsDocument(value: unknown): CmsValidationResult {
     }
     for (const page of d.pages) {
       const p = `pages.${page.id}`;
-      if (['admin', 'api', 'assets', 'media', 'images', 'fonts', 'en', 'fr', 'es'].includes(page.slug)) fail(errors, p, 'reserved slug');
+      if (['admin', 'api', 'assets', 'media', 'images', 'fonts', 'en', 'fr', 'es', 'ar'].includes(page.slug)) fail(errors, p, 'reserved slug');
       if (page.seo.canonical?.startsWith('/')) {
         const preferred = page.seo.canonical.slice(1);
-        const reserved = ['admin', 'api', 'assets', 'media', 'images', 'fonts', 'en', 'fr', 'es'];
+        const reserved = ['admin', 'api', 'assets', 'media', 'images', 'fonts', 'en', 'fr', 'es', 'ar'];
         if ((page.id === 'home' ? preferred !== '' : !/^[a-z0-9][a-z0-9-]{0,79}$/.test(preferred)) || reserved.includes(preferred)) fail(errors, `${p}.seo.canonical`, 'invalid canonical route');
         if (d.pages.some(other => other.id !== page.id && (other.slug === preferred || other.id === preferred || other.seo.canonical === page.seo.canonical))) fail(errors, `${p}.seo.canonical`, 'canonical route already used');
       }
@@ -319,6 +375,20 @@ export function validateCmsDocument(value: unknown): CmsValidationResult {
       const host = new URL(review.url).hostname;
       if (host !== 'tripadvisor.com' && !host.endsWith('.tripadvisor.com')) fail(errors, `reviews.${review.id}`, 'review attribution must link to Tripadvisor');
     }
+  return errors;
+}
+
+/** Pure validation: never merges source defaults into an editor's valid document. */
+export function validateCmsDocument(value: unknown): CmsValidationResult {
+  const errors: string[] = [];
+  try {
+    if (!isJson(value)) return { valid: false, errors: ['document: expected safe JSON data'] };
+    const encoded = JSON.stringify(value);
+    if (encoded.length > CMS_LIMITS.bytes || new TextEncoder().encode(encoded).length > CMS_LIMITS.bytes) return { valid: false, errors: ['document: exceeds byte limit'] };
+    documentCheck(value, 'document', errors);
+    if (errors.length) return { valid: false, errors };
+    const d = value as CmsDocument;
+    errors.push(...validateCmsRelationships(d));
     return errors.length ? { valid: false, errors } : { valid: true, errors: [], document: d };
   } catch { return { valid: false, errors: ['document: invalid input'] }; }
 }

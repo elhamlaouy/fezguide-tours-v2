@@ -1,0 +1,47 @@
+# Isolated CMS candidate — PUBLIC Worker (test public business site)
+# Deploy target: fezguidetours-cms-candidate-public  (workers.dev test URL; never the live apex/www)
+# Bound exclusively to NEW isolated resources; never touches production/old-preview D1/R2 or vars.
+name = "fezguidetours-cms-candidate-public"
+main = "worker/candidate-public.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+preview_urls = false
+account_id = "417f3820605485ace5bdbb9576452f42"
+
+[[d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms-candidate-20261024"
+database_id = "8b82c07d-273d-459f-abc2-1dbb2f81e586"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-candidate-media-20261024"
+
+[images]
+binding = "CMS_IMAGES"
+
+# Config-defined namespace: SHA256(worker name), first 32 bits unsigned.
+# Approximate per-location counter, not a global quota or billing cap.
+[[ratelimits]]
+name = "CMS_PUBLIC_RATE_LIMITER"
+namespace_id = "1866884043"
+simple = { limit = 600, period = 60 }
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Unknown bypassed asset URLs must not return the business homepage.
+not_found_handling = "none"
+run_worker_first = ["/*", "!/assets/*", "!/images/*", "!/fonts/*", "!/favicon.svg"]
+
+[vars]
+# Both Workers pin the PUBLIC test origin; the editor hostname is not a publication origin.
+CANONICAL_ORIGIN = "https://fezguidetours-cms-candidate-public.elhamlaouy.workers.dev"
+CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
+CMS_PROCESSING_MODE = "staged-v1"
+CMS_PUBLIC_DELIVERY_ORIGIN = "https://fezguidetours-cms-candidate-public.elhamlaouy.workers.dev"
+CMS_VALIDATION_POLICY = "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab"
+CMS_RENDERER_ID = "ad70decb5754943e8c24250fbf3fb38d10912851e02bed3a411f40c0a671d876"
+CMS_ASSET_ID = "2a33181ad5382544e8d9a9ffa83cec1340986f051808fc2e7eaa1a30b3e6a496"
+CMS_SHELL_ID = "25aac7cf54eefe4a0ea754a78aefd65fda0a46a41325b8f3301befbc470e423a"

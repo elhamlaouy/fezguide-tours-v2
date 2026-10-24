@@ -1,0 +1,59 @@
+{
+  "scope": "Approved isolated candidate host setup; provider readback, not login or deployment clearance",
+  "access_readback": {
+    "url": "https://dash.cloudflare.com/api/v4/accounts/417f3820605485ace5bdbb9576452f42/access/apps/757cd74c-101d-47bb-aac0-99282d693d1f",
+    "explicit_reload_after_save": true,
+    "success": true,
+    "application_id": "757cd74c-101d-47bb-aac0-99282d693d1f",
+    "name": "FezGuideTours CMS candidate editor",
+    "type": "self_hosted",
+    "aud": "fd4ff16b847e4719028d2c3f43834df2034356c623d3e9f8a210e8592b365ce6",
+    "created_at": "2026-10-24T15:36:53Z",
+    "updated_at": "2026-10-24T15:52:26Z",
+    "domain": "app.fezguidetours.com",
+    "self_hosted_domains": ["app.fezguidetours.com"],
+    "destinations": [{"type": "public", "uri": "app.fezguidetours.com"}],
+    "policy": {
+      "id": "c2f8f5c5-533e-455b-99e8-992e23458beb",
+      "name": "FezGuideTours candidate approved editors",
+      "decision": "allow",
+      "include": [{"email": {"email": "elhamlaouy@gmail.com"}}, {"email": {"email": "fezguidetours1@gmail.com"}}],
+      "exclude": [],
+      "require": [],
+      "reusable": true,
+      "precedence": 1,
+      "updated_at": "2026-10-24T15:35:23Z"
+    },
+    "policy_count": 1,
+    "session_duration": "24h",
+    "http_only_cookie_attribute": true,
+    "options_preflight_bypass": false,
+    "enable_binding_cookie": false,
+    "eager_redirect_cookie_setting": true
+  },
+  "editor_alias_closed_before_access_host_move": {
+    "worker": "fezguidetours-cms-candidate-app",
+    "account_id": "417f3820605485ace5bdbb9576452f42",
+    "write_path": "workers/scripts/fezguidetours-cms-candidate-app/subdomain",
+    "before": {"enabled": true, "previews_enabled": true},
+    "explicit_write": {"enabled": false, "previews_enabled": false},
+    "independent_readback": {"enabled": false, "previews_enabled": false},
+    "readback_utc": "2026-10-24T15:52:03.123Z"
+  },
+  "custom_host_read_only_preflight": {
+    "zone_id": "6274f60c4feb905b6c352ffbe4a4ec6f",
+    "zone_name": "fezguidetours.com",
+    "zone_status": "active",
+    "zone_account_id": "417f3820605485ace5bdbb9576452f42",
+    "zone_matches_total": 1,
+    "app_dns_records_total": 0,
+    "app_worker_custom_domain_matches": []
+  },
+  "limits": [
+    "Only the new Access app changed; no existing production/old-preview Access settings changed",
+    "App custom hostname not attached; no candidate config redeployment or DNS write yet",
+    "Local app config still has zero audience pending bounded reviewed update",
+    "Protected configuration is not a successful login or hosted CMS lifecycle proof",
+    "No paid-plan change, owner-content import/publication or original D1/R2 write"
+  ]
+}

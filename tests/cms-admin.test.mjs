@@ -19,7 +19,9 @@ registerTsx();
 register(pathToFileURL(loaderPath));
 
 const { Window } = await import('happy-dom');
-const window = new Window({ url: 'https://fez.example/admin' });
+// happy-dom 21 opts out of iframe browsing contexts by default, even for blank frames.
+// Enable that emulator feature only; production sandbox and script evaluation stay unchanged.
+const window = new Window({ url: 'https://fez.example/admin', settings: { enableIframePageLoading: true } });
 const assign = (key, value) => {
   try { globalThis[key] = value; }
   catch { Object.defineProperty(globalThis, key, { configurable: true, writable: true, value }); }
@@ -166,6 +168,75 @@ const serial = (name, fn) => test(name, async () => {
   await previous;
   try { await fn(); }
   finally { release(); }
+});
+
+serial('visible new page creates a true blank without losing edits or writing automatically', async () => {
+  let saved;
+  installFetch(({ url, method, body }) => {
+    if (url.endsWith('/revisions')) return { body: { revisions: [] } };
+    if (method === 'PUT') { saved = body.document; return { body: { version: 3, draftRevision: 3, published: false } }; }
+    return { body: content(cmsDoc()) };
+  });
+  await render();
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Unsaved home');
+  const trigger = document.querySelector('button[name="new-page"]');
+  assert.ok(trigger, 'visible New page action exists');
+  assert.equal(trigger.closest('details'), null, 'not buried in All pages');
+  await click('button[name="new-page"]');
+  await choose('select[name="new-page-mode"]', 'blank');
+  await typeInto('input[name="new-page-id"]', 'empty-page');
+  await click('button[name="add-page"]');
+  assert.equal(document.querySelector('select[name="current-page"]').value, 'empty-page');
+  assert.equal(document.querySelector('input[data-flag="page-enabled"]').checked, false);
+  assert.equal(document.querySelectorAll('button[data-section-tab]').length, 0);
+  assert.equal(puts().length, 0);
+  await click('button[name="save-draft"]');
+  assert.deepEqual(saved.pages.find(p => p.id === 'empty-page').sections, []);
+  assert.equal(saved.pages[0].title.en, 'Unsaved home');
+  assert.deepEqual(saved.navigation, []);
+});
+
+serial('new page starter, copy source, identity guards and EN FR ES labels are mounted', async () => {
+  for (const [language, label] of [['en', 'New page'], ['fr', 'Nouvelle page'], ['es', 'Nueva página']]) {
+    let saved;
+    const doc = cmsDoc();
+    doc.pages[0].seo.canonical = '/';
+    installFetch(({ url, method, body }) => {
+      if (url.endsWith('/revisions')) return { body: { revisions: [] } };
+      if (method === 'PUT') { saved = body.document; return { body: { version: 3, draftRevision: 3, published: false } }; }
+      return { body: content(doc) };
+    });
+    await render(language);
+    assert.equal(document.querySelector('button[name="new-page"]').textContent, label);
+    assert.equal(document.querySelector('#cms-new-page').hidden, true);
+    await click('button[name="new-page"]');
+    assert.equal(document.querySelector('#cms-new-page').hidden, false);
+    await choose('select[name="new-page-template"]', 'editorial');
+    await typeInto('input[name="new-page-id"]', 'story-page');
+    await click('button[name="add-page"]');
+    assert.equal(document.querySelector('select[name="current-page"]').value, 'story-page', document.querySelector('[data-field-errors]')?.textContent);
+    assert.ok(document.querySelector('[data-section-tab="story"]'));
+    await choose('select[name="new-page-mode"]', 'copy');
+    assert.equal(document.querySelectorAll('select[name="copy-page-source"] option').length, 2);
+    await choose('select[name="copy-page-source"]', 'home');
+    await typeInto('input[name="new-page-id"]', 'ar');
+    await click('button[name="add-page"]');
+    assert.ok(document.querySelector('[data-field-errors]'));
+    assert.equal(document.querySelector('select[name="current-page"]').value, 'story-page', document.querySelector('[data-field-errors]')?.textContent);
+    await typeInto('input[name="new-page-id"]', 'home');
+    await click('button[name="add-page"]');
+    assert.ok(document.querySelector('[data-field-errors]'));
+    await typeInto('input[name="new-page-id"]', 'home-copy');
+    await click('button[name="add-page"]');
+    assert.equal(document.querySelector('select[name="current-page"]').value, 'home-copy');
+    assert.equal(puts().length, 0);
+    await click('button[name="save-draft"]');
+    assert.equal(saved.pages.find(p => p.id === 'story-page').kind, 'editorial');
+    assert.equal(saved.pages.find(p => p.id === 'home-copy').seo.canonical, undefined);
+    assert.equal(saved.pages.find(p => p.id === 'home-copy').enabled, false);
+    assert.deepEqual(saved.pages.find(p => p.id === 'home-copy').sections, doc.pages[0].sections);
+    assert.equal(validateCmsDocument(saved).valid, true);
+  }
 });
 
 serial('seeded product category edits and canonical page duplicates save valid relationships', async () => {
@@ -460,7 +531,7 @@ serial('adds, duplicates, and removes a schema section', async () => {
   assert.equal(saved.pages[0].sections.every(item => item.type === 'benefits'), true);
 });
 
-serial('creates an enabled page and adds navigation only when checked', async () => {
+serial('creates a disabled starter page and adds navigation only when checked', async () => {
   let saved;
   installFetch(({ url, method, body }) => {
     if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc()) };
@@ -477,7 +548,7 @@ serial('creates an enabled page and adds navigation only when checked', async ()
   await click('button[name="add-page"]');
   const added = await waitFor(() => document.querySelector('button[data-page="summer-walk"]'));
   assert.equal(added.getAttribute('aria-current'), 'page');
-  assert.doesNotMatch(added.textContent, /unpublished/);
+  assert.match(added.textContent, /unpublished/);
   assert.equal(document.querySelector('[data-nav-page="summer-walk"]'), null);
   assert.match(previewQuery().textContent, /summer-walk/);
   assert.ok(document.querySelector('button[data-section-tab="hero"]'));
@@ -496,11 +567,11 @@ serial('creates an enabled page and adds navigation only when checked', async ()
   assert.equal(valid.valid, true, valid.errors?.join('\n'));
   const summer = saved.pages.find(item => item.id === 'summer-walk');
   const night = saved.pages.find(item => item.id === 'night-walk');
-  assert.equal(summer.enabled, true);
+  assert.equal(summer.enabled, false);
   assert.equal(summer.slug, 'summer-walk');
   assert.equal(summer.sections.length, 1);
   assert.equal(summer.sections[0].type, 'hero');
-  assert.equal(night.enabled, true);
+  assert.equal(night.enabled, false);
   assert.equal(saved.navigation.some(link => link.pageId === 'summer-walk'), false);
   assert.equal(saved.navigation.some(link => link.pageId === 'night-walk'), true);
   assert.equal(saved.footer.links.some(link => link.pageId === 'night-walk'), false);

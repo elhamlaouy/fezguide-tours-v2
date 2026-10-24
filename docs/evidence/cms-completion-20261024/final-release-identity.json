@@ -1,0 +1,15 @@
+{
+  "contract": "cms-release-identity-v1",
+  "CMS_VALIDATION_POLICY": "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab",
+  "CMS_RENDERER_ID": "ad70decb5754943e8c24250fbf3fb38d10912851e02bed3a411f40c0a671d876",
+  "CMS_ASSET_ID": "2a33181ad5382544e8d9a9ffa83cec1340986f051808fc2e7eaa1a30b3e6a496",
+  "CMS_SHELL_ID": "25aac7cf54eefe4a0ea754a78aefd65fda0a46a41325b8f3301befbc470e423a",
+  "renderer": {
+    "files": 171,
+    "bytes": 32407809
+  },
+  "assets": {
+    "files": 963,
+    "bytes": 123623317
+  }
+}

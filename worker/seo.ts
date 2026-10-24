@@ -3,6 +3,7 @@ import { validateCmsDocument } from '../src/cms/schema';
 import { isPublicPage, pageLocaleAvailable } from '../src/cms/render-utils';
 import { pagePath, resolveRoute, type PublicRoute } from '../src/cms/routing';
 import { CmsStore } from './cms-store';
+import { slugRedirects } from './cms-slug-redirects';
 import { resolveImage } from '../src/cms/render-utils';
 import { imageSizes, optimizedImageSrc, responsiveImageProps } from '../src/cms/optimized-image';
 import { publicCmsDocument, type CmsRoutesEnv } from './cms-routes';
@@ -90,11 +91,7 @@ export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Pr
   }
   const route = resolveRoute(url, document);
   if (!route.page && env.CMS_SLUG_REDIRECTS) {
-    const raw = env.CMS_SLUG_REDIRECTS;
-    if (raw.length > 16_000) throw new Error('Oversized slug redirects');
-    const aliases: unknown = JSON.parse(raw);
-    if (!aliases || typeof aliases !== 'object' || Array.isArray(aliases) || Object.keys(aliases).length > 100 ||
-      Object.entries(aliases).some(([from, to]) => !/^[a-z0-9][a-z0-9-]{0,79}$/.test(from) || typeof to !== 'string' || !/^[a-z0-9][a-z0-9-]{0,79}$/.test(to))) throw new Error('Invalid slug redirects');
+    const aliases = slugRedirects(env.CMS_SLUG_REDIRECTS);
     const key = route.experienceId ?? route.pageId;
     const targetId = Object.hasOwn(aliases, key) ? (aliases as Record<string, string>)[key] : undefined;
     const target = document.pages.find(page => page.id === targetId && isPublicPage(document, page));
