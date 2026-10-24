@@ -354,6 +354,8 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const [conflict, setConflict] = useState('');
   const [notice, setNotice] = useState<Notice | null>(null);
   const [revisions, setRevisions] = useState<AdminRevision[]>([]);
+  const [historyError, setHistoryError] = useState(false);
+  const [historyReload, setHistoryReload] = useState(0);
   const [rollbackId, setRollbackId] = useState('');
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState<AdminProgress | null>(null);
@@ -414,7 +416,6 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     setLoadError('');
     try {
       applyContent(await loadAdminContent());
-      setRevisions(await loadAdminRevisions().catch(() => []));
     } catch (error) {
       if (error instanceof AdminApiError && error.status === 401) setStatus('unauthorized');
       else {
@@ -425,6 +426,13 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   }, [applyContent]);
 
   useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => {
+    if (status !== 'ready') return;
+    let current = true;
+    setHistoryError(false);
+    void loadAdminRevisions().then(items => { if (current) setRevisions(items); }).catch(() => { if (current) setHistoryError(true); });
+    return () => { current = false; };
+  }, [status, version, historyReload]);
   useEffect(() => { setLocale(language); }, [language]);
 
   const failConflict = useCallback(async () => {
@@ -933,14 +941,20 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
               <div hidden={workspace !== 'history'}>
                 <DraftTransfer document={draft} language={language} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onImport={next => { applyValidated(next); }} />
                 <RecoveryTools language={language} document={draft} version={version} dirty={dirty} disabled={busy || uploading || importing || pricingPending} onBusyChange={setImporting} onError={setErrors} onRestored={async result=>{
-                  try { const content=await loadAdminContent(); if(content.version<result.version)throw new Error('recovery_readback_failed'); applyContent(content); setRevisions(await loadAdminRevisions()); setNotice({version:result.version,label:'Restored private revision'}); }
-                  catch(error){setErrors(['staged_operation_failed',error instanceof AdminApiError?error.code:'recovery_readback_failed']);}
+                  versionRef.current=result.version; savedJson.current='';
+                  setVersion(result.version); setDraftRevision(result.draftRevision); setNotice(null);
+                  try { const content=await loadAdminContent(); if(content.version<result.version)throw new Error('recovery_readback_failed'); applyContent(content); setNotice({version:result.version,label:'Restored private revision'}); }
+                  catch{throw new Error('recovery_readback_failed');}
                 }} />
               </div>
 
             </div>
             <fieldset hidden={workspace !== 'history'}>
               <legend>{translate('Revisions')}</legend>
+              {historyError && <p data-history-error role="alert">
+                {{ en: 'History could not refresh. Your draft has not been changed.', fr: 'Impossible de rafraîchir l’historique. Votre brouillon n’a pas été modifié.', es: 'No se pudo actualizar el historial. Tu borrador no se ha modificado.' }[language]}
+                {' '}<button type="button" name="retry-history" disabled={busy || uploading || importing} onClick={() => setHistoryReload(current => current + 1)}>{{ en: 'Retry history', fr: 'Réessayer l’historique', es: 'Reintentar historial' }[language]}</button>
+              </p>}
               <ul>
                 {revisions.map(revision => (
                   <li key={revision.version}>

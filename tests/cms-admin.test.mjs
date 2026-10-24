@@ -1071,3 +1071,64 @@ serial('pending media upload blocks save publish rollback without a document wri
   assert.equal(document.querySelector('[name="save-draft"]').disabled, false);
   assert.equal(puts().length, 0); assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
 });
+
+serial('history refreshes after a private save without reloading the editor', async () => {
+  let state = content(cmsDoc());
+  let revisions = [{ version: 2, kind: 'draft', actor: 'fixture', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }];
+  installFetch(({ url, method, body }) => {
+    if (url.endsWith('/revisions')) return { body: { revisions: structuredClone(revisions) } };
+    if (method === 'PUT') {
+      state = { ...content(body.document, 3), publishedRevision: 1 };
+      revisions = [{ ...revisions[0], version: 3 }, ...revisions];
+      return { body: { version: 3, draftRevision: 3, published: false } };
+    }
+    return { body: structuredClone(state) };
+  });
+  await render();
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Saved title remains mounted');
+  await click('button[name="save-draft"]');
+  await waitFor(() => document.querySelector('[data-revision="3"]'));
+  await click('[data-workspace-tab="history"]');
+  await waitFor(() => [...document.querySelectorAll('fieldset button')].some(button => button.textContent === 'Revision 3 (draft)'));
+  assert.equal(document.querySelector('textarea[data-path="pages.home.title.en"]').value, 'Saved title remains mounted');
+  assert.equal(puts().length, 1);
+});
+
+serial('history refresh failure keeps saved and unsaved content and can retry without saving again', async () => {
+  let state = content(cmsDoc());
+  let failHistory = false;
+  installFetch(({ url, method, body }) => {
+    if (url.endsWith('/revisions')) return failHistory ? { status: 503, body: { error: 'unavailable' } } : { body: { revisions: [{ version: state.version, kind: 'draft', actor: 'fixture', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }] } };
+    if (method === 'PUT') { state = content(body.document, 3); failHistory = true; return { body: { version: 3, draftRevision: 3, published: false } }; }
+    return { body: structuredClone(state) };
+  });
+  await render();
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Saved successfully');
+  await click('button[name="save-draft"]');
+  await waitFor(() => document.querySelector('[data-revision="3"]'));
+  await waitFor(() => document.querySelector('[data-history-error]'));
+  assert.match(document.querySelector('[data-history-error]').textContent, /history/i);
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Unsaved after confirmed save');
+  failHistory = false;
+  await click('button[name="retry-history"]');
+  await waitFor(() => !document.querySelector('[data-history-error]'));
+  await waitFor(() => [...document.querySelectorAll('fieldset button')].some(button => button.textContent === 'Revision 3 (draft)'));
+  assert.equal(document.querySelector('textarea[data-path="pages.home.title.en"]').value, 'Unsaved after confirmed save');
+  assert.equal(puts().length, 1);
+  assert.match(document.querySelector('.cms-version-details').textContent, /Unsaved changes/);
+});
+
+for (const operation of ['publish', 'rollback']) serial(`history refreshes after ${operation} without reloading`, async () => {
+  let state = content(cmsDoc());
+  installFetch(({ url, method }) => {
+    if (url.endsWith('/revisions')) return { body: { revisions: [{ version: state.version, kind: state.version === 3 ? operation : 'draft', actor: 'fixture', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }] } };
+    if (method === 'POST' && url.endsWith('/' + operation)) { state = { ...content(cmsDoc(), 3), publishedRevision: 3 }; return { body: { version: 3, draftRevision: 3, published: true } }; }
+    return { body: structuredClone(state) };
+  });
+  await render();
+  if (operation === 'rollback') await typeInto('input[name="rollback-revision"]', '1');
+  await click(`button[name="${operation}"]`);
+  await waitFor(() => [...document.querySelectorAll('fieldset button')].some(button => button.textContent === `Revision 3 (${operation})`));
+  assert.equal(puts().length, 0);
+  assert.equal(calls.filter(call => call.method === 'POST').length, 1);
+});

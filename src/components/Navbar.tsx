@@ -108,8 +108,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7E2DA] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
         {/* Zone 1: Brand Wordmark / Logo */}
-        <div className="flex items-center">
-          <Logo brandName={contact.siteName} onClick={() => handleLinkClick('home')} size="md" className="max-[360px]:gap-1.5" />
+        <div className="flex min-w-0 items-center">
+          <Logo brandName={contact.siteName} onClick={() => handleLinkClick('home')} size="md" className="min-w-0 max-[360px]:gap-1.5 max-lg:[&>div:last-child]:min-w-0 max-lg:[&>div:last-child]:whitespace-normal max-lg:[&>div:last-child]:[overflow-wrap:anywhere] max-lg:[&>div:last-child>span]:min-w-0" />
         </div>
 
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
@@ -142,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Zone 3: 1-2 Primary Actions + Language Selector + Admin Link */}
-        <div className="flex items-center gap-2.5 sm:gap-3 max-[360px]:gap-2">
+        <div className="flex shrink-0 items-center gap-2.5 sm:gap-3 max-[360px]:gap-2">
           {/* Language Switcher Dropdown */}
           <div className="relative">
             <button
