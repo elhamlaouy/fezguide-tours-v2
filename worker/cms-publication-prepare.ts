@@ -175,11 +175,18 @@ export class PublicationPreparer {
       return this.status(selected,actor);
     } catch(error) { failure(error); }
   }
-  private async catalog(id: string, actor: string): Promise<Catalog> {
+  private async catalog(id: string, actor: string, progress = false): Promise<Catalog> {
     actorCheck(actor); const renderer=await this.configuration();
     if(typeof id!=='string'||!/^[a-f0-9]{32}$/.test(id)) throw new CmsError(400,'invalid_publication');
     const {policy,assets,origin}=this.config;
-    const row=await this.db.prepare(`SELECT c.id,c.actor,c.expected_version,c.target_revision,c.source_revision,c.source_digest,c.policy,c.renderer,c.assets,
+    const row=await this.db.prepare(`SELECT ${progress ? `(SELECT COUNT(*) FROM cms_artifact_entries WHERE catalog_id=c.id)+
+        (SELECT COUNT(*) FROM cms_catalog_upload_checks WHERE catalog_id=c.id)+
+        (SELECT COALESCE(SUM(COALESCE((SELECT p.work_units FROM cms_projection_cache p WHERE p.policy=c.policy AND p.context_digest=c.context_digest
+          AND p.kind=json_extract(m.value,'$.kind') AND p.digest=json_extract(m.value,'$.digest') AND p.part_key=COALESCE(json_extract(m.value,'$.key'),'')),
+          (SELECT w.processed FROM cms_large_projection_work w WHERE w.policy=c.policy AND w.context_digest=c.context_digest
+          AND w.kind=json_extract(m.value,'$.kind') AND w.digest=json_extract(m.value,'$.digest') AND w.part_key=COALESCE(json_extract(m.value,'$.key'),'')),0)),0)
+          FROM json_each(a.manifest) m)+
+        (SELECT COUNT(*) FROM json_each(a.manifest) m WHERE EXISTS(${this.cacheExists})) AS count,` : ''}c.id,c.actor,c.expected_version,c.target_revision,c.source_revision,c.source_digest,c.policy,c.renderer,c.assets,
       c.origin,c.context_digest,c.state,c.plan_json,c.expires_at>${clock} AS live,${clock}+3600 AS renew_at,
       EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version) AS bootstrap
       FROM cms_artifact_catalogs c
@@ -447,18 +454,9 @@ export class PublicationPreparer {
 
   async status(id: string, actor: string): Promise<Progress> {
     try {
-      const catalog=await this.catalog(id,actor);
+      const catalog=await this.catalog(id,actor,true);
       const plan=JSON.parse(catalog.plan_json) as Plan;
-      const row=await this.db.prepare(`SELECT (SELECT COUNT(*) FROM cms_artifact_entries WHERE catalog_id=c.id)+
-        (SELECT COUNT(*) FROM cms_catalog_upload_checks WHERE catalog_id=c.id)+
-        (SELECT COALESCE(SUM(COALESCE((SELECT p.work_units FROM cms_projection_cache p WHERE p.policy=c.policy AND p.context_digest=c.context_digest
-          AND p.kind=json_extract(m.value,'$.kind') AND p.digest=json_extract(m.value,'$.digest') AND p.part_key=COALESCE(json_extract(m.value,'$.key'),'')),
-          (SELECT w.processed FROM cms_large_projection_work w WHERE w.policy=c.policy AND w.context_digest=c.context_digest
-          AND w.kind=json_extract(m.value,'$.kind') AND w.digest=json_extract(m.value,'$.digest') AND w.part_key=COALESCE(json_extract(m.value,'$.key'),'')),0)),0)
-          FROM json_each(a.manifest) m)+
-        (SELECT COUNT(*) FROM json_each(a.manifest) m WHERE EXISTS(${this.cacheExists})) AS count
-        FROM cms_artifact_catalogs c JOIN cms_revision_admissions a ON a.revision=c.source_revision AND a.policy=c.policy AND a.digest=c.source_digest
-        WHERE c.id=?`).bind(id).first<{count:number}>();
+      const row=catalog as Catalog & {count:number};
       return {id,ready:catalog.state==='ready',done:row!.count,total:plan.parts+plan.entries.length+(plan.uploads?.length??0)+(plan.nodes??0)};
     } catch(error) { failure(error); }
   }

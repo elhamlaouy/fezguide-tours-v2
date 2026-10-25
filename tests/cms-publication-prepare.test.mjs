@@ -95,6 +95,56 @@ async function finish(preparer,progress) {
   return progress;
 }
 
+test('status reads eligibility and exact progress in one database snapshot',async()=>{
+  const f=await fixture();
+  try {
+    const Preparer=await load(),preparer=new Preparer(f.db,f.bucket,f.assets,config);
+    const started=await preparer.start(1,'actor','publish');
+    f.reads.length=0;
+    assert.deepEqual(await preparer.status(started.id,'actor'),started);
+    assert.equal(f.reads.length,1,'one guarded SQL snapshot, not separate eligibility and count requests');
+  }finally{f.close();}
+});
+
+for(const phase of ['before-large-projection','final-fresh-status']) test(`status retains ${phase} expiry recheck`,async()=>{
+  const f=await fixture();
+  try {
+    const Preparer=await load(),preparer=new Preparer(f.db,f.bucket,f.assets,config);
+    let progress=await preparer.start(1,'actor','publish');
+    progress=await preparer.advance(progress.id,'actor'); // admit the small projection before an artifact advance
+    const beforeWrites=f.writes.length;
+    let catalogReads=0;
+    const wrap=(statement,query)=>({
+      bind(...values){return wrap(statement.bind(...values),query);},
+      async first(...args){
+        if(query.includes(' AS live')&&query.includes(' AS bootstrap')){
+          catalogReads++;
+          if(catalogReads===(phase==='before-large-projection'?2:4)) f.sql.prepare('UPDATE cms_artifact_catalogs SET expires_at=0 WHERE id=?').run(progress.id);
+        }
+        return statement.first(...args);
+      },
+      all(...args){return statement.all(...args);},
+      run(...args){return statement.run(...args);},
+    });
+    const db={prepare(query){return wrap(f.db.prepare(query),query);},batch(statements){return f.db.batch(statements);}};
+    await assert.rejects(new Preparer(db,f.bucket,f.assets,config).advance(progress.id,'actor'),code('publication_conflict'));
+    assert.ok(catalogReads>=(phase==='before-large-projection'?2:4),'original eligibility point reached; fail-closed catch may recheck again');
+    assert.equal(f.writes.length-beforeWrites,phase==='before-large-projection'?0:1);
+    assert.equal(f.sql.prepare('SELECT published_revision FROM cms_documents WHERE id=1').get().published_revision,null);
+  }finally{f.close();}
+});
+
+for(const invalid of ['actor','expiry','renderer','policy']) test(`single status snapshot denies changed ${invalid}`,async()=>{
+  const f=await fixture();
+  try {
+    const Preparer=await load(),preparer=new Preparer(f.db,f.bucket,f.assets,config);
+    const started=await preparer.start(1,'actor','publish');
+    if(invalid==='expiry')f.sql.prepare('UPDATE cms_artifact_catalogs SET expires_at=0 WHERE id=?').run(started.id);
+    const changed={...config,...(invalid==='renderer'?{renderer:'different-renderer'}:{}),...(invalid==='policy'?{policy:'different-policy'}:{})};
+    await assert.rejects(new Preparer(f.db,f.bucket,f.assets,changed).status(started.id,invalid==='actor'?'wrong-actor':'actor'),code('publication_conflict'));
+  }finally{f.close();}
+});
+
 test('actual release-derived complete-dist identity prepares, commits and serves anonymous HTML and JSON',async(t)=>{
   const {computeReleaseIdentity}=await import('../scripts/cms-release-identity.mjs');
   // Generic prebuild tests need no dist; the parent can opt into current built bytes.
