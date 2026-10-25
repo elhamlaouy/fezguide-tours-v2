@@ -1,0 +1,46 @@
+# Additive real-live release configuration; existing root/candidate resources are unchanged.
+# Existing protected app Worker and exact Access host/policy; new live storage only.
+# First bootstrap uses preflight delivery. Switch delivery to apex with final public cutover.
+name = "fezguidetours-cms-candidate-app"
+main = "worker/app.ts"
+compatibility_date = "2026-10-01"
+workers_dev = false
+preview_urls = false
+account_id = "417f3820605485ace5bdbb9576452f42"
+routes = [{ pattern = "app.fezguidetours.com", custom_domain = true }]
+
+[[d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms-live-20261025"
+database_id = "90a8da61-ad2d-45a0-a9aa-483f337efc18"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-live-media-20261025"
+
+[images]
+binding = "CMS_IMAGES"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/*", "!/assets/*", "!/images/*", "!/fonts/*", "!/favicon.svg"]
+
+[vars]
+# Canonical identity stays on the apex; delivery can move without resealing the catalog.
+CANONICAL_ORIGIN = "https://fezguidetours.com"
+ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
+# Exact saved new Access app757cd74c-101d-47bb-aac0-99282d693d1f;
+# evidence: candidate-access-custom-host-readback.json. Not a successful login proof.
+ACCESS_AUD = "fd4ff16b847e4719028d2c3f43834df2034356c623d3e9f8a210e8592b365ce6"
+ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
+# app.ts does not invoke the public limiter; authenticated staged calls use durable D1 budgets.
+# Saved custom-host policy is verified; deployed edge enforcement/login remain separate gates.
+CMS_PROCESSING_MODE = "staged-v1"
+CMS_PUBLIC_DELIVERY_ORIGIN = "https://fezguidetours-cms-live-public.elhamlaouy.workers.dev"
+CMS_VALIDATION_POLICY = "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab"
+CMS_RENDERER_ID = "f9e780d5c93c76e5c96eee2fce233c305c3c6ae41b05b6c55e94692d558270e4"
+CMS_ASSET_ID = "14dd50bec26e04b1d39adf98649ab1e4d2a46778903ee375dccb8f645e190452"
+CMS_SHELL_ID = "c8aed5247dcdf9edebc366a786d56afa97b1d3cfd5476fcfa34ee20b8bd61230"

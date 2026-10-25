@@ -1,0 +1,47 @@
+# Additive real-live release configuration; existing root/candidate resources are unchanged.
+# Deliberately no routes: preflight must not take live apex/www ownership.
+# Parent assigns exact custom domains through the API only after verified readiness.
+name = "fezguidetours-cms-live-public"
+main = "worker/index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = false
+preview_urls = false
+account_id = "417f3820605485ace5bdbb9576452f42"
+
+[[d1_databases]]
+binding = "CMS_DB"
+database_name = "fezguidetours-cms-live-20261025"
+database_id = "90a8da61-ad2d-45a0-a9aa-483f337efc18"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "CMS_MEDIA"
+bucket_name = "fezguidetours-cms-live-media-20261025"
+
+[images]
+binding = "CMS_IMAGES"
+
+# Reserved live namespace; parent must verify account-wide uniqueness before remote deployment.
+# Approximate per-location counter, not a global quota or billing cap.
+[[ratelimits]]
+name = "CMS_PUBLIC_RATE_LIMITER"
+namespace_id = "1866884045"
+simple = { limit = 600, period = 60 }
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Unknown bypassed asset URLs must not return the business homepage.
+not_found_handling = "none"
+run_worker_first = ["/*", "!/assets/*", "!/images/*", "!/fonts/*", "!/favicon.svg"]
+
+[vars]
+# Canonical identity stays on the apex; delivery can move without resealing the catalog.
+CANONICAL_ORIGIN = "https://fezguidetours.com"
+CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
+CMS_PROCESSING_MODE = "staged-v1"
+CMS_PUBLIC_DELIVERY_ORIGIN = "https://fezguidetours.com"
+CMS_VALIDATION_POLICY = "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab"
+CMS_RENDERER_ID = "f9e780d5c93c76e5c96eee2fce233c305c3c6ae41b05b6c55e94692d558270e4"
+CMS_ASSET_ID = "14dd50bec26e04b1d39adf98649ab1e4d2a46778903ee375dccb8f645e190452"
+CMS_SHELL_ID = "c8aed5247dcdf9edebc366a786d56afa97b1d3cfd5476fcfa34ee20b8bd61230"
