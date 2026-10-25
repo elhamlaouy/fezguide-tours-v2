@@ -32,7 +32,7 @@ export const Logo: React.FC<LogoProps> = ({
       onClick={onClick}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
-      className={`inline-flex items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
+      className={`inline-flex min-w-0 max-w-full items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
       aria-label={`${brandName} Logo`}
       onKeyDown={onClick ? event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } } : undefined}
     >
@@ -119,8 +119,8 @@ export const Logo: React.FC<LogoProps> = ({
       </div>
 
       {showText && (
-        <div className="flex items-center tracking-tight font-extrabold whitespace-nowrap">
-          {brandName === 'FezGuideTours' ? <><span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span><span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span></> : <span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>{brandName}</span>}
+        <div className="flex min-w-0 items-center tracking-tight font-extrabold whitespace-normal [overflow-wrap:anywhere]">
+          {brandName === 'FezGuideTours' ? <><span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span><span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span></> : <span className={`min-w-0 text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>{brandName}</span>}
         </div>
       )}
     </div>

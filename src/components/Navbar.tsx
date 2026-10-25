@@ -106,14 +106,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7E2DA] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 min-h-20 py-2 flex items-center justify-between gap-4 max-[360px]:gap-2">
         {/* Zone 1: Brand Wordmark / Logo */}
         <div className="flex min-w-0 items-center">
           <Logo brandName={contact.siteName} onClick={() => handleLinkClick('home')} size="md" className="min-w-0 max-[360px]:gap-1.5 max-lg:[&>div:last-child]:min-w-0 max-lg:[&>div:last-child]:whitespace-normal max-lg:[&>div:last-child]:[overflow-wrap:anywhere] max-lg:[&>div:last-child>span]:min-w-0" />
         </div>
 
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
+        <nav className="hidden xl:flex shrink-0 items-center gap-6 xl:gap-7">
           {shellLinks.map((link) => {
             const className = `text-sm font-semibold transition-colors relative py-1 cursor-pointer whitespace-nowrap ${
               link.active ? 'text-[#005F5A]' : 'text-[#44504E] hover:text-[#005F5A]'
@@ -204,7 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-[#1C2524] hover:bg-[#F2ECE4] transition-colors cursor-pointer"
+            className="xl:hidden p-2 rounded-lg text-[#1C2524] hover:bg-[#F2ECE4] transition-colors cursor-pointer"
             aria-label={language === 'es' ? "Abrir o cerrar el menú de navegación" : "Toggle navigation menu"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -214,7 +214,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#E7E2DA] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-2 shadow-xl max-h-[80vh] overflow-y-auto">
+        <div className="xl:hidden border-t border-[#E7E2DA] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-2 shadow-xl max-h-[80vh] overflow-y-auto">
           <div className="flex flex-col gap-1">
             {shellLinks.map((link) => {
               const className = `text-start px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${

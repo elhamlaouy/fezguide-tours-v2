@@ -45,8 +45,8 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-[#233130]">
           {/* Col 1: Brand & Mission */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white/95 px-3 py-2 rounded-xl inline-block shadow-sm">
+          <div className="lg:col-span-5 min-w-0 space-y-4">
+            <div className="bg-white/95 max-w-full px-3 py-2 rounded-xl inline-block shadow-sm">
               <Logo brandName={contact.siteName} size="sm" onClick={() => onNavigate('home')} />
             </div>
             <p className="text-sm leading-relaxed text-[#A4B5B3] max-w-md">
