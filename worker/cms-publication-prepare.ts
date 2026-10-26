@@ -18,11 +18,16 @@ type Context = { projectionPolicy:2; uploadPolicy: 1; pageIds: unknown[]; produc
 type Entry = { path: string; type: 'html' | '404' | 'sitemap' | 'robots' | 'compatibility' | 'document'; language?: Language };
 type Plan = { nodes:number; uploadPolicy:1; context: Context; parts: number; entries: Entry[]; routes: { key: string; path: string }[]; uploads?: {id:string;src:string;key:string}[] };
 type Catalog = { id: string; actor: string; expected_version: number; target_revision: number; source_revision: number; source_digest: string;
-  policy: string; renderer: string; assets: string; origin: string; context_digest: string; state: string; plan_json: string; live: number; renew_at: number; bootstrap: number };
+  policy: string; renderer: string; assets: string; origin: string; context_digest: string; state: string; plan_json: string; live: number; renew_at: number; bootstrap: number; refresh: number };
 type Summary = { kind: string; position: number; field_key: string | null; summary_json: string; title_json: string | null; no_index: number | null };
 type Assets = { fetch(request: Request): Promise<Response> };
 type StoredObject = { key?: string; etag: string; version: string; size: number; httpMetadata?: { contentType?: string }; customMetadata?: Record<string,string>; checksums?: { sha256?: ArrayBuffer } };
 type Bucket = { put(key: string, bytes: Uint8Array, options: { onlyIf: { etagDoesNotMatch: string }; sha256: ArrayBuffer; httpMetadata: { contentType: string }; customMetadata: Record<string,string> }): Promise<StoredObject | null>; head(key: string): Promise<StoredObject | null> };
+const refreshGuard = (shell: string) => `EXISTS(SELECT 1 FROM cms_catalog_refreshes f JOIN cms_publications p ON p.revision=f.revision AND p.catalog_id=f.previous_catalog_id
+      JOIN cms_revisions raw ON raw.version=f.revision AND length(CAST(raw.document AS BLOB))=f.document_bytes
+      WHERE f.catalog_id=c.id AND f.revision=c.source_revision AND f.revision=d.published_revision
+        AND f.expected_version=c.expected_version AND f.draft_revision=d.draft_revision AND f.document_bytes=a.document_bytes
+        AND f.policy=c.policy AND f.renderer=c.renderer AND f.assets=c.assets AND f.origin=c.origin AND f.shell='${shell}')`;
 const clock = "CAST(strftime('%s','now') AS INTEGER)";
 const languages = ['en','fr','es'] as const;
 const encode = (value: string) => new TextEncoder().encode(value);
@@ -100,25 +105,34 @@ export class PublicationPreparer {
     try { return assembleCmsDocument(parts); } catch { conflict(); }
   }
   async start(expectedVersion: number, actor: string, mode: 'publish' | 'rollback' | 'bootstrap', revision?: number): Promise<Progress> {
+    if(!['publish','rollback','bootstrap'].includes(mode))throw new CmsError(400,'invalid_publication');
+    return this.startIntent(expectedVersion,actor,mode,revision);
+  }
+  async startRefresh(expectedVersion: number, actor: string, expectedPublishedRevision: number, expectedPreviousCatalogId: string): Promise<Progress> {
+    requireVersion(expectedPublishedRevision);
+    if(!/^[a-f0-9]{32}$/.test(expectedPreviousCatalogId))throw new CmsError(400,'invalid_publication');
+    return this.startIntent(expectedVersion,actor,'refresh',expectedPublishedRevision,expectedPreviousCatalogId);
+  }
+  private async startIntent(expectedVersion: number, actor: string, mode: 'publish' | 'rollback' | 'bootstrap' | 'refresh', revision?: number, previous: string | null = null): Promise<Progress> {
     try {
       requireVersion(expectedVersion); actorCheck(actor); const renderer=await this.configuration();
-      const bootstrap=mode==='bootstrap';
-      if(!['publish','rollback','bootstrap'].includes(mode) || (mode!=='rollback' && revision!==undefined)) throw new CmsError(400,'invalid_publication');
+      const bootstrap=mode==='bootstrap',refresh=mode==='refresh';
+      if(!['publish','rollback','bootstrap','refresh'].includes(mode) || (!['rollback','refresh'].includes(mode) && revision!==undefined)) throw new CmsError(400,'invalid_publication');
       if(mode==='rollback') requireVersion(revision);
-      const catalogMode=bootstrap?'publish':mode;
-      const source=await this.db.prepare(`SELECT a.revision,a.digest,json_array_length(a.manifest) AS parts,
+      const catalogMode=bootstrap||refresh?'publish':mode;
+      const source=await this.db.prepare(`SELECT a.revision,a.digest,a.document_bytes,d.draft_revision,json_array_length(a.manifest) AS parts,
         COALESCE((SELECT SUM((SELECT COUNT(*) FROM json_tree(v.document_json))) FROM json_each(a.manifest) m
           JOIN cms_validation_parts v ON v.policy=a.policy AND v.kind=json_extract(m.value,'$.kind') AND v.digest=json_extract(m.value,'$.digest')
           WHERE v.document_bytes>32768),0) AS nodes FROM cms_documents d
-        JOIN cms_revisions r ON r.version=CASE WHEN ?='publish' THEN d.draft_revision WHEN ?='bootstrap' THEN d.published_revision ELSE ? END
+        JOIN cms_revisions r ON r.version=CASE WHEN ?='publish' THEN d.draft_revision WHEN ? IN ('bootstrap','refresh') THEN d.published_revision ELSE ? END
         JOIN cms_revision_admissions a ON a.revision=r.version AND a.policy=? AND a.document_bytes=length(CAST(r.document AS BLOB))
         WHERE d.id=1 AND d.version=? AND r.version<=d.version
-          AND (?='rollback' OR (?='bootstrap' AND d.published_revision=r.version
+          AND (${refresh?`d.published_revision=${revision} AND EXISTS(SELECT 1 FROM cms_publications p WHERE p.revision=d.published_revision AND p.catalog_id=?)`:`?='rollback'`} OR (?='bootstrap' AND d.published_revision=r.version
             AND NOT EXISTS(SELECT 1 FROM cms_publications p WHERE p.revision=r.version)
             AND NOT EXISTS(SELECT 1 FROM cms_catalog_bootstraps b JOIN cms_artifact_catalogs existing ON existing.id=b.catalog_id
               WHERE b.revision=r.version AND existing.state='published')) OR (?='publish' AND d.draft_revision=r.version))`)
-        .bind(mode,mode,revision??null,this.config.policy,expectedVersion,mode,mode,mode)
-        .first<{revision:number;digest:string;parts:number;nodes:number}>();
+        .bind(mode,mode,revision??null,this.config.policy,expectedVersion,refresh?previous:mode,mode,mode)
+        .first<{revision:number;digest:string;document_bytes:number;draft_revision:number;parts:number;nodes:number}>();
       if(!source) conflict();
       // Observe before asynchronous planning: an older start must not supersede
       // an unseen preparation created while that planning was in flight.
@@ -132,25 +146,28 @@ export class PublicationPreparer {
       plan.nodes=source.nodes;
       const id=crypto.randomUUID().replaceAll('-','');
       const {policy,assets,origin}=this.config;
+      const refreshIdentity=refresh
+        ? `AND EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=cms_artifact_catalogs.id AND f.revision=? AND f.previous_catalog_id=? AND f.draft_revision=? AND f.document_bytes=? AND f.shell=?)`
+        : `AND NOT EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=cms_artifact_catalogs.id)`;
       const bootstrapIdentity=bootstrap
         ? `AND EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=cms_artifact_catalogs.id AND b.revision=? AND b.expected_version=?)`
         : `AND NOT EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=cms_artifact_catalogs.id)`;
       const identity=`actor=? AND mode=? AND expected_version=? AND source_revision=? AND source_digest=?
-        AND policy=? AND renderer=? AND assets=? AND origin=? AND context_digest=? ${bootstrapIdentity}`;
+        AND policy=? AND renderer=? AND assets=? AND origin=? AND context_digest=? ${bootstrapIdentity} ${refreshIdentity}`;
       const values=[actor,catalogMode,expectedVersion,source.revision,source.digest,policy,renderer,assets,origin,contextDigest];
-      const identityValues=bootstrap?[...values,source.revision,expectedVersion]:values;
+      const identityValues=bootstrap?[...values,source.revision,expectedVersion]:refresh?[...values,source.revision,previous,source.draft_revision,source.document_bytes,this.config.shell]:values;
       const results=await this.batch([
         this.db.prepare(`SELECT CASE WHEN EXISTS(SELECT 1 FROM cms_documents d
           JOIN cms_revisions r ON r.version=? AND r.version<=d.version
           JOIN cms_revision_admissions a ON a.revision=r.version AND a.policy=? AND a.digest=?
             AND a.document_bytes=length(CAST(r.document AS BLOB))
-          WHERE d.id=1 AND d.version=? AND (?='rollback'
+          WHERE d.id=1 AND d.version=? AND (${refresh?`d.published_revision=${revision} AND d.draft_revision=${source.draft_revision} AND a.document_bytes=${source.document_bytes} AND EXISTS(SELECT 1 FROM cms_publications p WHERE p.revision=d.published_revision AND p.catalog_id=?)`:`?='rollback'`}
             OR (?='bootstrap' AND d.published_revision=a.revision
               AND NOT EXISTS(SELECT 1 FROM cms_publications p WHERE p.revision=a.revision)
               AND NOT EXISTS(SELECT 1 FROM cms_catalog_bootstraps b JOIN cms_artifact_catalogs existing ON existing.id=b.catalog_id
                 WHERE b.revision=a.revision AND existing.state='published'))
             OR (?='publish' AND d.draft_revision=a.revision)))
-          THEN 1 ELSE json('publication_conflict') END`).bind(source.revision,policy,source.digest,expectedVersion,mode,mode,mode),
+          THEN 1 ELSE json('publication_conflict') END`).bind(source.revision,policy,source.digest,expectedVersion,refresh?previous:mode,mode,mode),
         this.db.prepare(`UPDATE cms_artifact_catalogs SET state='expired' WHERE state IN ('building','ready') AND
           (expires_at<=${clock} OR expected_version<>(SELECT version FROM cms_documents WHERE id=1))`),
         // start is an explicit owner action, not a commit retry. Keep receipts and
@@ -168,6 +185,9 @@ export class PublicationPreparer {
         this.db.prepare(`INSERT OR IGNORE INTO cms_catalog_bootstraps(catalog_id,revision,expected_version)
           SELECT id,source_revision,expected_version FROM cms_artifact_catalogs WHERE id=? AND ?='bootstrap' AND state='building'`)
           .bind(id,mode),
+        ...(refresh?[this.db.prepare(`INSERT INTO cms_catalog_refreshes(catalog_id,revision,previous_catalog_id,expected_version,draft_revision,document_bytes,policy,renderer,assets,origin,shell)
+          SELECT id,source_revision,?,expected_version,?,?,?,?,?,?,? FROM cms_artifact_catalogs WHERE id=? AND state='building'`)
+          .bind(previous,source.draft_revision,source.document_bytes,policy,renderer,assets,origin,this.config.shell,id)]:[]),
         this.db.prepare(`SELECT id FROM cms_artifact_catalogs WHERE state IN ('building','ready') AND ${identity}`).bind(...identityValues),
       ]);
       const selected=results[results.length-1].results?.[0]?.id;
@@ -188,14 +208,15 @@ export class PublicationPreparer {
           FROM json_each(a.manifest) m)+
         (SELECT COUNT(*) FROM json_each(a.manifest) m WHERE EXISTS(${this.cacheExists})) AS count,` : ''}c.id,c.actor,c.expected_version,c.target_revision,c.source_revision,c.source_digest,c.policy,c.renderer,c.assets,
       c.origin,c.context_digest,c.state,c.plan_json,c.expires_at>${clock} AS live,${clock}+3600 AS renew_at,
-      EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version) AS bootstrap
+      EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version) AS bootstrap,
+      EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=c.id) AS refresh
       FROM cms_artifact_catalogs c
       JOIN cms_documents d ON d.id=1 AND d.version=c.expected_version
       JOIN cms_revision_admissions a ON a.revision=c.source_revision AND a.policy=c.policy AND a.digest=c.source_digest
       JOIN cms_revisions r ON r.version=a.revision AND length(CAST(r.document AS BLOB))=a.document_bytes
       WHERE c.id=? AND c.actor=? AND c.policy=? AND c.renderer=? AND c.assets=? AND c.origin=?
-        AND (c.mode='rollback' OR d.draft_revision=c.source_revision OR (d.published_revision=c.source_revision
-          AND EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version)))`)
+        AND (${refreshGuard(this.config.shell)} OR (NOT EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=c.id) AND (c.mode='rollback' OR d.draft_revision=c.source_revision OR (d.published_revision=c.source_revision
+          AND EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version)))))`)
       .bind(id,actor,policy,renderer,assets,origin).first<Catalog>();
     if(!row||!row.live||!['building','ready'].includes(row.state)) conflict();
     return row;
@@ -206,10 +227,11 @@ export class PublicationPreparer {
     return this.db.prepare(`SELECT CASE WHEN EXISTS(SELECT 1 FROM cms_artifact_catalogs c
       JOIN cms_documents d ON d.id=1 AND d.version=c.expected_version
       JOIN cms_revision_admissions a ON a.revision=c.source_revision AND a.policy=c.policy AND a.digest=c.source_digest
+      JOIN cms_revisions r ON r.version=a.revision AND length(CAST(r.document AS BLOB))=a.document_bytes
       WHERE c.id=? AND c.actor=? AND c.policy=? AND c.renderer=? AND c.assets=? AND c.origin=? AND c.context_digest=?
-        AND c.state='building' AND c.expires_at>${clock} AND c.expires_at>=? AND (c.mode='rollback' OR d.draft_revision=c.source_revision
+        AND c.state='building' AND c.expires_at>${clock} AND c.expires_at>=? AND (${refreshGuard(this.config.shell)} OR (NOT EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=c.id) AND (c.mode='rollback' OR d.draft_revision=c.source_revision
           OR (d.published_revision=c.source_revision AND EXISTS(SELECT 1 FROM cms_catalog_bootstraps b
-            WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version))))
+            WHERE b.catalog_id=c.id AND b.revision=c.source_revision AND b.expected_version=c.expected_version))))))
       THEN 1 ELSE json('publication_conflict') END`).bind(catalog.id,catalog.actor,policy,renderer,assets,origin,catalog.context_digest,minimumExpiry);
   }
   private renew(catalog: Catalog): CmsD1Statement[] {
@@ -290,10 +312,12 @@ export class PublicationPreparer {
   private async render(catalog: Catalog, entry: Entry): Promise<{body:string;contentType:string}> {
     const origin=catalog.origin;
     if(entry.type==='robots') return {body:`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`,contentType:'text/plain; charset=utf-8'};
-    const row=await this.db.prepare(`SELECT public_json,json_extract(public_json,'$.legacy') AS legacy_json FROM cms_artifact_catalogs WHERE id=?`)
+    // Keep SQLite JSON validation (including empty/malformed failures) without returning duplicate legacy bytes.
+    const projection=entry.type==='compatibility'?"json_extract(public_json,'$.legacy') AS legacy_json":'json_type(public_json) AS public_type';
+    const row=await this.db.prepare(`SELECT public_json,${projection} FROM cms_artifact_catalogs WHERE id=?`)
       .bind(catalog.id).first<{public_json:string;legacy_json:string}>();
     if(!row?.public_json) conflict();
-    if(entry.type==='document') return {body:`{"version":${catalog.bootstrap?catalog.source_revision:catalog.target_revision},"document":${row.public_json}}`,contentType:'application/json; charset=utf-8'};
+    if(entry.type==='document') return {body:`{"version":${catalog.bootstrap||catalog.refresh?catalog.source_revision:catalog.target_revision},"document":${row.public_json}}`,contentType:'application/json; charset=utf-8'};
     if(entry.type==='compatibility') return {body:row.legacy_json,contentType:'application/json; charset=utf-8'};
     const document=JSON.parse(row.public_json) as CmsDocument;
     if(entry.type==='sitemap') {

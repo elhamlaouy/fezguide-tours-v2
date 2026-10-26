@@ -10,7 +10,7 @@ const parse = file => JSON.parse(execFileSync('python3', ['-c', 'import json,sys
 const app=parse('wrangler.cms-live-app.toml'), pre=parse('wrangler.cms-live-preflight.toml'), pub=parse('wrangler.cms-live-public.toml');
 const candidate=parse('wrangler.cms-candidate-app.toml');
 const apex='https://fezguidetours.com', delivery='https://fezguidetours-cms-live-public.elhamlaouy.workers.dev';
-const identities={CMS_VALIDATION_POLICY:'2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab',CMS_RENDERER_ID:'f9e780d5c93c76e5c96eee2fce233c305c3c6ae41b05b6c55e94692d558270e4',CMS_ASSET_ID:'14dd50bec26e04b1d39adf98649ab1e4d2a46778903ee375dccb8f645e190452',CMS_SHELL_ID:'c8aed5247dcdf9edebc366a786d56afa97b1d3cfd5476fcfa34ee20b8bd61230'};
+const identities={CMS_VALIDATION_POLICY:'2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab',CMS_RENDERER_ID:'fd7d6ab2d34e98f2320c2d0d1810342ffe4f5c4c30772442fff50b8a82b25e9d',CMS_ASSET_ID:'c8e5c8e93bde3aabc1d8f060728c58b952c994468b6131b5d229323361ebada5',CMS_SHELL_ID:'12fc8646b862dc54e67ef7f0d3df6dc606a2f37388152bd2c1f05a65b7a50316'};
 test('live storage, entrypoints, aliases and canonical identities are explicit and isolated',()=>{
  for(const [config,main,dev] of [[app,'worker/app.ts',false],[pre,'worker/candidate-public.ts',true],[pub,'worker/index.ts',false]]){
   assert.equal(config.main,main);assert.equal(config.workers_dev,dev);assert.equal(config.preview_urls,false);
@@ -58,7 +58,7 @@ import { DatabaseSync } from 'node:sqlite';
 async function fixture({published=true,admitted=true,contentType='text/html; charset=utf-8'}={}) {
   const { preparedPublicResponse }=await import('../worker/prepared-public.ts');
   const sql=new DatabaseSync(':memory:');
-  for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) sql.exec(readFileSync(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
+  for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) sql.exec(readFileSync(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
   const id='b'.repeat(32), sourceDigest='a'.repeat(64), body='<main>prepared public page</main>';
   const bytes=new TextEncoder().encode(body), checksum=await crypto.subtle.digest('SHA-256',bytes), digest=Buffer.from(checksum).toString('hex');
   const raw='{"fixture":"admitted immutable document"}';

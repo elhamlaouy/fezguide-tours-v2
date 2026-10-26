@@ -1,3 +1,4 @@
+import { RELEASE_CTE, REFRESH_JOIN, SELECTED_CATALOG } from './cms-catalog-selection';
 import type { CmsD1Database } from './cms-store';
 import { redirectRendererId } from './cms-slug-redirects';
 
@@ -19,7 +20,7 @@ export interface PreparedPublicEnv {
 }
 interface Entry {
   revision: number; document_version: number; target_revision: number; expected_version: number; source_revision: number; source_digest: string;
-  id: string; policy: string; renderer: string; assets: string; origin: string; state: string; bootstrap: number;
+  id: string; policy: string; renderer: string; assets: string; origin: string; state: string; bootstrap: number; refresh: number;
   canonical_path: string | null; path: string; object_key: string; etag: string;
   object_version: string; digest: string; bytes: number; content_type: string; status: number;
 }
@@ -33,14 +34,13 @@ function hex(value:ArrayBuffer|ArrayBufferView|undefined) {
 }
 
 /** One published-entry lookup. Never select or process the private source document. */
-export const PREPARED_LOOKUP=`SELECT d.published_revision AS revision,d.version AS document_version,c.id,c.target_revision,c.expected_version,c.source_revision,c.source_digest,
-  (b.catalog_id IS NOT NULL) AS bootstrap,c.policy,c.renderer,c.assets,c.origin,c.state,f.canonical_path,
+export const PREPARED_LOOKUP=`${RELEASE_CTE} SELECT d.published_revision AS revision,d.version AS document_version,c.id,c.target_revision,c.expected_version,c.source_revision,c.source_digest,
+  (b.catalog_id IS NOT NULL) AS bootstrap,(refresh.catalog_id IS NOT NULL) AS refresh,c.policy,c.renderer,c.assets,c.origin,c.state,f.canonical_path,
   e.path,e.object_key,e.etag,e.object_version,e.digest,e.bytes,e.content_type,e.status
   FROM cms_documents d LEFT JOIN cms_publications p ON p.revision=d.published_revision
   LEFT JOIN cms_catalog_bootstraps b ON b.revision=d.published_revision AND b.expected_version=d.version
-  JOIN cms_artifact_catalogs c ON c.id=COALESCE(p.catalog_id,b.catalog_id)
-    AND ((p.catalog_id IS NOT NULL AND c.target_revision=d.published_revision)
-      OR (p.catalog_id IS NULL AND b.catalog_id IS NOT NULL AND c.source_revision=d.published_revision AND c.expected_version=d.version))
+  ${REFRESH_JOIN}
+  JOIN cms_artifact_catalogs c ON ${SELECTED_CATALOG}
   JOIN cms_revision_admissions a ON a.revision=c.source_revision AND a.policy=c.policy AND a.digest=c.source_digest
   JOIN cms_revision_admissions active ON active.revision=d.published_revision AND active.policy=c.policy
     AND active.digest=c.source_digest AND active.document_bytes=a.document_bytes AND active.manifest=a.manifest
@@ -65,12 +65,12 @@ export async function preparedPublicResponse(request:Request,env:PreparedPublicE
     const key=pathKey||experienceId||queryPage||'home';
     const routingKey=`${pathKey?'path':'query'}:${language}:${key.length<=80?key:'@unknown'}`;
     const direct=['/api/cms','/api/cms/document','/robots.txt','/sitemap.xml'].includes(url.pathname)?url.pathname:null;
-    const row=await env.CMS_DB.prepare(PREPARED_LOOKUP).bind(routingKey,direct,`@404:${language}`,env.CMS_VALIDATION_POLICY,renderer,env.CMS_ASSET_ID,env.CANONICAL_ORIGIN).first<Entry>();
-    const bootstrap=row?.bootstrap===1;
-    if(!row||(!bootstrap&&row.revision!==row.target_revision)||
+    const row=await env.CMS_DB.prepare(PREPARED_LOOKUP).bind(env.CMS_VALIDATION_POLICY,renderer,env.CMS_ASSET_ID,env.CANONICAL_ORIGIN,routingKey,direct,`@404:${language}`,env.CMS_VALIDATION_POLICY,renderer,env.CMS_ASSET_ID,env.CANONICAL_ORIGIN).first<Entry>();
+    const refresh=row?.refresh===1,bootstrap=row?.bootstrap===1;
+    if(!row||(!bootstrap&&!refresh&&row.revision!==row.target_revision)||
       (bootstrap&&(row.revision!==row.source_revision||row.document_version!==row.expected_version||row.target_revision!==row.expected_version+1))||
       !Number.isSafeInteger(row.revision)||row.revision<1||!Number.isSafeInteger(row.source_revision)||
-      (bootstrap?row.source_revision!==row.revision:row.source_revision>=row.revision)||
+      ((bootstrap||refresh)?row.source_revision!==row.revision:row.source_revision>=row.revision)||
       !/^[a-f0-9]{32}$/.test(row.id)||!hash.test(row.source_digest)||!hash.test(row.digest)||row.origin!==env.CANONICAL_ORIGIN||
       row.policy!==env.CMS_VALIDATION_POLICY||row.renderer!==renderer||row.assets!==env.CMS_ASSET_ID||row.state!=='published'||
       !row.object_key.startsWith(`prepared/v1/${row.id}/`)||row.object_key.length>200||![200,404].includes(row.status)||

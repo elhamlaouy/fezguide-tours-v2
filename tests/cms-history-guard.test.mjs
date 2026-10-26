@@ -22,7 +22,7 @@ test('mounted Back/Forward retains dirty drafts and pending import/upload unless
  globalThis.fetch=async(path,init={})=>{
   if((init.method??'GET')!=='GET')writes.push(String(path));
   if(path==='/api/admin/media')return new Promise(resolve=>{releaseUpload=()=>resolve(Response.json({media:{id:'upload-22222222-2222-4222-8222-222222222222',src:'/media/upload-22222222-2222-4222-8222-222222222222.png',alt:title,width:1,height:1,source:'cms-upload'},previewSrc:'/api/admin/media/upload-22222222-2222-4222-8222-222222222222.png'},{status:201}));});
-  return Response.json(path==='/api/cms/document'?{version:2,document:doc}:path==='/api/admin/content'?{version:2,draftRevision:2,publishedRevision:2,document:doc}:String(path).endsWith('/revisions')?{revisions:[]}:doc.legacy);
+  return Response.json(path==='/api/cms/document'?{version:2,document:doc}:path==='/api/admin/content?read=meta'?{version:2,draftRevision:2,publishedRevision:2,document:doc}:String(path).endsWith('/revisions')?{revisions:[]}:doc.legacy);
  };
  window.fetch=globalThis.fetch;window.history.pushState(null,'','/admin');
  const host=window.document.createElement('div');window.document.body.append(host);const root=createRoot(host);

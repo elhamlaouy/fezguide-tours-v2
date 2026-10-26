@@ -12,7 +12,7 @@ const metadata = parts => parts.map(({ value, ...part }) => ({ ...part, digest: 
 
 function fixture(now) {
   const sql = new DatabaseSync(':memory:');
-  for (const file of ['0001_cms.sql', '0002_media_budget.sql', '0003_cms_release_safeguards.sql', '0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) {
+  for (const file of ['0001_cms.sql', '0002_media_budget.sql', '0003_cms_release_safeguards.sql', '0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) {
     sql.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url), 'utf8'));
   }
   if (now) {

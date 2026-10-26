@@ -1,15 +1,15 @@
 {
   "contract": "cms-release-identity-v1",
   "CMS_VALIDATION_POLICY": "2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab",
-  "CMS_RENDERER_ID": "f9e780d5c93c76e5c96eee2fce233c305c3c6ae41b05b6c55e94692d558270e4",
-  "CMS_ASSET_ID": "14dd50bec26e04b1d39adf98649ab1e4d2a46778903ee375dccb8f645e190452",
-  "CMS_SHELL_ID": "c8aed5247dcdf9edebc366a786d56afa97b1d3cfd5476fcfa34ee20b8bd61230",
+  "CMS_RENDERER_ID": "fd7d6ab2d34e98f2320c2d0d1810342ffe4f5c4c30772442fff50b8a82b25e9d",
+  "CMS_ASSET_ID": "c8e5c8e93bde3aabc1d8f060728c58b952c994468b6131b5d229323361ebada5",
+  "CMS_SHELL_ID": "12fc8646b862dc54e67ef7f0d3df6dc606a2f37388152bd2c1f05a65b7a50316",
   "renderer": {
-    "files": 171,
-    "bytes": 32409004
+    "files": 172,
+    "bytes": 32430190
   },
   "assets": {
     "files": 963,
-    "bytes": 123624867
+    "bytes": 123627680
   }
 }

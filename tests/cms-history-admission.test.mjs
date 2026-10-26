@@ -8,7 +8,7 @@ const {createCmsSeed}=await import('../src/cms/seed.ts');
 const {StagedCmsStore}=await import('../worker/cms-staged-store.ts');
 function seed(){const doc=createCmsSeed();for(const[k,v]of Object.entries(doc))if(Array.isArray(v))doc[k]=[];for(const[k,v]of Object.entries(doc.legacy))if(Array.isArray(v))doc.legacy[k]=[];doc.pages=[{...createCmsSeed().pages.find(p=>p.id==='home'),sections:[]}];doc.footer.links=[];doc.uiCopy={};return doc;}
 function fixture(){
- const sql=new DatabaseSync(':memory:');for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql'])sql.exec(readFileSync(new URL('../migrations/'+file,import.meta.url),'utf8'));
+ const sql=new DatabaseSync(':memory:');for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql'])sql.exec(readFileSync(new URL('../migrations/'+file,import.meta.url),'utf8'));
  const raw=JSON.stringify(seed(),null,2)+'\n';
  sql.prepare("INSERT INTO cms_revisions VALUES(1,?,'draft','historic-editor','original-time',NULL)").run(raw);
  sql.prepare("INSERT INTO cms_revisions VALUES(2,?,'publish','historic-editor','second-time',1)").run(raw);

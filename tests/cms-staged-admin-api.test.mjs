@@ -827,7 +827,7 @@ for (const [mode, status, language, kept] of [
   assert.ok(errors, 'owner must see an actionable staged failure');
   assert.match(errors.textContent, kept);
   assert.equal(document.querySelector('[data-path="pages.home.title.en"]').value, 'Keep this unsaved edit');
-  assert.equal(calls.filter(call => call.method === 'GET' && call.url === '/api/admin/content').length, 1, 'failure must not silently reload/discard edits');
+  assert.equal(calls.filter(call => call.method === 'GET' && call.url === '/api/admin/content?read=meta').length, 1, 'failure must not silently reload/discard edits');
   assert.equal(calls.some(call => call.url.includes('/preparations/') && call.url.endsWith('/commit')), false);
   if (mode === 'save') assert.equal(calls.some(call => call.url.endsWith('/commit')), false);
   assert.equal(document.querySelector('[data-admin-progress]'), null);

@@ -3,6 +3,7 @@ import { StagedCmsStore, type CmsSaveManifestEntry } from './cms-staged-store';
 import { CmsError, MAX_DOCUMENT_BYTES } from './cms-store';
 import type { CmsPart } from '../src/cms/schema';
 import { consumeCmsRequest } from './cms-request-budget';
+import { RELEASE_CTE, REFRESH_JOIN, SELECTED_CATALOG } from './cms-catalog-selection';
 import { PublicationPreparer } from './cms-publication-prepare';
 import { commitPreparedBootstrap, commitPreparedPublication } from './cms-publication-commit';
 import { MEDIA_KEY_PATTERN } from './media';
@@ -42,19 +43,18 @@ export async function stagedCmsResponse(request: Request, env: CmsRoutesEnv, act
     if (!env.CMS_DB || !env.CMS_VALIDATION_POLICY || !env.CMS_RENDERER_ID || !env.CMS_ASSET_ID ||
         !env.CANONICAL_ORIGIN || !env.CMS_PUBLIC_DELIVERY_ORIGIN || url.origin !== env.CMS_PUBLIC_DELIVERY_ORIGIN) throw new CmsError(503, 'cms_unavailable');
     const renderer = await redirectRendererId(env.CMS_RENDERER_ID, env.CMS_SLUG_REDIRECTS);
-    const allowed = await env.CMS_DB.prepare(`SELECT checks.receipt_json FROM cms_documents d
+    const allowed = await env.CMS_DB.prepare(`${RELEASE_CTE} SELECT checks.receipt_json FROM cms_documents d
       LEFT JOIN cms_publications p ON p.revision=d.published_revision
       LEFT JOIN cms_catalog_bootstraps b ON b.revision=d.published_revision AND b.expected_version=d.version
-      JOIN cms_artifact_catalogs c ON c.id=COALESCE(p.catalog_id,b.catalog_id)
-        AND ((p.catalog_id IS NOT NULL AND c.target_revision=d.published_revision)
-          OR (p.catalog_id IS NULL AND b.catalog_id IS NOT NULL AND c.source_revision=d.published_revision AND c.expected_version=d.version))
+      ${REFRESH_JOIN}
+      JOIN cms_artifact_catalogs c ON ${SELECTED_CATALOG}
       JOIN cms_revision_admissions a ON a.revision=c.source_revision AND a.policy=c.policy AND a.digest=c.source_digest
       JOIN cms_revision_admissions active ON active.revision=d.published_revision AND active.policy=c.policy
         AND active.digest=c.source_digest AND active.document_bytes=a.document_bytes AND active.manifest=a.manifest
       JOIN cms_catalog_media m ON m.catalog_id=c.id AND m.media_key=?
       JOIN cms_catalog_upload_checks checks ON checks.catalog_id=c.id AND checks.media_key=m.media_key AND checks.state='verified'
       WHERE d.id=1 AND c.state='published' AND c.policy=? AND c.renderer=? AND c.assets=? AND c.origin=? LIMIT 1`)
-      .bind(key, env.CMS_VALIDATION_POLICY, renderer, env.CMS_ASSET_ID, env.CANONICAL_ORIGIN).first<{receipt_json:string}>();
+      .bind(env.CMS_VALIDATION_POLICY,renderer,env.CMS_ASSET_ID,env.CANONICAL_ORIGIN,key, env.CMS_VALIDATION_POLICY, renderer, env.CMS_ASSET_ID, env.CANONICAL_ORIGIN).first<{receipt_json:string}>();
     if (!allowed) throw new CmsError(404, 'not_found');
     return serveVerifiedUpload(key,request,env.CMS_MEDIA as NonNullable<Parameters<typeof serveVerifiedUpload>[2]>,allowed.receipt_json);
   }
@@ -95,6 +95,7 @@ export async function stagedCmsResponse(request: Request, env: CmsRoutesEnv, act
     };
     if (Object.values(config).some(value => typeof value !== 'string' || !value || value.length > 512) ||
         !/^[a-f0-9]{64}$/.test(config.assets) || !/^[a-f0-9]{64}$/.test(config.shell)) throw new CmsError(503, 'cms_unavailable');
+    if(preparation&&await env.CMS_DB.prepare('SELECT 1 FROM cms_catalog_refreshes WHERE catalog_id=?').bind(preparation[1]).first())throw new CmsError(409,'publication_conflict');
     const renderer = await redirectRendererId(config.renderer, env.CMS_SLUG_REDIRECTS);
     const pinnedConfig = {...config, redirects: env.CMS_SLUG_REDIRECTS};
     if (preparation?.[2] === 'commit') {
@@ -143,6 +144,12 @@ export async function stagedCmsResponse(request: Request, env: CmsRoutesEnv, act
     if (job[2] === 'commit') return helpers.json(await store.finishSave(job[1], actor));
     await store.putPart(job[1], actor, body.part as CmsPart);
     return helpers.json({ stored: true });
+  }
+  if (url.search) {
+    const response = await store.readBounded(url.searchParams, revision ? Number(revision[1]) : undefined);
+    const headers = new Headers(helpers.json(null).headers);
+    headers.set('Content-Type', response.headers.get('Content-Type')!);
+    return new Response(response.body, { status: response.status, headers });
   }
   const response = revision ? await store.readRawRevision(Number(revision[1])) : await store.readRawContent();
   // Prefix trusted raw JSON. Never parse, schema-validate or stringify the owner source.

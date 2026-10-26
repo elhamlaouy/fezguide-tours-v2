@@ -274,7 +274,7 @@ serial('editor uploads, selects and privately previews a new photo without impli
   const media = { id, src: `/media/${id}.png`, alt: text('Uploaded image'), width: 1, height: 1, source: 'cms-upload' };
   let saved;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/media') return { status: 201, body: { media, previewSrc: `/api/admin/media/${id}.png` } };
     if (url === '/api/admin/content/draft') { saved = body.document; return { body: { version: 3, draftRevision: 3, published: false } }; }
@@ -329,7 +329,7 @@ serial('401 shows sign-in required and stores no token', async () => {
   const status = await waitFor(() => document.querySelector('[data-admin-status="unauthorized"]'));
   assert.match(status.textContent, /Sign-in required/);
   assert.equal(calls.length, 1);
-  assert.equal(calls[0].url, '/api/admin/content');
+  assert.equal(calls[0].url, '/api/admin/content?read=meta');
   assert.equal(calls[0].method, 'GET');
   assert.equal(calls[0].credentials, 'same-origin');
   assert.equal(window.localStorage.length, 0);
@@ -340,7 +340,7 @@ serial('a section text edit appears in the preview markup', async () => {
   const doc = cmsDoc();
   assert.equal(validateCmsDocument(doc).valid, true);
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -359,7 +359,7 @@ serial('409 reloads the server draft and does not send a second overwrite', asyn
   const initial = cmsDoc('Hello paragraph', 'Home title');
   const server = cmsDoc('Hello paragraph', 'Server title');
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(calls.some(call => call.method === 'PUT') ? server : initial, 4) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(calls.some(call => call.method === 'PUT') ? server : initial, 4) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       assert.equal(body.expectedVersion, 4);
@@ -377,7 +377,7 @@ serial('409 reloads the server draft and does not send a second overwrite', asyn
   await settle();
   assert.equal(puts().length, 1);
   assert.equal(calls.filter(call => call.method === 'PUT' && call.url === '/api/admin/content/draft').length, 1);
-  assert.ok(calls.slice(calls.findIndex(call => call.method === 'PUT') + 1).some(call => call.method === 'GET' && call.url === '/api/admin/content'));
+  assert.ok(calls.slice(calls.findIndex(call => call.method === 'PUT') + 1).some(call => call.method === 'GET' && call.url === '/api/admin/content?read=meta'));
   assert.match(previewQuery().textContent, /Server title/);
   assert.doesNotMatch(previewQuery().textContent, /Client edit/);
 });
@@ -386,7 +386,7 @@ serial('publish sends the edited document then the real publish endpoint', async
   let version = 4;
   let saved;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc(), version) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc(), version) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [{ version: 2, kind: 'publish', actor: 'owner', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       assert.deepEqual(Object.keys(body).sort(), ['document', 'expectedVersion']);
@@ -415,7 +415,7 @@ serial('publish sends the edited document then the real publish endpoint', async
 serial('rollback calls the real endpoint and shows the returned revision', async () => {
   let version = 5;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc(), version) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc(), version) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [{ version: 2, kind: 'publish', actor: 'owner', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }] } };
     if (url === '/api/admin/content/rollback' && method === 'POST') {
       assert.deepEqual(body, { expectedVersion: 5, revision: 2 });
@@ -435,7 +435,7 @@ serial('rollback calls the real endpoint and shows the returned revision', async
 
 serial('invalid edits show field errors and are not saved', async () => {
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc()) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc()) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (method === 'PUT') return { body: { version: 3, draftRevision: 3, published: false } };
     throw new Error(`unexpected ${method} ${url}`);
@@ -453,7 +453,7 @@ serial('enabled flags and section order change the preview', async () => {
   const doc = cmsDoc('Alpha copy');
   doc.pages[0].sections.push({ id: 'next', type: 'richText', enabled: true, variant: 'panel', blocks: [{ type: 'paragraph', text: text('Beta copy') }] });
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -474,7 +474,7 @@ serial('every seed section type exposes its text for editing', async () => {
   const valid = validateCmsDocument(doc);
   assert.equal(valid.valid, true, valid.errors?.join('\n'));
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -491,7 +491,7 @@ serial('preview shows an unpublished page without publishing it', async () => {
   const doc = cmsDoc('Hidden paragraph', 'Hidden title');
   doc.pages[0].enabled = false;
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -504,7 +504,7 @@ serial('preview shows an unpublished page without publishing it', async () => {
 serial('adds, duplicates, and removes a schema section', async () => {
   let saved;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc('Hello paragraph')) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc('Hello paragraph')) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       saved = body.document;
@@ -534,7 +534,7 @@ serial('adds, duplicates, and removes a schema section', async () => {
 serial('creates a disabled starter page and adds navigation only when checked', async () => {
   let saved;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc()) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc()) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       saved = body.document;
@@ -583,7 +583,7 @@ serial('media picker sets a library id and rejects an unknown id before save', a
   doc.pages[0].sections = [{ id: 'hero', type: 'hero', variant: 'banner', enabled: true, title: text('Home title'), links: [] }];
   let saved;
   installFetch(({ url, method, body }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       saved = body.document;
@@ -608,7 +608,7 @@ serial('media picker sets a library id and rejects an unknown id before save', a
   const bad = cmsDoc();
   bad.pages[0].sections = [{ id: 'hero', type: 'hero', variant: 'banner', enabled: true, title: text('Home title'), links: [], image: { mediaId: 'missing', alt: text('Missing') } }];
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(bad) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(bad) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (method === 'PUT') return { body: { version: 3, draftRevision: 3, published: false } };
     throw new Error(`unexpected ${method} ${url}`);
@@ -632,7 +632,7 @@ serial('full structured controls expose SEO, globals and numeric theme fields', 
 
 serial('theme edits appear in the page preview without raw CSS', async () => {
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc()) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(cmsDoc()) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -664,7 +664,7 @@ serial('language tabs, navigation labels, and footer order stay on existing page
     { id: 'foot-b', pageId: 'home', label: text('Second'), enabled: true },
   ];
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     throw new Error(`unexpected ${method} ${url}`);
   });
@@ -704,7 +704,7 @@ serial('Spanish editor controls and locale tabs edit Spanish without changing EN
   doc.pages[0].title.es = 'Página de inicio';
   doc.pages[0].sections[0].blocks[0].text.es = 'Descubre Fez de la mano de nuestros guías locales.';
   installFetch(({ url, method }) => {
-    if (url === '/api/admin/content' && method === 'GET') return { body: content(doc) };
+    if (url === '/api/admin/content?read=meta' && method === 'GET') return { body: content(doc) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
     if (url === '/api/admin/content/draft' && method === 'PUT') return { body: { version: 3, draftRevision: 3, published: false } };
     throw new Error(`unexpected ${method} ${url}`);

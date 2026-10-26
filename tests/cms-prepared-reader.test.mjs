@@ -8,7 +8,7 @@ register();
 async function fixture({published=true,admitted=true,contentType='text/html; charset=utf-8'}={}) {
   const { preparedPublicResponse }=await import('../worker/prepared-public.ts');
   const sql=new DatabaseSync(':memory:');
-  for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) sql.exec(readFileSync(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
+  for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) sql.exec(readFileSync(new URL(`../migrations/${name}`,import.meta.url),'utf8'));
   const id='b'.repeat(32), sourceDigest='a'.repeat(64), body='<main>prepared public page</main>';
   const bytes=new TextEncoder().encode(body), checksum=await crypto.subtle.digest('SHA-256',bytes), digest=Buffer.from(checksum).toString('hex');
   const raw='{"fixture":"admitted immutable document"}';

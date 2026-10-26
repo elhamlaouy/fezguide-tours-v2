@@ -9,7 +9,7 @@ test('F4 assembly enumerates each manifest once and uses complete receipt-key lo
   const {documentAssemblySql,projectedDocumentSql}=await import('../worker/cms-document-sql.ts');
   const db=new DatabaseSync(':memory:');
   try{
-    for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql'])db.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
+    for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql'])db.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
     for(const [query,table] of [[documentAssemblySql(),'cms_validation_parts'],[projectedDocumentSql(),'cms_projection_cache']]){
       const plan=db.prepare('EXPLAIN QUERY PLAN '+query).all('fixture').map(row=>row.detail);
       assert.equal(plan.filter(line=>line.startsWith('SCAN m VIRTUAL TABLE')).length,1,'one manifest enumeration, not one per assembled field');
@@ -25,7 +25,7 @@ test('native SQL reconstructs all document fields without parsing source bodies 
   const source=createCmsSeed();
   const db=new DatabaseSync(':memory:');
   try {
-    for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) db.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
+    for(const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) db.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
     const manifest=[];
     let counter=0;
     const add=(kind,index,value,key)=>{

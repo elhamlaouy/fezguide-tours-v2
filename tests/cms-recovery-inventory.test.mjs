@@ -3,7 +3,7 @@ import {test} from 'node:test';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 const key=n=>`upload-${String(n).padStart(8,'0')}-1234-1234-1234-123456789012.png`;
-function fixture(){const sql=new DatabaseSync(':memory:');for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql'])sql.exec(readFileSync(new URL('../migrations/'+name,import.meta.url),'utf8'));
+function fixture(){const sql=new DatabaseSync(':memory:');for(const name of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql'])sql.exec(readFileSync(new URL('../migrations/'+name,import.meta.url),'utf8'));
  const queries=[];const statement=(q,p=[])=>({bind:(...args)=>statement(q,args),async first(){queries.push(q);return sql.prepare(q).get(...p)??null;},async all(){queries.push(q);return{success:true,results:sql.prepare(q).all(...p)};}});
  const old=new Date('2020-01-01T00:00:00.000Z');const objects=Array.from({length:20},(_,i)=>({key:'uploads/'+key(i+1),size:3,uploaded:old,etag:'etag-'+i,version:'version-'+i}));
  return{sql,queries,db:{prepare:statement},objects,bucket:{async list({limit,cursor}){const offset=Number(cursor??0),page=objects.slice(offset,offset+limit);return{objects:page,truncated:offset+limit<objects.length,...(offset+limit<objects.length?{cursor:String(offset+limit)}:{})};}}};}

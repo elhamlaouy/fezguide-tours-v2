@@ -66,8 +66,87 @@ function operationId(value: unknown): string {
   return value;
 }
 
+async function readDocument(path: string, historical = false): Promise<Record<string, unknown>> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 180000);
+  try {
+    const metadata = await request(path + '?read=meta', 'GET', undefined, {}, controller.signal);
+    controller.signal.throwIfAborted();
+    // A legacy server answers this same opt-in request with its ordinary document.
+    // A declared but malformed protocol never falls back to another full read.
+    if (!Object.hasOwn(metadata, 'readProtocol')) return metadata;
+    const invalid = (): never => { throw new AdminApiError(502, 'invalid_response'); };
+    const positive = (v: unknown) => integer(v) !== null && (v as number) > 0;
+    const pointer = (v: unknown) => v === null || (positive(v) && (v as number) <= (metadata.version as number));
+    const empty = !historical && metadata.version === 0 && metadata.draftRevision === null && metadata.publishedRevision === null;
+    const fields = ['processing','readProtocol','version','revision','policy','digest','bytes','sliceBytes','pin',
+      ...(historical ? ['kind','createdAt','sourceRevision'] : ['draftRevision','publishedRevision'])];
+    if (metadata.readProtocol !== 'bounded-v1' || metadata.processing !== 'staged-v1' || Object.keys(metadata).length !== fields.length || fields.some(k => !Object.hasOwn(metadata,k)) ||
+      typeof metadata.policy !== 'string' || !metadata.policy || metadata.policy.length > 512 || typeof metadata.pin !== 'string' || !/^[a-f0-9]{64}$/.test(metadata.pin) ||
+      metadata.sliceBytes !== 32768 || integer(metadata.version) === null || (metadata.version as number) < 0 ||
+      (historical ? !positive(metadata.version) || metadata.revision !== metadata.version || !['draft','publish','rollback'].includes(metadata.kind as string) || typeof metadata.createdAt !== 'string' || !pointer(metadata.sourceRevision)
+        : !pointer(metadata.draftRevision) || !pointer(metadata.publishedRevision) || metadata.revision !== metadata.draftRevision || (!empty && !positive(metadata.draftRevision))) ||
+      (empty ? metadata.bytes !== 0 || metadata.digest !== null || metadata.revision !== null
+        : !positive(metadata.bytes) || (metadata.bytes as number) > CMS_LIMITS.bytes || typeof metadata.digest !== 'string' || !/^[a-f0-9]{64}$/.test(metadata.digest))) invalid();
+    const bytes = metadata.bytes as number;
+    const assembled = new Uint8Array(bytes);
+    for (let part = 1; part <= Math.ceil(bytes / 32768); part++) {
+      const response = await fetch(path + '?' + new URLSearchParams({read:'slice',pin:metadata.pin as string,part:String(part)}), {
+        method:'GET',credentials:'same-origin',cache:'no-store',signal:controller.signal,headers:{Accept:'application/octet-stream'},
+      });
+      controller.signal.throwIfAborted();
+      if (!response.ok) {
+        // Error bodies are not document sources; do not retry or downgrade on denial.
+        let code = 'request_failed';
+        try { const payload = await response.json(); if (typeof payload.error === 'string') code = payload.error; } catch { /* sanitized fallback */ }
+        throw new AdminApiError(response.status,code,response.headers.get('Retry-After'));
+      }
+      const expected = Math.min(32768,bytes-(part-1)*32768);
+      const declared = response.headers.get('Content-Length');
+      if (response.headers.get('Content-Type') !== 'application/octet-stream' || (declared !== null && (!/^(0|[1-9]\d*)$/.test(declared) || Number(declared) !== expected))) {
+        await response.body?.cancel().catch(() => {}); invalid();
+      }
+      const reader = response.body?.getReader();
+      if (!reader) invalid();
+      let received = 0;
+      try {
+        for (;;) {
+          const chunk = await reader!.read();
+          controller.signal.throwIfAborted();
+          if (chunk.done) break;
+          if (received + chunk.value.byteLength > expected) { await reader!.cancel().catch(() => {}); invalid(); }
+          assembled.set(chunk.value,(part-1)*32768+received); received += chunk.value.byteLength;
+        }
+      } finally { reader!.releaseLock(); }
+      if (received !== expected) invalid();
+    }
+    const final = await request(path + '?' + new URLSearchParams({read:'verify',pin:metadata.pin as string}), 'GET', undefined, {}, controller.signal);
+    controller.signal.throwIfAborted();
+    if (Object.keys(final).length !== fields.length || fields.some(k => final[k] !== metadata[k])) invalid();
+    let document: unknown = null;
+    if (bytes) {
+      const digest = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',assembled)),b=>b.toString(16).padStart(2,'0')).join('');
+      controller.signal.throwIfAborted();
+      if (digest !== metadata.digest) invalid();
+      try { document = JSON.parse(new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(assembled)); } catch { invalid(); }
+      if (!document || typeof document !== 'object' || Array.isArray(document)) invalid();
+    }
+    return {...metadata,document};
+  } catch (error) {
+    if (controller.signal.aborted) throw new AdminApiError(408,'read_timeout');
+    throw error;
+  } finally { clearTimeout(timer); }
+}
+
+export async function loadAdminRevision(version: number): Promise<{version:number;kind:string;createdAt:string;sourceRevision:number|null;document:CmsDocument}> {
+  if (!Number.isSafeInteger(version) || version < 1) throw new AdminApiError(400,'invalid_revision');
+  const payload = await readDocument(`/api/admin/content/revisions/${version}`, true);
+  if (payload.version !== version || typeof payload.kind !== 'string' || typeof payload.createdAt !== 'string' || !payload.document || typeof payload.document !== 'object' || Array.isArray(payload.document)) throw new AdminApiError(502,'invalid_response');
+  return {version,kind:payload.kind,createdAt:payload.createdAt,sourceRevision:integer(payload.sourceRevision),document:payload.document as CmsDocument};
+}
+
 export async function loadAdminContent(): Promise<AdminContent> {
-  const payload = await request('/api/admin/content', 'GET');
+  const payload = await readDocument('/api/admin/content');
   const version = integer(payload.version);
   const document = payload.document;
   if (version === null || (document !== null && (!document || typeof document !== 'object' || Array.isArray(document)))) {

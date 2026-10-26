@@ -25,7 +25,7 @@ test('unused-media report stays advisory and never sends a delete operation',asy
 test('mounted CMS History tab exposes and completes the private recovery workflow',async()=>{
  const savedFetch=globalThis.fetch,requests=[];let version=1;const published=1;
  const fakeFetch=async(path,init={})=>{const route=String(path),method=init.method??'GET',body=typeof init.body==='string'?JSON.parse(init.body):init.body;requests.push({route,method,body});
-  if(route==='/api/admin/content')return Response.json({version,draftRevision:version,publishedRevision:published,document:seed});
+  if(route==='/api/admin/content?read=meta')return Response.json({version,draftRevision:version,publishedRevision:published,document:seed});
   if(route==='/api/admin/content/revisions')return Response.json({revisions:[...(version===2?[{version:2,kind:'draft',actor:'owner',created_at:'restored',source_revision:1}]:[]),{version:1,kind:'draft',actor:'owner',created_at:'original',source_revision:null}]});
   if(route==='/api/admin/recovery/restore')return Response.json({id:'b'.repeat(32)});
   if(route.endsWith('/manifest'))return Response.json({missing:body.manifest.map((_,i)=>i)});
@@ -48,7 +48,7 @@ test('mounted CMS History tab exposes and completes the private recovery workflo
   await until(()=>host.querySelector('[data-revision="2"]')&&[...host.querySelectorAll('li button')].some(button=>button.textContent==='Revision 2 (draft)'),'restored revision AND History row');
   assert.equal(version,2);assert.equal(published,1);assert.ok(host.querySelector('[data-revision="2"]'),'the restored revision is read back into the mounted editor');
   assert.equal(requests.some(item=>item.route==='/api/admin/content/publish'||item.route==='/api/admin/content/preparations'),false,'restore never publishes');
-  assert.equal(requests.at(-3).route,'/api/admin/recovery/restore/'+'b'.repeat(32)+'/commit');assert.equal(requests.at(-2).route,'/api/admin/content');assert.equal(requests.at(-1).route,'/api/admin/content/revisions');
+  assert.equal(requests.at(-3).route,'/api/admin/recovery/restore/'+'b'.repeat(32)+'/commit');assert.equal(requests.at(-2).route,'/api/admin/content?read=meta');assert.equal(requests.at(-1).route,'/api/admin/content/revisions');
  }finally{await act(async()=>root.unmount());host.remove();globalThis.fetch=savedFetch;}
 });
 
@@ -60,7 +60,7 @@ async function mountedRecovery(handler){
  const previous={fetch:globalThis.fetch,windowFetch:window.fetch,confirm:window.confirm};const requests=[];
  const fake=async(path,init={})=>{const route=String(path),method=init.method??'GET',body=typeof init.body==='string'?JSON.parse(init.body):init.body;requests.push({route,method,body});
   const custom=await handler?.(route,body);if(custom)return custom;
-  if(route==='/api/admin/content')return Response.json({version:1,draftRevision:1,publishedRevision:1,document:seed});
+  if(route==='/api/admin/content?read=meta')return Response.json({version:1,draftRevision:1,publishedRevision:1,document:seed});
   if(route==='/api/admin/content/revisions')return Response.json({revisions:[{version:1,kind:'draft',actor:'synthetic',created_at:'original',source_revision:null}]});
   if(route==='/api/admin/recovery/restore')return Response.json({id:'c'.repeat(32)});
   if(route.endsWith('/manifest'))return Response.json({missing:body.manifest.map((_,i)=>i)});
@@ -103,7 +103,7 @@ for(const failure of ['interrupted commit','failed commit','failed readback'])te
  let committed=false;
  const session=await mountedRecovery(async route=>{
   if(route.endsWith('/commit')){committed=true;if(failure==='interrupted commit')throw new TypeError('synthetic_connection_lost');if(failure==='failed commit')return Response.json({error:'synthetic_commit_failed'},{status:503});return Response.json({version:2,draftRevision:2,published:false});}
-  if(route==='/api/admin/content'&&committed)return Response.json({error:'synthetic_readback_failed'},{status:503});
+  if(route==='/api/admin/content?read=meta'&&committed)return Response.json({error:'synthetic_readback_failed'},{status:503});
   if(route==='/api/admin/content/draft')return Response.json({error:'synthetic_draft_failed'},{status:503});
  });
  try{await click(named('restore-archive'));await until(()=>committed&&!named('backup-file').disabled&&host.querySelector('[role="alert"]'),'error surfaced and recovery unlocked');

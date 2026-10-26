@@ -40,7 +40,7 @@ for(const shellId of [undefined,'','bad','A'.repeat(64)]) test(`staged publicati
 });
 async function fixture() {
   const sql = new DatabaseSync(':memory:');
-  for (const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) sql.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url),'utf8'));
+  for (const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) sql.exec(readFileSync(new URL(`../migrations/${file}`, import.meta.url),'utf8'));
   const queries = [];
   const statement = (query, values = []) => ({
     bind: (...args) => statement(query,args),
@@ -309,6 +309,48 @@ for(const mode of ['publish','rollback']) test(`F3 real client/router ${mode}: l
     assert.equal(f.sql.prepare('SELECT kind FROM cms_revisions WHERE version=2').get().kind,mode);
     assert.equal(f.sql.prepare('SELECT COUNT(*) AS n FROM cms_publications').get().n,1);
   } finally {globalThis.fetch=originalFetch;f.close();}
+});
+
+test('bounded editor client uses opt-in metadata, binary slices and final verification through authenticated SQLite router',async()=>{
+  const f=await fixture(),originalFetch=globalThis.fetch;
+  try{
+    const doc=smallSeed();await f.stage(doc);
+    const meta=await f.call('/api/admin/content?read=meta');
+    assert.equal(meta.headers.get('X-Content-Type-Options'),'nosniff');
+    const paths=[];f.queries.length=0;
+    globalThis.fetch=async(path,options={})=>{paths.push(path);return f.call(path,options.method??'GET',undefined,{Origin:ORIGIN,'Sec-Fetch-Site':'same-origin'});};
+    const api=await import('../src/admin/admin-api.ts');
+    assert.deepEqual((await api.loadAdminContent()).document,doc);
+    assert.equal(paths[0],'/api/admin/content?read=meta');
+    assert.ok(paths.some(p=>p.includes('read=slice')));assert.ok(paths.at(-1).includes('read=verify'));
+    assert.ok(f.queries.every(q=>!q.includes('r.document,a.revision')&&!q.includes('SELECT r.*')));
+    paths.length=0;
+    const revision=await api.loadAdminRevision(1);
+    assert.deepEqual(revision.document,doc);assert.equal(revision.kind,'draft');
+    assert.equal(paths[0],'/api/admin/content/revisions/1?read=meta');
+  }finally{globalThis.fetch=originalFetch;f.close();}
+});
+
+test('bounded reads retain authentication, Fetch Metadata, sanitized errors and every-request read charging',async()=>{
+  const f=await fixture();try{
+    await f.stage();
+    const path='/api/admin/content?read=meta';
+    const cold={...f.env,CMS_DB:{prepare(){assert.fail('unauthorized DB access');},batch(){assert.fail('unauthorized charge');}}};
+    for(const headers of [{},{'Cf-Access-Jwt-Assertion':f.jwt,'Sec-Fetch-Site':'cross-site'}]){
+      const response=await f.handler(new Request(ORIGIN+path,{method:Object.keys(headers).length?'POST':'GET',headers}),cold);
+      assert.equal(response.status,Object.keys(headers).length?403:401);
+    }
+    const before=f.sql.prepare("SELECT used FROM cms_request_budgets WHERE actor='editor' AND bucket='read'").get()?.used??0;
+    const m=await(await f.call(path)).json();
+    const slice=await f.call('/api/admin/content?'+new URLSearchParams({read:'slice',pin:m.pin,part:'1'}));
+    assert.equal(slice.status,200);assert.equal(slice.headers.get('X-Content-Type-Options'),'nosniff');
+    assert.equal((await f.call('/api/admin/content?'+new URLSearchParams({read:'verify',pin:m.pin}))).status,200);
+    assert.equal(f.sql.prepare("SELECT used FROM cms_request_budgets WHERE actor='editor' AND bucket='read'").get().used,before+3);
+    const wrong=await f.call('/api/admin/content?read=verify&pin='+'0'.repeat(64));
+    assert.equal(wrong.status,409);assert.deepEqual(await wrong.json(),{error:'read_conflict'});
+    f.sql.prepare("UPDATE cms_request_budgets SET used=300,reset_at=unixepoch()+60 WHERE actor='editor' AND bucket='read'").run();
+    const limited=await f.call(path);assert.equal(limited.status,429);assert.deepEqual(await limited.json(),{error:'cms_request_rate'});
+  }finally{f.close();}
 });
 
 test('real SQLite staged save routes persist admitted bytes and return raw revisions plus metadata-only history', async()=>{

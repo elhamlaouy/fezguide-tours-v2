@@ -33,7 +33,7 @@ function seed() {
 }
 async function fixture(document=seed(),trace=()=>{},populateUploads=true,policy=config.policy) {
   const sql=new DatabaseSync(':memory:');
-  for (const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql']) sql.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
+  for (const file of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql']) sql.exec(readFileSync(new URL(`../migrations/${file}`,import.meta.url),'utf8'));
   const reads=[];
   let assemblies=0;
   sql.function('observed_projection',value=>{ assemblies++; return value; });
@@ -88,6 +88,89 @@ async function fixture(document=seed(),trace=()=>{},populateUploads=true,policy=
   const assets={async fetch(request) { assert.equal(new URL(request.url).pathname,'/index.html'); return new Response(shell,{headers:{'Content-Type':'text/html'}}); }};
   return {sql,db,reads,parts,document,bucket,assets,objects,writes,get assemblies(){return assemblies;},close(){sql.close();}};
 }
+
+test('lean publication read omits duplicate legacy except compatibility and preserves complete artifacts',async()=>{
+  const {rewriteRouteHtml}=await import('../worker/seo.ts');
+  const {resolveRoute}=await import('../src/cms/routing.ts');
+  const f=await fixture();
+  try {
+    const Preparer=await load(),preparer=new Preparer(f.db,f.bucket,f.assets,config);
+    const ready=await finish(preparer,await preparer.start(1,'actor','publish'));
+    const catalog=await preparer.catalog(ready.id,'actor');
+    const plan=JSON.parse(catalog.plan_json);
+    const raw=f.sql.prepare('SELECT public_json FROM cms_artifact_catalogs WHERE id=?').get(ready.id).public_json;
+    const document=JSON.parse(raw);
+    for(const entry of plan.entries){
+      f.reads.length=0;
+      const actual=await preparer.render(catalog,entry);
+      const reads=f.reads.filter(read=>read.query.includes('SELECT public_json'));
+      if(entry.type!=='robots'){
+        assert.equal(reads.length,1);
+        assert.equal(Object.hasOwn(reads[0].row,'legacy_json'),entry.type==='compatibility','noncompatibility must not return full legacy');
+      }
+      let expected;
+      if(entry.type==='document') expected={body:`{"version":2,"document":${raw}}`,contentType:'application/json; charset=utf-8'};
+      else if(entry.type==='compatibility') expected={body:f.sql.prepare("SELECT json_extract(public_json,'$.legacy') AS value FROM cms_artifact_catalogs WHERE id=?").get(ready.id).value,contentType:'application/json; charset=utf-8'};
+      else if(entry.type==='robots') expected={body:`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${config.origin}/sitemap.xml\n`,contentType:'text/plain; charset=utf-8'};
+      else if(entry.type==='sitemap') expected={body:`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url><loc>${config.origin}/</loc><xhtml:link rel="alternate" hreflang="en" href="${config.origin}/"/><xhtml:link rel="alternate" hreflang="fr" href="${config.origin}/fr"/><xhtml:link rel="alternate" hreflang="es" href="${config.origin}/es"/></url><url><loc>${config.origin}/fr</loc><xhtml:link rel="alternate" hreflang="en" href="${config.origin}/"/><xhtml:link rel="alternate" hreflang="fr" href="${config.origin}/fr"/><xhtml:link rel="alternate" hreflang="es" href="${config.origin}/es"/></url><url><loc>${config.origin}/es</loc><xhtml:link rel="alternate" hreflang="en" href="${config.origin}/"/><xhtml:link rel="alternate" hreflang="fr" href="${config.origin}/fr"/><xhtml:link rel="alternate" hreflang="es" href="${config.origin}/es"/></url></urlset>`,contentType:'application/xml; charset=utf-8'};
+      else expected={body:rewriteRouteHtml(shell,document,entry.type==='404'?{language:entry.language,pageId:'not-found'}:resolveRoute(new URL(entry.path,config.origin),document),config.origin),contentType:'text/html; charset=utf-8'};
+      assert.deepEqual(actual,expected,entry.path);
+    }
+  }finally{f.close();}
+});
+
+for(const type of ['html','404','sitemap','document','compatibility']) for(const input of [null,'','{broken']) test(`lean publication ${type} preserves SQLite failure and sanitized advance for ${JSON.stringify(input)}`,async()=>{
+  const f=await fixture(),probe=new DatabaseSync(':memory:');
+  try{
+    probe.exec('CREATE TABLE cms_artifact_catalogs(id TEXT,public_json TEXT)');
+    const Preparer=await load(),normal=new Preparer(f.db,f.bucket,f.assets,config);
+    let progress=await normal.start(1,'actor','publish');
+    progress=await normal.advance(progress.id,'actor');
+    probe.prepare('INSERT INTO cms_artifact_catalogs VALUES(?,?)').run(progress.id,input);
+    const old=probe.prepare("SELECT public_json,json_extract(public_json,'$.legacy') AS legacy_json FROM cms_artifact_catalogs WHERE id=?");
+    if(input===null)assert.equal(old.get(progress.id).public_json,null);
+    else assert.throws(()=>old.get(progress.id),/malformed JSON/);
+    let failedRead=false,rechecks=0;
+    const db={prepare(query){
+      if(query.startsWith('SELECT public_json')) return {bind(...args){return {async first(){failedRead=true;return probe.prepare(query).get(...args);}};}};
+      if(failedRead&&query.includes(' AS live'))rechecks++;
+      return f.db.prepare(query);
+    },batch:statements=>f.db.batch(statements)};
+    const preparer=new Preparer(db,f.bucket,f.assets,config),render=preparer.render.bind(preparer);
+    preparer.render=(catalog)=>render(catalog,{type,path:'/',language:'en'});
+    await assert.rejects(preparer.advance(progress.id,'actor'),error=>code('publication_conflict')(error)&&error.status===409);
+    assert.equal(failedRead,true);
+    assert.equal(rechecks,1,'SQL malformed JSON must retain concurrent-ready eligibility recheck');
+    assert.equal(f.writes.length,0);
+    assert.equal(f.sql.prepare('SELECT published_revision FROM cms_documents').get().published_revision,null);
+  }finally{probe.close();f.close();}
+});
+
+for(const ready of [false,true]) test(`lean publication malformed SQL recheck ${ready?'recovers concurrently ready catalog':'denies expired catalog'}`,async()=>{
+  const f=await fixture(),probe=new DatabaseSync(':memory:');
+  try{
+    probe.exec("CREATE TABLE cms_artifact_catalogs(id TEXT,public_json TEXT)");
+    const Preparer=await load(),normal=new Preparer(f.db,f.bucket,f.assets,config);
+    let progress=await normal.start(1,'actor','publish');progress=await normal.advance(progress.id,'actor');
+    probe.prepare('INSERT INTO cms_artifact_catalogs VALUES(?,?)').run(progress.id,'');
+    let injected=false;
+    const db={prepare(query){
+      if(query.startsWith('SELECT public_json'))return {bind(...args){return {async first(){
+        injected=true;
+        try{return probe.prepare(query).get(...args);}catch(error){
+          if(ready)await finish(normal,progress);
+          else f.sql.prepare('UPDATE cms_artifact_catalogs SET expires_at=0 WHERE id=?').run(progress.id);
+          throw error;
+        }
+      }};}};
+      return f.db.prepare(query);
+    },batch:statements=>f.db.batch(statements)};
+    const result=new Preparer(db,f.bucket,f.assets,config).advance(progress.id,'actor');
+    if(ready)assert.equal((await result).ready,true);else await assert.rejects(result,code('publication_conflict'));
+    assert.equal(injected,true);
+    assert.equal(f.sql.prepare('SELECT published_revision FROM cms_documents').get().published_revision,null);
+  }finally{probe.close();f.close();}
+});
 
 async function finish(preparer,progress) {
   for(let i=0;i<200&&!progress.ready;i++) progress=await preparer.advance(progress.id,'actor');

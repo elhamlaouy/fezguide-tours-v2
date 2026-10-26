@@ -212,6 +212,49 @@ export class StagedCmsStore {
     } catch (error) { failure(error); }
   }
 
+  /** Each result is scalar metadata plus at most one fixed-size BLOB slice. */
+  async readBounded(params: URLSearchParams, revision?: number): Promise<Response> {
+    const mode = params.get('read');
+    const allowed = mode === 'meta' ? ['read'] : mode === 'verify' ? ['read', 'pin'] : mode === 'slice' ? ['read', 'pin', 'part'] : [];
+    if (!allowed.length || [...params.keys()].some(key => !allowed.includes(key) || params.getAll(key).length !== 1) || allowed.some(key => !params.has(key))) throw new CmsError(400, 'invalid_read');
+    const pin = params.get('pin');
+    const part = params.get('part');
+    if (mode !== 'meta' && !/^[a-f0-9]{64}$/.test(pin!)) throw new CmsError(400, 'invalid_read');
+    if (mode === 'slice' && (!/^[1-9]\d{0,2}$/.test(part!) || Number(part) > Math.ceil(CMS_LIMITS.bytes / 32768))) throw new CmsError(400, 'invalid_read');
+    if (revision !== undefined) { requireVersion(revision); if (revision < 1) throw new CmsError(400, 'invalid_read'); }
+    try {
+      // These immutable identities suffice without returning the potentially large manifest:
+      // PK(revision,policy), cms_admission_immutable_{update,delete}, and revision
+      // no_update/no_delete triggers are installed by migrations 0001/0004.
+      const row = await this.db.prepare(`SELECT ${revision === undefined ? 'd.version,d.draft_revision,d.published_revision,' : ''}
+        r.version AS revision,r.kind,r.created_at,r.source_revision,a.digest,a.document_bytes,
+        length(CAST(r.document AS BLOB)) AS actual_bytes
+        ${mode === 'slice' ? ',substr(CAST(r.document AS BLOB),?,32768) AS chunk' : ''}
+        FROM ${revision === undefined ? 'cms_documents d LEFT JOIN cms_revisions r ON r.version=d.draft_revision' : 'cms_revisions r'}
+        LEFT JOIN cms_revision_admissions a ON a.revision=r.version AND a.policy=?
+        WHERE ${revision === undefined ? 'd.id=1' : 'r.version=?'}`)
+        .bind(...(mode === 'slice' ? [(Number(part) - 1) * 32768 + 1] : []), this.policy, ...(revision === undefined ? [] : [revision]))
+        .first<{ version: number; draft_revision: number | null; published_revision: number | null; revision: number | null; kind: string; created_at: string; source_revision: number | null; digest: string | null; document_bytes: number | null; actual_bytes: number | null; chunk?: number[] | Uint8Array | ArrayBuffer }>();
+      if (!row) throw new CmsError(revision === undefined ? 503 : 404, revision === undefined ? 'cms_unavailable' : 'revision_not_found');
+      const empty = revision === undefined && row.version === 0 && row.draft_revision === null && row.published_revision === null;
+      if (!empty && (row.revision === null || row.digest === null || row.document_bytes !== row.actual_bytes)) throw new CmsError(409, 'admission_required');
+      if (!empty && (!Number.isSafeInteger(row.document_bytes) || row.document_bytes! < 1 || row.document_bytes! > CMS_LIMITS.bytes || !/^[a-f0-9]{64}$/.test(row.digest!))) throw new CmsError(503, 'cms_unavailable');
+      const metadata = { processing: 'staged-v1', readProtocol: 'bounded-v1',
+        ...(revision === undefined ? { version: row.version, draftRevision: row.draft_revision, publishedRevision: row.published_revision }
+          : { version: row.revision, kind: row.kind, createdAt: row.created_at, sourceRevision: row.source_revision }),
+        revision: row.revision, policy: this.policy, digest: empty ? null : row.digest, bytes: empty ? 0 : row.document_bytes, sliceBytes: 32768 };
+      const identity = await digest(JSON.stringify(metadata));
+      if (mode !== 'meta' && pin !== identity) throw new CmsError(409, 'read_conflict');
+      if (mode === 'slice') {
+        if (empty || Number(part) > Math.ceil(row.document_bytes! / 32768)) throw new CmsError(400, 'invalid_read');
+        const chunk = row.chunk instanceof ArrayBuffer ? new Uint8Array(row.chunk) : new Uint8Array(row.chunk!);
+        if (chunk.byteLength !== Math.min(32768, row.document_bytes! - (Number(part) - 1) * 32768)) throw new CmsError(503, 'cms_unavailable');
+        return new Response(chunk, { headers: { 'Content-Type': 'application/octet-stream', 'Cache-Control': 'no-store' } });
+      }
+      return this.response(JSON.stringify({ ...metadata, pin: identity }));
+    } catch (error) { failure(error); }
+  }
+
   async readRawContent(): Promise<Response> {
     try {
       const row = await this.db.prepare(`SELECT d.version,d.draft_revision,d.published_revision,r.document,a.revision AS admitted

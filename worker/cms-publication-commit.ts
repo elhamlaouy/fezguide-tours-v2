@@ -22,6 +22,7 @@ export async function commitPreparedPublication(db: CmsD1Database, input: Commit
       AND c.policy=? AND c.renderer=? AND c.assets=? AND c.origin=? AND c.mode=? AND c.state='ready' AND json_extract(c.plan_json,'$.uploadPolicy')=1
       AND c.expires_at>CAST(strftime('%s','now') AS INTEGER) AND d.version=c.expected_version
       AND NOT EXISTS(SELECT 1 FROM cms_catalog_bootstraps bootstrap WHERE bootstrap.catalog_id=c.id)
+      AND NOT EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=c.id)
       AND (c.mode='rollback' OR d.draft_revision=c.source_revision)
       AND length(CAST(r.document AS BLOB))=a.document_bytes
       AND (SELECT COUNT(*) FROM cms_artifact_entries WHERE catalog_id=c.id)=c.expected_entries
@@ -63,6 +64,58 @@ export async function commitPreparedPublication(db: CmsD1Database, input: Commit
   return {version,draftRevision:version,published:true};
 }
 
+
+
+type RefreshCommit = Omit<Commit,'mode'> & { expectedPublishedRevision: number; expectedPreviousCatalogId: string; shell: string };
+/** Strict single-use activation: no content, history, admission or publication writes. */
+export async function commitPreparedRefresh(db: CmsD1Database, input: RefreshCommit) {
+  requireVersion(input.expectedVersion); requireVersion(input.expectedPublishedRevision);
+  if(!/^[a-f0-9]{64}$/.test(input.shell)||!/^[a-f0-9]{32}$/.test(input.catalogId)||!/^[a-f0-9]{32}$/.test(input.expectedPreviousCatalogId)||
+    typeof input.actor!=='string'||!input.actor||input.actor.length>256||
+    [input.policy,input.renderer,input.assets,input.origin].some(v=>typeof v!=='string'||!v||v.length>512))throw new CmsError(400,'invalid_publication');
+  try {
+    const renderer=await redirectRendererId(input.renderer,input.redirects);
+    const eligible=`SELECT c.id FROM cms_catalog_refreshes f
+      JOIN cms_artifact_catalogs c ON c.id=f.catalog_id AND c.mode='publish' AND c.target_revision=c.expected_version+1
+        AND c.source_revision=f.revision AND c.expected_version=f.expected_version
+        AND c.policy=f.policy AND c.renderer=f.renderer AND c.assets=f.assets AND c.origin=f.origin
+      JOIN cms_documents d ON d.id=1 AND d.version=f.expected_version AND d.published_revision=f.revision AND d.draft_revision=f.draft_revision
+      JOIN cms_publications p ON p.revision=f.revision AND p.catalog_id=f.previous_catalog_id
+      JOIN cms_revision_admissions a ON a.revision=f.revision AND a.policy=f.policy AND a.digest=c.source_digest AND a.document_bytes=f.document_bytes
+      JOIN cms_revisions r ON r.version=a.revision AND length(CAST(r.document AS BLOB))=f.document_bytes
+      WHERE c.id=? AND c.actor=? AND c.expected_version=? AND f.revision=? AND f.previous_catalog_id=?
+        AND c.policy=? AND c.renderer=? AND c.assets=? AND c.origin=? AND f.shell=? AND c.state=?
+        AND c.expires_at>CAST(strftime('%s','now') AS INTEGER) AND c.public_json IS NOT NULL
+        AND json_extract(c.plan_json,'$.uploadPolicy')=1 AND json_array_length(c.plan_json,'$.entries')=c.expected_entries
+        AND NOT EXISTS(SELECT 1 FROM cms_catalog_bootstraps b WHERE b.catalog_id=c.id)
+        AND NOT EXISTS(SELECT 1 FROM cms_publications existing WHERE existing.catalog_id=c.id)
+        AND (SELECT COUNT(*) FROM cms_artifact_entries WHERE catalog_id=c.id)=c.expected_entries
+        AND NOT EXISTS(SELECT 1 FROM json_each(c.plan_json,'$.entries') planned WHERE NOT EXISTS(
+          SELECT 1 FROM cms_artifact_entries e JOIN cms_artifact_reservations reservation
+            ON reservation.catalog_id=e.catalog_id AND reservation.path=e.path AND reservation.bytes=e.bytes AND reservation.state='stored'
+          WHERE e.catalog_id=c.id AND e.path=json_extract(planned.value,'$.path')))
+        AND (SELECT COUNT(*) FROM cms_artifact_reservations WHERE catalog_id=c.id)=c.expected_entries
+        AND (SELECT COUNT(*) FROM cms_catalog_upload_checks WHERE catalog_id=c.id)=COALESCE(json_array_length(c.plan_json,'$.uploads'),0)
+        AND NOT EXISTS(SELECT 1 FROM cms_catalog_media m WHERE m.catalog_id=c.id AND NOT EXISTS(
+          SELECT 1 FROM cms_catalog_upload_checks u WHERE u.catalog_id=c.id AND u.media_key=m.media_key AND u.state='verified'))
+        AND NOT EXISTS(SELECT 1 FROM cms_catalog_upload_checks u WHERE u.catalog_id=c.id AND u.state='verified' AND NOT EXISTS(
+          SELECT 1 FROM cms_catalog_media m WHERE m.catalog_id=c.id AND m.media_key=u.media_key))`;
+    const values=[input.catalogId,input.actor,input.expectedVersion,input.expectedPublishedRevision,input.expectedPreviousCatalogId,input.policy,renderer,input.assets,input.origin,input.shell];
+    const results=await db.batch([
+      db.prepare(`SELECT CASE WHEN EXISTS(${eligible}) THEN 1 ELSE json('cms_catalog_refresh_conflict') END`).bind(...values,'ready'),
+      db.prepare("UPDATE cms_artifact_catalogs SET state='published' WHERE id=? AND state='ready'").bind(input.catalogId),
+      // SQL assertion, not a post-commit JS check: suppressed updates and trigger pointer drift roll back everything.
+      db.prepare(`SELECT CASE WHEN EXISTS(${eligible}) THEN 1 ELSE json('cms_catalog_refresh_incomplete') END`).bind(...values,'published'),
+    ]);
+    if(results.length!==3||results.some(result=>!result.success))throw new CmsError(503,'cms_unavailable');
+    return {version:input.expectedVersion,publishedRevision:input.expectedPublishedRevision,published:true,refresh:true};
+  } catch(error) {
+    if(error instanceof CmsError)throw error;
+    if(error instanceof Error&&/malformed JSON|cms_catalog_|cms_publication_/.test(error.message))throw new CmsError(409,'publication_conflict');
+    throw new CmsError(503,'cms_unavailable');
+  }
+}
+
 type BootstrapCommit = Omit<Commit,'mode'>;
 /** Seal the first prepared public catalog against the existing pointer only. */
 export async function commitPreparedBootstrap(db: CmsD1Database, input: BootstrapCommit) {
@@ -85,6 +138,7 @@ export async function commitPreparedBootstrap(db: CmsD1Database, input: Bootstra
         AND c.state IN ('ready','published') AND (c.state='published' OR c.expires_at>CAST(strftime('%s','now') AS INTEGER))
         AND c.expires_at>0 AND d.version=c.expected_version AND d.published_revision=b.revision
         AND NOT EXISTS(SELECT 1 FROM cms_publications p WHERE p.revision=b.revision)
+        AND NOT EXISTS(SELECT 1 FROM cms_catalog_refreshes f WHERE f.catalog_id=c.id)
         AND length(CAST(r.document AS BLOB))=a.document_bytes
         AND (SELECT COUNT(*) FROM cms_artifact_entries WHERE catalog_id=c.id)=c.expected_entries
         AND (SELECT COUNT(*) FROM cms_catalog_upload_checks WHERE catalog_id=c.id)=COALESCE(json_array_length(c.plan_json,'$.uploads'),0)
