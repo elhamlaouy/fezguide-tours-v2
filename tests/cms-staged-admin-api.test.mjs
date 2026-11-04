@@ -142,6 +142,29 @@ async function withClock(run) {
   }
 }
 
+for (const denied of [false, true]) test(`progress distinguishes proactive pacing from actual denial: ${denied}`, async () => withClock(async ({ waits }) => {
+  let advances = 0, denialSent = false;
+  const progress = [];
+  fixture(call => {
+    if (call.method === 'GET') return { body: loaded() };
+    if (call.url.endsWith('/preparations')) return { body: { id, ready: false, done: 0, total: 60 } };
+    if (call.url.endsWith('/advance')) {
+      if (denied && advances === 2 && !denialSent) { denialSent = true; return { status: 429, headers: { 'Retry-After': '1' }, body: { error: 'rate_limited' } }; }
+      return { body: { id, ready: ++advances === 60, done: advances, total: 60 } };
+    }
+    return { body: result(true) };
+  });
+  await api.loadAdminContent();
+  await api.publishAdminDraft(2, event => progress.push(event));
+  const pacing = progress.filter(event => event.phase === 'pace');
+  assert.equal(pacing.length, 1, 'normal request-window wait has its own phase');
+  assert.deepEqual(pacing[0], { phase: 'pace', done: denied ? 58 : 59, total: 60 });
+  const retries = progress.filter(event => event.phase === 'retry');
+  assert.deepEqual(retries, denied ? [{ phase: 'retry', done: 2, total: 60 }] : []);
+  assert.deepEqual(waits, denied ? [1000, 59000] : [60000]);
+  assert.deepEqual(progress.filter(event => event.phase === 'prepare').map(event => event.done), Array.from({ length: 61 }, (_, i) => i));
+}));
+
 for (const retryAfter of ['1', '0', 'not-a-date', 'http-date']) test(`client contract: 429 waits before retry with Retry-After ${retryAfter}`, async () => {
   await withClock(async ({ waits }) => {
     let attempt = 0;
@@ -382,7 +405,7 @@ test('client contract: overslept write-budget wait cannot send a late save commi
     const calls = fixture(call => ({ body: call.method === 'GET' ? loaded() : call.url.endsWith('/save-jobs') ? { id, missing: Array.from({ length: 59 }, (_, i) => i) } : call.url.endsWith('/part') ? { stored: true } : result() }));
     await api.loadAdminContent();
     await assert.rejects(api.saveAdminDraft(2, createCmsSeed(), progress => {
-      if (progress.phase === 'retry') jump(1800001);
+      if (progress.phase === 'pace') jump(1800001);
     }), error => error.code === 'staged_operation_timeout' && error.preserveDraft);
     assert.equal(calls.some(call => call.url.endsWith('/commit')), false);
   });

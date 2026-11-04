@@ -71,7 +71,7 @@ export default {async fetch(request,env){
   const db=await mf.getD1Database('CMS_DB');
   // SQLite's own complete_statement handles trigger bodies and quoted semicolons.
   const parser="import sqlite3,json,sys\nout=[]\nfor name in sys.argv[1:]:\n text=open(name).read(); part=''\n for char in text:\n  part+=char\n  if char==';' and sqlite3.complete_statement(part):out.append(part);part=''\nprint(json.dumps(out))";
-  const migrations=['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql'].map(name=>path.join(root,'migrations',name));
+  const migrations=['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql'].map(name=>path.join(root,'migrations',name));
   const statements=JSON.parse(execFileSync('python',['-c',parser,...migrations],{encoding:'utf8'}));
   for(const sql of statements)await db.prepare(sql).run();
   const b64=value=>Buffer.from(JSON.stringify(value)).toString('base64url');

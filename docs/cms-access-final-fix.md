@@ -1,5 +1,11 @@
 # Access authentication — reviewed final fix
 
+## Clean online deployment verified
+
+Commit `55db9e37f3e689bb13b8004d72ceba310db0efc4`, PR #12, Workers Builds `60e29b06-2044-4a32-aee3-3fa2b9b645f8`: successful. Explicitly reloaded the real owner preview: Content editor loads instead of 401. Authenticated `/api/admin/content` returns `{"version":0,"draftRevision":null,"publishedRevision":null,"document":null}` with no diagnostic fields. A separate signed-out browser still reaches the exact preview application's Access login screen. GitHub main remains `241dca78c7c89dc5803082a4804681fc5b7529a9`; production was not merged/redeployed.
+
+Authentication is fixed. The isolated online store is empty and still needs safe content initialization/import. No owner draft/history/media was overwritten, copied or published by this authentication fix. Do not call the entire CMS production-ready or claim online publishing/upload proof from this result.
+
 ## Root cause
 
 The original signing-key request used `redirect: 'error'`. Node accepts this option, but native Cloudflare workerd throws before making the request:

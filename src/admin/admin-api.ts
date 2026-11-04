@@ -2,7 +2,7 @@ import type { MediaText, MediaUploadResult } from '../../worker/media';
 import { CMS_LIMITS, CMS_PART_FIELDS, type CmsDocument } from '../cms/schema';
 import { splitCmsDocument } from '../cms/document-parts';
 
-export interface AdminProgress { phase: 'hash' | 'upload' | 'prepare' | 'commit' | 'retry'; done: number; total: number }
+export interface AdminProgress { phase: 'hash' | 'upload' | 'prepare' | 'commit' | 'pace' | 'retry'; done: number; total: number }
 export type AdminProgressCallback = (progress: AdminProgress) => void;
 let stagedProcessing = false;
 
@@ -186,7 +186,9 @@ function stagedWriteResult(payload: Record<string, unknown>, expectedVersion: nu
   return result;
 }
 
-async function stagedOperation(onProgress: AdminProgressCallback | undefined, action: (send: StagedRequest, budget: (requests: number) => void) => Promise<AdminWriteResult>): Promise<AdminWriteResult> {
+async function stagedOperation(onProgress: AdminProgressCallback | undefined, action: (send: StagedRequest, budget: (requests: number) => void, report: AdminProgressCallback) => Promise<AdminWriteResult>): Promise<AdminWriteResult> {
+  let lastProgress: AdminProgress = { phase: 'prepare', done: 0, total: 1 };
+  const report: AdminProgressCallback = progress => { lastProgress = progress; onProgress?.(progress); };
   let retries = 0;
   const startedAt = Date.now();
   let deadline = startedAt + 1800000;
@@ -198,10 +200,10 @@ async function stagedOperation(onProgress: AdminProgressCallback | undefined, ac
   };
   let windowEnds = 0;
   let writes = 0;
-  const waitForBudget = async (wait: number) => {
+  const waitForBudget = async (wait: number, phase: 'pace' | 'retry') => {
     if (Date.now() + wait >= deadline) throw new AdminApiError(408, 'staged_operation_timeout');
     const waitingAt = Date.now();
-    onProgress?.({ phase: 'retry', done: retries, total: 32 });
+    onProgress?.({ ...lastProgress, phase });
     await new Promise(resolve => setTimeout(resolve, wait));
     if (Date.now() >= deadline || Date.now() - waitingAt >= 1800000) throw new AdminApiError(408, 'staged_operation_timeout');
   };
@@ -211,7 +213,7 @@ async function stagedOperation(onProgress: AdminProgressCallback | undefined, ac
       if (Date.now() >= deadline) throw new AdminApiError(408, 'staged_operation_timeout');
       // D1 charges every write, including commit: leave the next window for request 61.
       // Local pacing is not authority; concurrent tabs/site contention can still return 429.
-      if (writes >= 60 && Date.now() < windowEnds) await waitForBudget(windowEnds - Date.now());
+      if (writes >= 60 && Date.now() < windowEnds) await waitForBudget(windowEnds - Date.now(), 'pace');
       if (Date.now() >= windowEnds) { windowEnds = Date.now() + 60000; writes = 0; }
       writes++;
       const controller = new AbortController();
@@ -234,12 +236,12 @@ async function stagedOperation(onProgress: AdminProgressCallback | undefined, ac
         const wait = Math.max(Math.min(60000, 250 * 2 ** consecutiveRetries++), Number.isFinite(retryAt) ? retryAt : 0);
         if (wait > 60000) throw error;
         retries++;
-        await waitForBudget(wait);
+        await waitForBudget(wait, 'retry');
       }
       finally { clearTimeout(timeout); }
     }
   };
-  try { return await action(send, budget); }
+  try { return await action(send, budget, report); }
   catch (error) {
     if (error instanceof AdminApiError) throw new AdminApiError(error.status, error.code, error.retryAfter, true);
     throw new AdminApiError(0, 'staged_operation_failed', null, true);
@@ -247,7 +249,7 @@ async function stagedOperation(onProgress: AdminProgressCallback | undefined, ac
 }
 
 export async function saveAdminDraft(expectedVersion: number, document: CmsDocument, onProgress?: AdminProgressCallback): Promise<AdminWriteResult> {
-  if (stagedProcessing) return stagedOperation(onProgress, async (send, budget) => {
+  if (stagedProcessing) return stagedOperation(onProgress, async (send, budget, onProgress) => {
     // Detach every value before hashing yields; uploads must match this exact manifest.
     const parts = structuredClone(splitCmsDocument(document));
     budget(parts.length + 2); // start + each possible missing part + explicit commit
@@ -288,7 +290,7 @@ function preparation(payload: Record<string, unknown>, previous?: Preparation): 
 }
 
 async function prepareAdminWrite(expectedVersion: number, mode: 'publish' | 'rollback', revision?: number, onProgress?: AdminProgressCallback): Promise<AdminWriteResult> {
-  return stagedOperation(onProgress, async (send, budget) => {
+  return stagedOperation(onProgress, async (send, budget, onProgress) => {
     let job = preparation(await send('/api/admin/content/preparations', { expectedVersion, mode, ...(revision === undefined ? {} : { revision }) }));
     // At most two stalled responses per integer progress unit, plus final sealing.
     const maxAdvances = 3 * (job.total - job.done + 1);

@@ -122,9 +122,9 @@ const SPANISH_LABELS: Record<string, string> = {
 const LOCALES = ['en', 'fr', 'es'] as const;
 type Locale = typeof LOCALES[number];
 const PROGRESS_LABELS: Record<Locale, Record<AdminProgress['phase'], string>> = {
-  en: { hash: 'Checking draft', upload: 'Uploading draft', prepare: 'Preparing publication', commit: 'Committing revision', retry: 'Rate limited; waiting to retry' },
-  fr: { hash: 'Vérification du brouillon', upload: 'Envoi du brouillon', prepare: 'Préparation de la publication', commit: 'Enregistrement de la révision', retry: 'Limite atteinte ; nouvelle tentative en attente' },
-  es: { hash: 'Comprobando borrador', upload: 'Enviando borrador', prepare: 'Preparando publicación', commit: 'Confirmando revisión', retry: 'Límite alcanzado; esperando para reintentar' },
+  en: { hash: 'Checking draft', upload: 'Uploading draft', prepare: 'Preparing publication', commit: 'Committing revision', pace: 'Pacing requests; continuing shortly', retry: 'Rate limited; waiting to retry' },
+  fr: { hash: 'Vérification du brouillon', upload: 'Envoi du brouillon', prepare: 'Préparation de la publication', commit: 'Enregistrement de la révision', pace: 'Régulation des requêtes ; reprise dans un instant', retry: 'Limite atteinte ; nouvelle tentative en attente' },
+  es: { hash: 'Comprobando borrador', upload: 'Enviando borrador', prepare: 'Preparando publicación', commit: 'Confirmando revisión', pace: 'Regulando solicitudes; continuando en breve', retry: 'Límite alcanzado; esperando para reintentar' },
 };
 const SECTION_TYPES = ['hero', 'richText', 'cardGrid', 'productGrid', 'gallery', 'benefits', 'cta', 'reviews', 'faq', 'team', 'itinerary', 'inclusions', 'practicalInfo', 'contact'] as const;
 const FONTS = ['system', 'inter', 'noto-sans'] as const;

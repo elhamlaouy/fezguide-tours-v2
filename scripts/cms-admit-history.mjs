@@ -78,7 +78,13 @@ function sqliteBinding(sql){
  return{prepare:statement,async batch(statements){sql.exec('BEGIN IMMEDIATE');try{const results=[];for(const s of statements)results.push(await s.run());sql.exec('COMMIT');return results;}catch(e){sql.exec('ROLLBACK');throw e;}}};
 }
 function noSymlinkAncestors(file){
- for(let current=path.resolve(file);;current=path.dirname(current)){const stat=lstatSync(current);if(stat.isSymbolicLink())fail('history_unsafe_path');if(current===path.dirname(current))break;}
+ for(let current=path.resolve(file);;current=path.dirname(current)){
+  if(process.platform==='darwin'&&['/var','/tmp','/etc'].includes(current)){
+   if(current===path.dirname(current))break;
+   continue;
+  }
+  const stat=lstatSync(current);if(stat.isSymbolicLink())fail('history_unsafe_path');if(current===path.dirname(current))break;
+ }
 }
 async function cli(args){
  if(args.length===1&&args[0]==='--help'){console.log('node scripts/cms-admit-history.mjs --snapshot PRIVATE_JSON --output-dir NEW_PRIVATE_DIRECTORY\nCreates a history-only admitted SQLite simulation. Never writes the input or a live database.');return;}
@@ -92,7 +98,7 @@ async function cli(args){
  const file=path.join(directory,'admitted-copy.sqlite');closeSync(openSync(file,'wx',0o600));
  const sql=new DatabaseSync(file);
  try{
-  for(const migration of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql'])sql.exec(readFileSync(new URL('../migrations/'+migration,import.meta.url),'utf8'));
+  for(const migration of ['0001_cms.sql','0002_media_budget.sql','0003_cms_release_safeguards.sql','0004_cms_prepared_publications.sql','0005_cms_recovery.sql','0006_cms_first_catalog_bootstrap.sql','0007_cms_catalog_refreshes.sql'])sql.exec(readFileSync(new URL('../migrations/'+migration,import.meta.url),'utf8'));
   // Only this newly created, exclusive simulation receives original-table writes.
   const insert=sql.prepare('INSERT INTO cms_revisions(version,document,kind,actor,created_at,source_revision) VALUES(?,?,?,?,?,?)');
   for(const r of plan.snapshot.revisions)insert.run(r.version,r.document,r.kind,r.actor,r.created_at,r.source_revision);

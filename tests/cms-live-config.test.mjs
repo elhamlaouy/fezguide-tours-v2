@@ -10,7 +10,7 @@ const parse = file => JSON.parse(execFileSync('python3', ['-c', 'import json,sys
 const app=parse('wrangler.cms-live-app.toml'), pre=parse('wrangler.cms-live-preflight.toml'), pub=parse('wrangler.cms-live-public.toml');
 const candidate=parse('wrangler.cms-candidate-app.toml');
 const apex='https://fezguidetours.com', delivery='https://fezguidetours-cms-live-public.elhamlaouy.workers.dev';
-const identities={CMS_VALIDATION_POLICY:'2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab',CMS_RENDERER_ID:'fd7d6ab2d34e98f2320c2d0d1810342ffe4f5c4c30772442fff50b8a82b25e9d',CMS_ASSET_ID:'c8e5c8e93bde3aabc1d8f060728c58b952c994468b6131b5d229323361ebada5',CMS_SHELL_ID:'12fc8646b862dc54e67ef7f0d3df6dc606a2f37388152bd2c1f05a65b7a50316'};
+const identities={CMS_VALIDATION_POLICY:'2921387c583aa835a808a3aeb3b969b6511b7b425dfeacca09b5cd474489f9ab',CMS_RENDERER_ID:'1fb23ac486b6cd8ce069012a43800db5489ba52271dc42beeef33cbd5c92b56d',CMS_ASSET_ID:'7c1efb75332e38d462ee00cd78e18e28153faf2b92cf242d00feec9c45ba5869',CMS_SHELL_ID:'7740d938d092e928871055f34af7ab2eb06fba4f68ea03a1eaa95b9608d49e95'};
 test('live storage, entrypoints, aliases and canonical identities are explicit and isolated',()=>{
  for(const [config,main,dev] of [[app,'worker/app.ts',false],[pre,'worker/candidate-public.ts',true],[pub,'worker/index.ts',false]]){
   assert.equal(config.main,main);assert.equal(config.workers_dev,dev);assert.equal(config.preview_urls,false);

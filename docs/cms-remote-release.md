@@ -1,6 +1,8 @@
-# FezGuideTours remote release setup — in progress
+# FezGuideTours remote release setup — historical record
 
-## Current authorization
+> **Later scope supersedes the historical permission below:** current work is local repairs/read-only readiness only. No commit, push, deploy, production publication, new resource creation or provider-policy changes without fresh explicit authorization. Existing resource facts remain useful; reread actual state before use. See `cms-provider-readiness-20261020.md`.
+
+## Historical authorization (superseded)
 
 Supersedes the earlier billing-disabled hold in `cms-continuation-checkpoint.md`:
 Owner said “ok so lets redeploy it then” and explicitly selected **Yes—enable R2, then deploy only after the checks pass**. R2 usage-billed activation approved; no additional paid subscription approved. Commit/push/PR/production release authorized only after checks. Preserve inherited PR → Cloudflare Workers Builds → main production path.

@@ -7,7 +7,8 @@ import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { startPreview } from './cms-preview.mjs';
 import { backupLocalState, restoreLocalState } from './cms-local-backup.mjs';
-const scratch=process.env.TMPDIR??'/home/ubuntu/.hermes/profiles/website-builder/cache/scratch';
+import os from 'node:os';
+const scratch=process.env.TMPDIR??os.tmpdir();
 const temporary=await mkdtemp(path.join(scratch,'cms-preview-proof-'));
 async function freePort(){return new Promise((resolve,reject)=>{const s=net.createServer();s.once('error',reject);s.listen(0,'127.0.0.1',()=>{const port=s.address().port;s.close(()=>resolve(port));});});}
 const options={port:await freePort(),upstream:await freePort(),inspector:await freePort(),state:path.join(temporary,'owner-state'),assetsDirectory:path.join(temporary,'built-assets')};

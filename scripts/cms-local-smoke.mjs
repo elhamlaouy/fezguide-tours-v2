@@ -3,6 +3,7 @@ import { mkdtemp, readdir, rm } from 'node:fs/promises';
 import { DatabaseSync } from 'node:sqlite';
 import net from 'node:net';
 import path from 'node:path';
+import os from 'node:os';
 import { register } from 'tsx/esm/api';
 
 register();
@@ -10,7 +11,7 @@ const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { validateCmsDocument } = await import('../src/cms/schema.ts');
 
 const root = path.resolve(import.meta.dirname, '..');
-const scratch = '/home/ubuntu/.hermes/profiles/website-builder/cache/scratch';
+const scratch = process.env.TMPDIR ?? os.tmpdir();
 const wrangler = ['npx', '--yes', 'wrangler@4.149.0'];
 const SENTINEL = 'DRAFT-SENTINEL-NOT-PUBLIC';
 const config = 'wrangler.cms-local.toml';
@@ -145,7 +146,7 @@ try {
   const draft = structuredClone(seedDoc);
   draft.siteSettings.heroTitle = { ...draft.siteSettings.heroTitle, en: SENTINEL };
   draft.legacy.siteSettings.heroTitle = { ...draft.legacy.siteSettings.heroTitle, en: SENTINEL };
-  draft.uiCopy['Footer.text.5'] = { ...draft.uiCopy['Footer.text.5'], en: SENTINEL };
+  draft.uiCopy['ui.footer.copyright'] = { ...draft.uiCopy['ui.footer.copyright'], en: SENTINEL };
   if (!validateCmsDocument(draft).valid) throw new Error('draft fixture invalid');
 
   await run(['d1', 'migrations', 'apply', 'fez-cms-local', '--local', '--config', config, '--persist-to', persist], persist);
@@ -182,7 +183,7 @@ try {
   const publicJson = JSON.parse(document.text);
   const legacy = JSON.parse(compatibility.text);
   if (document.text.includes(SENTINEL) || compatibility.text.includes(SENTINEL)) throw new Error('draft sentinel leaked into public JSON');
-  if (publicJson.document?.uiCopy?.['Footer.text.5']?.en !== 'Atlas Tactics') throw new Error('published document lost the Atlas footer credit');
+  if (!publicJson.document?.uiCopy?.['ui.footer.copyright']?.en?.includes('FezGuideTours')) throw new Error('published document lost the footer copyright');
   if (hasKey(publicJson, 'bookings') || hasKey(legacy, 'bookings')) throw new Error('public JSON contained bookings');
   if (!Array.isArray(legacy.tours) || legacy.tours.length < 1) throw new Error('public compatibility tours missing');
 

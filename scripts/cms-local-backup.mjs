@@ -1,5 +1,5 @@
 // Complete STOPPED LOCAL Miniflare state. Never a Cloudflare production backup command.
-import {mkdir,readdir,readFile,lstat,access,rm,writeFile,open,readlink,statfs} from 'node:fs/promises';
+import {mkdir,readdir,readFile,lstat,access,rm,writeFile,open,readlink,statfs,realpath} from 'node:fs/promises';
 import {constants} from 'node:fs';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -12,6 +12,10 @@ const PRIVATE_DIRECTORY=0o700,PRIVATE_FILE=0o600;
 const fail=message=>{throw Error(message);};
 async function rejectSymlinkComponents(input){
  for(let current=path.resolve(input);;current=path.dirname(current)){
+  if(process.platform==='darwin'&&['/var','/tmp','/etc'].includes(current)){
+   if(current===path.dirname(current))break;
+   continue;
+  }
   try{if((await lstat(current)).isSymbolicLink())fail('Snapshot refuses symlinks in path ancestry');}catch(e){if(e.code!=='ENOENT')throw e;}
   if(current===path.dirname(current))break;
  }
@@ -23,6 +27,7 @@ function distinct(source,target){if(source===target||target.startsWith(source+pa
 // processes. It cannot establish global quiescence and is never a live-snapshot guarantee.
 async function rejectOpenStateHandles(state){
  if(process.platform==='darwin'){
+  try{state=await realpath(state);}catch{}
   // A visible self-held directory FD is a positive control: empty/partial scans
   // cannot silently establish stopped state. No shell, PATH lookup or sudo.
   const control=await open(state,constants.O_RDONLY|constants.O_NOFOLLOW);
