@@ -78,7 +78,7 @@ test('local simulator stays isolated and authorized release binds separate produ
   assert.match(production, /\[\[d1_databases\]\][\s\S]*?database_id = "edb04713-e9ba-4b72-b967-7909d9ab61af"/);
   assert.match(production, /\[\[previews\.d1_databases\]\][\s\S]*?database_id = "cf43b67c-6f6a-4348-8444-361f0c796a5d"/);
   assert.match(production, /bucket_name = "fezguidetours-cms-media-v2"/);
-  assert.match(production, /bucket_name = "fezguidetours-cms-media-v2-preview-v2"/);
+  assert.match(production, /bucket_name = "fezguidetours-cms-media-preview-v2"/);
   assert.equal(local.includes('edb04713-e9ba-4b72-b967-7909d9ab61af'), false);
   assert.equal(local.includes('cf43b67c-6f6a-4348-8444-361f0c796a5d'), false);
   assert.match(local, /binding = "CMS_DB"/);
