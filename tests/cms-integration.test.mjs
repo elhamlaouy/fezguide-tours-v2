@@ -75,16 +75,16 @@ test('local simulator stays isolated and authorized release binds separate produ
   assert.equal(production.includes('00000000-0000-0000-0000-000000000000'), false);
   assert.match(production, /run_worker_first = \["\/\*", "!\/assets\/\*", "!\/images\/\*", "!\/fonts\/\*", "!\/favicon\.svg"\]/);
   assert.match(production, /binding = "CMS_DB"/);
-  assert.match(production, /\[\[d1_databases\]\][\s\S]*?database_id = "1256f794-3fe3-48fa-b747-c7536b1e842e"/);
-  assert.match(production, /\[\[previews\.d1_databases\]\][\s\S]*?database_id = "0a0ffd04-1c44-4710-810d-cc8fe71229c5"/);
-  assert.match(production, /bucket_name = "fezguidetours-cms-media"/);
-  assert.match(production, /bucket_name = "fezguidetours-cms-media-preview"/);
-  assert.equal(local.includes('1256f794-3fe3-48fa-b747-c7536b1e842e'), false);
-  assert.equal(local.includes('0a0ffd04-1c44-4710-810d-cc8fe71229c5'), false);
+  assert.match(production, /\[\[d1_databases\]\][\s\S]*?database_id = "edb04713-e9ba-4b72-b967-7909d9ab61af"/);
+  assert.match(production, /\[\[previews\.d1_databases\]\][\s\S]*?database_id = "cf43b67c-6f6a-4348-8444-361f0c796a5d"/);
+  assert.match(production, /bucket_name = "fezguidetours-cms-media-v2"/);
+  assert.match(production, /bucket_name = "fezguidetours-cms-media-v2-preview-v2"/);
+  assert.equal(local.includes('edb04713-e9ba-4b72-b967-7909d9ab61af'), false);
+  assert.equal(local.includes('cf43b67c-6f6a-4348-8444-361f0c796a5d'), false);
   assert.match(local, /binding = "CMS_DB"/);
   assert.match(local, /database_id = "00000000-0000-0000-0000-000000000000"/);
   assert.match(local, /run_worker_first = \["\/\*", "!\/assets\/\*", "!\/images\/\*", "!\/fonts\/\*", "!\/favicon\.svg"\]/);
-  assert.equal(local.includes('49f69448fb834d4496a05e0d41b19b3c'), false);
+  assert.equal(local.includes('877026740d534091b2f44c57a1566a54'), false);
   assert.equal(local.includes('workers_dev = true'), false);
 });
 

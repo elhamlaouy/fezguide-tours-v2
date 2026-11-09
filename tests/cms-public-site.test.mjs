@@ -240,7 +240,7 @@ test('missing or invalid document keeps the hardcoded shell and source contact',
 test('worker runs before assets for admin and api routes', () => {
   const wrangler = read('wrangler.toml');
   assert.match(wrangler, /run_worker_first = \["\/\*", "!\/assets\/\*", "!\/images\/\*", "!\/fonts\/\*", "!\/favicon\.svg"\]/);
-  assert.match(wrangler, /id = "49f69448fb834d4496a05e0d41b19b3c"/);
+  assert.match(wrangler, /id = "877026740d534091b2f44c57a1566a54"/);
   assert.match(wrangler, /binding = "CMS_DB"/);
   assert.match(wrangler, /binding = "CMS_MEDIA"/);
   assert.match(wrangler, /binding = "CMS_IMAGES"/);
