@@ -150,3 +150,26 @@ test('Navbar and Footer links invoke the navigation handler without a full reloa
   await unmount();
 });
 after(async () => { await window.happyDOM.close(); });
+
+test('Navbar never overflows: tighter spacing first, then the compact menu button', async () => {
+  const proto = window.HTMLElement.prototype;
+  const original = { sw: Object.getOwnPropertyDescriptor(proto, 'scrollWidth'), cw: Object.getOwnPropertyDescriptor(proto, 'clientWidth') };
+  // Simulate a header row that is too narrow for the full menu even with tighter spacing.
+  Object.defineProperty(proto, 'scrollWidth', { configurable: true, get() { return this.hasAttribute?.('data-nav-fit') ? 1400 : 0; } });
+  Object.defineProperty(proto, 'clientWidth', { configurable: true, get() { return this.hasAttribute?.('data-nav-fit') ? 1200 : 0; } });
+  try {
+    const { host, unmount } = await mount(withCms(navbar('es', seed)));
+    const row = host.querySelector('[data-nav-fit]');
+    assert.equal(row.getAttribute('data-nav-fit'), '2', 'falls back to the compact menu');
+    assert.match(host.querySelector('header nav').className, /^hidden$/, 'full menu hidden when it cannot fit');
+    await unmount();
+    // Fits with tighter spacing.
+    Object.defineProperty(proto, 'scrollWidth', { configurable: true, get() { if (!this.hasAttribute?.('data-nav-fit')) return 0; return this.getAttribute('data-nav-fit') === '0' ? 1250 : 1190; } });
+    const second = await mount(withCms(navbar('es', seed)));
+    assert.equal(second.host.querySelector('[data-nav-fit]').getAttribute('data-nav-fit'), '1', 'tighter spacing is enough');
+    assert.match(second.host.querySelector('header nav').className, /gap-3/);
+    await second.unmount();
+  } finally {
+    for (const [key, d] of [['scrollWidth', original.sw], ['clientWidth', original.cw]]) { if (d) Object.defineProperty(proto, key, d); else delete proto[key]; }
+  }
+});

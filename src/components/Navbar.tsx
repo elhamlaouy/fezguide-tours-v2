@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Language, PageId } from '../types';
 import { UI_TEXT } from '../data/shared-ui';
 import { Logo } from './Logo';
@@ -40,6 +40,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
+  // The full desktop menu only shows when it actually fits: longer FR/ES labels (or owner-edited labels) would
+  // otherwise push the booking button off-screen on laptop widths. Measured before paint, so there is no flicker.
+  const rowRef = useRef<HTMLDivElement>(null);
+  // 0 = normal spacing, 1 = tighter spacing, 2 = compact (menu button). Each step is tried only if the previous overflows.
+  const [fit, setFit] = useState<0 | 1 | 2>(0);
+  const compact = fit === 2;
+  const [measureKey, setMeasureKey] = useState(0);
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onResize = () => { setFit(0); setMeasureKey(key => key + 1); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  useLayoutEffect(() => {
+    const row = rowRef.current;
+    if (!row || fit === 2) return;
+    if (row.scrollWidth > row.clientWidth + 1) setFit(fit === 0 ? 1 : 2);
+  });
+  useLayoutEffect(() => { setFit(0); setMeasureKey(key => key + 1); }, [language]);
+  void measureKey;
   const { customPages, blogPosts, siteSettings } = useCms();
 
   const tNav = UI_TEXT.nav;
@@ -108,14 +128,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#E7E2DA] transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
+      <div ref={rowRef} data-nav-fit={fit} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
         {/* Zone 1: Brand Wordmark / Logo */}
         <div className="flex items-center">
           <Logo brandName={contact.siteName} href={pagePath(cms, 'home', language)} onClick={() => handleLinkClick('home')} size="md" className="max-[360px]:gap-1.5" />
         </div>
 
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-7">
+        <nav className={compact ? "hidden" : fit === 1 ? "hidden lg:flex items-center gap-3 xl:gap-4" : "hidden lg:flex items-center gap-6 xl:gap-7"}>
           {shellLinks.map((link) => {
             const className = `text-sm font-semibold transition-colors relative py-1 cursor-pointer whitespace-nowrap ${
               link.active ? 'text-[#005F5A]' : 'text-[#44504E] hover:text-[#005F5A]'
@@ -208,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-[#1C2524] hover:bg-[#F2ECE4] transition-colors cursor-pointer"
+            className={`${compact ? "" : "lg:hidden "}p-2 rounded-lg text-[#1C2524] hover:bg-[#F2ECE4] transition-colors cursor-pointer`}
             aria-label={language === 'es' ? "Abrir o cerrar el menú de navegación" : "Toggle navigation menu"}
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -218,7 +238,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-[#E7E2DA] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-2 shadow-xl max-h-[80vh] overflow-y-auto">
+        <div className={`${compact ? "" : "lg:hidden "}border-t border-[#E7E2DA] bg-[#FAF8F5] px-4 pt-3 pb-6 space-y-2 shadow-xl max-h-[80vh] overflow-y-auto`}>
           <div className="flex flex-col gap-1">
             {shellLinks.map((link) => {
               const className = `text-start px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
