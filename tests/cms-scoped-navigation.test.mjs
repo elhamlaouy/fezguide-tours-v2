@@ -251,7 +251,7 @@ for (const [spelling, arrival] of customArrivals) {
     assert.deepEqual(payload.scope, { version: 1, pageId: custom.id, language: 'fr' });
     assert.deepEqual(payload.document.pages.find(page => page.id === custom.id), projection.pages.find(page => page.id === custom.id), 'current body is retained wholesale');
     assert.equal(window.location.href, 'https://example.test/fr/owner-preferred?utm_source=arrival&campaign=kept#details', 'canonical path removes routing queries but preserves campaign queries and hash');
-    assert.equal(document.title, 'CURRENT OWNER CUSTOM SEO');
+    assert.equal(document.title, 'CURRENT OWNER CUSTOM SEO | Fez Guide Tours');
     assert.equal(document.querySelector('link[rel="canonical"]').href, 'https://example.test/fr/owner-preferred', 'SEO canonical excludes query and hash');
     assert.deepEqual(requests, [], 'alias arrival canonicalizes with history.replaceState, not a document load');
     assert.deepEqual(app.fetches, []);

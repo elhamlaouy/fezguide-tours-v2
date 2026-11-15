@@ -71,7 +71,7 @@ test('mounted public shell tracks locale URLs, CMS-only navigation and popstate 
     assert.equal(window.location.pathname, '/fr/bespoke-morocco-experiences');
     assert.ok(host.querySelector('h1'));
     assert.match(host.querySelector('h1').textContent, /Voyages Sur Mesure/);
-    assert.equal(window.document.title, document.pages.find(page => page.id === 'page-bespoke-itinerary').seo.title.fr);
+    assert.equal(window.document.title, document.pages.find(page => page.id === 'page-bespoke-itinerary').seo.title.fr + ' | Fez Guide Tours');
     assert.equal(window.document.querySelector('link[rel="canonical"]').href, 'https://fezguidetours.com/fr/bespoke-morocco-experiences');
     await act(async () => { window.history.back(); await new Promise(resolve => setTimeout(resolve, 10)); });
     assert.equal(window.location.pathname, '/fr/about');

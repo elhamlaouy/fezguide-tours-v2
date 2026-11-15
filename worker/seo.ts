@@ -80,9 +80,11 @@ export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Pr
   const origin = canonicalOrigin(env.CANONICAL_ORIGIN);
   if (path === '/robots.txt') return textResponse(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`, 'text/plain');
   if (path === '/sitemap.xml') {
+    const parsedDate = published.createdAt ? new Date(published.createdAt) : undefined;
+    const lastmod = parsedDate && !Number.isNaN(parsedDate.getTime()) ? `<lastmod>${parsedDate.toISOString()}</lastmod>` : '';
     const urls = document.pages.filter(page => isPublicPage(document, page) && !page.seo.noIndex).flatMap(page => (['en', 'fr', 'es'] as const).filter(language => pageLocaleAvailable(document, page, language)).map(language => {
       const alternates = (['en', 'fr', 'es'] as const).filter(lang => pageLocaleAvailable(document, page, lang)).map(lang => `<xhtml:link rel="alternate" hreflang="${lang}" href="${origin}${pagePath(document, page.id, lang)}"/>`).join('');
-      return `<url><loc>${origin}${pagePath(document, page.id, language)}</loc>${alternates}</url>`;
+      return `<url><loc>${origin}${pagePath(document, page.id, language)}</loc>${lastmod}${alternates}</url>`;
     })).join('');
     return textResponse(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`, 'application/xml');
   }

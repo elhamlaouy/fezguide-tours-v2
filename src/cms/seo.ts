@@ -1,4 +1,4 @@
-import type { CmsDocument } from './schema';
+import { isSafeCmsUrl, type CmsDocument } from './schema';
 import { contentLanguage, localizedText, publicProduct, resolveImage, pageLocaleAvailable } from './render-utils';
 import { pagePath, type PublicRoute } from './routing';
 
@@ -14,6 +14,18 @@ export function canonicalOrigin(configured?: string): string {
 }
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 export const safeJson = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+export const BRAND_NAME = 'Fez Guide Tours';
+/** Append the visible brand unless the title already carries it ("Fez Guide Tours" or "FezGuideTours"). */
+export const brandedTitle = (title: string) => /fez\s?guide\s?tours/i.test(title) ? title : `${title} | ${BRAND_NAME}`;
+const HOME_LABEL = { en: 'Home', fr: 'Accueil', es: 'Inicio' } as const;
+/** The visible breadcrumb shows the short city name for the Fez hub rather than its long page title. */
+const FEZ_LABEL = { en: 'Fez', fr: 'Fès', es: 'Fez' } as const;
+/** "Street, City, 30110 Country" -> street + postcode; anything unrecognised stays whole in streetAddress. */
+function splitAddress(text: string): { streetAddress: string; postalCode?: string } {
+  const match = /^(.+?),\s*(\d{5})\s+[^,\d]+$/.exec(text.trim());
+  return match ? { streetAddress: match[1]!, postalCode: match[2]! } : { streetAddress: text };
+}
+const httpsOnly = (value: string | undefined): string[] => value && isSafeCmsUrl(value) && value.startsWith('https://') ? [value] : [];
 export const notFound = (language: PublicRoute['language']) => language === 'fr' ? 'Page introuvable' : language === 'es' ? 'Página no encontrada' : 'Page not found';
 
 export function pageDescription(document: CmsDocument, page: CmsDocument['pages'][number], language: PublicRoute['language']): string {
@@ -33,7 +45,8 @@ export function pageDescription(document: CmsDocument, page: CmsDocument['pages'
 export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: string): string {
   const page = route.page;
   const language = page ? contentLanguage(page, route.language) : route.language;
-  const title = page ? localizedText(page.seo.title, language) || localizedText(page.title, language) : `404 — ${notFound(language)}`;
+  const plainTitle = page ? localizedText(page.seo.title, language) || localizedText(page.title, language) : `404 — ${notFound(language)}`;
+  const title = page ? brandedTitle(plainTitle) : plainTitle;
   const description = page ? pageDescription(document, page, language) : notFound(language);
   const canonical = page ? `${origin}${pagePath(document, page.id, route.language)}` : undefined;
   const visibleImage = page?.sections.flatMap(section => {
@@ -55,18 +68,35 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
     const defaultLanguage = (['en', 'fr', 'es'] as const).find(locale => pageLocaleAvailable(document, page, locale)) ?? route.language;
     tags.push(`<link rel="alternate" hreflang="x-default" href="${origin}${pagePath(document, page.id, defaultLanguage)}">`);
     const settings = document.siteSettings;
+    const siteUrl = `${origin}/`;
+    const address = splitAddress(localizedText(settings.address, language));
+    const homeImage = settings.heroImage && isSafeCmsUrl(settings.heroImage, true) ? new URL(settings.heroImage, origin).href : imageUrl;
+    const sameAs = [settings.socialTripadvisor, settings.socialInstagram, settings.socialFacebook].flatMap(httpsOnly);
     const schema: Record<string, unknown>[] = [
-      { '@context': 'https://schema.org', '@type': 'WebSite', name: settings.siteName, url: `${origin}/` },
-      { '@context': 'https://schema.org', '@type': 'TravelAgency', name: settings.siteName, url: `${origin}/`, telephone: settings.phoneNumber, email: settings.email,
-        address: { '@type': 'PostalAddress', streetAddress: localizedText(settings.address, language) } },
-      { '@context': 'https://schema.org', '@type': 'WebPage', name: title, description, url: canonical, inLanguage: language },
+      { '@context': 'https://schema.org', '@type': 'WebSite', name: BRAND_NAME, url: siteUrl },
+      { '@context': 'https://schema.org', '@type': 'TravelAgency', name: BRAND_NAME, url: siteUrl, telephone: settings.phoneNumber, email: settings.email,
+        logo: `${origin}/favicon.svg`, ...(homeImage ? { image: homeImage } : {}),
+        address: { '@type': 'PostalAddress', streetAddress: address.streetAddress, addressLocality: 'Fez', ...(address.postalCode ? { postalCode: address.postalCode } : {}), addressCountry: 'MA' },
+        geo: { '@type': 'GeoCoordinates', latitude: 34.0331, longitude: -5.0003 }, areaServed: { '@type': 'City', name: 'Fez' }, priceRange: '$$',
+        ...(sameAs.length ? { sameAs } : {}) },
+      { '@context': 'https://schema.org', '@type': 'WebPage', name: plainTitle, description, url: canonical, inLanguage: language },
     ];
+    if (page.id !== 'home') {
+      const chain = [page];
+      for (let parent = page.parentId ? document.pages.find(p => p.id === page.parentId) : undefined; parent && chain.length < 3; parent = parent.parentId ? document.pages.find(p => p.id === parent!.parentId) : undefined) {
+        if (!chain.includes(parent) && parent.id !== 'home' && pageLocaleAvailable(document, parent, route.language)) chain.push(parent);
+      }
+      const crumbs = [{ name: HOME_LABEL[language], url: `${origin}${pagePath(document, 'home', route.language)}` },
+        ...chain.reverse().map(item => ({ name: item !== page && item.id === 'fez' ? FEZ_LABEL[language] : localizedText(item.title, language), url: `${origin}${pagePath(document, item.id, route.language)}` }))];
+      schema.push({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: crumbs.map((crumb, index) => ({ '@type': 'ListItem', position: index + 1, name: crumb.name, item: crumb.url })) });
+    }
     const product = page.kind === 'product' ? publicProduct(document, page.productId) : undefined;
     // Offers are only marked up when this matching product's price is actually visible in a booking section.
     if (product && page.sections.some(section => section.enabled && section.type === 'cta' && section.variant === 'booking' && section.productId === product.id)) {
       const hero = page.sections.find(section => section.enabled && section.type === 'hero' && localizedText(section.title, language));
       schema.push({ '@context': 'https://schema.org', '@type': 'Product', name: localizedText(hero?.title ?? page.title, language), url: canonical,
-        ...(imageUrl ? { image: imageUrl } : {}), ...(product.price ? { offers: { '@type': 'Offer', price: product.price.amount, priceCurrency: product.price.currency, url: canonical } } : {}) });
+        description: localizedText(product.shortDescription, language) || description, brand: { '@type': 'Brand', name: BRAND_NAME },
+        ...(imageUrl ? { image: imageUrl } : {}), ...(product.price ? { offers: { '@type': 'Offer', price: product.price.amount, priceCurrency: product.price.currency, url: canonical, availability: 'https://schema.org/InStock' } } : {}) });
     }
     tags.push(`<script type="application/ld+json">${safeJson(schema)}</script>`);
   }
