@@ -15,6 +15,7 @@ import { uiCopyRegistry } from './ui-copy-registry';
 import { WORKSPACES, workspaceText, friendlySection, languageName, type Workspace, type EditorLayout } from './editor-workspace';
 import { editorLabel, FRENCH_ADMIN_LABELS } from './editor-labels';
 import { GLOBAL_FIELDS, PAGE_FIELDS, sectionFields, editorDefault, nextEditorId, setEditorPath, removeEditorPage, HIDDEN_EDITOR_COLLECTIONS, FALLBACK_ONLY_SITE_SETTINGS } from '../cms/editor-controls';
+import { blogPageCover, coversToChoose, todayIso } from './article-edit';
 import { syncEntityEdits } from '../cms/entity-projection';
 import './admin.css';
 
@@ -250,7 +251,9 @@ function previewModel(document: CmsDocument, page: CmsPage): { document: CmsDocu
   // Draft uploads are private even after reload. Never persist preview URLs.
   const media = document.media.map(item => /^\/media\/upload-[a-f0-9-]{36}\.(jpg|png|webp)$/.test(item.src)
     ? { ...item, src: item.src.replace('/media/', '/api/admin/media/') } : item);
-  return { document: { ...document, products, blogPosts, media }, page: visible };
+  // The blog reader looks the post's page up in the document, so a draft (disabled) post page must be enabled there too.
+  const pages = page.enabled ? document.pages : document.pages.map(item => item.id === page.id ? visible : item);
+  return { document: { ...document, pages, products, blogPosts, media }, page: visible };
 }
 /** Which workspace tab shows each library collection. */
 function globalWorkspace(key: string): Workspace {
@@ -576,7 +579,12 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     const item = editorDefault(GLOBAL_FIELDS[key].item!, draft) as Record<string, unknown>;
     item.id = id;
     if ('title' in item) item.title = { en: id, fr: id, es: id };
-    if (key === 'blogPosts') { item.slug = id; item.author = ''; item.date = new Date().toISOString().slice(0, 10); item.published = false; }
+    if (key === 'blogPosts') {
+      item.slug = id; item.author = ''; item.date = todayIso(); item.published = false;
+      // A new post starts from the Blog page's own cover photo; with none, the placeholder is flagged for the owner to replace.
+      const cover = blogPageCover(draft);
+      if (cover) item.coverImage = cover; else coversToChoose.add(id);
+    }
     if (key === 'teamMembers') item.name = id;
     if (key === 'products') {
       item.kind = 'product'; item.actionType = 'book_tour'; item.published = false;
@@ -593,6 +601,14 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       applyValidated(syncEntityEdits(draft, { ...draft, blogPosts: [...draft.blogPosts, item as unknown as CmsDocument['blogPosts'][number]], pages: [...draft.pages, created] }));
     } else applyValidated({ ...draft, [key]: [...items, item] });
     return true;
+  });
+  // Photos uploaded from the blog form join the draft library only; the owner still saves and publishes explicitly.
+  const addUploadedMedia = useStableCallback((media: CmsDocument['media'][number]) => {
+    edit(current => ({ ...current, media: [...current.media.filter(item => item.id !== media.id), media] }));
+  });
+  // Writing in a blog post shows that post in the main live preview.
+  const focusPostPage = useStableCallback((id: string) => {
+    if (draftRef.current?.pages.some(item => item.id === id) && id !== selectedPageId) { setSelectedPageId(id); setSelectedSectionId(''); }
   });
   function duplicatePage() {
     if (!draft || !page || !window.confirm(editorLabel('duplicatePage', language))) return;
@@ -905,7 +921,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
               {Object.entries(GLOBAL_FIELDS).filter(([key]) => !HIDDEN_EDITOR_COLLECTIONS.includes(key) && globalWorkspace(key) === workspace).map(([key, spec]) => <LazyDetails key={key} defaultOpen={key === 'theme' || key === 'siteSettings'} summary={editorLabel(key, language)}>
                 {key === 'reviews' && <p>{editorLabel('reviewHelp', language)}</p>}
                 {key === 'siteSettings' && <p className="cms-admin-note" data-hero-hint>{editorLabel('heroHint', language)}</p>}
-                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !FALLBACK_ONLY_SITE_SETTINGS.includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} onEditPrice={openPricing} errors={key === 'products' ? errors : undefined} />
+                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !FALLBACK_ONLY_SITE_SETTINGS.includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} onEditPrice={openPricing} errors={key === 'products' ? errors : undefined} onMediaUploaded={addUploadedMedia} onMediaBusy={setUploading} onFocusPage={focusPostPage} />
               </LazyDetails>)}
               {workspace === 'settings' && <details data-ui-copy><summary>{editorLabel('uiCopy', language)}</summary>
                 <p className="cms-admin-note">{w('uiCopyIntro')}</p>

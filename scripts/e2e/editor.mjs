@@ -216,8 +216,8 @@ export async function run(ctx) {
       await tab('page'); await ed.fill('textarea[data-path="pages.e2e-test-page.title.en"]', 'E2E Test Page');
     });
 
-    const BLOG = { slug: `e2e-blog-${stamp}`, en: 'E2E blog post', fr: 'Article E2E', es: 'Artículo E2E', body: 'E2E blog second paragraph' };
-    let blogId;
+    const BLOG = { slug: `e2e-blog-${stamp}`, en: 'E2E blog post', fr: 'Article E2E', es: 'Artículo E2E', body: 'E2E blog second paragraph', heading: 'E2E toolbar heading', bold: 'bold toolbar words', items: ['E2E list one', 'E2E list two'], linkText: 'E2E guide', linkUrl: 'https://example.com/e2e-guide', date: '2026-03-04' };
+    let blogId, blogPath, blogCover;
     await s.check('add a blog post (EN/FR/ES) and tick "published"', async () => {
       await tab('content');
       await openDetails(ed.locator('details:has(> summary:text-is("Blog posts"))'));
@@ -230,11 +230,59 @@ export async function run(ctx) {
         await locale(l);
         await ed.fill(`[data-path="${p}.title.${l}"]`, BLOG[l]);
         await ed.fill(`[data-path="${p}.excerpt.${l}"]`, `${BLOG[l]} excerpt`);
-        await ed.fill(`[data-path="${p}.content.${l}"]`, `${BLOG[l]} first paragraph.\n\n${BLOG.body}`);
+        if (l !== 'en') await ed.fill(`[data-path="${p}.content.${l}"]`, `${BLOG[l]} first paragraph.\n\n${BLOG.body}`);
       }
       await locale('en');
       await ed.fill(`[data-path="${p}.author"]`, 'E2E');
       await ed.check(`[data-path="${p}.published"]`);
+      blogPath = p;
+    });
+
+    // The English article is written with the formatting toolbar (heading, bold, bullet list, link, library photo).
+    await s.check('blog form: format the English article with the toolbar (heading, bold, bullet list, link, library photo)', async () => {
+      const area = ed.locator(`[data-path="${blogPath}.content.en"]`);
+      const pick = async needle => area.evaluate((el, text) => { el.focus(); const at = el.value.indexOf(text); if (at < 0) throw new Error(`no "${text}" in the article`); el.setSelectionRange(at, at + text.length); }, needle);
+      const tool = id => ed.click(`[data-article-field="${blogPath}.content.en"] [data-article-tool=${id}]`);
+      await area.fill(BLOG.heading); await pick(BLOG.heading); await tool('heading');
+      await area.press('Control+End'); await ed.keyboard.type(`\n\nThis story has ${BLOG.bold} inside it.\n\n${BLOG.body}\n\n${BLOG.items.join('\n')}\n\nRead the ${BLOG.linkText} online.`);
+      await pick(BLOG.bold); await tool('bold');
+      await pick(BLOG.items.join('\n')); await tool('bullets');
+      await pick(BLOG.linkText); await tool('link');
+      await ed.fill('[name=article-link-address]', 'javascript:alert(1)'); await ed.click('[name=insert-article-link]');
+      await ed.waitForSelector('[data-article-link-error]'); await snap('06-blog-link-error');
+      await ed.fill('[name=article-link-address]', BLOG.linkUrl); await ed.click('[name=insert-article-link]');
+      await area.press('Control+End'); await tool('photo');
+      await ed.fill('[data-media-picker=article-photo] [name=picker-search]', PHOTO_ALT); await ed.waitForTimeout(300);
+      await snap('07-blog-photo-picker');
+      await ed.click(`[data-media-picker=article-photo] [data-picker-media="${uploadId}"]`);
+      const text = await area.inputValue();
+      assert.ok(text.startsWith(`## ${BLOG.heading}`), text);
+      assert.ok(text.includes(`**${BLOG.bold}**`) && text.includes(`- ${BLOG.items[0]}\n- ${BLOG.items[1]}`), text);
+      assert.ok(text.includes(`[${BLOG.linkText}](${BLOG.linkUrl})`) && text.includes(`](media:${uploadId})`), text);
+      await ed.waitForTimeout(450);
+      const preview = ed.locator(`[data-article-field="${blogPath}.content.en"] [data-article-preview]`);
+      assert.ok(await preview.locator('h2').filter({ hasText: BLOG.heading }).count() && await preview.locator('strong').filter({ hasText: BLOG.bold }).count() && await preview.locator('ul li').count() === 2 && await preview.locator('figure img').count(), 'article preview shows heading, bold, list and photo');
+      await snap('08-blog-toolbar-preview');
+    });
+
+    await s.check('blog form: date picker and cover photo picker', async () => {
+      const date = ed.locator(`[data-path="${blogPath}.date"]`);
+      assert.equal(await date.getAttribute('type'), 'date');
+      assert.match(await date.inputValue(), /^\d{4}-\d{2}-\d{2}$/, 'new posts start with a date');
+      await date.fill(BLOG.date); assert.equal(await date.inputValue(), BLOG.date);
+      await ed.click(`[data-cover-field="${blogPath}.coverImage"] [data-cover-change]`);
+      await ed.fill('[data-media-picker=cover] [name=picker-search]', 'Fez'); await ed.waitForTimeout(300);
+      const choice = ed.locator('[data-media-picker=cover] [data-picker-media]').nth(1);
+      blogCover = { id: await choice.getAttribute('data-picker-media') };
+      await choice.click();
+      assert.equal(await ed.locator('[data-media-picker=cover]').count(), 0, 'picker closes after choosing');
+      assert.ok(await ed.locator(`[data-cover-field="${blogPath}.coverImage"] [data-cover-thumb]`).count());
+      await snap('09-blog-cover');
+    });
+
+    await s.check('main live preview follows the post being written', async () => {
+      await ed.click(`[data-path="${blogPath}.content.en"]`);
+      await frame().locator('body').getByText(BLOG.heading).first().waitFor({ timeout: 20000 });
     });
 
     await s.check('change the design (corner radius)', async () => { await tab('appearance'); await ed.selectOption('select[name=theme-radius]', 'pill'); });
@@ -246,6 +294,9 @@ export async function run(ctx) {
       assert.equal(d.pages.find(p => p.id === 'home').sections.find(x => x.id === hiddenId).enabled, false);
       assert.ok(d.pages.some(p => p.id === 'e2e-test-page'));
       assert.equal(d.theme.radius, 'pill');
+      const post = d.blogPosts.find(b => b.id === blogId);
+      assert.ok(post.content.en.startsWith(`## ${BLOG.heading}`) && post.content.en.includes(`**${BLOG.bold}**`) && post.content.en.includes(`- ${BLOG.items[0]}`) && post.content.en.includes(`[${BLOG.linkText}](${BLOG.linkUrl})`) && post.content.en.includes(`](media:${uploadId})`), 'formatted article stored');
+      assert.equal(post.date, BLOG.date); assert.equal(post.coverImage, d.media.find(m => m.id === blogCover.id).src, 'cover chosen with the picker');
       assert.equal(d.pages.find(p => p.id === 'fez').sections.find(x => x.id === 'hero').image.mediaId, uploadId);
       const src = d.media.find(m => m.id === uploadId).src; ctx.uploads.push(src);
       assert.equal((await ctx.http(src, { auth: false })).status, 404, 'unpublished upload must not be public');
@@ -283,6 +334,21 @@ export async function run(ctx) {
         const card = v.locator('article, li, div').filter({ has: v.getByText(BLOG.en) }).filter({ has: v.getByText('Read More') }).last();
         await card.getByText('Read More').click(); await v.waitForTimeout(800);
         assert.ok((await v.locator('body').innerText()).includes(BLOG.body), 'new blog post not readable from /blog');
+        // The formatted article renders as headings, bold, a list, a link and a photo (reader on /blog, then the post page).
+        const formatted = async where => {
+          const art = v.locator('.article-body');
+          await art.first().waitFor({ timeout: 15000 });
+          assert.ok(await art.locator('h2').filter({ hasText: BLOG.heading }).count(), `${where}: h2 missing`);
+          assert.ok(await art.locator('strong').filter({ hasText: BLOG.bold }).count(), `${where}: bold missing`);
+          assert.equal(await art.locator('ul > li').count(), 2, `${where}: list missing`);
+          assert.ok(await art.locator(`a[href="${BLOG.linkUrl}"]`).count(), `${where}: link missing`);
+          assert.ok(await art.locator('figure img').count(), `${where}: photo missing`);
+          assert.equal(await art.locator('script, iframe').count(), 0);
+        };
+        await formatted('/blog reader');
+        await v.screenshot({ path: join(ctx.out, '10-public-blog-reader.png') });
+        await v.goto(`${B}/${BLOG.slug}`, { waitUntil: 'networkidle' }); await formatted('post page');
+        await v.screenshot({ path: join(ctx.out, '11-public-blog-post.png') });
         await v.goto(B + '/fez', { waitUntil: 'networkidle' }); assert.ok((await v.content()).includes(uploadId), 'uploaded photo not on Fez page');
         await v.screenshot({ path: join(ctx.out, '04-public-fez-photo.png') });
       } finally { await v.close(); }
