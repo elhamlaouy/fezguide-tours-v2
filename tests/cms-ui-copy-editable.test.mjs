@@ -117,3 +117,18 @@ test('homepage trust badge with no text in the current language is not rendered 
   assert.equal(count(renderPage(document, home, 'en')), before - 1);
   assert.equal(count(renderPage(document, home, 'fr')), before);
 });
+
+test('the editor lists every new interface text with its human label and group (EN/FR/ES)', async () => {
+  const { uiCopyRegistry } = await import('../src/admin/ui-copy-registry.ts');
+  const { SUPPORTED_UI_COPY, HARDCODED_UI_COPY } = await import('../src/cms/ui-copy.ts');
+  for (const language of ['en', 'fr', 'es']) {
+    const entries = new Map(uiCopyRegistry(SUPPORTED_UI_COPY, language).map(entry => [entry.key, entry]));
+    for (const item of HARDCODED_UI_COPY) {
+      const entry = entries.get(item.key);
+      assert.ok(entry, `${item.key} listed`);
+      assert.equal(entry.label, item.label[language], `${item.key} label (${language})`);
+      assert.equal(entry.group, item.group[language], `${item.key} group (${language})`);
+      assert.deepEqual(entry.defaults, item.defaults, `${item.key} defaults`);
+    }
+  }
+});

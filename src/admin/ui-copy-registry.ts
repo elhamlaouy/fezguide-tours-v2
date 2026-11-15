@@ -1,4 +1,5 @@
 import type { Language } from '../types';
+import { UI_COPY_META } from '../cms/ui-copy';
 
 export interface Texts { en: string; fr: string; es: string }
 export interface UiCopyEntry { key: string; label: string; group: string; defaults: Texts }
@@ -33,8 +34,10 @@ export function uiCopyRegistry(supported: Record<string, unknown>, language: Lan
   for (const [key, raw] of Object.entries(supported)) {
     const record = raw && typeof raw === 'object' ? raw as Record<string, unknown> : {};
     const defaults = isTexts(record.defaults) ? record.defaults : isTexts(raw) ? raw : { en: '', fr: '', es: '' };
-    const label = pickText(record.label, language).trim() || humanizeUiCopyKey(key);
-    const group = pickText(record.group, language).trim() || groupOf(key);
+    // Human labels/groups come from the entry itself or from the shared metadata registry (UI_COPY_META).
+    const meta = Object.hasOwn(UI_COPY_META, key) ? UI_COPY_META[key] : undefined;
+    const label = pickText(record.label, language).trim() || pickText(meta?.label, language).trim() || humanizeUiCopyKey(key);
+    const group = pickText(record.group, language).trim() || pickText(meta?.group, language).trim() || groupOf(key);
     entries.push({ key, label, group, defaults: { en: defaults.en, fr: defaults.fr, es: defaults.es } });
   }
   return entries;
