@@ -65,6 +65,21 @@ export function resolveImage(document: CmsDocument, image: CmsImage, language: L
     portrait: Boolean(media.width && media.height && media.height > media.width),
   };
 }
+export function formatPrice(product: CmsProduct, language: Language): string {
+  const price = product.price;
+  if (!price || typeof price.amount !== 'number' || !Number.isFinite(price.amount)) return '';
+  const amount = price.currency === 'EUR' ? `€${price.amount}` : price.currency === 'USD' ? `$${price.amount}` : price.currency === 'MAD' ? `${price.amount} MAD` : '';
+  if (!amount) return '';
+  const basis = price.basis === 'person'
+    ? { en: 'per person', fr: 'par personne', es: 'por persona' }
+    : price.basis === 'group'
+      ? { en: 'per group', fr: 'par groupe', es: 'por grupo' }
+      : price.basis === 'vehicle'
+        ? { en: 'per vehicle', fr: 'par véhicule', es: 'por vehículo' }
+        : undefined;
+  return basis ? `${amount} ${localizedText(basis, language)}` : amount;
+}
+
 export function uiText(document: CmsDocument, key: string, language: Language, fallback: Localized): string {
   return localizedText(document.uiCopy[key] ?? fallback, language);
 }

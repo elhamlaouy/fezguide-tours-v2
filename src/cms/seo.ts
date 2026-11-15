@@ -12,7 +12,7 @@ export function canonicalOrigin(configured?: string): string {
   }
   return DEFAULT_CANONICAL_ORIGIN;
 }
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
+export const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 export const safeJson = (value: unknown) => JSON.stringify(value).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 export const BRAND_NAME = 'Fez Guide Tours';
 /** Append the visible brand unless the title already carries it ("Fez Guide Tours" or "FezGuideTours"). */
