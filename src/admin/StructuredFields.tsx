@@ -1,10 +1,13 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, type EditorField } from '../cms/editor-controls';
+import { TOUR_TABS, blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, tourTabErrorCounts, type EditorField, type TourTabId } from '../cms/editor-controls';
 import type { CmsDocument } from '../cms/schema';
 import type { Language } from '../types';
 import { editorLabel } from './editor-labels';
 import { languageName, workspaceText } from './editor-workspace';
-import { isLanguageKey, itemName, numberedLabel, referenceName } from './editor-names';
+import { isLanguageKey, itemName, nestedItemLabel, numberedLabel, referenceName } from './editor-names';
+import type { CmsMedia } from '../cms/schema';
+import { ArticleField } from './ArticleField';
+import { CoverField, DateField } from './BlogFields';
 
 interface Props {
   spec: EditorField; value: unknown; path: string; document: CmsDocument;
@@ -16,6 +19,13 @@ interface Props {
   inAdvanced?: boolean;
   /** Explicit owner-facing label for this node only (used by the interface-text list). */
   label?: string;
+  /** Validation errors (raw `path: message`), used only to flag tour tabs that hold an invalid field. */
+  errors?: readonly string[];
+  /** Adds an uploaded photo to the draft library (blog photo and cover pickers). Never saves or publishes. */
+  onMediaUploaded?: (media: CmsMedia) => void;
+  onMediaBusy?: (busy: boolean) => void;
+  /** Lets the live preview follow the blog post being written. */
+  onFocusPage?: (pageId: string) => void;
 }
 // Google shows ~60 title characters; " | Fez Guide Tours" (18) is appended automatically. Descriptions show ~155.
 export const SEO_TITLE_LIMIT = 42;
@@ -34,7 +44,7 @@ const SEO_HINTS = {
 export function fieldLabel(path: string, value: unknown, spec: EditorField, document: CmsDocument, language: Language): string {
   const segments = path.split('.');
   const last = segments.at(-1) ?? '';
-  if (/^\d+$/.test(last)) return numberedLabel(Number(last), spec.type === 'reference' ? referenceName(spec.collection, value, document, language) : itemName(value, language), language);
+  if (/^\d+$/.test(last)) return nestedItemLabel(path, value, document, language) ?? numberedLabel(Number(last), spec.type === 'reference' ? referenceName(spec.collection, value, document, language) : itemName(value, language), language);
   if (isLanguageKey(last) && segments.length > 1) return `${editorLabel(segments.at(-2)!, language)} (${languageName(last as Language)})`;
   if (/^products\.[^.]+\.pageId$/.test(path)) return editorLabel('shownUnder', language);
   return editorLabel(last, language);
@@ -77,6 +87,29 @@ function useChildChange(handler: React.MutableRefObject<ChildHandler>) {
     return fn;
   }, [handler]);
 }
+const TOUR_TAB_LABELS: Record<TourTabId, string> = { basics: 'tourTabBasics', price: 'tourTabPrice', itinerary: 'tourTabItinerary', included: 'tourTabIncluded', photos: 'tourTabPhotos', policies: 'tourTabPolicies' };
+/** Remembered for the rest of the editing session, so the next tour opens on the tab the owner was using. */
+let lastTourTab: TourTabId = 'basics';
+/** One group of a tour's fields at a time: only the active group is mounted. */
+function TourTabs({ legend, dataPath, index, productId, language, errors, entries, renderField, advanced, trailing }: {
+  legend: string; dataPath: string; index: number; productId: unknown; language: Language; errors?: readonly string[];
+  entries: [string, EditorField][]; renderField: (entry: [string, EditorField]) => React.ReactNode; advanced: React.ReactNode; trailing: React.ReactNode;
+}): React.JSX.Element {
+  const [tab, setTab] = useState<TourTabId>(lastTourTab);
+  const counts = tourTabErrorCounts(errors, index, productId);
+  const group = TOUR_TABS.find(item => item.id === tab) ?? TOUR_TABS[0];
+  const t = (key: string) => editorLabel(key, language);
+  const inTab = entries.filter(([key]) => group.fields.includes(key)).sort((a, b) => group.fields.indexOf(a[0]) - group.fields.indexOf(b[0]));
+  // The open tour's summary already shows its name: the legend stays for screen readers only.
+  return <fieldset data-object={dataPath} data-tour-tabs=""><legend className="cms-sr-only">{legend}</legend>
+    <div className="cms-tour-tabs" role="group" aria-label={t('tourTabs')}>{TOUR_TABS.map(item => {
+      const count = counts[item.id] ?? 0;
+      return <button key={item.id} type="button" data-tour-tab={item.id} aria-pressed={item.id === group.id} onClick={() => { lastTourTab = item.id; setTab(item.id); }}>{t(TOUR_TAB_LABELS[item.id])}{count > 0 && <span className="cms-tab-badge" data-tab-errors={count}>{count}<span className="cms-sr-only"> {t('tourTabErrors')}</span></span>}</button>;
+    })}</div>
+    <div className="cms-tour-panel" data-tour-panel={group.id}>{inTab.map(entry => renderField(entry))}</div>
+    {advanced}{trailing}
+  </fieldset>;
+}
 const LOCALIZED_LIST_ITEM_SPEC: EditorField = { type: 'array', item: { type: 'text' } };
 /** Large collections render items lazily: a collapsed item mounts none of its fields until it is opened. */
 const LAZY_COLLECTIONS = new Set(['products', 'blogPosts', 'teamMembers', 'faqs', 'media', 'editorialEntries', 'reviews']);
@@ -108,10 +141,11 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
   const pricePath = /^products\.([^.]+)\.(price$|practicalInfo\.price(?:EUR|MAD|USD)$)/.exec(path);
   if (props.onEditPrice && pricePath) {
     const product = /^\d+$/.test(pricePath[1]) ? document.products[Number(pricePath[1])] : document.products.find(item => item.id === pricePath[1]);
-    return <div data-price-readonly={path}><p>{label}: {typeof value === 'number' ? value : value && typeof value === 'object' ? `${(value as {amount: number}).amount} ${(value as {currency: string}).currency}` : '—'}</p><button type="button" data-open-pricing={product?.id} onClick={() => { if (product) props.onEditPrice?.(product.id); }}>{workspaceText('pricing', language)}</button><details><summary>{workspaceText('priceAdvanced', language)}</summary><pre>{JSON.stringify(value, null, 2) ?? '—'}</pre></details></div>;
+    return <div data-price-readonly={path} className="cms-price-summary"><p>{pricePath[2] === 'price' ? t('currentPrice') : label}: <strong>{typeof value === 'number' ? value : value && typeof value === 'object' ? `${(value as {amount: number}).amount} ${(value as {currency: string}).currency}${(value as {basis?: string}).basis ? ` / ${t((value as {basis: string}).basis)}` : ''}` : '—'}</strong></p><button type="button" data-open-pricing={product?.id} onClick={() => { if (product) props.onEditPrice?.(product.id); }}>{pricePath[2] === 'price' ? t('editPrice') : workspaceText('pricing', language)}</button><details><summary>{workspaceText('priceAdvanced', language)}</summary><pre>{JSON.stringify(value, null, 2) ?? '—'}</pre></details></div>;
   }
   if (spec.optional && value === undefined) return <div className="cms-optional"><button type="button" data-enable={path} onClick={() => onChange(editorDefault(spec, document))}>{t('enableField')}: {label}</button></div>;
-  const optionalRemove = spec.optional ? <details className="cms-field-options"><summary>{t('fieldOptions')}</summary><button type="button" data-unset={path} onClick={() => onChange(undefined)}>{t('remove')}: {label}</button></details> : null;
+  // A small, quiet text button (was a "Field options" disclosure on every optional field).
+  const optionalRemove = spec.optional ? <div className="cms-field-options"><button type="button" data-unset={path} aria-label={`${t('remove')}: ${label}`} title={`${t('remove')}: ${label}`} onClick={() => onChange(undefined)}>{t('removeField')}</button></div> : null;
   if (spec.type === 'object') {
     const record = (value ?? {}) as Record<string, unknown>;
     const actual = path.includes('.blocks.') ? blockFields(String(record.type)).fields : spec.fields;
@@ -131,7 +165,16 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
     const entries = Object.entries(actual ?? {});
     const advanced = props.inAdvanced ? [] : entries.filter(([key]) => isAdvancedEditorField(`${path}.${key}`));
     const primary = entries.filter(([key]) => !advanced.some(([other]) => other === key));
-    return <fieldset data-object={path}><legend>{label}</legend>{primary.map(entry => field(entry, !!props.inAdvanced))}{advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>}{optionalRemove}</fieldset>;
+    const tourMatch = props.inAdvanced ? null : /^products\.(\d+)$/.exec(path);
+    if (tourMatch) {
+      const hideMirrors = (key: string, child: EditorField): EditorField => key === 'practicalInfo' && props.onEditPrice && child.fields
+        ? { ...child, fields: Object.fromEntries(Object.entries(child.fields).filter(([name]) => !/^price(EUR|MAD|USD)$/.test(name))) } : child;
+      return <TourTabs legend={label} dataPath={path} index={Number(tourMatch[1])} productId={record.id} language={language} errors={props.errors} entries={primary}
+        renderField={([key, child]) => field([key, hideMirrors(key, child)], false)}
+        advanced={advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>} trailing={optionalRemove} />;
+    }
+    const named = /^(blogPosts|teamMembers|faqs|media|editorialEntries|reviews)\.\d+$/.test(path); // lazy rows show their name in the summary already
+    return <fieldset data-object={path}><legend className={named ? 'cms-sr-only' : undefined}>{label}</legend>{primary.map(entry => field(entry, !!props.inAdvanced))}{advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>}{optionalRemove}</fieldset>;
   }
   if (spec.type === 'localized' || spec.type === 'localizedList') {
     const record = (value ?? { en: spec.type === 'localized' ? '' : [], fr: spec.type === 'localized' ? '' : [], es: spec.type === 'localized' ? '' : [] }) as Record<string, unknown>;
@@ -146,6 +189,12 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
     const seoLimit = seoKind === 'title' ? SEO_TITLE_LIMIT : SEO_DESCRIPTION_LIMIT;
     handler.current = (_key, next) => onChange({ ...record, [locale]: next });
     const seoHint = seoKind ? <p className={seoLength > seoLimit ? 'cms-admin-note cms-seo-counter is-warning' : 'cms-admin-note cms-seo-counter'} data-seo-counter={path} aria-live="polite">{seoLength}/{seoLimit} · {SEO_HINTS[seoKind][seoLength === 0 ? 'empty' : 'help'][language]}</p> : null;
+    const article = spec.type === 'localized' ? /^blogPosts\.([^.]+)\.content$/.exec(path) : null;
+    if (article) {
+      const post = document.blogPosts.find((item, index) => item.id === article[1] || String(index) === article[1]);
+      return <div><ArticleField label={label} path={path} record={record} locale={locale} language={language} document={document} onChange={onChange as (next: Record<string, unknown>) => void}
+        onMediaUploaded={props.onMediaUploaded} onMediaBusy={props.onMediaBusy} onFocusText={post && props.onFocusPage ? () => props.onFocusPage?.(post.id) : undefined} />{optionalRemove}</div>;
+    }
     return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({languageName(locale)}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} label={undefined} spec={LOCALIZED_LIST_ITEM_SPEC} value={record[locale]} path={`${path}.${locale}`} onChange={childChange(locale)} />}{seoHint}{optionalRemove}</div>;
   }
   if (spec.type === 'array') {
@@ -201,7 +250,15 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
     const known = document.media.some(m => m.src === value);
     const current = typeof value === 'string' && value ? value : '';
     const address = <label>{t('src')}<input {...inputPath} type="text" readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>;
+    const cover = /^blogPosts\.([^.]+)\.coverImage$/.exec(path);
+    if (cover) {
+      const post = document.blogPosts.find((item, index) => item.id === cover[1] || String(index) === cover[1]);
+      return <CoverField label={label} path={path} value={current} postId={post?.id} document={document} language={language} locale={locale} onChange={onChange as (src: string) => void}
+        onMediaUploaded={props.onMediaUploaded} onMediaBusy={props.onMediaBusy}
+        address={<details className="cms-advanced"><summary>{t('advanced')}: {t('src')}</summary>{address}</details>} trailing={optionalRemove} />;
+    }
     return <div className="cms-media-field"><label>{label}<select data-url-picker={path} value={known ? String(value) : current} onChange={event => { if (event.target.value) onChange(event.target.value); }}>{!current && <option value="">{t('noValue')}</option>}{current && !known && <option value={current}>{current}</option>}{document.media.map(media => <option key={media.id} value={media.src}>{media.alt[locale] || media.id}</option>)}</select></label>{props.inAdvanced ? address : <details className="cms-advanced"><summary>{t('advanced')}: {t('src')}</summary>{address}</details>}{optionalRemove}</div>;
   }
+  if (/^blogPosts\.[^.]+\.date$/.test(path)) return <DateField label={label} path={path} value={String(value ?? '')} language={language} onChange={onChange as (next: string) => void} trailing={optionalRemove} />;
   return <div><label>{label}<input {...inputPath} type={path.startsWith('theme.colors.') ? 'color' : 'text'} readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>{optionalRemove}</div>;
 }

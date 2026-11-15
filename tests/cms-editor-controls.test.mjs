@@ -4,7 +4,7 @@ import { register } from 'tsx/esm/api';
 register();
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { validateCmsDocument } = await import('../src/cms/schema.ts');
-const { GLOBAL_FIELDS, PAGE_FIELDS, SECTION_VARIANTS, sectionFields, blockFields, editorDefault, parseEditorImport, removeEditorPage, setEditorPath } = await import('../src/cms/editor-controls.ts');
+const { TOUR_TABS, tourTabErrorCounts, isAdvancedEditorField, GLOBAL_FIELDS, PAGE_FIELDS, SECTION_VARIANTS, sectionFields, blockFields, editorDefault, parseEditorImport, removeEditorPage, setEditorPath } = await import('../src/cms/editor-controls.ts');
 const { editorLabel } = await import('../src/admin/editor-labels.ts');
 
 function covered(value, spec, path) {
@@ -104,4 +104,24 @@ test('structured path edits remove optional keys and preserve stable array ident
   const removed = setEditorPath(original, ['pages', 'home', 'seo', 'canonical'], undefined);
   assert.deepEqual(removed, { pages: [{ id: 'home', seo: {} }] });
   assert.equal(original.pages[0].seo.canonical, 'https://example.com');
+});
+
+test('every tour field is in exactly one tour tab or the Advanced section', () => {
+  const fields = Object.keys(GLOBAL_FIELDS.products.item.fields);
+  for (const field of fields) {
+    const tabs = TOUR_TABS.filter(tab => tab.fields.includes(field));
+    const advanced = isAdvancedEditorField(`products.0.${field}`);
+    assert.equal(tabs.length + (advanced ? 1 : 0), 1, `${field}: tabs=${tabs.map(t => t.id)} advanced=${advanced}`);
+  }
+  for (const tab of TOUR_TABS) for (const field of tab.fields) assert.ok(fields.includes(field), `${tab.id} lists unknown field ${field}`);
+  assert.deepEqual(TOUR_TABS.map(tab => tab.id), ['basics', 'price', 'itinerary', 'included', 'photos', 'policies']);
+  for (const tab of TOUR_TABS) for (const language of ['en', 'fr', 'es']) {
+    const key = `tourTab${tab.id === 'price' ? 'Price' : tab.id[0].toUpperCase() + tab.id.slice(1)}`;
+    assert.notEqual(editorLabel(key, language), key, `${key} ${language}`);
+  }
+});
+test('tour tab error counts follow validation paths by id or position', () => {
+  const counts = tourTabErrorCounts(['products.our-fez-tours.title.en: invalid or oversized string', 'document.products[0].price: x', 'products.1.included.en.0: y', 'products.0.id: duplicate identifier', 'pages.home.title.en: z', 'cms_unavailable'], 0, 'our-fez-tours');
+  assert.deepEqual(counts, { basics: 1, price: 1 });
+  assert.deepEqual(tourTabErrorCounts(undefined, 0, 'a'), {});
 });

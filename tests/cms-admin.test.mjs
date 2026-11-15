@@ -138,6 +138,14 @@ async function reveal(selector) {
     await act(async () => { window.document.querySelector(`[data-workspace-tab="${tab}"]`)?.click(); });
     await openLazy(has);
     if (has()) return;
+    // A tour mounts one tab's fields at a time: open each tab of the open tours.
+    for (const tourTab of ['basics', 'price', 'itinerary', 'included', 'photos', 'policies']) {
+      const buttons = [...window.document.querySelectorAll(`[data-tour-tab="${tourTab}"]`)];
+      if (!buttons.length) break;
+      await act(async () => { for (const button of buttons) button.click(); });
+      await openLazy(has);
+      if (has()) return;
+    }
     for (const panel of ['photos', 'layout', 'advanced', 'content']) {
       if (!window.document.querySelector(`[data-section-panel="${panel}"]`)) break;
       await act(async () => { window.document.querySelector(`[data-section-panel="${panel}"]`).click(); });
@@ -793,6 +801,7 @@ serial('entity creation keeps product graph valid and referenced page removal hi
   await reveal('[name="remove-page"]');
   assert.equal(document.querySelector('[name="remove-page"]').disabled, true);
   await click('[data-add="products"]');
+  await click('[data-tour-tab="price"]');
   await click('[data-open-pricing="experience"]');
   await typeInto('[name="price-amount"]', '170');
   await choose('[name="price-currency"]', 'EUR');
@@ -1153,10 +1162,13 @@ serial('technical fields live in a collapsed Advanced disclosure but remain edit
   const productAdvanced = product.querySelector('[data-advanced="products.0"]');
   assert.equal(productAdvanced.open, false);
   for (const field of ['id', 'kind', 'actionType']) assert.ok(productAdvanced.querySelector(`[data-path="products.0.${field}"]`), field);
-  assert.ok(productAdvanced.querySelector('[data-array="products.0.galleryImages"], [data-enable="products.0.galleryImages"]'), 'raw gallery URLs under Advanced');
+  assert.equal(productAdvanced.querySelector('[data-array="products.0.galleryImages"], [data-enable="products.0.galleryImages"]'), null, 'gallery lives in the Photos tab, not Advanced');
+  await click('[data-tour-tab="basics"]');
   const category = product.querySelector('[data-path="products.0.pageId"]');
   assert.ok(category && !category.closest('.cms-advanced'));
   assert.match(category.closest('label').textContent, /^Shown under/);
+  await click('[data-tour-tab="photos"]');
+  assert.ok(product.querySelector('[data-array="products.0.galleryImages"], [data-enable="products.0.galleryImages"]'), 'gallery is in the Photos tab');
   const primaryPicker = product.querySelector('[data-url-picker="products.0.image"]');
   assert.ok(primaryPicker && !primaryPicker.closest('.cms-advanced'), 'photo picker is the primary way to choose a photo');
   assert.ok(product.querySelector('.cms-advanced [data-path="products.0.image"]'), 'raw image address is secondary but usable');
@@ -1164,6 +1176,49 @@ serial('technical fields live in a collapsed Advanced disclosure but remain edit
   assert.ok(saved, document.querySelector('[data-field-errors]')?.textContent);
   assert.equal(saved.pages.find(page => page.id === 'about').seo.canonical, '/about-us');
   assert.equal(validateCmsDocument(saved).valid, true);
+});
+
+serial('a tour shows one tab of fields at a time, flags tabs with errors and remembers the last tab', async () => {
+  const doc = await seedDocument();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-workspace-tab="content"]');
+  await reveal('[data-tour-tab="basics"]');
+  const item = () => document.querySelector('[data-array-item="products.0"]');
+  const tabs = () => [...item().querySelectorAll('[data-tour-tab]')];
+  assert.deepEqual(tabs().map(tab => tab.dataset.tourTab), ['basics', 'price', 'itinerary', 'included', 'photos', 'policies']);
+  assert.ok(tabs().every(tab => tab.tagName === 'BUTTON' && tab.hasAttribute('aria-pressed')));
+  await click('[data-tour-tab="basics"]');
+  assert.equal(item().querySelector('[data-tour-tab="basics"]').getAttribute('aria-pressed'), 'true');
+  assert.ok(item().querySelector('[data-path="products.0.title.en"]'));
+  assert.equal(item().querySelector('[data-path="products.0.cancellationPolicy.en"]'), null, 'inactive tab fields are not mounted');
+  assert.equal(item().querySelectorAll('[data-tour-panel]').length, 1);
+  await click('[data-tour-tab="price"]');
+  assert.equal(item().querySelector('[data-tour-tab="basics"]').getAttribute('aria-pressed'), 'false');
+  assert.equal(item().querySelector('[data-path="products.0.title.en"]'), null);
+  assert.ok(item().querySelector('[data-price-readonly="products.0.price"] [data-open-pricing]'));
+  assert.ok(item().querySelector('[data-path="products.0.practicalInfo.duration.en"]'));
+  await click('[data-tour-tab="policies"]');
+  assert.ok(item().querySelector('[data-path="products.0.cancellationPolicy.en"]'));
+  assert.ok(item().querySelector('[data-path="products.0.meetingPointDetails.en"]'));
+  // The next render of the same session reopens the tab the owner used last.
+  await render();
+  await click('[data-workspace-tab="content"]');
+  await reveal('[data-tour-tab="basics"]');
+  assert.equal(item().querySelector('[data-tour-tab="policies"]').getAttribute('aria-pressed'), 'true');
+});
+
+serial('a tour tab with an invalid field shows an error count', async () => {
+  const doc = await seedDocument();
+  installFetch(({ url, method }) => method === 'PUT' ? { status: 400, body: { error: 'invalid_document', errors: [`products.${doc.products[0].id}.title.en: invalid or oversized string`] } } : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-workspace-tab="content"]');
+  await reveal('[data-tour-tab="basics"]');
+  await typeInto('[data-path="products.0.title.en"]', 'x'.repeat(5000));
+  await click('button[name="save-draft"]');
+  const badge = document.querySelector('[data-array-item="products.0"] [data-tour-tab="basics"] [data-tab-errors]');
+  assert.ok(badge, document.querySelector('[data-field-errors]')?.textContent ?? 'no errors shown');
+  assert.equal(badge.dataset.tabErrors, '1');
 });
 
 serial('collections use plain names, editorial entries are hidden, and lists are numbered with item names', async () => {
@@ -1182,7 +1237,11 @@ serial('collections use plain names, editorial entries are hidden, and lists are
   assert.equal(legend('products.1'), `2. ${doc.products[1].title.en}`);
   assert.equal(legend('teamMembers.0'), `1. ${doc.teamMembers[0].name}`);
   assert.match(document.querySelector('[data-array-move="products.0:down"]').getAttribute('aria-label'), new RegExp(`Move down: 1\\. ${doc.products[0].title.en.slice(0, 20)}`));
-  const text0 = [...document.querySelectorAll('[data-array-item="products.0"] label')].filter(label => !label.closest('.cms-advanced')).map(label => label.textContent).join('\n');
+  const tourLabels = () => [...document.querySelectorAll('[data-array-item="products.0"] label')].filter(label => !label.closest('.cms-advanced')).map(label => label.textContent).join('\n');
+  await click('[data-tour-tab="photos"]');
+  let text0 = tourLabels();
+  await click('[data-tour-tab="basics"]');
+  text0 += `\n${tourLabels()}`;
   assert.match(text0, /Photo description \(for Google & screen readers\)/);
   assert.match(text0, /Short description/);
   assert.doesNotMatch(text0, /Image alternative text|Identifier \(stable\)|Action \(fixed\)/);

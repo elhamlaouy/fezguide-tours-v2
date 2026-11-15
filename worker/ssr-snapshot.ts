@@ -14,6 +14,8 @@ import { footerShellLinks, visibleShellLinks } from '../src/cms/public-document'
 import { escapeHtml as esc } from '../src/cms/seo';
 import { UI_TEXT } from '../src/data/shared-ui';
 import { copyText } from '../src/cms/ui-copy';
+import { ARTICLE_IMAGE_SIZES, articleMedia, articleOverride, parseArticle, type ArticleBlock, type ArticleSpan } from '../src/cms/article-format';
+import { responsiveImageProps } from '../src/cms/optimized-image';
 
 // Approved hand-built product layouts (src/cms/ApprovedPageRenderer.tsx) omit a few generic labels.
 // The fidelity test renders every seed page through the real client, so drift here is caught.
@@ -54,10 +56,44 @@ function productCard(document: CmsDocument, product: CmsProduct, language: Langu
   return `<li>${tag('p', localizedText(product.subtitle, language), ' class="ssr-eyebrow"')}<h3><a href="${esc(pagePath(document, target.id, language))}">${esc(title)}</a></h3>${tag('p', localizedText(product.shortDescription, language))}${tag('p', price, ' class="ssr-price"')}</li>`;
 }
 
+function articleSpans(spans: ArticleSpan[]): string {
+  return spans.map(span => {
+    if (span.t === 'text') return esc(span.text);
+    if (span.t === 'strong') return `<strong>${articleSpans(span.children)}</strong>`;
+    if (span.t === 'em') return `<em>${articleSpans(span.children)}</em>`;
+    // The parser already applied isSafeCmsUrl.
+    return `<a href="${esc(span.href)}"${span.href.startsWith('https://') ? ' rel="noopener noreferrer" target="_blank"' : ''}>${articleSpans(span.children)}</a>`;
+  }).join('');
+}
+function articleBlock(document: CmsDocument, block: ArticleBlock, language: Language): string {
+  switch (block.type) {
+    case 'heading': return `<h${block.level}>${articleSpans(block.spans)}</h${block.level}>`;
+    case 'paragraph': return `<p>${articleSpans(block.spans)}</p>`;
+    case 'quote': return `<blockquote>${articleSpans(block.spans)}</blockquote>`;
+    case 'list': { const name = block.ordered ? 'ol' : 'ul'; return `<${name}>${block.items.map(item => `<li>${articleSpans(item)}</li>`).join('')}</${name}>`; }
+    case 'image': {
+      const media = articleMedia(document, block.mediaId, block.alt, block.caption, language);
+      if (!media) return '';
+      const props = responsiveImageProps(media.src, ARTICLE_IMAGE_SIZES);
+      const size = media.width && media.height ? ` width="${Math.round(media.width)}" height="${Math.round(media.height)}"` : '';
+      return `<figure><img src="${esc(props.src)}"${props.srcSet ? ` srcset="${esc(props.srcSet)}" sizes="${esc(props.sizes ?? '')}"` : ''} alt="${esc(media.alt)}"${size} loading="lazy" decoding="async">${block.caption ? `<figcaption>${esc(block.caption)}</figcaption>` : ''}</figure>`;
+    }
+  }
+}
+/** A blog post's article body, exactly as the client renders it (headings, lists, quotes, links, photos). */
+function articleHtml(document: CmsDocument, text: string, language: Language): string {
+  const html = parseArticle(text).blocks.map(block => articleBlock(document, block, language)).join('');
+  return html ? `<div class="ssr-article">${html}</div>` : '';
+}
+
 function section(document: CmsDocument, page: CmsPage, item: CmsSection, language: Language, level: 'h1' | 'h2'): string {
   switch (item.type) {
     case 'hero': return head(item, language, level) + actions(document, item.links, language);
     case 'richText': {
+      // A blog post's visible body is its own formatted text for this language (see BlogPage); plain or
+      // custom-block pages keep the generic block rendering below.
+      const article = item.id === 'content' ? articleOverride(document.blogPosts.find(post => post.id === page.id), item, language) : undefined;
+      if (article !== undefined) return articleHtml(document, article, language);
       const blocks = item.blocks.map(block => {
         if (block.type === 'list') { const items = localizedList(block.items, language).filter(Boolean); return items.length ? `<ul>${items.map(li => tag('li', li)).join('')}</ul>` : ''; }
         if (block.type === 'link') { const label = (block.text[language] ?? localizedText(block.text, language)).trim(); const href = businessContactHref(document, block.href); return label && isSafeCmsUrl(href) ? `<p><a href="${esc(href)}"${href.startsWith('https://') ? ' rel="noopener noreferrer" target="_blank"' : ''}>${esc(label)}</a></p>` : ''; }

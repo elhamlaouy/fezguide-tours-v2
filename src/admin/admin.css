@@ -125,3 +125,38 @@
 .cms-copy-item>button{font-size:.7rem;margin:.2rem 0 .5rem}
 /* Typing in the editor must not relayout/repaint the preview, and vice versa. */
 .cms-admin-preview,.cms-work-panel{contain:layout paint style}
+
+.cms-admin .cms-tour-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 .8rem}
+.cms-admin .cms-tour-tabs button{flex:0 1 auto;padding:.5rem .75rem;min-height:2.5rem;font-size:.8rem}
+.cms-admin .cms-tab-badge{display:inline-block;margin-inline-start:.4rem;min-width:1.2rem;padding:0 .35rem;border-radius:999px;background:#b3261e;color:#fff;font-size:.68rem;font-weight:700;text-align:center;line-height:1.2rem}
+.cms-admin .cms-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cms-admin .cms-price-summary{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin:.4rem 0 .8rem;padding:.6rem .75rem;border:1px solid var(--cms-line);border-radius:8px;background:#f8fbfb}
+.cms-admin .cms-price-summary>p{margin:0}.cms-admin .cms-price-summary>details{flex-basis:100%}
+@media (max-width:640px){.cms-admin .cms-tour-tabs button{flex:1 1 calc(50% - .35rem);text-align:center}}
+/* Blog post form: formatting toolbar, photo picker, preview, date and cover fields */
+.cms-admin .cms-field-options{margin:-.4rem 0 .7rem;text-align:end}
+.cms-admin .cms-field-options button{border:0;background:transparent;color:var(--cms-muted);font-size:.68rem;padding:.2rem .3rem;text-decoration:underline;min-height:0}
+.cms-admin .cms-article-field>label{margin-bottom:.4rem}
+.cms-admin .cms-article-toolbar{display:flex;flex-wrap:wrap;gap:.3rem;padding:.35rem;margin:0 0 .45rem;border:1px solid var(--cms-line);border-radius:9px;background:#f8fafb}
+.cms-admin .cms-article-toolbar button{flex:0 1 auto;min-height:2.4rem;padding:.35rem .6rem;font-size:.76rem;text-align:center;white-space:nowrap}
+.cms-admin .cms-article-panel,.cms-admin .cms-media-picker{border:1px solid #cadfda;border-radius:9px;background:#f8fbfa;padding:.6rem .8rem;margin:.2rem 0 .6rem}
+.cms-admin .cms-article-panel label,.cms-admin .cms-media-picker label{margin:.35rem 0}
+.cms-admin .cms-media-picker-bar{display:flex;gap:.5rem;align-items:end;flex-wrap:wrap}.cms-admin .cms-media-picker-bar label{flex:1 1 12rem}
+.cms-admin .cms-media-picker-grid{grid-template-columns:repeat(auto-fill,minmax(7rem,1fr));max-height:20rem;overflow:auto;overscroll-behavior:contain}
+.cms-admin .cms-media-picker-grid button{text-align:start}
+.cms-admin .cms-media-picker-grid button[aria-pressed=true]{outline:2px solid var(--cms-accent)}
+.cms-admin .cms-media-picker-upload{margin-top:.6rem;font-size:.76rem}
+.cms-admin .cms-article-field textarea{min-height:16rem;font-size:1rem;line-height:1.55}
+.cms-admin .cms-article-help{margin:.4rem 0;font-size:.74rem}.cms-admin .cms-article-help pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;border:1px solid var(--cms-line);border-radius:7px;padding:.6rem;font:inherit;font-size:.74rem;line-height:1.6}
+.cms-admin .cms-article-preview{border:1px solid var(--cms-line);border-radius:10px;background:#fff;padding:.7rem .9rem;margin:.6rem 0 1rem}
+.cms-admin .cms-article-preview h4{margin:0;font-size:.8rem;color:#425c67}.cms-admin .cms-article-preview-hint{margin:.15rem 0 .6rem;font-size:.7rem;color:var(--cms-muted)}
+.cms-admin .cms-article-preview-body{max-height:30rem;overflow:auto;overscroll-behavior:contain;contain:content}
+.cms-admin .cms-article-preview-body img{max-width:100%;height:auto;border-radius:.5rem}.cms-admin .cms-article-preview-body figure{margin:0}
+.cms-admin .cms-field-title{margin:.75rem 0 .35rem;font-size:.81rem;font-weight:550}
+.cms-admin .cms-cover-current{display:flex;gap:.8rem;align-items:center;padding:.5rem;border:1px solid var(--cms-line);border-radius:9px;background:#fff}
+.cms-admin .cms-cover-current img,.cms-admin .cms-cover-empty{flex:none;width:7.5rem;height:5rem;object-fit:cover;border-radius:6px;background:#eef2f3}
+.cms-admin .cms-cover-actions{display:grid;gap:.4rem;justify-items:start;font-size:.8rem;overflow-wrap:anywhere}
+.cms-admin .cms-cover-field[data-cover-needs-choice] .cms-cover-current{border-color:#d3a232;background:#fffbea}
+.cms-admin .cms-cover-field[data-cover-needs-choice] [data-cover-change]{background:var(--cms-accent);border-color:var(--cms-accent);color:#fff;font-weight:600}
+.cms-admin .cms-date-field input[type=date][aria-invalid=true]{border-color:#b3261e}
+@media (max-width:520px){.cms-admin .cms-cover-current{flex-direction:column;align-items:flex-start}.cms-admin .cms-cover-current img,.cms-admin .cms-cover-empty{width:100%;height:9rem}}
