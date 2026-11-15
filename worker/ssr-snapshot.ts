@@ -79,7 +79,11 @@ function section(document: CmsDocument, page: CmsPage, item: CmsSection, languag
       return head(item, language, level) + (items ? `<ul class="ssr-cards">${items}</ul>` : '');
     }
     case 'benefits': {
-      const items = item.items.map(entry => ({ title: localizedText(entry.title, language), description: localizedText(entry.description, language) })).filter(entry => entry.title || entry.description)
+      // Approved homepage trust badges render the exact language only (an emptied badge stays hidden, no fallback);
+      // the generic Benefits renderer falls back to EN/FR. Mirror whichever the client uses.
+      const exact = page.id === 'home' && item.id === 'trust';
+      const text = (value: Partial<Record<Language, string>>) => exact ? (value[language] ?? '') : localizedText(value, language);
+      const items = item.items.map(entry => ({ title: text(entry.title), description: text(entry.description) })).filter(entry => entry.title || entry.description)
         .map(entry => `<li>${tag('strong', entry.title)}${entry.title && entry.description ? ' ' : ''}${tag('span', entry.description)}</li>`).join('');
       return head(item, language, level) + (items ? `<ul>${items}</ul>` : '');
     }

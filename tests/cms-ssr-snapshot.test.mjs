@@ -223,3 +223,17 @@ test('the Worker serves the snapshot for published pages and never for drafts', 
     assert.equal(rootOf(await missing.text()), '<main><h1>404 — Page not found</h1></main>');
   } finally { sqlite.close(); clearSnapshotCache(); }
 });
+
+test('an emptied homepage trust badge stays hidden in the snapshot (no other-language fallback), like the approved homepage', () => {
+  clearSnapshotCache();
+  const document = createCmsSeed();
+  const trust = document.pages.find(page => page.id === 'home').sections.find(section => section.id === 'trust');
+  const removed = trust.items[0].title.fr;
+  assert.ok(removed && render(document, '/').includes(trust.items[0].title.en));
+  trust.items[0].title.en = '';   // the owner deleted the English badge text in the CMS
+  clearSnapshotCache();
+  const root = rootOf(render(document, '/'));
+  assert.ok(!root.includes(removed), 'French text must not leak into the English page');
+  assert.ok(root.includes(trust.items[1].title.en), 'other badges still render');
+  assert.ok(rootOf(render(document, '/fr')).includes(removed), 'French page keeps its own text');
+});
