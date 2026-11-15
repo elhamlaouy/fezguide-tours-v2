@@ -123,3 +123,26 @@ export function removeEditorPage(document: CmsDocument, id: string): CmsDocument
     return s;
   }) })), navigation: cleanLinks(document.navigation), footer: { ...document.footer, links: cleanLinks(document.footer.links) } };
 }
+
+/** Internal collections the website never reads: kept in the data, never offered in the editor. */
+export const HIDDEN_EDITOR_COLLECTIONS: readonly string[] = ['editorialEntries'];
+/**
+ * Site settings that only feed the pre-CMS fallback homepage (used when no CMS document exists).
+ * With a published document the homepage hero comes from the Home page sections, so these edit nothing.
+ * `heroImage` is NOT listed: SEO structured data (src/cms/seo.ts) still reads it.
+ */
+export const FALLBACK_ONLY_SITE_SETTINGS: readonly string[] = ['heroTitle', 'heroTagline', 'heroSubtitle'];
+const ADVANCED_FIELD_PATTERNS: readonly RegExp[] = [
+  /^pages\.[^.]+\.(id|kind|parentId|productId|localeFallback|source)$/, /^pages\.[^.]+\.seo\.canonical$/,
+  /^products\.[^.]+\.(kind|actionType|galleryImages)$/, /^media\.[^.]+\.(source|src|width|height)$/,
+  /^reviews\.[^.]+\.source$/, /^siteSettings\.heroImage$/,
+];
+/**
+ * Technical fields stay fully editable but are shown inside a collapsed "Advanced" disclosure.
+ * Section ids/types/enabled flags already live in the section "Advanced details" tab, so they are not matched here.
+ */
+export function isAdvancedEditorField(path: string): boolean {
+  if (/^pages\.[^.]+\.sections\.[^.]+\.id$/.test(path)) return false;
+  if (/(^|\.)id$/.test(path)) return true;
+  return ADVANCED_FIELD_PATTERNS.some(pattern => pattern.test(path));
+}

@@ -10,9 +10,11 @@ import { MediaUpload } from './MediaUpload';
 import { StructuredFields } from './StructuredFields';
 import { DraftTransfer } from './DraftTransfer';
 import { SUPPORTED_UI_COPY } from '../cms/ui-copy';
-import { WORKSPACES, workspaceText, friendlySection, type Workspace, type EditorLayout } from './editor-workspace';
+import { describeEditorError, editorError, friendlyApiError } from './editor-errors';
+import { uiCopyRegistry } from './ui-copy-registry';
+import { WORKSPACES, workspaceText, friendlySection, languageName, type Workspace, type EditorLayout } from './editor-workspace';
 import { editorLabel, FRENCH_ADMIN_LABELS } from './editor-labels';
-import { GLOBAL_FIELDS, PAGE_FIELDS, sectionFields, editorDefault, nextEditorId, setEditorPath, removeEditorPage } from '../cms/editor-controls';
+import { GLOBAL_FIELDS, PAGE_FIELDS, sectionFields, editorDefault, nextEditorId, setEditorPath, removeEditorPage, HIDDEN_EDITOR_COLLECTIONS, FALLBACK_ONLY_SITE_SETTINGS } from '../cms/editor-controls';
 import { syncEntityEdits } from '../cms/entity-projection';
 import './admin.css';
 
@@ -125,62 +127,7 @@ const SPACING = ['compact', 'comfortable', 'generous'] as const;
 const RADII = ['square', 'rounded', 'pill'] as const;
 const RESERVED_SLUGS = new Set(['admin', 'api', 'assets', 'media']);
 
-export function editorError(error: string, language: Locale): string {
-  if (language === 'en') return error;
-  if (language === 'fr') {
-    const separator = error.indexOf(': ');
-    const path = separator < 0 ? '' : error.slice(0, separator);
-    const message = separator < 0 ? error : error.slice(separator + 2);
-    const explanations: Record<string, string> = {
-      'invalid or oversized string': 'Texte non valide ou trop long', 'expected boolean': 'Choisissez oui ou non',
-      'number out of range': 'Nombre hors de la plage autorisée', 'unsupported value': 'Valeur non prise en charge',
-      'expected object': 'Objet de contenu requis', 'unknown field': 'Champ non pris en charge',
-      'expected bounded array': 'Liste non valide ou trop longue', 'unsafe URL': 'Lien non sûr ou non pris en charge',
-      'missing reference': 'Le contenu référencé n’existe pas. Retirez d’abord les références avant de supprimer',
-      'duplicate identifier': 'Identifiant déjà utilisé', 'reserved slug': 'Identifiant réservé',
-      'use a lowercase slug': 'Utilisez un identifiant en minuscules sans espaces', 'already used': 'Cet identifiant est déjà utilisé',
-      'enter a revision id': 'Saisissez un identifiant de révision valide', 'exceeds byte limit': 'Le document dépasse la taille autorisée',
-      'attribution records are read-only': 'Les textes et attributions des avis sont en lecture seule',
-      'home cannot be removed': 'La page d’accueil ne peut pas être supprimée', 'invalid dictionary key': 'Clé de texte non valide ou déjà utilisée',
-      'save_failed': 'L’enregistrement du brouillon a échoué', 'publish_failed': 'La publication a échoué', 'rollback_failed': 'La restauration a échoué',
-    };
-    const explanation = message.startsWith('unknown id ') ? `Image introuvable : ${message.slice(11)}` : explanations[message] ?? 'Contenu non valide. Vérifiez ce champ avant d’enregistrer';
-    return path ? `${path}: ${explanation}` : explanation;
-  }
-  const separator = error.indexOf(': ');
-  const path = separator < 0 ? '' : error.slice(0, separator);
-  const message = separator < 0 ? error : error.slice(separator + 2);
-  const explanations: Record<string, string> = {
-    'invalid or oversized string': 'Texto no válido o demasiado largo',
-    'expected boolean': 'Selecciona un valor de sí o no',
-    'number out of range': 'Número fuera del intervalo permitido',
-    'unsupported value': 'Valor no admitido',
-    'expected object': 'Se requiere un objeto de contenido',
-    'unknown field': 'Campo no admitido',
-    'expected bounded array': 'Lista no válida o demasiado larga',
-    'unsafe URL': 'Enlace no seguro o no admitido',
-    'missing reference': 'No existe el contenido al que se hace referencia',
-    'duplicate identifier': 'Identificador duplicado',
-    'reserved slug': 'Identificador reservado',
-    'use a lowercase slug': 'Usa un identificador en minúsculas, sin espacios',
-    'already used': 'Este identificador ya está en uso',
-    'enter a revision id': 'Introduce un identificador de revisión válido',
-    'exceeds byte limit': 'El documento supera el tamaño permitido',
-    'attribution records are read-only': 'El texto y la atribución de las reseñas son de solo lectura',
-    'home cannot be removed': 'La página de inicio no se puede eliminar',
-    'invalid dictionary key': 'Clave de texto no válida o ya utilizada',
-    'save_failed': 'No se ha podido guardar el borrador',
-    'publish_failed': 'No se ha podido publicar el borrador',
-    'rollback_failed': 'No se ha podido restaurar la revisión',
-    'unauthorized': 'Tu sesión ha caducado o no está autorizada',
-    'version_conflict': 'Otra persona ha modificado el contenido. Vuelve a cargarlo',
-    'invalid_document': 'El documento contiene campos no válidos',
-  };
-  const explanation = message.startsWith('unknown id ')
-    ? `No existe la imagen ${message.slice('unknown id '.length)}`
-    : explanations[message] ?? 'Contenido no válido. Revisa este campo antes de guardar';
-  return path ? `${path}: ${explanation}` : explanation;
-}
+export { editorError };
 
 interface Notice { version: number; label: string }
 
@@ -393,7 +340,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   useEffect(() => { setLocale(language); }, [language]);
 
   const failConflict = useCallback(async () => {
-    setConflict('Version conflict. Reloaded the current draft and did not overwrite it.');
+    setConflict('version_conflict');
     setNotice(null);
     try { applyContent(await loadAdminContent()); }
     catch (error) {
@@ -632,6 +579,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const page = draft?.pages.find(item => item.id === selectedPageId) ?? draft?.pages[0];
   const section = page?.sections.find(item => item.id === selectedSectionId) ?? page?.sections[0];
   const dirty = pricingPending || (draft ? JSON.stringify(draft) !== savedJson.current : false);
+  const stateKey = dirty ? 'unsaved' : publishedRevision !== null && publishedRevision === draftRevision ? 'published' : 'draft';
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => { if (dirty || uploading || importing || busy) { event.preventDefault(); event.returnValue = ''; } };
     const historyGuard = (event: Event) => {
@@ -643,6 +591,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   }, [dirty, uploading, importing, busy, language]);
   const leave = () => { if (!uploading && !importing && !busy && (!dirty || window.confirm(editorLabel('discard', language)))) onClose(); };
   const preview = draft && page ? previewModel(draft, page) : null;
+  const copyRegistry = uiCopyRegistry(SUPPORTED_UI_COPY, language);
   const visiblePhotos = draft?.media.filter(item => `${item.alt[locale]} ${item.id}`.toLocaleLowerCase().includes(photoSearch.toLocaleLowerCase())) ?? [];
   const openPricing = (id: string) => {
     if (busyRef.current || uploading || importing) return;
@@ -673,7 +622,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   if (status === 'error' && !draft) {
     return (
       <section className="cms-admin" data-admin-status="error" lang={language} dir="ltr">
-        <p role="alert">{language === 'es' ? 'No se ha podido cargar el borrador' : 'The editor could not load the draft'} ({loadError}).</p>
+        <p role="alert" title={loadError} data-code={loadError}>{friendlyApiError(loadError, language)}</p>
         <button type="button" onClick={() => { if (!dirty || window.confirm(editorLabel('discard', language))) void reload(); }}>{translate('Reload')}</button>
         <button type="button" onClick={leave}>{translate('Close')}</button>
       </section>
@@ -685,10 +634,10 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       <header className="cms-admin-bar">
         <div>
           <h1>{draft?.siteSettings.siteName || translate('Content editor')} <span className="cms-editor-badge">{translate('Content editor')}</span></h1>
-          <p className="cms-version-details">{translate('Version')} {version}. {translate('Draft revision')} {draftRevision ?? translate('none')}. {translate('Published revision')} {publishedRevision ?? translate('none')}.{dirty ? translate(' Unsaved changes.') : ''}</p>
+          <p className="cms-version-details" title={`${translate('Version')} ${version}`}>{translate('Version')} {version}. {translate('Draft revision')} {draftRevision ?? translate('none')}. {translate('Published revision')} {publishedRevision ?? translate('none')}.</p>
         </div>
         <div className="cms-admin-actions">
-          <span className={dirty ? "cms-draft-state is-dirty" : "cms-draft-state"} role="status">{w(dirty ? 'unsaved' : 'saved')}</span>
+          <span className={`cms-draft-state is-${stateKey}`} data-state={stateKey} role="status">{w(stateKey === 'unsaved' ? 'stateUnsaved' : stateKey === 'published' ? 'statePublished' : 'stateDraft')}</span>
           <button type="button" name="save-draft" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => { await persist(); })}>{translate('Save draft')}</button>
           <button type="button" name="publish" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => {
             const saved = await persist();
@@ -716,9 +665,9 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       </div>
       <p className="cms-first-step">{w('intro')}</p>
       {pricingPending && <p className="cms-admin-notice" role="status">{w('pendingPrice')} <button type="button" name="return-to-pricing" onClick={() => { setWorkspace('pricing'); setLayout('split'); }}>{w('pricing')}</button></p>}
-      {conflict && <p className="cms-admin-alert" data-admin-conflict role="alert">{translate(conflict)}</p>}
+      {conflict && <p className="cms-admin-alert" data-admin-conflict data-code={conflict} title={conflict} role="alert">{friendlyApiError(conflict, language)}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}
-      {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => <li key={error}>{editorError(error, language)}</li>)}</ul>}
+      {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => { const described = describeEditorError(error, language, draft ?? undefined); return <li key={error} title={described.code} data-code={described.code}>{described.text}</li>; })}</ul>}
       {!draft || !page ? (
         <div className="cms-admin-bootstrap" data-admin-bootstrap>
           <p>{translate('No draft is stored yet.')}</p>
@@ -743,7 +692,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             ))}
             <div className="cms-admin-create">
               <label>
-                {translate('New page id')}
+                {editorLabel('page id', language)}
                 <input name="new-page-id" value={newPageId} autoComplete="off" spellCheck={false} onChange={event => setNewPageId(event.target.value)} />
               </label>
               <label className="cms-admin-check">
@@ -758,7 +707,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             <div className="cms-workspace-heading"><h2>{w(workspace)}</h2><p>{w(`${workspace}Help`)}</p></div>
             <div className="cms-admin-tabs" role="tablist" aria-label={translate('Language')}>
               {LOCALES.map(lang => (
-                <button type="button" key={lang} role="tab" data-locale={lang} aria-selected={locale === lang} onClick={() => setLocale(lang)}>{lang === 'es' ? 'Español (España)' : lang}</button>
+                <button type="button" key={lang} role="tab" data-locale={lang} aria-selected={locale === lang} onClick={() => setLocale(lang)}>{languageName(lang)}</button>
               ))}
             </div>
             {pricingProductId && <div hidden={workspace !== 'pricing'}><PriceEditor key={pricingProductId} document={draft} productId={pricingProductId} language={language} disabled={busy || uploading || importing} onChange={changePrice} onPendingChange={setPricingPending} /></div>}
@@ -768,7 +717,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
               {translate('Page enabled')}
             </label>
             <label>
-              {translate('Page title')} ({locale})
+              {translate('Page title')} ({languageName(locale)})
               <textarea data-path={`pages.${page.id}.title.${locale}`} value={page.title[locale]} onChange={event => editPath(`pages.${page.id}.title.${locale}`, event.target.value)} />
             </label>
             <StructuredFields spec={{ ...PAGE_FIELDS, fields: Object.fromEntries(Object.entries(PAGE_FIELDS.fields!).filter(([key]) => !['title', 'enabled'].includes(key))) }} value={page} path={`pages.${page.id}`} document={draft} language={language} locale={locale} onChange={value => structuredEdit(`pages.${page.id}`, value)} />
@@ -900,15 +849,24 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             </fieldset>
             </div>
             <div className="cms-global-fields">
-              {Object.entries(GLOBAL_FIELDS).map(([key, spec]) => <details key={key} hidden={key === 'theme' ? workspace !== 'appearance' : key === 'media' ? workspace !== 'photos' : ['siteSettings','navigation','footer'].includes(key) ? workspace !== 'settings' : workspace !== 'content'} open={key === 'theme' || key === 'siteSettings'}><summary>{editorLabel(key, language)}</summary>
+              {Object.entries(GLOBAL_FIELDS).filter(([key]) => !HIDDEN_EDITOR_COLLECTIONS.includes(key)).map(([key, spec]) => <details key={key} hidden={key === 'theme' ? workspace !== 'appearance' : key === 'media' ? workspace !== 'photos' : ['siteSettings','navigation','footer'].includes(key) ? workspace !== 'settings' : workspace !== 'content'} open={key === 'theme' || key === 'siteSettings'}><summary>{editorLabel(key, language)}</summary>
                 {key === 'reviews' && <p>{editorLabel('reviewHelp', language)}</p>}
-                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !['heroTitle','heroTagline','heroSubtitle','heroImage'].includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} onEditPrice={openPricing} />
-                {key === 'siteSettings' && <details className="cms-legacy-settings"><summary>{w('legacyHero')}</summary><p>{w('legacyHeroHelp')}</p><dl>{(['heroTitle','heroTagline','heroSubtitle','heroImage'] as const).map(field => <div key={field}><dt>{editorLabel(field, language)}</dt><dd>{typeof draft.siteSettings[field] === 'string' ? draft.siteSettings[field] as string : (draft.siteSettings[field] as Record<string,string> | undefined)?.[locale]}</dd></div>)}</dl></details>}
+                {key === 'siteSettings' && <p className="cms-admin-note" data-hero-hint>{editorLabel('heroHint', language)}</p>}
+                <StructuredFields spec={key === 'theme' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => ['fontScale', 'containerWidth', 'buttonVariant', 'cardVariant'].includes(field))) } : key === 'siteSettings' ? { ...spec, fields: Object.fromEntries(Object.entries(spec.fields!).filter(([field]) => !FALLBACK_ONLY_SITE_SETTINGS.includes(field))) } : spec} value={draft[key as keyof CmsDocument]} path={key} document={draft} language={language} locale={locale} onChange={value => structuredEdit(key, value)} onRemove={removeStructured} onAdd={addEntity} onEditPrice={openPricing} />
               </details>)}
-              <details hidden={workspace !== 'settings'}><summary>{editorLabel('uiCopy', language)} · {w('advancedTab')}</summary>
-                {Object.entries({ ...SUPPORTED_UI_COPY, ...Object.fromEntries(Object.entries(draft.uiCopy).filter(([key]) => Object.hasOwn(SUPPORTED_UI_COPY, key))) }).map(([key, value]) => <div key={key}><code>{key}</code><StructuredFields spec={{ type: 'localized' }} value={value} path={`uiCopy.${key}`} document={draft} language={language} locale={locale} onChange={next => edit(current => ({ ...current, uiCopy: { ...current.uiCopy, [key]: next as CmsDocument['uiCopy'][string] } }))} />
-                  <button type="button" data-remove-copy={key} onClick={() => { if (window.confirm(editorLabel('confirmRemove', language))) edit(current => ({ ...current, uiCopy: Object.fromEntries(Object.entries(current.uiCopy).filter(([id]) => id !== key)) })); }}>{w('resetCopy')}</button>
-                </div>)}
+              <details hidden={workspace !== 'settings'} data-ui-copy><summary>{editorLabel('uiCopy', language)}</summary>
+                <p className="cms-admin-note">{w('uiCopyIntro')}</p>
+                {copyRegistry.map((entry, position) => {
+                  const stored = draft.uiCopy[entry.key];
+                  return <React.Fragment key={entry.key}>
+                    {(position === 0 || copyRegistry[position - 1].group !== entry.group) && <h4 className="cms-copy-group">{entry.group}</h4>}
+                    <div className="cms-copy-item" data-copy-key={entry.key} data-copy-changed={stored !== undefined}>
+                      <StructuredFields spec={{ type: 'localized' }} label={entry.label} value={stored ?? entry.defaults} path={`uiCopy.${entry.key}`} document={draft} language={language} locale={locale} onChange={next => edit(current => ({ ...current, uiCopy: { ...current.uiCopy, [entry.key]: next as CmsDocument['uiCopy'][string] } }))} />
+                      <details className="cms-advanced"><summary>{editorLabel('advanced', language)}</summary><p>{editorLabel('uiCopyKey', language)}: <code>{entry.key}</code></p><p>{w('uiCopyDefault')} ({languageName(locale)}): {entry.defaults[locale]}</p></details>
+                      <button type="button" data-remove-copy={entry.key} disabled={stored === undefined} onClick={() => { if (window.confirm(editorLabel('confirmRemove', language))) edit(current => ({ ...current, uiCopy: Object.fromEntries(Object.entries(current.uiCopy).filter(([id]) => id !== entry.key)) })); }}>{w('resetCopy')}</button>
+                    </div>
+                  </React.Fragment>;
+                })}
                 <details className="cms-unsupported-copy"><summary>{w('unsupportedCopy')}</summary>
                   <p>{w('unsupportedCopyHelp')}</p>
                   {Object.entries(draft.uiCopy).filter(([key]) => !Object.hasOwn(SUPPORTED_UI_COPY, key)).map(([key, value]) => <div key={key}><code>{key}</code><StructuredFields spec={{ type: 'localized' }} value={value} path={`uiCopy.${key}`} document={draft} language={language} locale={locale} onChange={next => edit(current => ({ ...current, uiCopy: { ...current.uiCopy, [key]: next as CmsDocument['uiCopy'][string] } }))} />
