@@ -10,6 +10,8 @@ export interface Env extends CmsRoutesEnv {
   CANONICAL_ORIGIN?: string;
   CMS_SLUG_REDIRECTS?: string;
   CMS_PUBLIC_RATE_LIMIT_REQUIRED?: string;
+  /** Comma-separated hostnames that serve only the editor (e.g. app.fezguidetours.com). */
+  CMS_EDITOR_HOSTS?: string;
   CMS_PUBLIC_RATE_LIMITER?: { limit(options: { key: string }): Promise<{ success: boolean }> };
   CMS_KV?: KVNamespaceReader;
   ASSETS?: {
@@ -58,6 +60,18 @@ export default {
     // cannot fall through to assets. Public D1 routes replace KV only when CMS_DB exists.
     const admin = isCmsAdminPath(path);
     const staticAsset = /^\/(?:assets|images|fonts)(?:\/|$)/.test(path) || path === '/favicon.svg';
+    // Editor-only hostnames: never serve a duplicate public site. Page routes open the editor;
+    // admin, API, media and static files are handled exactly as on the main domain.
+    const editorHosts = (env.CMS_EDITOR_HOSTS ?? '').split(',').map(host => host.trim().toLowerCase()).filter(Boolean);
+    if (editorHosts.includes(url.hostname.toLowerCase())) {
+      if (path === '/robots.txt') {
+        return new Response('User-agent: *\nDisallow: /\n', { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', ...securityHeaders } });
+      }
+      const passthrough = admin || staticAsset || path.startsWith('/api/') || path.startsWith('/media/') || /\.[a-z0-9]+$/i.test(path);
+      if (!passthrough) {
+        return new Response(null, { status: 302, headers: { Location: '/admin', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex, nofollow', ...securityHeaders } });
+      }
+    }
     const dynamic = admin || path.startsWith('/api/') || path.startsWith('/media/upload-') || (Boolean(env.CMS_DB) && !staticAsset);
     if (env.CMS_PUBLIC_RATE_LIMIT_REQUIRED === 'true' && dynamic) {
       try {

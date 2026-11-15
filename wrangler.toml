@@ -34,6 +34,7 @@ ACCESS_TEAM_DOMAIN = "delicate-forest-c939.cloudflareaccess.com"
 ACCESS_AUD = "32271121f6e019de0d240549fafa28ce5232448badca6d0e8350b8111e718061"
 ACCESS_ALLOWED_EMAILS = "elhamlaouy@gmail.com,fezguidetours1@gmail.com"
 CMS_PUBLIC_RATE_LIMIT_REQUIRED = "true"
+CMS_EDITOR_HOSTS = "app.fezguidetours.com"
 
 [previews.vars]
 CANONICAL_ORIGIN = "https://fezguidetours.com"
