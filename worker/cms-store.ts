@@ -24,6 +24,8 @@ export const MAX_DOCUMENT_BYTES = 2_000_000;
 // Kept in sync with migration 0003; includes all retained immutable revisions.
 export const MAX_REVISION_COUNT = 1000;
 export const MAX_REVISION_DOCUMENT_BYTES = 24 * 1024 * 1024;
+/** Most recent revisions kept for History/rollback; older ones are pruned after each save (migration 0008). */
+export const REVISION_RETENTION = 100;
 
 export class CmsError extends Error {
   constructor(public status: number, public code: string, public retryAfter?: number) { super(code); }
@@ -166,6 +168,20 @@ export class CmsStore {
     if (results.length !== 2 || results.some(result => !result.success)) throw new CmsError(503, 'cms_unavailable');
     // D1 includes the budget trigger's UPDATE in INSERT changes; stale SELECTs still change zero rows.
     if ((results[0].meta?.changes ?? 0) < 1 || results[1].meta?.changes !== 1) throw new CmsError(409, 'version_conflict');
+    await this.prune();
     return { version, draftRevision: version, published: kind !== 'draft' };
+  }
+
+  /** Best effort: delete history older than the newest REVISION_RETENTION revisions, never the current draft or
+   * published revision, nor any revision a kept one points to. The database trigger enforces the same rules,
+   * and a failure here never fails the save that already succeeded. */
+  private async prune() {
+    try {
+      await this.db.prepare(`DELETE FROM cms_revisions
+        WHERE version <= (SELECT version FROM cms_documents WHERE id = 1) - ?
+        AND version NOT IN (SELECT draft_revision FROM cms_documents WHERE id = 1 AND draft_revision IS NOT NULL)
+        AND version NOT IN (SELECT published_revision FROM cms_documents WHERE id = 1 AND published_revision IS NOT NULL)
+        AND version NOT IN (SELECT source_revision FROM cms_revisions WHERE source_revision IS NOT NULL)`).bind(REVISION_RETENTION).run();
+    } catch { /* older schema or a concurrent change: retry on the next save */ }
   }
 }
