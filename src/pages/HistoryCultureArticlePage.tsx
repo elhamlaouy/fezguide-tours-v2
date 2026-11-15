@@ -10,6 +10,8 @@ import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSecti
 interface HistoryCultureArticlePageProps {
   language: Language;
   onBack: () => void;
+  /** Parent page id for the breadcrumb link. */
+  parentPageId?: string;
   onNavigate: (page: PageId) => void;
   onExploreTours: () => void;
 }
@@ -133,7 +135,7 @@ const content = {
   },
 };
 
-export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
+export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps> = ({ language, onBack, parentPageId, onNavigate, onExploreTours }) => {
   const cms = useFezEditorial('fez-history-landmarks', language);
   const source = content[language];
   const copy = { ...source, title: cms.document ? cms.page?.title[cms.locale] ?? '' : source.title, paragraphs: source.paragraphs.map((paragraph, index) => cms.story(index === 0 ? 'introduction' : `story-${index}`, paragraph)) };
@@ -146,6 +148,7 @@ export const HistoryCultureArticlePage: React.FC<HistoryCultureArticlePageProps>
         parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
+        parentPageId={parentPageId}
         onParent={onBack}
       />
 

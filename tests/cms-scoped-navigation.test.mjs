@@ -73,7 +73,7 @@ test('mounted scoped shell uses real document navigation for custom links, local
   try {
     await act(async () => { root.render(createElement(App)); await new Promise(resolve => setTimeout(resolve, 20)); });
     const before = document.querySelector('main').innerHTML;
-    await act(async () => { [...document.querySelectorAll('nav button')].find(button => button.textContent === 'Scoped custom').click(); });
+    await act(async () => { [...document.querySelectorAll('nav a')].find(button => button.textContent === 'Scoped custom').click(); });
     assert.deepEqual(requests.pop(), ['assign', '/fr/owner-preferred?utm_source=retained']);
     assert.equal(window.location.pathname, '/fr/about', 'no pushState into a route with missing bodies');
     assert.equal(document.querySelector('main').innerHTML, before);
@@ -142,7 +142,7 @@ async function mountScopeEdgeApp(t, source, path) {
   await act(async () => {
     root.render(createElement(Profiler, { id: 'scope-edge', onRender() {
       const main = document.querySelector('main');
-      commits.push({ html: main?.innerHTML, text: main?.textContent, activeLinks: [...document.querySelectorAll('nav button')].filter(button => button.querySelector('span')).map(button => button.textContent) });
+      commits.push({ html: main?.innerHTML, text: main?.textContent, activeLinks: [...document.querySelectorAll('nav a')].filter(button => button.querySelector('span')).map(button => button.textContent) });
     } }, createElement(App)));
     await new Promise(resolve => setTimeout(resolve, 20));
   });
@@ -183,7 +183,7 @@ for (const scenario of ['missing URL', 'hidden public page', 'unavailable locale
     assert.deepEqual(app.fetches, []);
     assert.doesNotMatch(document.body.innerHTML, /PRIVATE HIDDEN ABOUT BODY/);
     const before = app.main().innerHTML;
-    const publicButton = [...document.querySelectorAll('nav button')].find(button => button.textContent === 'Public destination');
+    const publicButton = [...document.querySelectorAll('nav a')].find(button => button.textContent === 'Public destination');
     if (scenario !== 'fully empty public projection') {
       assert.ok(publicButton);
       assert.ok(JSON.stringify(projection.pages.find(page => page.id === 'fez')).includes(destinationBody));
@@ -278,7 +278,7 @@ for (const [spelling, arrival] of customArrivals) {
     await app.traverse('forward');
     assert.deepEqual(requests, [], 'real same-scope Back/Forward also stays in memory');
     assert.equal(app.main().innerHTML, fullBody);
-    const offscope = [...document.querySelectorAll('nav button')].find(button => button.textContent === 'Off-scope About');
+    const offscope = [...document.querySelectorAll('nav a')].find(button => button.textContent === 'Off-scope About');
     assert.ok(offscope);
     await act(async () => offscope.click());
     assert.deepEqual(requests, [['assign', '/fr/about?utm_source=arrival&campaign=kept']], 'off-scope click loads HTML, retains campaign parameters and removes hash');
@@ -319,7 +319,7 @@ test('API-unavailable source fallback still renders and navigates in memory in a
         assert.ok(requested.includes('/api/cms/document'));
         assert.ok(requested.includes('/api/cms'));
         assert.equal(document.documentElement.lang, language);
-        await act(async () => [...host.querySelectorAll('nav button')][1].click());
+        await act(async () => [...host.querySelectorAll('nav a')][1].click());
         for (let retry = 0; retry < 100 && !host.querySelector('main h1'); retry++) await act(async () => { await new Promise(resolve => setTimeout(resolve, 10)); });
         assert.equal(window.location.pathname, `${language === 'en' ? '' : `/${language}`}/fez`);
         assert.ok(host.querySelector('main h1'), 'source navigation still renders its route');

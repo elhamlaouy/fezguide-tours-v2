@@ -20,7 +20,7 @@ const manifest = JSON.parse(await readFile(new URL('../src/cms/optimized-images.
 const decode = value => value?.replaceAll('&amp;', '&').replaceAll('&quot;', '"');
 const attrs = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map(match => [match[1].toLowerCase(), decode(match[2])]));
 const photos = html => [...html.matchAll(/<img\b[^>]*>/g)].map(match => attrs(match[0]));
-const sectionCardPhotos = html => [...html.matchAll(/<div\b[^>]*class="relative aspect-4\/3 w-full[^>]*>\s*(<img\b[^>]*>)/g)].map(match => attrs(match[1]));
+const sectionCardPhotos = html => [...html.matchAll(/<(?:div|a)\b[^>]*class="relative aspect-4\/3 w-full[^>]*>\s*(<img\b[^>]*>)/g)].map(match => attrs(match[1]));
 const renderCard = (document, pageId, pillar, language = 'en') => renderToStaticMarkup(createElement(ApprovedContentProvider, { document, page: document.pages.find(page => page.id === pageId), language }, createElement(SectionCard, { pillar, language, onExplore() {}, onBookTour() {} })));
 const render = (document, pageId = 'home', language = 'en') => renderToStaticMarkup(createElement(PageRenderer, { document, page: document.pages.find(page => page.id === pageId), language, onNavigate() {}, onBook() {} }));
 const quickPhotos = html => photos(html.match(/<section\b[^>]*data-section-id="quick-navigation"[^>]*>([\s\S]*?)<\/section>/)[1]);

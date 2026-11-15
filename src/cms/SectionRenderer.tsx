@@ -1,3 +1,5 @@
+import { InternalLink } from '../components/InternalLink';
+import { pagePath } from './routing';
 import { businessContactHref } from './business-contact';
 import { imageSizes, responsiveImageProps } from './optimized-image';
 import type { ReactNode } from 'react';
@@ -122,7 +124,7 @@ function Actions({ document, links, language, onNavigate }: { document: CmsDocum
         const label = localizedText(link.label, language);
         if (link.pageId) {
           const pageId = link.pageId;
-          return <button key={link.id} type="button" className="cms-button" data-page-id={pageId} onClick={() => onNavigate(pageId)}>{label}</button>;
+          return <InternalLink key={link.id} className="cms-button" data-page-id={pageId} href={pagePath(document, pageId, language)} onNavigate={() => onNavigate(pageId)}>{label}</InternalLink>;
         }
         return <SafeAnchor key={link.id} href={businessContactHref(document, link.href || '')}>{label}</SafeAnchor>;
       })}
@@ -220,7 +222,7 @@ function CardGrid({ document, section, language, titleTag, onNavigate }: Section
         {cards.map(card => {
           const face = <><CardFace document={document} image={card.image} language={language} sizes={imageSizes(document.theme.containerWidth, 'card', cards.length, section.variant === 'featured', card.image ? resolveImage(document, card.image, language)?.src : undefined)} badge={card.badge} title={card.title} description={card.description} />{blogMetadata(document, card.pageId, language) && <span className="cms-meta">{blogMetadata(document, card.pageId, language)}</span>}</>;
           return card.pageId
-            ? <button key={card.id} type="button" className="cms-card" data-page-id={card.pageId} onClick={() => onNavigate(card.pageId!)}>{face}</button>
+            ? <InternalLink key={card.id} className="cms-card" data-page-id={card.pageId} href={pagePath(document, card.pageId, language)} onNavigate={() => onNavigate(card.pageId!)}>{face}</InternalLink>
             : <article key={card.id} className="cms-card">{face}</article>;
         })}
       </div>
@@ -245,7 +247,7 @@ function ProductGrid({ document, section, language, titleTag, onNavigate }: Sect
           const sizes = imageSizes(document.theme.containerWidth, 'card', products.length, section.variant === 'featured', image?.src);
           const price = formatPrice(product, language);
           return (
-            <button key={product.id} type="button" className="cms-card cms-product-card" data-page-id={target.id} data-product-id={product.id} onClick={() => onNavigate(target.id)}>
+            <InternalLink key={product.id} className="cms-card cms-product-card" data-page-id={target.id} data-product-id={product.id} href={pagePath(document, target.id, language)} onNavigate={() => onNavigate(target.id)}>
               {image ? <img className={image.portrait ? 'cms-img cms-img-portrait' : 'cms-img'} {...responsiveImageProps(image.src, sizes)} alt={image.alt} width={image.width} height={image.height} style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : null}
               <span className="cms-card-body">
                 {localizedText(product.subtitle, language) ? <span className="cms-eyebrow">{localizedText(product.subtitle, language)}</span> : null}
@@ -253,7 +255,7 @@ function ProductGrid({ document, section, language, titleTag, onNavigate }: Sect
                 <span className="cms-card-copy">{localizedText(product.shortDescription, language)}</span>
                 {price ? <span className="cms-price" data-price-product-id={product.id}>{price}</span> : null}
               </span>
-            </button>
+            </InternalLink>
           );
         })}
       </div>

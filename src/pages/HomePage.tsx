@@ -8,6 +8,7 @@ import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/ap
 import { visibleLink, resolveImage } from '../cms/render-utils';
 import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
+import { InternalLink } from '../components/InternalLink';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
 import {
   Compass,
@@ -46,6 +47,11 @@ export const HomePage: React.FC<HomePageProps> = ({
   const blank = { en: '', fr: '', es: '' };
   const imageSource = (mediaId: string | undefined) => document && mediaId ? resolveImage(document, {mediaId, alt:blank}, language)?.src : undefined;
   const heroLinks = document ? (hero?.links ?? []).filter(link => visibleLink(document, link)) : [];
+  const heroAction = (link: (typeof heroLinks)[number] | undefined, fallbackPage: string, className: string, content: React.ReactNode) => {
+    if (link?.href && !link.pageId) return <a href={link.href} className={className}>{content}</a>;
+    const target = link?.pageId ?? fallbackPage;
+    return <InternalLink href={pagePath(document, target, language)} onNavigate={() => onNavigate(target)} className={className}>{content}</InternalLink>;
+  };
   const heroSource = document ? imageSource(hero?.image?.mediaId) : (siteSettings?.heroImage || '/images/real/about_us_image7.jpg');
   const tHero = UI_TEXT.hero;
   const tHomeNav = UI_TEXT.homeQuickNav;
@@ -191,20 +197,18 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             {/* Action CTAs */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-              {(!document || heroLinks[0]) && (<button
-                onClick={() => heroLinks[0]?.pageId ? onNavigate(heroLinks[0].pageId!) : heroLinks[0]?.href ? window.location.assign(heroLinks[0].href!) : onNavigate('fez')}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-sm rounded-xl shadow-lg ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-              >
+              {(!document || heroLinks[0]) && heroAction(heroLinks[0], 'fez',
+                "w-full sm:w-auto px-8 py-3.5 bg-[#C84B31] hover:bg-[#B33D25] text-white font-bold text-sm rounded-xl shadow-lg ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2",
+                <>
                 <Compass className="w-4 h-4" />
                 <span>{document ? heroLinks[0]?.label[language] ?? '' : tHero.ctaExplore[language]}</span>
-              </button>)}
-              {(!document || heroLinks[1]) && (<button
-                onClick={() => heroLinks[1]?.pageId ? onNavigate(heroLinks[1].pageId!) : heroLinks[1]?.href ? window.location.assign(heroLinks[1].href!) : onNavigate('day-trips')}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-sm rounded-xl shadow-md ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-              >
+                </>)}
+              {(!document || heroLinks[1]) && heroAction(heroLinks[1], 'day-trips',
+                "w-full sm:w-auto px-8 py-3.5 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-sm rounded-xl shadow-md ring-2 ring-white/30 transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2",
+                <>
                 <MapPin className="w-4 h-4 text-[#E6F4F2]" />
                 <span>{document ? heroLinks[1]?.label[language] ?? '' : tHero.ctaDayTrips[language]}</span>
-              </button>)}
+                </>)}
             </div>
 
             {/* Trust Row */}
@@ -245,14 +249,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           })) : quickSections.map(card => ({ ...card, alt: card.title }))).map((sec) => {
             const Icon = sec.icon;
             return (
-              <div
+              <InternalLink
                 key={sec.id}
-                onClick={() => {
+                href={pagePath(document, sec.id, language)}
+                onNavigate={() => {
                   onNavigate(sec.id);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                role="button"
-                tabIndex={0}
                 className="group relative bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-lg transition-all cursor-pointer flex flex-col justify-between"
               >
                 {/* Visual Thumbnail */}
@@ -290,7 +293,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
-              </div>
+              </InternalLink>
             );
           })}
         </div>
@@ -303,13 +306,14 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{document ? featured?.eyebrow?.[language] ?? '' : ("Handcrafted Itineraries")}</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight mt-1">{document ? featured?.title?.[language] ?? '' : ("Top Featured Medina Tours & Excursions")}</h2>
           </div>
-          <button
-            onClick={() => onNavigate('fez')}
+          <InternalLink
+            href={pagePath(document, 'fez', language)}
+            onNavigate={() => onNavigate('fez')}
             className="text-xs font-bold text-[#C84B31] hover:text-[#B33D25] flex items-center gap-1 cursor-pointer"
           >
             <span>{language === 'es' ? "Ver todas las visitas" : "View All Tours"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </InternalLink>
         </div>
 
         {/* 6 Featured Tour Cards */}

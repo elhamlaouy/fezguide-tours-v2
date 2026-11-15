@@ -49,6 +49,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ language, onNavigate }) =>
         parentLabel={title}
         currentTitle={title}
         onHome={() => onNavigate('home')}
+        parentPageId="home"
         onParent={() => onNavigate('home')}
       />
 

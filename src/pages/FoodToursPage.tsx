@@ -6,6 +6,7 @@ import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/ap
 import { visibleLink } from '../cms/render-utils';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
+import { InternalLink, usePagePath } from '../components/InternalLink';
 import { UtensilsCrossed, Coffee, Heart, Check, Sparkles, Flame } from 'lucide-react';
 
 interface FoodToursPageProps {
@@ -20,6 +21,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
   onBookTour,
 }) => {
   const { tours } = useCms();
+  const pathFor = usePagePath();
   const { document, section } = useApprovedContent('food-tours');
   const callout = section('food-tour-cta', 'cta');
   const hero = section('hero', 'hero');
@@ -247,22 +249,19 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
               ? 'Une balade privée pour vous et votre groupe. Les dégustations suivent ce que les boutiques préparent ce jour-là.'
               : 'This is a private food walk for you and your group. The tastings follow what local shops are preparing that day.')}</p>
           <div className="pt-2">
-            {document ? (callout?.links ?? []).filter(link => visibleLink(document, link)).map(link => (<button key={link.id}
-              onClick={() => { if (link.pageId) { const target = tours.find(tour => tour.id === link.pageId); if (target) onExplore(target); } else if (link.href) window.location.assign(link.href); }}
-              className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
-            >{link.label[language]}</button>)) : (<button
-              onClick={() => {
-                const product = foodPillars.find((pillar) => pillar.id === 'our-food-tours');
-                if (product) onExplore(product);
-              }}
-              className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
-            >
+            {document ? (callout?.links ?? []).filter(link => visibleLink(document, link)).map(link => {
+              if (link.pageId) { const target = tours.find(tour => tour.id === link.pageId); return target ? <InternalLink key={link.id} href={pathFor(target.id, language)} onNavigate={() => onExplore(target)} className="inline-block py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer">{link.label[language]}</InternalLink> : null; }
+              return link.href ? <a key={link.id} href={link.href} className="inline-block py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer">{link.label[language]}</a> : null;
+            }) : (() => {
+              const product = foodPillars.find((pillar) => pillar.id === 'our-food-tours');
+              return product ? <InternalLink href={pathFor(product.id, language)} onNavigate={() => onExplore(product)} className="inline-block py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer">
               {language === 'es'
                 ? "Reservad vuestra ruta privada de degustación"
                 : language === 'fr'
                 ? 'Réserver la visite culinaire'
                 : 'Book Your Private Food Tasting Walk'}
-            </button>)}
+            </InternalLink> : null;
+            })()}
           </div>
         </div></ApprovedSection>
 

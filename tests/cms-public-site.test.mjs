@@ -212,8 +212,8 @@ test('canonical shell filters links in the active locale, not English', async ()
   assert.doesNotMatch(spanish, /English only sentinel|Français seulement/);
   const dom = new Window();
   dom.document.body.innerHTML = spanish;
-  for (const button of dom.document.querySelectorAll('nav button, footer button')) {
-    assert.ok(button.textContent.trim() || button.getAttribute('aria-label'), 'no unnamed focusable shell buttons');
+  for (const button of dom.document.querySelectorAll('nav button, footer button, nav a, footer a')) {
+    assert.ok(button.textContent.trim() || button.getAttribute('aria-label'), 'no unnamed focusable shell buttons and links');
   }
   await dom.happyDOM.close();
   assert.match(shellMarkup(document, 'en'), /English only sentinel/);

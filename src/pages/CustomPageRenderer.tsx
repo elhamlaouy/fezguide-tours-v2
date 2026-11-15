@@ -4,6 +4,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, useApprovedContent } from '../cms/approved-content';
 import { responsiveImageProps } from '../cms/optimized-image';
+import { InternalLink, usePagePath } from '../components/InternalLink';
 import { Calendar, Check, Compass, MessageCircle, ArrowLeft } from 'lucide-react';
 
 interface CustomPageRendererProps {
@@ -20,6 +21,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
   onBookTour,
 }) => {
   const { siteSettings } = useCms();
+  const pathFor = usePagePath();
   const { document, section } = useApprovedContent(page.id);
   const hero = section('hero', 'hero');
   const content = section('content', 'richText');
@@ -63,15 +65,16 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-[#E7E2DA] pb-3 text-xs">
-          <button
-            onClick={() => onNavigate('home')}
+          <InternalLink
+            href={pathFor('home', language)}
+            onNavigate={() => onNavigate('home')}
             className="inline-flex items-center gap-1.5 font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>
               {language === 'es' ? 'Volver al inicio' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
             </span>
-          </button>
+          </InternalLink>
         </div>
 
         {/* Prose Overview */}

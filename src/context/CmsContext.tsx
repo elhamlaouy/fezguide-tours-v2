@@ -72,3 +72,6 @@ export const useCms = (): CmsContextValue => {
   }
   return context;
 };
+
+/** Like useCms, but undefined outside a provider (isolated component renders). */
+export const useOptionalCms = (): CmsContextValue | undefined => useContext(CmsContext);
