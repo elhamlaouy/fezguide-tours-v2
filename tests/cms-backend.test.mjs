@@ -680,3 +680,21 @@ test('public reads reuse one projection per published revision and refresh after
   assert.equal(rolled.version, 5);
   assert.equal(rolled.document.pages[0].title, 'first');
 });
+
+test('Access service tokens are denied unless their exact Client ID is allowlisted', async () => {
+  const { createAccessVerifier } = await import('../worker/cms-auth.ts');
+  const verify = createAccessVerifier({ now: () => NOW * 1000, fetch: async () => Response.json({ keys: [jwk] }) });
+  const service = { sub: '', email: undefined, type: 'app', common_name: 'abc123.access' };
+  const token = await signedToken(service);
+  assert.equal(await verify(accessRequest(token), accessEnv), null, 'off by default');
+  const env = { ...accessEnv, ACCESS_ALLOWED_SERVICE_TOKENS: 'abc123.access' };
+  assert.deepEqual(await verify(accessRequest(token), env), { subject: 'service:abc123.access' });
+  assert.equal(await verify(accessRequest(await signedToken({ ...service, common_name: 'other.access' })), env), null, 'other tokens denied');
+  assert.equal(await verify(accessRequest(await signedToken({ ...service, type: 'org' })), env), null, 'only application tokens');
+  assert.equal(await verify(accessRequest(await signedToken({ ...service, aud: ['other-app'] })), env), null, 'audience still enforced');
+  assert.equal(await verify(accessRequest(await signedToken({ ...service, sub: 'someone' })), env), null, 'a user token cannot claim a service identity');
+  const forged = token.slice(0, token.lastIndexOf('.') + 1) + Buffer.from('x'.repeat(256)).toString('base64url');
+  assert.equal(await verify(accessRequest(forged), env), null, 'signature still enforced');
+  const onlyServices = { ACCESS_TEAM_DOMAIN: accessEnv.ACCESS_TEAM_DOMAIN, ACCESS_AUD: accessEnv.ACCESS_AUD, ACCESS_ALLOWED_SERVICE_TOKENS: 'abc123.access' };
+  assert.equal(await verify(accessRequest(await signedToken()), onlyServices), null, 'users still need their own allowlist');
+});
