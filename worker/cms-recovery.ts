@@ -3,7 +3,8 @@ import { boundedMediaBytes, MEDIA_KEY_PATTERN, type CmsMediaBucket } from './med
 export const MAX_BACKUP_BYTES = 32 * 1024 * 1024;
 const MAX_REVISIONS = 1000;
 interface BackupRevision { version: number; kind: string; actor: string; createdAt: string; sourceRevision: number | null; document: object; sha256: string }
-interface BackupMedia { key: string; bytes: number; sha256: string }
+// `missing` marks an upload referenced only by superseded revisions whose object no longer exists in R2.
+interface BackupMedia { key: string; bytes?: number; sha256?: string; missing?: true }
 interface CmsBackup { format: 'fez-cms-backup-v1'; state: { version: number; draftRevision: number | null; publishedRevision: number | null }; revisions: BackupRevision[]; media: BackupMedia[] }
 const invalid = (): never => { throw new CmsError(422, 'invalid_backup'); };
 async function hash(bytes: Uint8Array<ArrayBuffer>): Promise<string> {
@@ -37,16 +38,26 @@ export async function exportBackup(db: CmsD1Database, store: CmsStore, bucket?: 
  if ((rows.results?.length ?? 0) > MAX_REVISIONS) throw new CmsError(413, 'backup_too_large');
  const revisions: BackupRevision[] = [];
  let length = 0;
+ // Stored revisions were validated when written and are immutable: parse only (re-validating every revision
+ // cost >10 ms of CPU each on Workers Free).
+ const parsed = (raw: string): object => { const value: unknown = JSON.parse(raw); if (!value || typeof value !== 'object' || Array.isArray(value)) invalid(); return value as object; };
  for (const row of rows.results ?? []) {
-  const document = store.validate(JSON.parse(row.document));
+  const document = parsed(row.document);
   length += new TextEncoder().encode(JSON.stringify(document)).byteLength;
   if (length > MAX_BACKUP_BYTES - 1024 * 1024) throw new CmsError(413, 'backup_too_large');
   revisions.push({version:row.version,kind:row.kind,actor:row.actor,createdAt:row.created_at,sourceRevision:row.source_revision,document,sha256:await documentHash(document)});
  }
  const keys = retainedUploadKeys(revisions.map(r => r.document));
  if (keys.size && !bucket) throw new CmsError(503, 'media_unavailable');
+ // Uploads used by the current draft or published revision must exist; uploads only referenced by superseded
+ // revisions may have been cleaned up and are recorded as missing instead of failing the whole backup.
+ const current = revisions.filter(r => r.version === state.draftRevision || r.version === state.publishedRevision).map(r => r.document);
+ const required = retainedUploadKeys(current);
  const media: BackupMedia[] = [];
- for (const key of [...keys].sort()) media.push(await mediaDigest(bucket!, key));
+ for (const key of [...keys].sort()) {
+  try { media.push(await mediaDigest(bucket!, key)); }
+  catch (error) { if (!required.has(key) && error instanceof CmsError && error.code === 'backup_media_missing') media.push({ key, missing: true }); else throw error; }
+ }
  return {format:'fez-cms-backup-v1',state:{version:state.version,draftRevision:state.draftRevision,publishedRevision:state.publishedRevision},revisions,media};
 }
 export async function restoreBackup(store: CmsStore, bucket: CmsMediaBucket | undefined, value: unknown, revision: number, expectedVersion: number, actor: string) {
@@ -69,9 +80,16 @@ export async function restoreBackup(store: CmsStore, bucket: CmsMediaBucket | un
  for (const row of backup.revisions) if (row.sourceRevision !== null && (!versions.has(row.sourceRevision) || row.sourceRevision >= row.version)) invalid();
  const keys = retainedUploadKeys(documents), seen = new Set<string>();
  if (keys.size && !bucket) throw new CmsError(503, 'media_unavailable');
+ const needed = retainedUploadKeys(chosen ? [chosen] : []);
  for (const entry of backup.media) {
-  if (!entry || !keys.has(entry.key) || seen.has(entry.key) || !Number.isSafeInteger(entry.bytes) || entry.bytes < 1 || !/^[a-f0-9]{64}$/.test(entry.sha256)) invalid();
+  if (!entry || !keys.has(entry.key) || seen.has(entry.key)) invalid();
   seen.add(entry.key);
+  if (entry.missing === true) {
+   // A superseded revision's cleaned-up upload is acceptable unless the revision being restored needs it.
+   if (needed.has(entry.key)) throw new CmsError(422, 'backup_media_missing');
+   continue;
+  }
+  if (!Number.isSafeInteger(entry.bytes) || entry.bytes! < 1 || !/^[a-f0-9]{64}$/.test(entry.sha256 ?? '')) invalid();
   const actual = await mediaDigest(bucket!,entry.key);
   if (actual.sha256 !== entry.sha256 || actual.bytes !== entry.bytes) throw new CmsError(422, 'backup_media_hash');
  }
@@ -84,7 +102,7 @@ export async function orphanDryRun(db: CmsD1Database, store: CmsStore, bucket?: 
  if (!bucket?.list) throw new CmsError(503,'media_inventory_unavailable');
  const rows = await db.prepare('SELECT document FROM cms_revisions ORDER BY version LIMIT ?').bind(MAX_REVISIONS + 1).all<{document:string}>();
  if (!rows.success || (rows.results?.length ?? 0) > MAX_REVISIONS) throw new CmsError(413,'backup_too_large');
- const retained = retainedUploadKeys((rows.results ?? []).map(row=>store.validate(JSON.parse(row.document))));
+ const retained = retainedUploadKeys((rows.results ?? []).map(row=>JSON.parse(row.document) as object));
  const objects = [], cutoff = Date.now() - 7 * 24 * 3600 * 1000;
  let cursor: string | undefined;
  do {

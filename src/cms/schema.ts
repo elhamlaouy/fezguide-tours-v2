@@ -430,13 +430,43 @@ function checkReferences(c: Checker, d: CmsDocument): void {
   }
 }
 
+/** Cheap safety check for values produced by JSON.parse (no getters, symbols, holes or prototypes are possible there):
+ * bounded depth/array sizes and no prototype-pollution keys. */
+function isParsedJsonSafe(value: unknown, depth = 0): boolean {
+  if (depth > 30) return false;
+  if (value === null || typeof value !== 'object') return typeof value !== 'number' || Number.isFinite(value);
+  if (Array.isArray(value)) {
+    if (value.length > CMS_LIMITS.media) return false;
+    for (let i = 0; i < value.length; i++) if (!isParsedJsonSafe(value[i], depth + 1)) return false;
+    return true;
+  }
+  if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) return false;
+  for (const key in value) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') return false;
+    if (!isParsedJsonSafe((value as Record<string, unknown>)[key], depth + 1)) return false;
+  }
+  // JSON.parse creates "__proto__" as an own data property that for…in does not reveal on every engine; check explicitly.
+  return !Object.prototype.hasOwnProperty.call(value, '__proto__');
+}
+/** UTF-8 byte length never exceeds 3 × UTF-16 code units, so the encode pass is only needed near the limit. */
+export function withinByteLimit(text: string, limit: number): boolean {
+  if (text.length > limit) return false;
+  return text.length * 3 <= limit || new TextEncoder().encode(text).length <= limit;
+}
+
+export interface ValidateOptions {
+  /** The value came straight from JSON.parse (Worker request bodies and stored revisions): use the cheap safety check. */
+  parsedJson?: boolean;
+  /** The caller enforces the byte limit itself (e.g. on the serialized form it stores): skip the size pass here. */
+  sizeCheckedByCaller?: boolean;
+}
+
 /** Pure validation: never merges source defaults into an editor's valid document. */
-export function validateCmsDocument(value: unknown): CmsValidationResult {
+export function validateCmsDocument(value: unknown, options: ValidateOptions = {}): CmsValidationResult {
   const c = new Checker();
   try {
-    if (!isPlainJson(value)) return { valid: false, errors: ['document: expected safe JSON data'] };
-    const encoded = JSON.stringify(value);
-    if (encoded.length > CMS_LIMITS.bytes || new TextEncoder().encode(encoded).length > CMS_LIMITS.bytes) return { valid: false, errors: ['document: exceeds byte limit'] };
+    if (!(options.parsedJson ? isParsedJsonSafe(value) : isPlainJson(value))) return { valid: false, errors: ['document: expected safe JSON data'] };
+    if (!options.sizeCheckedByCaller && !withinByteLimit(JSON.stringify(value), CMS_LIMITS.bytes)) return { valid: false, errors: ['document: exceeds byte limit'] };
     c.document(value, 'document');
     if (c.errors.length) return { valid: false, errors: c.errors };
     const d = value as CmsDocument;

@@ -39,3 +39,37 @@ test('backup checks all immutable revisions and media; missing/hash-mismatched r
   await restoreBackup(store,bucket,backup,1,2,'owner');const state=await store.read();assert.equal(state.version,3);assert.equal(state.publishedRevision,2);assert.equal(state.draftRevision,3);
  }finally{f.sqlite.close();}
 });
+
+test('backup records uploads used only by superseded revisions as missing; current or restored content still requires them', async () => {
+ const {exportBackup,restoreBackup}=await import('../worker/cms-recovery.ts');
+ const {CmsStore}=await import('../worker/cms-store.ts');
+ const f=fixture(),store=new CmsStore(f.db,f.validate),bytes=new Uint8Array([1,2,3]);
+ const gone='upload-aaaaaaaa-1234-1234-1234-123456789012.jpg';
+ const bucket={async get(path){return path===`uploads/${key}`?{body:new Blob([bytes]).stream()}:null;}};
+ try{
+  // v1/v2: a test upload that was later cleaned up from R2. v3/v4: current content using a present upload.
+  await store.saveDraft({schemaVersion:1,pages:[],media:[{src:`/media/${gone}`}]},0,'owner');await store.publish(1,'owner');
+  await store.saveDraft({schemaVersion:1,pages:[],media:[{src:`/media/${key}`}]},2,'owner');await store.publish(3,'owner');
+  const backup=await exportBackup(f.db,store,bucket);
+  assert.deepEqual(backup.media.find(m=>m.key===gone),{key:gone,missing:true});
+  assert.equal(backup.media.find(m=>m.key===key).bytes,3);
+  await assert.rejects(restoreBackup(store,bucket,backup,1,4,'owner'),e=>e.code==='backup_media_missing','restoring a revision that needs the missing upload is refused');
+  assert.equal((await store.read()).version,4,'nothing written');
+  const restored=await restoreBackup(store,bucket,backup,3,4,'owner');assert.equal(restored.version,5);
+  // If the CURRENT content needs a missing upload, the backup itself fails instead of silently omitting it.
+  await store.saveDraft({schemaVersion:1,pages:[],media:[{src:`/media/${gone}`}]},5,'owner');
+  await assert.rejects(exportBackup(f.db,store,bucket),e=>e.code==='backup_media_missing');
+ }finally{f.sqlite.close();}
+});
+
+test('editor reads trust stored revisions (no re-validation) but rollback re-validates', async () => {
+ const {CmsStore}=await import('../worker/cms-store.ts');
+ const f=fixture();let calls=0;const counted=v=>{calls++;return f.validate(v);};const store=new CmsStore(f.db,counted);
+ try{
+  await store.saveDraft({schemaVersion:1,pages:[]},0,'owner');await store.publish(1,'owner');
+  calls=0;await store.read();await store.readPublished();await store.readRevision(1);assert.equal(calls,0,'reads do not re-validate');
+  await store.rollback(1,2,'owner');assert.equal(calls,1,'rollback validates the republished document');
+  f.sqlite.exec("DROP TRIGGER cms_revisions_no_update");f.sqlite.exec(`UPDATE cms_revisions SET document='{"x":1}' WHERE version=1`);
+  await assert.rejects(store.readRevision(1),e=>e.code==='cms_unavailable','a corrupt stored row fails closed');
+ }finally{f.sqlite.close();}
+});

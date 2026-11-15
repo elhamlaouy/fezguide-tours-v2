@@ -1,4 +1,5 @@
 import { consumeCmsRequest } from './cms-request-budget';
+import { withinByteLimit } from '../src/cms/schema';
 import { exportBackup, restoreBackup, orphanDryRun, MAX_BACKUP_BYTES } from './cms-recovery';
 import { MEDIA_KEY_PATTERN, uploadMedia, serveMedia, publishedMediaReferenced, type CmsMediaEnv } from './media';
 import { createAccessVerifier, type AccessVerifierOptions, type CmsAccessEnv } from './cms-auth';
@@ -245,7 +246,8 @@ export function createCmsHandler(options: CmsHandlerOptions) {
       const body = await requestJson(request, path.endsWith('/publish') || path.endsWith('/rollback') ? 4096 : MAX_CMS_REQUEST_BYTES);
       if (path.endsWith('/validate')) {
         exactFields(body, ['document']);
-        store.validate(body.document);
+        // Same byte cap as saving (enforced in CmsStore.append when a document is stored).
+        if (!withinByteLimit(JSON.stringify(store.validate(body.document)), MAX_DOCUMENT_BYTES)) throw new CmsError(413, 'document_too_large');
         return json({ valid: true });
       }
       exactFields(body, path.endsWith('/draft') ? ['expectedVersion', 'document'] : path.endsWith('/rollback') ? ['expectedVersion', 'revision'] : ['expectedVersion']);

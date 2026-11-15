@@ -156,3 +156,20 @@ test('seed prices agree with their practicalInfo mirrors, and a disagreement is 
   assert.equal(noUsd.products.find(p => p.id === 'daytrip-chefchaouen').practicalInfo.priceUSD, undefined);
   assert.deepEqual(checkPriceAgreement(noUsd), []);
 });
+
+test('parsedJson fast path is equivalent on real documents and still rejects unsafe JSON', async () => {
+  const { validateCmsDocument, withinByteLimit } = await import('../src/cms/schema.ts');
+  const { createCmsSeed } = await import('../src/cms/seed.ts');
+  const seed = JSON.parse(JSON.stringify(createCmsSeed()));
+  assert.equal(validateCmsDocument(seed, { parsedJson: true }).valid, true);
+  assert.equal(validateCmsDocument(seed).valid, true);
+  for (const text of ['{"__proto__":{"x":1}}', '{"a":{"constructor":1}}', '{"prototype":[]}']) {
+    assert.equal(validateCmsDocument(JSON.parse(text), { parsedJson: true }).errors[0], 'document: expected safe JSON data', text);
+  }
+  let deep = '1'; for (let i = 0; i < 40; i++) deep = `[${deep}]`;
+  assert.equal(validateCmsDocument(JSON.parse(`{"x":${deep}}`), { parsedJson: true }).valid, false);
+  assert.equal(validateCmsDocument({ pages: new Array(5000).fill(0) }, { parsedJson: true }).valid, false);
+  assert.equal(withinByteLimit('é'.repeat(700_000), 2_000_000), true);
+  assert.equal(withinByteLimit('é'.repeat(1_000_001), 2_000_000), false, '2,000,002 UTF-8 bytes');
+  assert.equal(withinByteLimit('a'.repeat(2_000_001), 2_000_000), false);
+});
