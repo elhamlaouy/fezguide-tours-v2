@@ -17,7 +17,7 @@ import { PageRenderer } from './cms/PageRenderer';
 import { pageLocaleAvailable, themeStyle } from './cms/render-utils';
 import './cms/site-theme.css';
 import { pagePath, resolveRoute } from './cms/routing';
-import { applyRouteSeo } from './cms/seo';
+import { applyRouteSeo, DEFAULT_CANONICAL_ORIGIN } from './cms/seo';
 import { isAdminPath, loadAdminApp, publishedPage, requiresDocumentNavigation, snapshotContainsRoute, type AdminAppComponent } from './cms/public-document';
 
 // Pages
@@ -187,7 +187,10 @@ function AppContent() {
   };
 
   const closeAdmin = () => {
-    if (typeof window !== 'undefined') navigate('home');
+    if (typeof window === 'undefined') return;
+    // The editor-only host (app.*) has no public site: leave to the canonical website instead.
+    if (window.location.hostname.startsWith('app.')) { window.location.assign(`${DEFAULT_CANONICAL_ORIGIN}/`); return; }
+    navigate('home');
   };
 
   const renderLegacyPage = () => {
