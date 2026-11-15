@@ -163,3 +163,20 @@ test('sitemap adds the published revision date as lastmod to every url', async (
     assert.equal(revisionQueries, before, 'cached revision needs no extra query');
   } finally { sqlite.close(); }
 });
+
+test('breadcrumb parents use their menu label and a parent loop always terminates', () => {
+  const document = createCmsSeed();
+  const crumbs = path => byType(ld(head(document, path)), 'BreadcrumbList').itemListElement.map(item => item.name);
+  assert.deepEqual(crumbs('/fez-history-landmarks'), ['Home', 'Fez', document.pages.find(p => p.id === 'fez-history-landmarks').title.en]);
+  const dayTripsLabel = document.navigation.find(link => link.pageId === 'day-trips').label.fr;
+  assert.equal(crumbs('/fr/daytrip-chefchaouen')[1], dayTripsLabel, 'parent label follows the French menu');
+  // Hostile graph: hidden parent pointing back at the page. Must not hang and must skip the hidden parent.
+  const looped = structuredClone(document);
+  const page = looped.pages.find(p => p.id === 'fez-history-landmarks');
+  const fez = looped.pages.find(p => p.id === 'fez');
+  fez.enabled = false; fez.parentId = page.id;
+  const started = Date.now();
+  const names = byType(ld(head(looped, '/fez-history-landmarks')), 'BreadcrumbList').itemListElement.map(item => item.name);
+  assert.ok(Date.now() - started < 1000);
+  assert.deepEqual(names, ['Home', page.title.en]);
+});

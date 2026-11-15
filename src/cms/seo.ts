@@ -18,8 +18,6 @@ export const BRAND_NAME = 'Fez Guide Tours';
 /** Append the visible brand unless the title already carries it ("Fez Guide Tours" or "FezGuideTours"). */
 export const brandedTitle = (title: string) => /fez\s?guide\s?tours/i.test(title) ? title : `${title} | ${BRAND_NAME}`;
 const HOME_LABEL = { en: 'Home', fr: 'Accueil', es: 'Inicio' } as const;
-/** The visible breadcrumb shows the short city name for the Fez hub rather than its long page title. */
-const FEZ_LABEL = { en: 'Fez', fr: 'Fès', es: 'Fez' } as const;
 /** "Street, City, 30110 Country" -> street + postcode; anything unrecognised stays whole in streetAddress. */
 function splitAddress(text: string): { streetAddress: string; postalCode?: string } {
   const match = /^(.+?),\s*(\d{5})\s+[^,\d]+$/.exec(text.trim());
@@ -83,11 +81,17 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
     ];
     if (page.id !== 'home') {
       const chain = [page];
-      for (let parent = page.parentId ? document.pages.find(p => p.id === page.parentId) : undefined; parent && chain.length < 3; parent = parent.parentId ? document.pages.find(p => p.id === parent!.parentId) : undefined) {
+      // Bounded walk: hidden parents are skipped, and the step cap rules out loops in any parent graph.
+      let parent = page.parentId ? document.pages.find(p => p.id === page.parentId) : undefined;
+      for (let steps = 0; parent && chain.length < 3 && steps < 8; steps++) {
         if (!chain.includes(parent) && parent.id !== 'home' && pageLocaleAvailable(document, parent, route.language)) chain.push(parent);
+        const next = parent.parentId;
+        parent = next ? document.pages.find(p => p.id === next) : undefined;
       }
+      // Parents use their top-menu label when they have one (what visitors see in the breadcrumb), else their title.
+      const menuLabel = (id: string) => localizedText(document.navigation.find(link => link.enabled && link.pageId === id)?.label ?? { en: '', fr: '', es: '' }, language);
       const crumbs = [{ name: HOME_LABEL[language], url: `${origin}${pagePath(document, 'home', route.language)}` },
-        ...chain.reverse().map(item => ({ name: item !== page && item.id === 'fez' ? FEZ_LABEL[language] : localizedText(item.title, language), url: `${origin}${pagePath(document, item.id, route.language)}` }))];
+        ...chain.reverse().map(item => ({ name: (item !== page && menuLabel(item.id)) || localizedText(item.title, language), url: `${origin}${pagePath(document, item.id, route.language)}` }))];
       schema.push({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: crumbs.map((crumb, index) => ({ '@type': 'ListItem', position: index + 1, name: crumb.name, item: crumb.url })) });
     }
     const product = page.kind === 'product' ? publicProduct(document, page.productId) : undefined;
