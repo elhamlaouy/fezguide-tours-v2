@@ -106,10 +106,10 @@ test('labels are renamed for non-technical owners in EN, FR and ES', () => {
 
 test('technical fields are classified Advanced; photo content and web addresses stay primary', () => {
   for (const path of ['pages.home.id', 'pages.home.kind', 'pages.home.parentId', 'pages.home.productId', 'pages.home.localeFallback', 'pages.home.source', 'pages.home.seo.canonical',
-    'products.0.id', 'products.0.kind', 'products.0.actionType', 'products.0.galleryImages', 'blogPosts.0.id', 'media.0.source', 'reviews.0.source', 'navigation.0.id', 'siteSettings.heroImage']) {
+    'products.0.id', 'products.0.kind', 'products.0.actionType', 'blogPosts.0.id', 'media.0.source', 'reviews.0.source', 'navigation.0.id', 'siteSettings.heroImage']) {
     assert.equal(isAdvancedEditorField(path), true, path);
   }
-  for (const path of ['pages.home.slug', 'pages.home.title', 'products.0.pageId', 'products.0.image', 'blogPosts.0.slug', 'siteSettings.email', 'pages.home.sections.hero.id', 'pages.home.sections.hero.title']) {
+  for (const path of ['pages.home.slug', 'pages.home.title', 'products.0.pageId', 'products.0.image', 'products.0.galleryImages', 'blogPosts.0.slug', 'siteSettings.email', 'pages.home.sections.hero.id', 'pages.home.sections.hero.title']) {
     assert.equal(isAdvancedEditorField(path), false, path);
   }
 });

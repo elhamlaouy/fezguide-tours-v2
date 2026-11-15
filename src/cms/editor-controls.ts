@@ -134,7 +134,7 @@ export const HIDDEN_EDITOR_COLLECTIONS: readonly string[] = ['editorialEntries']
 export const FALLBACK_ONLY_SITE_SETTINGS: readonly string[] = ['heroTitle', 'heroTagline', 'heroSubtitle'];
 const ADVANCED_FIELD_PATTERNS: readonly RegExp[] = [
   /^pages\.[^.]+\.(id|kind|parentId|productId|localeFallback|source)$/, /^pages\.[^.]+\.seo\.canonical$/,
-  /^products\.[^.]+\.(kind|actionType|galleryImages)$/, /^media\.[^.]+\.(source|src|width|height)$/,
+  /^products\.[^.]+\.(kind|actionType)$/, /^media\.[^.]+\.(source|src|width|height)$/,
   /^reviews\.[^.]+\.source$/, /^siteSettings\.heroImage$/,
 ];
 /**
@@ -145,4 +145,35 @@ export function isAdvancedEditorField(path: string): boolean {
   if (/^pages\.[^.]+\.sections\.[^.]+\.id$/.test(path)) return false;
   if (/(^|\.)id$/.test(path)) return true;
   return ADVANCED_FIELD_PATTERNS.some(pattern => pattern.test(path));
+}
+
+/**
+ * Tour editing tabs: every product field belongs to exactly one tab, or to the collapsed Advanced section
+ * (see isAdvancedEditorField). Purely a presentation grouping: the stored document is unchanged.
+ */
+export type TourTabId = 'basics' | 'price' | 'itinerary' | 'included' | 'photos' | 'policies';
+export const TOUR_TABS: readonly { id: TourTabId; fields: readonly string[] }[] = [
+  { id: 'basics', fields: ['published', 'pageId', 'title', 'subtitle', 'shortDescription', 'fullDescription', 'highlights'] },
+  { id: 'price', fields: ['price', 'practicalInfo'] },
+  { id: 'itinerary', fields: ['itinerary'] },
+  { id: 'included', fields: ['included', 'excluded', 'whatToBring', 'suitableFor'] },
+  { id: 'photos', fields: ['image', 'imageAlt', 'galleryImages'] },
+  { id: 'policies', fields: ['meetingPointDetails', 'cancellationPolicy'] },
+];
+export function tourTabOf(field: string): TourTabId | undefined {
+  return TOUR_TABS.find(tab => tab.fields.includes(field))?.id;
+}
+/** Number of validation errors per tour tab. Error paths use the product id or its position; both are matched. */
+export function tourTabErrorCounts(errors: readonly string[] | undefined, index: number, id: unknown): Partial<Record<TourTabId, number>> {
+  const counts: Partial<Record<TourTabId, number>> = {};
+  if (!errors?.length) return counts;
+  for (const raw of errors) {
+    const separator = raw.indexOf(': ');
+    const path = (separator < 0 ? raw : raw.slice(0, separator)).replace(/^document\.?/, '').replace(/\[(\d+)\]/g, '.$1');
+    const match = /^products\.([^.]+)\.([^.]+)/.exec(path);
+    if (!match || (match[1] !== String(index) && match[1] !== id)) continue;
+    const tab = tourTabOf(match[2]);
+    if (tab) counts[tab] = (counts[tab] ?? 0) + 1;
+  }
+  return counts;
 }

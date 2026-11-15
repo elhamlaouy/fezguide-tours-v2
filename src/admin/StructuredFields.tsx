@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
-import { blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, type EditorField } from '../cms/editor-controls';
+import { TOUR_TABS, blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, tourTabErrorCounts, type EditorField, type TourTabId } from '../cms/editor-controls';
 import type { CmsDocument } from '../cms/schema';
 import type { Language } from '../types';
 import { editorLabel } from './editor-labels';
@@ -16,6 +16,8 @@ interface Props {
   inAdvanced?: boolean;
   /** Explicit owner-facing label for this node only (used by the interface-text list). */
   label?: string;
+  /** Validation errors (raw `path: message`), used only to flag tour tabs that hold an invalid field. */
+  errors?: readonly string[];
 }
 // Google shows ~60 title characters; " | Fez Guide Tours" (18) is appended automatically. Descriptions show ~155.
 export const SEO_TITLE_LIMIT = 42;
@@ -77,6 +79,28 @@ function useChildChange(handler: React.MutableRefObject<ChildHandler>) {
     return fn;
   }, [handler]);
 }
+const TOUR_TAB_LABELS: Record<TourTabId, string> = { basics: 'tourTabBasics', price: 'tourTabPrice', itinerary: 'tourTabItinerary', included: 'tourTabIncluded', photos: 'tourTabPhotos', policies: 'tourTabPolicies' };
+/** Remembered for the rest of the editing session, so the next tour opens on the tab the owner was using. */
+let lastTourTab: TourTabId = 'basics';
+/** One group of a tour's fields at a time: only the active group is mounted. */
+function TourTabs({ legend, dataPath, index, productId, language, errors, entries, renderField, advanced, trailing }: {
+  legend: string; dataPath: string; index: number; productId: unknown; language: Language; errors?: readonly string[];
+  entries: [string, EditorField][]; renderField: (entry: [string, EditorField]) => React.ReactNode; advanced: React.ReactNode; trailing: React.ReactNode;
+}): React.JSX.Element {
+  const [tab, setTab] = useState<TourTabId>(lastTourTab);
+  const counts = tourTabErrorCounts(errors, index, productId);
+  const group = TOUR_TABS.find(item => item.id === tab) ?? TOUR_TABS[0];
+  const t = (key: string) => editorLabel(key, language);
+  const inTab = entries.filter(([key]) => group.fields.includes(key)).sort((a, b) => group.fields.indexOf(a[0]) - group.fields.indexOf(b[0]));
+  return <fieldset data-object={dataPath} data-tour-tabs=""><legend>{legend}</legend>
+    <div className="cms-tour-tabs" role="group" aria-label={t('tourTabs')}>{TOUR_TABS.map(item => {
+      const count = counts[item.id] ?? 0;
+      return <button key={item.id} type="button" data-tour-tab={item.id} aria-pressed={item.id === group.id} onClick={() => { lastTourTab = item.id; setTab(item.id); }}>{t(TOUR_TAB_LABELS[item.id])}{count > 0 && <span className="cms-tab-badge" data-tab-errors={count}>{count}<span className="cms-sr-only"> {t('tourTabErrors')}</span></span>}</button>;
+    })}</div>
+    <div className="cms-tour-panel" data-tour-panel={group.id}>{inTab.map(entry => renderField(entry))}</div>
+    {advanced}{trailing}
+  </fieldset>;
+}
 const LOCALIZED_LIST_ITEM_SPEC: EditorField = { type: 'array', item: { type: 'text' } };
 /** Large collections render items lazily: a collapsed item mounts none of its fields until it is opened. */
 const LAZY_COLLECTIONS = new Set(['products', 'blogPosts', 'teamMembers', 'faqs', 'media', 'editorialEntries', 'reviews']);
@@ -108,7 +132,7 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
   const pricePath = /^products\.([^.]+)\.(price$|practicalInfo\.price(?:EUR|MAD|USD)$)/.exec(path);
   if (props.onEditPrice && pricePath) {
     const product = /^\d+$/.test(pricePath[1]) ? document.products[Number(pricePath[1])] : document.products.find(item => item.id === pricePath[1]);
-    return <div data-price-readonly={path}><p>{label}: {typeof value === 'number' ? value : value && typeof value === 'object' ? `${(value as {amount: number}).amount} ${(value as {currency: string}).currency}` : '—'}</p><button type="button" data-open-pricing={product?.id} onClick={() => { if (product) props.onEditPrice?.(product.id); }}>{workspaceText('pricing', language)}</button><details><summary>{workspaceText('priceAdvanced', language)}</summary><pre>{JSON.stringify(value, null, 2) ?? '—'}</pre></details></div>;
+    return <div data-price-readonly={path} className="cms-price-summary"><p>{pricePath[2] === 'price' ? t('currentPrice') : label}: <strong>{typeof value === 'number' ? value : value && typeof value === 'object' ? `${(value as {amount: number}).amount} ${(value as {currency: string}).currency}${(value as {basis?: string}).basis ? ` / ${t((value as {basis: string}).basis)}` : ''}` : '—'}</strong></p><button type="button" data-open-pricing={product?.id} onClick={() => { if (product) props.onEditPrice?.(product.id); }}>{pricePath[2] === 'price' ? t('editPrice') : workspaceText('pricing', language)}</button><details><summary>{workspaceText('priceAdvanced', language)}</summary><pre>{JSON.stringify(value, null, 2) ?? '—'}</pre></details></div>;
   }
   if (spec.optional && value === undefined) return <div className="cms-optional"><button type="button" data-enable={path} onClick={() => onChange(editorDefault(spec, document))}>{t('enableField')}: {label}</button></div>;
   const optionalRemove = spec.optional ? <details className="cms-field-options"><summary>{t('fieldOptions')}</summary><button type="button" data-unset={path} onClick={() => onChange(undefined)}>{t('remove')}: {label}</button></details> : null;
@@ -131,6 +155,14 @@ function StructuredFieldsView(props: Props): React.JSX.Element {
     const entries = Object.entries(actual ?? {});
     const advanced = props.inAdvanced ? [] : entries.filter(([key]) => isAdvancedEditorField(`${path}.${key}`));
     const primary = entries.filter(([key]) => !advanced.some(([other]) => other === key));
+    const tourMatch = props.inAdvanced ? null : /^products\.(\d+)$/.exec(path);
+    if (tourMatch) {
+      const hideMirrors = (key: string, child: EditorField): EditorField => key === 'practicalInfo' && props.onEditPrice && child.fields
+        ? { ...child, fields: Object.fromEntries(Object.entries(child.fields).filter(([name]) => !/^price(EUR|MAD|USD)$/.test(name))) } : child;
+      return <TourTabs legend={label} dataPath={path} index={Number(tourMatch[1])} productId={record.id} language={language} errors={props.errors} entries={primary}
+        renderField={([key, child]) => field([key, hideMirrors(key, child)], false)}
+        advanced={advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>} trailing={optionalRemove} />;
+    }
     return <fieldset data-object={path}><legend>{label}</legend>{primary.map(entry => field(entry, !!props.inAdvanced))}{advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>}{optionalRemove}</fieldset>;
   }
   if (spec.type === 'localized' || spec.type === 'localizedList') {

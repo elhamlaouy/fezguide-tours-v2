@@ -125,3 +125,11 @@
 .cms-copy-item>button{font-size:.7rem;margin:.2rem 0 .5rem}
 /* Typing in the editor must not relayout/repaint the preview, and vice versa. */
 .cms-admin-preview,.cms-work-panel{contain:layout paint style}
+
+.cms-admin .cms-tour-tabs{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 .8rem}
+.cms-admin .cms-tour-tabs button{flex:0 1 auto;padding:.5rem .75rem;min-height:2.5rem;font-size:.8rem}
+.cms-admin .cms-tab-badge{display:inline-block;margin-inline-start:.4rem;min-width:1.2rem;padding:0 .35rem;border-radius:999px;background:#b3261e;color:#fff;font-size:.68rem;font-weight:700;text-align:center;line-height:1.2rem}
+.cms-admin .cms-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cms-admin .cms-price-summary{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin:.4rem 0 .8rem;padding:.6rem .75rem;border:1px solid var(--cms-line);border-radius:8px;background:#f8fbfb}
+.cms-admin .cms-price-summary>p{margin:0}.cms-admin .cms-price-summary>details{flex-basis:100%}
+@media (max-width:640px){.cms-admin .cms-tour-tabs button{flex:1 1 calc(50% - .35rem);text-align:center}}
