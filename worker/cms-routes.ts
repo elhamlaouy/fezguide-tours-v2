@@ -79,6 +79,26 @@ export function publicCmsDocument(value: object) {
   }
   return projected;
 }
+// Workers Free allows ~10 ms CPU per request. Full validation + projection of the
+// published document costs more than that, so visitors' requests reuse one public
+// projection per isolate, keyed by the immutable published revision number. Every
+// stored revision was validated on write (save/publish/rollback/restore all pass
+// through CmsStore.validate), and revisions can never be updated in place.
+const publicCache = new WeakMap<CmsD1Database, { version: number; document: PublicRecord }>();
+export async function readPublicDocument(db: CmsD1Database): Promise<{ version: number; document: PublicRecord } | null> {
+  const pointer = await db.prepare('SELECT published_revision FROM cms_documents WHERE id = 1').first<{ published_revision: number | null }>();
+  const version = pointer?.published_revision;
+  if (!version) return null;
+  const cached = publicCache.get(db);
+  if (cached && cached.version === version) return cached;
+  const row = await db.prepare('SELECT document FROM cms_revisions WHERE version = ?').bind(version).first<{ document: string }>();
+  if (!row) return null;
+  const parsed: unknown = JSON.parse(row.document);
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray((parsed as PublicRecord).pages)) throw new CmsError(503, 'cms_unavailable');
+  const entry = { version, document: publicCmsDocument(parsed) };
+  publicCache.set(db, entry);
+  return entry;
+}
 export function publicCmsCompatibility(value: object) {
   const legacy = (value as PublicRecord).legacy;
   // Reuse the full projection so compatibility copies cannot bypass canonical visibility.
@@ -202,15 +222,15 @@ export function createCmsHandler(options: CmsHandlerOptions) {
       if (path === '/api/admin/media') return json(await uploadMedia(request, env, { db: env.CMS_DB, actor: identity!.subject }), 201);
       if (mediaKey !== null) {
         if (publicMedia) {
-          const published = await store.readPublished();
-          if (!published || !publishedMediaReferenced(publicCmsDocument(published.document), `/media/${mediaKey}`)) throw new CmsError(404, 'not_found');
+          const published = await readPublicDocument(env.CMS_DB);
+          if (!published || !publishedMediaReferenced(published.document, `/media/${mediaKey}`)) throw new CmsError(404, 'not_found');
         }
         return await serveMedia(mediaKey, request, env);
       }
       if (publicRoute) {
-        const published = await store.readPublished();
+        const published = await readPublicDocument(env.CMS_DB);
         if (path === '/api/cms/document') return json({ version: published?.version ?? null,
-          document: published ? publicCmsDocument(published.document) : null });
+          document: published ? published.document : null });
         return json(published ? publicCmsCompatibility(published.document) : { data: null });
       }
       if (path === '/api/admin/content') return json(await store.read());

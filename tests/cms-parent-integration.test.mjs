@@ -30,5 +30,5 @@ test('canonical path overrides affect each locale without changing the trusted o
     const head = routeSeoHead(document, resolveRoute(new URL('https://canonical.example/es/about'), document), 'https://canonical.example');
     assert.ok(head.includes('rel="canonical" href="https://canonical.example/es/about"'));
   }
-  assert.equal(DEFAULT_CANONICAL_ORIGIN, 'https://fezguidetours.elhamlaouy.workers.dev');
+  assert.equal(DEFAULT_CANONICAL_ORIGIN, 'https://fezguidetours.com');
 });
