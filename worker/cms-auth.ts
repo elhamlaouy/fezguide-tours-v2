@@ -4,6 +4,9 @@ export interface CmsAccessEnv {
   ACCESS_AUD?: string;
   ACCESS_ALLOWED_SUBJECTS?: string;
   ACCESS_ALLOWED_EMAILS?: string;
+  // Optional, off by default: exact Access service-token Client IDs ("<id>.access") allowed to edit.
+  // Service-token JWTs carry an empty sub and the Client ID as common_name.
+  ACCESS_ALLOWED_SERVICE_TOKENS?: string;
 }
 export interface CmsIdentity { subject: string; email?: string }
 export interface AccessVerifierOptions {
@@ -115,7 +118,8 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
       const audience = env.ACCESS_AUD;
       const subjects = allowlist(env.ACCESS_ALLOWED_SUBJECTS);
       const emails = new Set([...allowlist(env.ACCESS_ALLOWED_EMAILS)].map(email => email.toLowerCase()));
-      if (!issuer || !audience || audience.length > 256 || (!subjects.size && !emails.size)) return null;
+      const services = allowlist(env.ACCESS_ALLOWED_SERVICE_TOKENS);
+      if (!issuer || !audience || audience.length > 256 || (!subjects.size && !emails.size && !services.size)) return null;
       const token = request.headers.get('Cf-Access-Jwt-Assertion');
       if (!token || token.length > MAX_TOKEN_BYTES) return null;
       const segments = token.split('.');
@@ -129,9 +133,11 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
         (claims.nbf !== undefined && (!Number.isSafeInteger(claims.nbf) || (claims.nbf as number) > time))) return null;
       const aud = typeof claims.aud === 'string' ? [claims.aud] : claims.aud;
       if (!Array.isArray(aud) || !aud.length || aud.some(value => typeof value !== 'string') || !aud.includes(audience)) return null;
-      if (typeof claims.sub !== 'string' || claims.sub.length < 1 || claims.sub.length > 256) return null;
+      const service = claims.sub === '' && claims.type === 'app' && typeof claims.common_name === 'string' &&
+        claims.common_name.length <= 256 && services.has(claims.common_name) ? claims.common_name : null;
+      if (!service && (typeof claims.sub !== 'string' || claims.sub.length < 1 || claims.sub.length > 256)) return null;
       const email = typeof claims.email === 'string' && claims.email.length <= 256 ? claims.email : undefined;
-      if (!subjects.has(claims.sub) && !(email && emails.has(email.toLowerCase()))) return null;
+      if (!service && !subjects.has(claims.sub as string) && !(email && emails.has(email.toLowerCase()))) return null;
       const signature = decode(segments[2]);
       const keys = await keysFor(issuer);
       const key = keys?.get(header.kid);
@@ -140,7 +146,7 @@ export function createAccessVerifier(options: AccessVerifierOptions = {}): Acces
       // Key retrieval and crypto are asynchronous: initial validity is not completion validity.
       const verifiedTime = Math.floor(now() / 1000);
       if ((claims.exp as number) <= verifiedTime || (claims.nbf !== undefined && (claims.nbf as number) > verifiedTime)) return null;
-      return { subject: claims.sub, ...(email ? { email } : {}) };
+      return service ? { subject: `service:${service}` } : { subject: claims.sub as string, ...(email ? { email } : {}) };
     } catch { return null; }
   };
 }
