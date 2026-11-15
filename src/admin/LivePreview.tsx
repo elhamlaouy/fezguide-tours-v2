@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
+import { memo, useCallback, useLayoutEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
 import type { Language } from '../types';
 import type { CmsDocument, CmsPage } from '../cms/schema';
@@ -52,7 +52,7 @@ const FRAME_CSS = `
   }
 `;
 
-export function LivePreview({ document: model, page, language, selectedSectionId, onSelectSection, onEditPrice, revealPrice = false, onNavigate, onLanguageChange, device, onDeviceChange }: LivePreviewProps) {
+function LivePreviewView({ document: model, page, language, selectedSectionId, onSelectSection, onEditPrice, revealPrice = false, onNavigate, onLanguageChange, device, onDeviceChange }: LivePreviewProps) {
   const labels = LABELS[language];
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -246,3 +246,6 @@ export function LivePreview({ document: model, page, language, selectedSectionId
     </div>, mount)}
   </section>;
 }
+
+/** The preview only re-renders when its document, page or chrome actually changes (never for unrelated editor state). */
+export const LivePreview = memo(LivePreviewView);

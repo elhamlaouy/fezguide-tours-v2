@@ -30,7 +30,7 @@ test('mounted Back/Forward retains dirty drafts and pending import/upload unless
  const wait=async(fn)=>{for(let i=0;i<100;i++){if(fn())return fn();await settle();}throw Error('mounted history fixture did not settle');};
  const back=()=>act(async()=>{window.history.back();await new Promise(resolve=>setTimeout(resolve,20));});
  try {
-  await act(async()=>root.render(createElement(App)));await wait(()=>host.querySelector('[data-path="pages.home.title.en"]'));
+  await act(async()=>root.render(createElement(App)));await wait(()=>host.querySelector('[data-workspace-tab="page"]'));await act(async()=>host.querySelector('[data-workspace-tab="page"]').click());await wait(()=>host.querySelector('[data-path="pages.home.title.en"]'));
   const input=host.querySelector('[data-path="pages.home.title.en"]');
   await act(async()=>{Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,'value').set.call(input,'Unsaved owner title');input.dispatchEvent(new window.Event('input',{bubbles:true}));});
   let confirms=0;window.confirm=()=>{confirms++;return false;};await back();
@@ -44,7 +44,7 @@ test('mounted Back/Forward retains dirty drafts and pending import/upload unless
   await back();assert.equal(window.location.pathname,'/admin');assert.equal(confirms,count);assert.equal(input.value,'Unsaved owner title');
   await act(async()=>releaseUpload());await settle();
   await back();assert.equal(window.location.pathname,'/');assert.equal(host.querySelector('.cms-admin'),null);assert.equal(confirms,count+1);
-  await act(async()=>{window.history.forward();await new Promise(resolve=>setTimeout(resolve,20));});await wait(()=>host.querySelector('[data-path="pages.home.title.en"]'));
+  await act(async()=>{window.history.forward();await new Promise(resolve=>setTimeout(resolve,20));});await wait(()=>host.querySelector('[data-workspace-tab="page"]'));await act(async()=>host.querySelector('[data-workspace-tab="page"]').click());await wait(()=>host.querySelector('[data-path="pages.home.title.en"]'));
   assert.equal(window.location.pathname,'/admin');assert.equal(host.querySelector('[data-path="pages.home.title.en"]').value,'Published home');
   assert.deepEqual(writes,['/api/admin/media'],'history never silently saves or publishes');
  } finally {
