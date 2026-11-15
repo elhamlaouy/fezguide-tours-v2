@@ -1,11 +1,9 @@
 import type { CmsDocument, CmsSection } from '../src/cms/schema';
-import { validateCmsDocument } from '../src/cms/schema';
 import { isPublicPage, pageLocaleAvailable } from '../src/cms/render-utils';
 import { pagePath, resolveRoute, type PublicRoute } from '../src/cms/routing';
-import { CmsStore } from './cms-store';
 import { resolveImage } from '../src/cms/render-utils';
 import { imageSizes, optimizedImageSrc, responsiveImageProps } from '../src/cms/optimized-image';
-import { publicCmsDocument, type CmsRoutesEnv } from './cms-routes';
+import { readPublicDocument, type CmsRoutesEnv } from './cms-routes';
 
 export interface PublicSeoEnv extends CmsRoutesEnv {
   CANONICAL_ORIGIN?: string;
@@ -75,10 +73,10 @@ export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Pr
   const accept = request.headers.get('Accept') ?? '*/*';
   if (!discovery && !accept.includes('text/html') && !accept.includes('*/*')) return null;
   if (!env.CMS_DB) return null;
-  const published = await new CmsStore(env.CMS_DB, validateCmsDocument).readPublished();
+  // Cached per isolate by published revision; only the public projection enters HTML/SEO.
+  const published = await readPublicDocument(env.CMS_DB);
   if (!published) return null;
-  // The store validates the private document; only its public projection enters HTML/SEO.
-  const document = publicCmsDocument(published.document) as unknown as CmsDocument;
+  const document = published.document as unknown as CmsDocument;
   const origin = canonicalOrigin(env.CANONICAL_ORIGIN);
   if (path === '/robots.txt') return textResponse(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`, 'text/plain');
   if (path === '/sitemap.xml') {

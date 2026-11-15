@@ -81,7 +81,8 @@ export async function startPreview({port=9196,upstream=9197,inspector=9497,state
   async function internal(pathname,method='GET',body){const response=await fetch(backend+pathname,{method,headers:{'Cf-Access-Jwt-Assertion':await token(),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});if(!response.ok)throw Error(`Preview startup ${pathname}: ${response.status} ${await response.text()}`);return response.json();}
   if((await fetch(backend+'/api/admin/content')).status!==401)throw Error('Anonymous upstream did not fail closed');
   const content=await internal('/api/admin/content');
-  if(content.version===0&&content.document===null){
+  // CMS_PREVIEW_EMPTY=1 starts like a fresh production database (no seed), to exercise the editor's own bootstrap.
+  if(content.version===0&&content.document===null&&process.env.CMS_PREVIEW_EMPTY!=='1'){
    const {register}=await import('tsx/esm/api');register();
    const {createCmsSeed}=await import(pathToFileURL(path.join(root,'src/cms/seed.ts')).href);
    const saved=await internal('/api/admin/content/draft','PUT',{expectedVersion:0,document:createCmsSeed()});

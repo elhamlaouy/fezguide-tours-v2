@@ -657,3 +657,26 @@ test('validation endpoint rejects a malformed successful validator result', asyn
   try { assert.equal((await call('/api/admin/content/validate', 'POST', { document: document('first') })).status, 422); }
   finally { db.sqlite.close(); }
 });
+
+test('public reads reuse one projection per published revision and refresh after publish/rollback', async () => {
+  const { readPublicDocument } = await import('../worker/cms-routes.ts');
+  const { CmsStore } = await import('../worker/cms-store.ts');
+  const db = database();
+  const store = new CmsStore(db, validate);
+  assert.equal(await readPublicDocument(db), null, 'nothing published yet');
+  await store.saveDraft(document('first'), 0, 'editor');
+  assert.equal(await readPublicDocument(db), null, 'drafts stay private');
+  await store.publish(1, 'editor');
+  const first = await readPublicDocument(db);
+  assert.equal(first.version, 2);
+  assert.equal(first.document.pages[0].title, 'first');
+  assert.equal(await readPublicDocument(db), first, 'same revision reuses the cached projection');
+  await store.saveDraft(document('second'), 2, 'editor');
+  assert.equal((await readPublicDocument(db)).document.pages[0].title, 'first', 'a new draft does not change public content');
+  await store.publish(3, 'editor');
+  assert.equal((await readPublicDocument(db)).document.pages[0].title, 'second');
+  await store.rollback(2, 4, 'editor');
+  const rolled = await readPublicDocument(db);
+  assert.equal(rolled.version, 5);
+  assert.equal(rolled.document.pages[0].title, 'first');
+});

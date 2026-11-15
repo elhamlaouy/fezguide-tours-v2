@@ -1000,3 +1000,26 @@ serial('pending media upload blocks save publish rollback without a document wri
   assert.equal(document.querySelector('[name="save-draft"]').disabled, false);
   assert.equal(puts().length, 0); assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
 });
+
+test('empty store offers a one-click private draft seeded from the current site content', async () => {
+  let stored = null;
+  let version = 0;
+  installFetch(({ url, method, body }) => {
+    if (url.endsWith('/api/admin/content') && method === 'GET') return { body: { version, draftRevision: stored ? version : null, publishedRevision: null, document: stored } };
+    if (url.endsWith('/api/admin/content/revisions')) return { body: { revisions: [] } };
+    if (url.endsWith('/api/admin/content/draft') && method === 'PUT') {
+      assert.equal(body.expectedVersion, 0);
+      stored = body.document; version = 1;
+      return { body: { version: 1, draftRevision: 1, published: false } };
+    }
+    return { status: 404, body: { error: 'not_found' } };
+  });
+  await render('en');
+  await waitFor(() => window.document.querySelector('[data-admin-bootstrap]'));
+  await click('button[name="bootstrap-from-site"]');
+  await waitFor(() => window.document.querySelector('select[name="current-page"] option[value="home"]'));
+  const save = calls.filter(call => call.method === 'PUT');
+  assert.equal(save.length, 1, 'exactly one draft save');
+  assert.ok(validateCmsDocument(save[0].body.document).valid, 'seed passes the shared validator');
+  assert.equal(calls.filter(call => call.url.endsWith('/publish')).length, 0, 'bootstrapping never publishes');
+});

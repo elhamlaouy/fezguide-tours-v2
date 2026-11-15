@@ -429,6 +429,30 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     }
   }, [failConflict, rememberWrite]);
 
+  const bootstrapText = {
+    en: { help: 'Start by loading the content the website shows today. It is saved as a private draft; visitors see no change until you click Publish.', button: 'Load the current website content' },
+    fr: { help: 'Commencez par charger le contenu actuellement affiché sur le site. Il est enregistré comme brouillon privé ; les visiteurs ne voient rien avant que vous cliquiez sur Publier.', button: 'Charger le contenu actuel du site' },
+    es: { help: 'Empieza cargando el contenido que muestra hoy la web. Se guarda como borrador privado; los visitantes no verán cambios hasta que pulses Publicar.', button: 'Cargar el contenido actual de la web' },
+  }[language];
+
+  // An empty store (fresh database) has no draft to edit. Seed it from the same
+  // source content the public fallback renders, as an ordinary private draft save.
+  async function bootstrapFromSite() {
+    if (draftRef.current) return;
+    try {
+      const { createCmsSeed } = await import('../cms/seed');
+      const result = validateCmsDocument(createCmsSeed());
+      if (!result.valid) { setErrors(result.errors); return; }
+      const saved = await saveAdminDraft(versionRef.current, result.document);
+      rememberWrite(saved, 'Saved revision');
+      applyContent(await loadAdminContent());
+    } catch (error) {
+      if (error instanceof AdminApiError && error.status === 409) await failConflict();
+      else if (error instanceof AdminApiError && error.status === 401) setStatus('unauthorized');
+      else setErrors([error instanceof AdminApiError ? error.code : 'save_failed']);
+    }
+  }
+
   async function run(action: () => Promise<void>) {
     if (busyRef.current || uploading || importing) return;
     busyRef.current = true;
@@ -695,7 +719,15 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       {conflict && <p className="cms-admin-alert" data-admin-conflict role="alert">{translate(conflict)}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}
       {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => <li key={error}>{editorError(error, language)}</li>)}</ul>}
-      {!draft || !page ? <p>{translate('No draft is stored yet.')}</p> : (
+      {!draft || !page ? (
+        <div className="cms-admin-bootstrap" data-admin-bootstrap>
+          <p>{translate('No draft is stored yet.')}</p>
+          {!draft && <>
+            <p>{bootstrapText.help}</p>
+            <button type="button" name="bootstrap-from-site" disabled={busy} onClick={() => void run(bootstrapFromSite)}>{bootstrapText.button}</button>
+          </>}
+        </div>
+      ) : (
         <div className="cms-admin-layout">
           <div className="cms-work-panel">
           <nav className="cms-workspace-tabs" aria-label={translate('Content editor')}>

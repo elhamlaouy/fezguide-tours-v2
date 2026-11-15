@@ -12,7 +12,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const temporary = await mkdtemp(path.join(process.env.TMPDIR, 'cms-seo-runtime-'));
 const config = path.join(temporary, 'wrangler.toml');
 const persist = path.join(temporary, 'state');
-const canonical = 'https://fezguidetours.elhamlaouy.workers.dev';
+const canonical = 'https://fezguidetours.com';
 let child;
 function run(args) {
   return new Promise((resolve, reject) => {

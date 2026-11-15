@@ -2,7 +2,7 @@ import type { CmsDocument } from './schema';
 import { contentLanguage, localizedText, publicProduct, resolveImage, pageLocaleAvailable } from './render-utils';
 import { pagePath, type PublicRoute } from './routing';
 
-export const DEFAULT_CANONICAL_ORIGIN = 'https://fezguidetours.elhamlaouy.workers.dev';
+export const DEFAULT_CANONICAL_ORIGIN = 'https://fezguidetours.com';
 
 export function canonicalOrigin(configured?: string): string {
   if (configured) {
