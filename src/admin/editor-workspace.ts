@@ -33,8 +33,6 @@ const copy: Record<string, [string, string, string]> = {
  'per-person': ['per person', 'par personne', 'por persona'],
  'per-group': ['per group', 'par groupe', 'por grupo'],
  'per-vehicle': ['per vehicle', 'par véhicule', 'por vehículo'],
- legacyHero: ['Archived hero settings (read only)', 'Anciens réglages d’introduction (lecture seule)', 'Ajustes antiguos de cabecera (solo lectura)'],
- legacyHeroHelp: ['These values are retained for compatibility, not used by CMS pages. To change the homepage introduction, choose Home → Page sections → Introduction / hero.', 'Ces valeurs sont conservées pour compatibilité. Pour modifier l’introduction, choisissez Accueil → Sections de la page → Introduction.', 'Estos valores se conservan por compatibilidad. Para cambiar la cabecera, elige Inicio → Secciones de página → Introducción.'],
  variantPhotoHelp: ['This layout does not display a photo. Choose a photo-enabled layout under Layout to show it.', 'Cette mise en page n’affiche pas de photo. Choisissez une disposition avec photo dans Mise en page.', 'Este diseño no muestra una foto. Elige un diseño con imagen en Diseño para mostrarla.'],
  resetCopy: ['Reset to default', 'Rétablir le texte par défaut', 'Restablecer texto predeterminado'],
  unsupportedCopy: ['Advanced / legacy keys — not automatically displayed', 'Clés avancées / anciennes — sans affichage automatique', 'Claves avanzadas / antiguas — sin visualización automática'],
@@ -80,7 +78,15 @@ const copy: Record<string, [string, string, string]> = {
  scope: ['Changes are private until you publish.', 'Les modifications restent privées avant publication.', 'Los cambios son privados hasta que publiques.'],
  saved: ['Draft saved', 'Brouillon enregistré', 'Borrador guardado'],
  unsaved: ['Unsaved changes', 'Modifications non enregistrées', 'Cambios sin guardar'],
+ statePublished: ['Published — up to date', 'Publié — à jour', 'Publicado — al día'],
+ stateDraft: ['Draft saved, not published yet', 'Brouillon enregistré, pas encore publié', 'Borrador guardado, aún sin publicar'],
+ stateUnsaved: ['Unsaved changes', 'Modifications non enregistrées', 'Cambios sin guardar'],
+ uiCopyIntro: ['Small texts used all over the website (buttons, labels, messages). Each one starts with the current wording; change it in any language. “Reset to default” puts the original text back.', 'Petits textes utilisés partout sur le site (boutons, libellés, messages). Chacun affiche le texte actuel ; modifiez-le dans chaque langue. « Rétablir le texte par défaut » remet le texte d’origine.', 'Textos cortos que se usan en toda la web (botones, etiquetas, mensajes). Cada uno muestra el texto actual; cámbialo en cada idioma. «Restablecer texto predeterminado» devuelve el original.'],
+ uiCopyDefault: ['Default text', 'Texte par défaut', 'Texto predeterminado'],
 };
+const LANGUAGE_NAMES: Record<Language, string> = { en: 'English', fr: 'Français', es: 'Español' };
+/** Every language button/label in the editor uses these names, never the raw code or a regional variant. */
+export function languageName(language: Language): string { return LANGUAGE_NAMES[language] ?? language; }
 export function workspaceText(key: string, language: Language): string {
  return copy[key]?.[language === 'fr' ? 1 : language === 'es' ? 2 : 0] ?? key;
 }

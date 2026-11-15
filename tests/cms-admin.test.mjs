@@ -241,14 +241,17 @@ serial('Spanish validation and page/revision errors retain paths with Spanish ex
   await typeInto('textarea[data-path="pages.home.title.es"]', 'x'.repeat(501));
   await click('button[name="save-draft"]');
   const errors = await waitFor(() => document.querySelector('[data-field-errors]'));
-  assert.match(errors.textContent, /document.pages\[0\].title.es: Texto no válido o demasiado largo/);
-  assert.doesNotMatch(errors.textContent, /invalid or oversized/);
+  // The field is named in words (page → field → language); the raw validator path stays available for support.
+  assert.match(errors.textContent, /Página “x+…” › Título › Español: Texto no válido o demasiado largo/);
+  assert.doesNotMatch(errors.textContent, /invalid or oversized|document\.pages\[0\]/);
+  assert.equal(errors.querySelector('li').dataset.code, 'document.pages[0].title.es: invalid or oversized string');
+  assert.equal(errors.querySelector('li').title, 'document.pages[0].title.es: invalid or oversized string');
   assert.equal(puts().length, 0);
   await typeInto('input[name="new-page-id"]', 'INVALID');
   await click('button[name="add-page"]');
-  assert.match(document.querySelector('[data-field-errors]').textContent, /Usa un identificador en minúsculas/);
+  assert.match(document.querySelector('[data-field-errors]').textContent, /Usa solo minúsculas, números y guiones/);
   await click('button[name="rollback"]');
-  assert.match(document.querySelector('[data-field-errors]').textContent, /Introduce un identificador de revisión válido/);
+  assert.match(document.querySelector('[data-field-errors]').textContent, /Introduce un número de versión válido/);
 });
 
 serial('401 shows sign-in required and stores no token', async () => {
@@ -374,7 +377,8 @@ serial('invalid edits show field errors and are not saved', async () => {
   await typeInto('textarea[data-path="pages.home.title.en"]', 'x'.repeat(501));
   await click('button[name="save-draft"]');
   const errors = await waitFor(() => document.querySelector('[data-field-errors]'));
-  assert.match(errors.textContent, /invalid or oversized string/);
+  assert.match(errors.textContent, /Page “x+…” › Title › English: This text is not valid or is too long\./);
+  assert.equal(errors.querySelector('li').dataset.code, 'document.pages[0].title.en: invalid or oversized string');
   assert.equal(puts().length, 0);
 });
 
@@ -546,7 +550,8 @@ serial('media picker sets a library id and rejects an unknown id before save', a
   await waitFor(() => document.querySelector('[data-admin-status="ready"]'));
   await click('button[name="save-draft"]');
   const errors = await waitFor(() => document.querySelector('[data-field-errors]'));
-  assert.match(errors.textContent, /unknown id missing/);
+  assert.match(errors.textContent, /Photo not found in the library: missing/);
+  assert.match(errors.querySelector('li').dataset.code, /unknown id missing/);
   assert.equal(puts().length, 0);
 });
 
@@ -645,7 +650,7 @@ serial('Spanish editor controls and locale tabs edit Spanish without changing EN
   assert.equal(document.querySelector('button[name="save-draft"]').textContent, 'Guardar borrador');
   assert.equal(document.querySelector('input[name="theme-color-primary"]').parentElement.textContent.trim(), 'principal');
   assert.deepEqual([...document.querySelectorAll('[data-locale]')].map(tab => tab.dataset.locale), ['en', 'fr', 'es']);
-  assert.equal(document.querySelector('[data-locale="es"]').textContent, 'Español (España)');
+  assert.deepEqual([...document.querySelectorAll('[data-locale]')].map(tab => tab.textContent), ['English', 'Français', 'Español']);
   assert.match(previewQuery().textContent, /Descubre Fez/);
   await typeInto('textarea[data-path="pages.home.sections.intro.blocks.0.text.es"]', 'Visita la medina con un guía local privado.');
   assert.match(previewQuery().textContent, /Visita la medina/);
@@ -748,7 +753,7 @@ serial('entity creation keeps product graph valid and referenced page removal hi
   assert.ok(document.querySelector('[data-page="experience"]'), 'referenced detail retained');
   await click('[name="duplicate-page"]');
   assert.ok(document.querySelector('[data-page="experience-copy"]'));
-  await click('[data-add="editorialEntries"]');
+  assert.equal(document.querySelector('[data-add="editorialEntries"]'), null, 'editorial entries are internal and not offered');
   await click('[data-add="blogPosts"]');
   await click('[data-add="teamMembers"]');
   await click('[data-add="faqs"]');
@@ -758,7 +763,7 @@ serial('entity creation keeps product graph valid and referenced page removal hi
   assert.equal(saved.products[0].price.amount, 170);
   assert.equal(saved.pages.find(p => p.id === 'experience').enabled, false);
   assert.equal(saved.pages.find(p => p.id === 'experience-copy').productId, 'experience-copy');
-  assert.equal(saved.editorialEntries.length, 1); assert.equal(saved.blogPosts.length, 1); assert.equal(saved.teamMembers.length, 1); assert.equal(saved.faqs.length, 1);
+  assert.equal(saved.editorialEntries.length, 0); assert.equal(saved.blogPosts.length, 1); assert.equal(saved.teamMembers.length, 1); assert.equal(saved.faqs.length, 1);
 });
 
 serial('invalid and oversized JSON imports never save or publish; valid import is dirty draft only', async () => {
@@ -776,9 +781,9 @@ serial('invalid and oversized JSON imports never save or publish; valid import i
   };
   const fakeFile = (raw, size = raw.length) => ({ size, text: async () => raw });
   await importFile(fakeFile('{"schemaVersion":1}'));
-  assert.match(document.querySelector('[data-field-errors]').textContent, /expected object|invalid or oversized/);
+  assert.match(document.querySelector('[data-field-errors]').textContent, /This content block is missing|not valid or is too long/);
   await importFile(fakeFile('{}', 2000001));
-  assert.match(document.querySelector('[data-field-errors]').textContent, /exceeds byte limit/);
+  assert.match(document.querySelector('[data-field-errors]').textContent, /too big to save/);
   assert.equal(puts().length, 0);
   const imported = structuredClone(doc); imported.pages[0].title.en = 'Imported title';
   await importFile(fakeFile(JSON.stringify(imported)));
@@ -885,7 +890,8 @@ serial('French structured controls and validation keep diagnostic paths with loc
   assert.match(document.querySelector('[data-path="theme.containerWidth"]').parentElement.textContent, /Largeur du contenu/);
   await typeInto('[data-path="theme.fontScale"]', '2');
   await click('[name="save-draft"]');
-  assert.match(document.querySelector('[data-field-errors]').textContent, /document.theme.fontScale: Nombre hors de la plage autorisée/);
+  assert.match(document.querySelector('[data-field-errors]').textContent, /Thème › Échelle typographique: Nombre hors de la plage autorisée/);
+  assert.equal(document.querySelector('[data-field-errors] li').dataset.code, 'document.theme.fontScale: number out of range');
   assert.equal(puts().length, 0);
 });
 
@@ -1040,4 +1046,168 @@ test('page SEO fields show a live Google length counter with localized guidance'
   assert.match(counter().textContent, /résumé est pris automatiquement/);
   const title = window.document.querySelector('[data-seo-counter="pages.home.seo.title"]');
   assert.match(title.textContent, /\/42 · .*Fez Guide Tours/);
+});
+
+const seedDocument = async () => (await import('../src/cms/seed.ts')).createCmsSeed();
+const saveOk = body => ({ body });
+
+serial('Site settings no longer offers fallback-only hero fields, explains where the homepage headline lives, and keeps the data', async () => {
+  const doc = cmsDoc();
+  doc.siteSettings.heroTitle = text('Legacy headline');
+  let saved;
+  installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, saveOk({ version: 3, draftRevision: 3, published: false })) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  for (const field of ['heroTitle', 'heroTagline', 'heroSubtitle']) assert.equal(document.querySelector(`[data-path^="siteSettings.${field}"]`), null, field);
+  assert.equal(document.querySelector('.cms-legacy-settings'), null);
+  assert.match(document.querySelector('[data-hero-hint]').textContent, /^To change the homepage headline, open Page sections → Home → the first section\.$/);
+  // heroImage still feeds Google structured data, so it stays editable (under Advanced).
+  assert.ok(document.querySelector('.cms-advanced [data-path="siteSettings.heroImage"], .cms-advanced [data-enable="siteSettings.heroImage"]'));
+  await typeInto('[data-path="siteSettings.email"]', 'owner@example.com');
+  await click('button[name="save-draft"]');
+  assert.equal(saved.siteSettings.email, 'owner@example.com');
+  assert.deepEqual(saved.siteSettings.heroTitle, text('Legacy headline'), 'hidden fields are saved untouched');
+});
+
+serial('technical fields live in a collapsed Advanced disclosure but remain editable; owner fields stay in the open', async () => {
+  const doc = await seedDocument();
+  let saved;
+  installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, saveOk({ version: 3, draftRevision: 3, published: false })) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-page="about"]');
+  await click('[data-workspace-tab="page"]');
+  const advanced = document.querySelector('[data-advanced="pages.about"]');
+  assert.ok(advanced && advanced.tagName === 'DETAILS' && advanced.open === false, 'collapsed by default');
+  assert.equal(advanced.querySelector('summary').textContent, 'Advanced');
+  for (const field of ['id', 'kind']) assert.ok(advanced.querySelector(`[data-path="pages.about.${field}"]`), `${field} under Advanced`);
+  const slug = document.querySelector('[data-path="pages.about.slug"]');
+  assert.ok(slug && !slug.closest('.cms-advanced'), 'web address stays primary');
+  assert.match(slug.closest('label').textContent, /^Web address \(after fezguidetours\.com\/\)/);
+  assert.ok(document.querySelector('[data-advanced="pages.about.seo"] [data-enable="pages.about.seo.canonical"], [data-advanced="pages.about.seo"] [data-path="pages.about.seo.canonical"]'), 'canonical under Advanced');
+  // Still editable.
+  await choose('[data-path="pages.about.kind"]', document.querySelector('[data-path="pages.about.kind"]').value);
+  await click('[data-enable="pages.about.seo.canonical"]');
+  await typeInto('[data-path="pages.about.seo.canonical"]', '/about-us');
+  // Products: id/kind/action/gallery URLs are secondary, category is visible as "Shown under".
+  const product = document.querySelector('[data-array-item="products.0"]');
+  const productAdvanced = product.querySelector('[data-advanced="products.0"]');
+  assert.equal(productAdvanced.open, false);
+  for (const field of ['id', 'kind', 'actionType']) assert.ok(productAdvanced.querySelector(`[data-path="products.0.${field}"]`), field);
+  assert.ok(productAdvanced.querySelector('[data-array="products.0.galleryImages"], [data-enable="products.0.galleryImages"]'), 'raw gallery URLs under Advanced');
+  const category = product.querySelector('[data-path="products.0.pageId"]');
+  assert.ok(category && !category.closest('.cms-advanced'));
+  assert.match(category.closest('label').textContent, /^Shown under/);
+  const primaryPicker = product.querySelector('[data-url-picker="products.0.image"]');
+  assert.ok(primaryPicker && !primaryPicker.closest('.cms-advanced'), 'photo picker is the primary way to choose a photo');
+  assert.ok(product.querySelector('.cms-advanced [data-path="products.0.image"]'), 'raw image address is secondary but usable');
+  await click('button[name="save-draft"]');
+  assert.ok(saved, document.querySelector('[data-field-errors]')?.textContent);
+  assert.equal(saved.pages.find(page => page.id === 'about').seo.canonical, '/about-us');
+  assert.equal(validateCmsDocument(saved).valid, true);
+});
+
+serial('collections use plain names, editorial entries are hidden, and lists are numbered with item names', async () => {
+  const doc = await seedDocument();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  const summaries = [...document.querySelectorAll('.cms-global-fields > details > summary')].map(summary => summary.textContent);
+  assert.ok(summaries.includes('Tours & experiences'));
+  assert.ok(summaries.includes('Tripadvisor reviews (show/hide and order)'));
+  assert.ok(!summaries.some(label => /Editorial entries|^Products$|attribution locked/.test(label)), summaries.join('|'));
+  assert.equal(document.querySelector('[data-array="editorialEntries"]'), null);
+  const legend = path => document.querySelector(`[data-array-item="${path}"] > [data-object="${path}"] > legend`)?.textContent;
+  assert.equal(legend('products.0'), `1. ${doc.products[0].title.en}`);
+  assert.equal(legend('products.1'), `2. ${doc.products[1].title.en}`);
+  assert.equal(legend('teamMembers.0'), `1. ${doc.teamMembers[0].name}`);
+  assert.equal(legend('navigation.0'), `1. ${doc.navigation[0].label.en}`);
+  assert.match(document.querySelector('[data-array-move="products.0:down"]').getAttribute('aria-label'), new RegExp(`Move down: 1\\. ${doc.products[0].title.en.slice(0, 20)}`));
+  const text0 = [...document.querySelectorAll('[data-array-item="products.0"] label')].filter(label => !label.closest('.cms-advanced')).map(label => label.textContent).join('\n');
+  assert.match(text0, /Photo description \(for Google & screen readers\)/);
+  assert.match(text0, /Short description/);
+  assert.doesNotMatch(text0, /Image alternative text|Identifier \(stable\)|Action \(fixed\)/);
+  const blog = document.querySelector('[data-array-item="blogPosts.0"]');
+  const blogText = [...blog.querySelectorAll('label')].map(label => label.textContent).join('\n');
+  assert.match(blogText, /Short summary/); assert.match(blogText, /Article text/); assert.match(blogText, /Show on website/);
+  assert.match(blogText, /Web address \(after fezguidetours\.com\/\)/);
+});
+
+serial('header shows a friendly publish status with revision numbers as a small secondary detail', async () => {
+  const doc = cmsDoc();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: { version: 37, draftRevision: 37, publishedRevision: 36, document: doc } });
+  await render();
+  const state = () => document.querySelector('.cms-draft-state');
+  assert.equal(state().textContent, 'Draft saved, not published yet');
+  assert.equal(document.querySelector('.cms-version-details').textContent, 'Version 37. Draft revision 37. Published revision 36.');
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Changed');
+  assert.equal(state().textContent, 'Unsaved changes');
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: { version: 37, draftRevision: 37, publishedRevision: 37, document: doc } });
+  await render('fr');
+  assert.equal(state().textContent, 'Publié — à jour');
+  await render('es');
+  assert.equal(state().textContent, 'Publicado — al día');
+});
+
+serial('interface text editor lists every supported key with a human label and default, even when the document has none', async () => {
+  const { SUPPORTED_UI_COPY } = await import('../src/cms/ui-copy.ts');
+  const { uiCopyRegistry } = await import('../src/admin/ui-copy-registry.ts');
+  const doc = cmsDoc();
+  doc.uiCopy = {};
+  let saved;
+  installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, saveOk({ version: 3, draftRevision: 3, published: false })) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  const entries = uiCopyRegistry(SUPPORTED_UI_COPY, 'en');
+  assert.ok(entries.length > 0);
+  for (const entry of entries) {
+    const row = document.querySelector(`[data-copy-key="${entry.key}"]`);
+    assert.ok(row, `missing row for ${entry.key}`);
+    assert.equal(row.querySelector(`[data-path="uiCopy.${entry.key}.en"]`).value, entry.defaults.en, `default prefilled for ${entry.key}`);
+    assert.ok(row.querySelector('label').textContent.startsWith(`${entry.label} (English)`), `human label for ${entry.key}`);
+    const rawKey = [...row.querySelectorAll('code')].find(code => code.textContent === entry.key);
+    assert.ok(rawKey && rawKey.closest('.cms-advanced'), `raw key only under Advanced for ${entry.key}`);
+    assert.equal(row.querySelector('[data-remove-copy]').disabled, true, 'nothing to reset yet');
+  }
+  const target = entries[0];
+  await typeInto(`[data-path="uiCopy.${target.key}.en"]`, 'Edited wording');
+  await click('button[name="save-draft"]');
+  assert.deepEqual(Object.keys(saved.uiCopy), [target.key], 'only the edited key is written');
+  assert.deepEqual(saved.uiCopy[target.key], { ...target.defaults, en: 'Edited wording' });
+  assert.equal(validateCmsDocument(saved).valid, true);
+});
+
+serial('save errors appear as plain-language messages in EN, FR and ES, keeping the raw code for support', async () => {
+  const failures = [
+    { respond: { status: 507, body: { error: 'cms_revision_storage_budget' } }, code: 'cms_revision_storage_budget', en: /history is full/i, fr: /historique.*plein/i, es: /historial.*lleno/i },
+    { respond: { status: 401, body: { error: 'unauthorized' } }, code: 'unauthorized', en: /session expired — sign in again in a new tab/i, fr: /session a expiré/i, es: /sesión ha caducado/i },
+    { respond: 'network', code: 'network_error', en: /internet connection/i, fr: /connexion internet/i, es: /conexión a internet/i },
+  ];
+  for (const failure of failures) {
+    for (const language of ['en', 'fr', 'es']) {
+      const doc = cmsDoc();
+      installFetch(({ url, method }) => {
+        if (url.endsWith('/revisions')) return { body: { revisions: [] } };
+        if (method === 'PUT') { if (failure.respond === 'network') throw new TypeError('Failed to fetch'); return failure.respond; }
+        return { body: content(doc) };
+      });
+      await render(language);
+      await typeInto(`textarea[data-path="pages.home.title.${language}"]`, 'Edited');
+      await click('button[name="save-draft"]');
+      const item = await waitFor(() => document.querySelector('[data-field-errors] li')).catch(error => { throw new Error(`${failure.code}/${language}: ${error.message.slice(-300)}`); });
+      assert.match(item.textContent, failure[language], `${failure.code}/${language}: ${item.textContent}`);
+      assert.doesNotMatch(item.textContent, new RegExp(failure.code));
+      assert.equal(item.dataset.code, failure.code);
+      assert.equal(item.title, failure.code);
+      assert.equal(document.querySelector(`textarea[data-path="pages.home.title.${language}"]`).value, 'Edited', 'edits are kept');
+    }
+  }
+});
+
+serial('a version conflict explains itself in plain language and the conflict banner keeps its code', async () => {
+  const doc = cmsDoc();
+  installFetch(({ url, method }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : method === 'PUT' ? { status: 409, body: { error: 'version_conflict' } } : { body: content(doc) });
+  await render();
+  await waitFor(() => document.querySelector('[data-admin-status="ready"]'));
+  await typeInto('textarea[data-path="pages.home.title.en"]', 'Mine');
+  await click('button[name="save-draft"]');
+  const banner = await waitFor(() => document.querySelector('[data-admin-conflict]'));
+  assert.match(banner.textContent, /Someone else saved at the same time \(edit conflict\)/);
+  assert.equal(banner.dataset.code, 'version_conflict');
 });

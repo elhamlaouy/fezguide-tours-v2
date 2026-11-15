@@ -24,7 +24,7 @@ export function DraftTransfer({ document, language, disabled, onImport, onError,
         if (file.size > CMS_LIMITS.bytes) throw new Error('document: exceeds byte limit');
         const next = parseEditorImport(await file.text(), document);
         if (window.confirm(t('importHelp'))) onImport(next);
-      } catch (error) { onError((error instanceof Error ? error.message : 'document: invalid input').split('\n')); }
+      } catch (error) { onError(error instanceof SyntaxError ? ['invalid_backup'] : (error instanceof Error ? error.message : 'document: invalid input').split('\n')); }
       finally { setWorking(false); onBusyChange(false); }
     }} /></label>
   </fieldset>;

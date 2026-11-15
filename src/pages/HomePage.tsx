@@ -6,6 +6,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { visibleLink, resolveImage } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { InternalLink } from '../components/InternalLink';
@@ -212,7 +213,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </div>
 
             {/* Trust Row */}
-            <ApprovedSection id="trust"><div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">{document ? (trust?.items ?? []).map((item, index) => { const Icon = [ShieldCheck, Star, Clock][index] ?? ShieldCheck; return (<div key={index} className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
+            <ApprovedSection id="trust"><div className="pt-4 border-t border-white/30 flex flex-wrap items-center justify-center gap-5 sm:gap-8 text-xs font-bold text-[#15201F]">{document ? (trust?.items ?? []).map((item, index) => { if (!item.title[language] && !item.description[language]) return null; const Icon = [ShieldCheck, Star, Clock][index] ?? ShieldCheck; return (<div key={index} className="flex items-center gap-1.5 bg-white/40 px-3 py-1 rounded-lg border border-white/30">
                 <Icon className={`w-4 h-4 ${index === 1 ? 'text-[#E07A5F] fill-current' : 'text-[#005F5A]'}`} />
                 <span>{item.title[language]}{item.description[language] && <span>{item.description[language]}</span>}</span>
               </div>); }) : (<>
@@ -311,7 +312,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             onNavigate={() => onNavigate('fez')}
             className="text-xs font-bold text-[#C84B31] hover:text-[#B33D25] flex items-center gap-1 cursor-pointer"
           >
-            <span>{language === 'es' ? "Ver todas las visitas" : "View All Tours"}</span>
+            <span>{copyText(document, 'ui.home.viewAllTours', language)}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </InternalLink>
         </div>

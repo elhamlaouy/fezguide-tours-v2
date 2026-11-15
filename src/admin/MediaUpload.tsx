@@ -2,14 +2,16 @@ import { useEffect, useId, useRef, useState } from 'react';
 import type { CmsMedia } from '../cms/schema';
 import type { MediaLocale, MediaText, MediaUploadResult } from '../../worker/media';
 import { AdminApiError, uploadAdminMedia } from './admin-api';
+import { friendlyApiError } from './editor-errors';
+import { languageName } from './editor-workspace';
 
 const COPY = {
-  en: { heading: 'Upload a photo', details: 'Optional title & caption', locale: 'Photo language', file: 'JPEG, PNG or WebP photo', limits: 'Maximum 8 MiB, 12 million pixels, 8192 pixels per side. Animated images are not accepted.', alt: 'Alternative text', title: 'Title (optional)', caption: 'Caption (optional)', upload: 'Upload photo', busy: 'Uploading…', success: 'Photo uploaded to your draft library. Save the draft and publish to make it public.', failure: 'Upload failed. Check the photo and try again.', denied: 'Your editor session expired or is not authorized. Sign in again.', unavailable: 'Photo storage or image validation is not configured. Contact the site administrator.', large: 'The photo exceeds the upload limit.', invalid: 'Choose a valid JPEG, PNG or WebP photo within the limits.', preview: 'Uploaded photo preview', select: 'Use this photo' },
-  fr: { heading: 'Ajouter une photo', details: 'Titre et légende facultatifs', locale: 'Langue de la photo', file: 'Photo JPEG, PNG ou WebP', limits: 'Maximum 8 Mio, 12 millions de pixels, 8192 pixels par côté. Les images animées sont refusées.', alt: 'Texte alternatif', title: 'Titre (facultatif)', caption: 'Légende (facultative)', upload: 'Ajouter la photo', busy: 'Envoi en cours…', success: 'Photo ajoutée à la bibliothèque du brouillon. Enregistrez puis publiez pour la rendre publique.', failure: 'Échec de l’envoi. Vérifiez la photo puis réessayez.', denied: 'Votre session a expiré ou n’est pas autorisée. Reconnectez-vous.', unavailable: 'Le stockage ou la validation des photos n’est pas configuré. Contactez l’administrateur.', large: 'La photo dépasse la limite autorisée.', invalid: 'Choisissez une photo JPEG, PNG ou WebP valide respectant les limites.', preview: 'Aperçu de la photo ajoutée', select: 'Utiliser cette photo' },
-  es: { heading: 'Subir una foto', details: 'Título y descripción opcionales', locale: 'Idioma de la foto', file: 'Foto JPEG, PNG o WebP', limits: 'Máximo 8 MiB, 12 millones de píxeles, 8192 píxeles por lado. No se admiten imágenes animadas.', alt: 'Texto alternativo', title: 'Título (opcional)', caption: 'Descripción (opcional)', upload: 'Subir foto', busy: 'Subiendo…', success: 'Foto añadida a la biblioteca del borrador. Guarda y publica para hacerla pública.', failure: 'La subida falló. Comprueba la foto e inténtalo de nuevo.', denied: 'Tu sesión ha caducado o no está autorizada. Vuelve a iniciar sesión.', unavailable: 'El almacenamiento o la validación de fotos no está configurado. Contacta con el administrador.', large: 'La foto supera el límite permitido.', invalid: 'Elige una foto JPEG, PNG o WebP válida dentro de los límites.', preview: 'Vista previa de la foto subida', select: 'Usar esta foto' },
+  en: { heading: 'Upload a photo', details: 'Optional title & caption', locale: 'Photo language', file: 'JPEG, PNG or WebP photo', limits: 'Maximum 8 MiB, 12 million pixels, 8192 pixels per side. Animated images are not accepted.', alt: 'Photo description (for Google & screen readers)', title: 'Title (optional)', caption: 'Caption (optional)', upload: 'Upload photo', busy: 'Uploading…', success: 'Photo uploaded to your draft library. Save the draft and publish to make it public.', failure: 'Upload failed. Check the photo and try again.', denied: 'Your editor session expired or is not authorized. Sign in again.', unavailable: 'Photo storage or image validation is not configured. Contact the site administrator.', large: 'The photo exceeds the upload limit.', invalid: 'Choose a valid JPEG, PNG or WebP photo within the limits.', preview: 'Uploaded photo preview', select: 'Use this photo' },
+  fr: { heading: 'Ajouter une photo', details: 'Titre et légende facultatifs', locale: 'Langue de la photo', file: 'Photo JPEG, PNG ou WebP', limits: 'Maximum 8 Mio, 12 millions de pixels, 8192 pixels par côté. Les images animées sont refusées.', alt: 'Description de la photo (pour Google et les lecteurs d’écran)', title: 'Titre (facultatif)', caption: 'Légende (facultative)', upload: 'Ajouter la photo', busy: 'Envoi en cours…', success: 'Photo ajoutée à la bibliothèque du brouillon. Enregistrez puis publiez pour la rendre publique.', failure: 'Échec de l’envoi. Vérifiez la photo puis réessayez.', denied: 'Votre session a expiré ou n’est pas autorisée. Reconnectez-vous.', unavailable: 'Le stockage ou la validation des photos n’est pas configuré. Contactez l’administrateur.', large: 'La photo dépasse la limite autorisée.', invalid: 'Choisissez une photo JPEG, PNG ou WebP valide respectant les limites.', preview: 'Aperçu de la photo ajoutée', select: 'Utiliser cette photo' },
+  es: { heading: 'Subir una foto', details: 'Título y descripción opcionales', locale: 'Idioma de la foto', file: 'Foto JPEG, PNG o WebP', limits: 'Máximo 8 MiB, 12 millones de píxeles, 8192 píxeles por lado. No se admiten imágenes animadas.', alt: 'Descripción de la foto (para Google y lectores de pantalla)', title: 'Título (opcional)', caption: 'Descripción (opcional)', upload: 'Subir foto', busy: 'Subiendo…', success: 'Foto añadida a la biblioteca del borrador. Guarda y publica para hacerla pública.', failure: 'La subida falló. Comprueba la foto e inténtalo de nuevo.', denied: 'Tu sesión ha caducado o no está autorizada. Vuelve a iniciar sesión.', unavailable: 'El almacenamiento o la validación de fotos no está configurado. Contacta con el administrador.', large: 'La foto supera el límite permitido.', invalid: 'Elige una foto JPEG, PNG o WebP válida dentro de los límites.', preview: 'Vista previa de la foto subida', select: 'Usar esta foto' },
 } as const;
 const empty = (): MediaText => ({ en: '', fr: '', es: '' });
-const LANGUAGES: Record<MediaLocale, string> = { en: 'English', fr: 'Français', es: 'Español' };
+const LANGUAGES: Record<MediaLocale, string> = { en: languageName('en'), fr: languageName('fr'), es: languageName('es') };
 
 export interface MediaUploadProps {
   language?: MediaLocale;
@@ -33,6 +35,7 @@ export function MediaUpload({ language = 'en', editingLocale = language, disable
   const [caption, setCaption] = useState<MediaText>(empty);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [errorCode, setErrorCode] = useState('');
   const [result, setResult] = useState<MediaUploadResult | null>(null);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => { onBusyChange?.(busy); }, [busy, onBusyChange]);
@@ -40,9 +43,9 @@ export function MediaUpload({ language = 'en', editingLocale = language, disable
 
   async function upload() {
     if (!file || busy || disabled) return;
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setError(copy.invalid); return; }
-    if (file.size > 8 * 1024 * 1024) { setError(copy.large); return; }
-    setBusy(true); setError(''); setResult(null);
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setErrorCode('unsupported_media_type'); setError(copy.invalid); return; }
+    if (file.size > 8 * 1024 * 1024) { setErrorCode('media_too_large'); setError(copy.large); return; }
+    setBusy(true); setError(''); setErrorCode(''); setResult(null);
     const operation = new AbortController(); controller.current = operation;
     try {
       const uploaded = await uploadAdminMedia(file, { alt,
@@ -52,9 +55,11 @@ export function MediaUpload({ language = 'en', editingLocale = language, disable
       onUploaded(uploaded.media, uploaded);
       onSelect?.(uploaded.media.id);
     } catch (failure) {
-      if (!operation.signal.aborted) setError(failure instanceof AdminApiError
-        ? [401, 403].includes(failure.status) ? copy.denied : failure.status === 503 ? copy.unavailable : failure.status === 413 ? copy.large : failure.status === 422 || failure.status === 415 ? copy.invalid : copy.failure
-        : copy.failure);
+      if (!operation.signal.aborted) {
+        const code = failure instanceof AdminApiError ? failure.code : 'request_failed';
+        setErrorCode(code);
+        setError(friendlyApiError(code, language));
+      }
     } finally { if (!operation.signal.aborted) setBusy(false); }
   }
 
@@ -74,7 +79,7 @@ export function MediaUpload({ language = 'en', editingLocale = language, disable
       </details>
     </fieldset>)}
     <button type="button" name="upload-photo" disabled={!file || busy || disabled} onClick={() => void upload()}>{busy ? copy.busy : copy.upload}</button>
-    {error && <p role="alert">{error}</p>}
+    {error && <p role="alert" title={errorCode} data-code={errorCode}>{error}</p>}
     {result && <div>
       <p role="status">{copy.success}</p>
       <img src={result.previewSrc} alt={result.media.alt[language] || copy.preview} width={result.media.width} height={result.media.height}

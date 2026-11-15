@@ -1,9 +1,10 @@
 import React from 'react';
-import { blockFields, editorDefault, nextEditorId, setEditorPath, type EditorField } from '../cms/editor-controls';
+import { blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, type EditorField } from '../cms/editor-controls';
 import type { CmsDocument } from '../cms/schema';
 import type { Language } from '../types';
 import { editorLabel } from './editor-labels';
-import { workspaceText } from './editor-workspace';
+import { languageName, workspaceText } from './editor-workspace';
+import { isLanguageKey, itemName, numberedLabel, referenceName } from './editor-names';
 
 interface Props {
   spec: EditorField; value: unknown; path: string; document: CmsDocument;
@@ -11,6 +12,10 @@ interface Props {
   onRemove?: (path: string, value: unknown) => void;
   onAdd?: (path: string) => boolean;
   onEditPrice?: (productId: string) => void;
+  /** True inside an opened-on-demand "Advanced" disclosure, so it is never nested twice. */
+  inAdvanced?: boolean;
+  /** Explicit owner-facing label for this node only (used by the interface-text list). */
+  label?: string;
 }
 // Google shows ~60 title characters; " | Fez Guide Tours" (18) is appended automatically. Descriptions show ~155.
 export const SEO_TITLE_LIMIT = 42;
@@ -25,9 +30,18 @@ const SEO_HINTS = {
     empty: { en: 'Empty: a summary is taken automatically from the page text.', fr: 'Vide : un résumé est pris automatiquement dans le texte de la page.', es: 'Vacío: se toma automáticamente un resumen del texto de la página.' },
   },
 } as const;
+/** Owner-facing label: list items are numbered from 1 and carry their own name; language leaves name the language. */
+export function fieldLabel(path: string, value: unknown, spec: EditorField, document: CmsDocument, language: Language): string {
+  const segments = path.split('.');
+  const last = segments.at(-1) ?? '';
+  if (/^\d+$/.test(last)) return numberedLabel(Number(last), spec.type === 'reference' ? referenceName(spec.collection, value, document, language) : itemName(value, language), language);
+  if (isLanguageKey(last) && segments.length > 1) return `${editorLabel(segments.at(-2)!, language)} (${languageName(last as Language)})`;
+  if (/^products\.[^.]+\.pageId$/.test(path)) return editorLabel('shownUnder', language);
+  return editorLabel(last, language);
+}
 export function StructuredFields(props: Props): React.JSX.Element {
   const { spec, value, path, document, language, locale, onChange } = props;
-  const label = editorLabel(path.split('.').at(-1) ?? '', language);
+  const label = props.label ?? fieldLabel(path, value, spec, document, language);
   const t = (key: string) => editorLabel(key, language);
   const shellLinkMatch = /^(navigation|footer\.links)\.(\d+)/.exec(path);
   const shellLink = shellLinkMatch ? (shellLinkMatch[1] === 'navigation' ? document.navigation : document.footer.links)[Number(shellLinkMatch[2])] : undefined;
@@ -43,7 +57,7 @@ export function StructuredFields(props: Props): React.JSX.Element {
   if (spec.type === 'object') {
     const record = (value ?? {}) as Record<string, unknown>;
     const actual = path.includes('.blocks.') ? blockFields(String(record.type)).fields : spec.fields;
-    return <fieldset data-object={path}><legend>{label}</legend>{Object.entries(actual ?? {}).map(([key, child]) => <StructuredFields key={key} {...props} spec={child} value={record[key]} path={`${path}.${key}`} onChange={next => {
+    const field = ([key, child]: [string, EditorField], inAdvanced: boolean) => <StructuredFields key={key} {...props} label={undefined} inAdvanced={inAdvanced} spec={child} value={record[key]} path={`${path}.${key}`} onChange={next => {
       if (key === 'type' && path.includes('.blocks.')) {
         const nextBlock = editorDefault(blockFields(String(next)), document) as Record<string, unknown>;
         const convertedText = record.text ?? (record.items ? Object.fromEntries(Object.entries(record.items as Record<string, string[]>).map(([locale, items]) => [locale, items.join('\n')])) : undefined);
@@ -54,7 +68,11 @@ export function StructuredFields(props: Props): React.JSX.Element {
         if (next !== undefined) delete nextRecord[key === 'pageId' ? 'href' : 'pageId'];
         onChange(nextRecord);
       } else onChange(setEditorPath(record, [key], next));
-    }} />)}{optionalRemove}</fieldset>;
+    }} />;
+    const entries = Object.entries(actual ?? {});
+    const advanced = props.inAdvanced ? [] : entries.filter(([key]) => isAdvancedEditorField(`${path}.${key}`));
+    const primary = entries.filter(([key]) => !advanced.some(([other]) => other === key));
+    return <fieldset data-object={path}><legend>{label}</legend>{primary.map(entry => field(entry, !!props.inAdvanced))}{advanced.length > 0 && <details className="cms-advanced" data-advanced={path}><summary>{t('advanced')}</summary>{advanced.map(entry => field(entry, true))}</details>}{optionalRemove}</fieldset>;
   }
   if (spec.type === 'localized' || spec.type === 'localizedList') {
     const record = (value ?? { en: spec.type === 'localized' ? '' : [], fr: spec.type === 'localized' ? '' : [], es: spec.type === 'localized' ? '' : [] }) as Record<string, unknown>;
@@ -68,7 +86,7 @@ export function StructuredFields(props: Props): React.JSX.Element {
     const seoLength = seoKind ? String(record[locale] ?? '').trim().length : 0;
     const seoLimit = seoKind === 'title' ? SEO_TITLE_LIMIT : SEO_DESCRIPTION_LIMIT;
     const seoHint = seoKind ? <p className={seoLength > seoLimit ? 'cms-admin-note cms-seo-counter is-warning' : 'cms-admin-note cms-seo-counter'} data-seo-counter={path} aria-live="polite">{seoLength}/{seoLimit} · {SEO_HINTS[seoKind][seoLength === 0 ? 'empty' : 'help'][language]}</p> : null;
-    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({locale}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} spec={{ type: 'array', item: { type: 'text' } }} value={record[locale]} path={`${path}.${locale}`} onChange={next => onChange({ ...record, [locale]: next })} />}{seoHint}{optionalRemove}</div>;
+    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({languageName(locale)}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} label={undefined} spec={{ type: 'array', item: { type: 'text' } }} value={record[locale]} path={`${path}.${locale}`} onChange={next => onChange({ ...record, [locale]: next })} />}{seoHint}{optionalRemove}</div>;
   }
   if (spec.type === 'array') {
     const items = Array.isArray(value) ? value : [];
@@ -86,14 +104,15 @@ export function StructuredFields(props: Props): React.JSX.Element {
     };
     const move = (i: number, delta: number) => { const next = [...items]; const [item] = next.splice(i, 1); next.splice(i + delta, 0, item); onChange(next); };
     const collection = itemSpec.collection;
+    const itemLabel = (index: number, item: unknown) => fieldLabel(`${path}.${index}`, item, itemSpec, document, language);
     const limit = path === 'media' ? 1000 : path === 'editorialEntries' ? 150 : 100;
     const canAdd = !reviewRecords && items.length < limit && (!collection || document[collection].some(item => !items.includes(item.id)));
     return <fieldset data-array={path}><legend>{label}</legend><ol>{items.map((item, index) => <li key={index} data-array-item={`${path}.${index}`} {...(path === 'navigation' ? { 'data-nav-link': item.id, 'data-nav-page': item.pageId ?? '' } : path === 'footer.links' ? { 'data-footer-link': item.id, 'data-link-page': item.pageId ?? '' } : {})}>
-      <StructuredFields {...props} spec={itemSpec} value={item} path={`${path}.${index}`} onChange={next => onChange(items.map((item, i) => i === index ? next : item))} />
+      <StructuredFields {...props} label={undefined} spec={itemSpec} value={item} path={`${path}.${index}`} onChange={next => onChange(items.map((item, i) => i === index ? next : item))} />
       <div className="cms-array-actions">
-        <button type="button" data-array-move={`${path}.${index}:up`} {...(path === 'footer.links' ? { 'data-footer-move': 'up', 'data-link': item.id } : {})} aria-label={`${t('up')}: ${label} ${index + 1}`} disabled={index === 0} onClick={() => move(index, -1)}>{t('up')}</button>
-        <button type="button" data-array-move={`${path}.${index}:down`} {...(path === 'footer.links' ? { 'data-footer-move': 'down', 'data-link': item.id } : {})} aria-label={`${t('down')}: ${label} ${index + 1}`} disabled={index === items.length - 1} onClick={() => move(index, 1)}>{t('down')}</button>
-        {!reviewRecords && <button type="button" data-array-remove={`${path}.${index}`} aria-label={`${t('remove')}: ${label} ${index + 1}`} onClick={() => {
+        <button type="button" data-array-move={`${path}.${index}:up`} {...(path === 'footer.links' ? { 'data-footer-move': 'up', 'data-link': item.id } : {})} aria-label={`${t('up')}: ${itemLabel(index, item)}`} disabled={index === 0} onClick={() => move(index, -1)}>{t('up')}</button>
+        <button type="button" data-array-move={`${path}.${index}:down`} {...(path === 'footer.links' ? { 'data-footer-move': 'down', 'data-link': item.id } : {})} aria-label={`${t('down')}: ${itemLabel(index, item)}`} disabled={index === items.length - 1} onClick={() => move(index, 1)}>{t('down')}</button>
+        {!reviewRecords && <button type="button" data-array-remove={`${path}.${index}`} aria-label={`${t('remove')}: ${itemLabel(index, item)}`} onClick={() => {
           if (!window.confirm(t('confirmRemove'))) return;
           const next = items.filter((_, i) => i !== index);
           if (props.onRemove) props.onRemove(`${path}.${index}`, next); else onChange(next);
@@ -105,8 +124,14 @@ export function StructuredFields(props: Props): React.JSX.Element {
   if (spec.type === 'boolean') return <div><label className="cms-admin-check"><input {...inputPath} type="checkbox" checked={value === true} onChange={event => onChange(event.target.checked)} />{label}</label>{optionalRemove}</div>;
   if (spec.type === 'reference' || spec.type === 'enum') {
     const options = spec.type === 'reference' && spec.collection ? document[spec.collection].map(item => item.id) : [...(spec.options ?? [])];
-    return <div><label>{label}<select {...inputPath} {...(path.endsWith('.pageId') ? pageAttributes : {})} value={String(value ?? '')} onChange={event => { if (options.includes(event.target.value)) onChange(event.target.value); }}>{!value && <option value="" disabled>{t('noValue')}</option>}{!options.includes(String(value ?? '')) && value ? <option value={String(value)}>{String(value)}</option> : null}{options.map(option => <option key={option} value={option}>{spec.type === 'enum' ? t(option) : option}</option>)}</select></label>{optionalRemove}</div>;
+    return <div><label>{label}<select {...inputPath} {...(path.endsWith('.pageId') ? pageAttributes : {})} value={String(value ?? '')} onChange={event => { if (options.includes(event.target.value)) onChange(event.target.value); }}>{!value && <option value="" disabled>{t('noValue')}</option>}{!options.includes(String(value ?? '')) && value ? <option value={String(value)}>{String(value)}</option> : null}{options.map(option => <option key={option} value={option}>{spec.type === 'enum' ? t(option) : (referenceName(spec.collection, option, document, language) || option)}</option>)}</select></label>{optionalRemove}</div>;
   }
   if (spec.type === 'number') return <div><label>{label}<input {...inputPath} type="number" min={spec.min} max={spec.max} step={spec.step} value={typeof value === 'number' ? value : ''} onChange={event => onChange(event.target.value === '' ? '' : Number(event.target.value))} /></label>{optionalRemove}</div>;
-  return <div><label>{label}<input {...inputPath} type={path.startsWith('theme.colors.') ? 'color' : 'text'} readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>{spec.type === 'mediaUrl' && <label>{t('mediaId')}<select data-url-picker={path} value={document.media.some(m => m.src === value) ? String(value) : ''} onChange={event => { if (event.target.value) onChange(event.target.value); }}><option value="">{t('noValue')}</option>{document.media.map(media => <option key={media.id} value={media.src}>{media.alt[locale] || media.id}</option>)}</select></label>}{optionalRemove}</div>;
+  if (spec.type === 'mediaUrl') {
+    const known = document.media.some(m => m.src === value);
+    const current = typeof value === 'string' && value ? value : '';
+    const address = <label>{t('src')}<input {...inputPath} type="text" readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>;
+    return <div className="cms-media-field"><label>{label}<select data-url-picker={path} value={known ? String(value) : current} onChange={event => { if (event.target.value) onChange(event.target.value); }}>{!current && <option value="">{t('noValue')}</option>}{current && !known && <option value={current}>{current}</option>}{document.media.map(media => <option key={media.id} value={media.src}>{media.alt[locale] || media.id}</option>)}</select></label>{props.inAdvanced ? address : <details className="cms-advanced"><summary>{t('advanced')}: {t('src')}</summary>{address}</details>}{optionalRemove}</div>;
+  }
+  return <div><label>{label}<input {...inputPath} type={path.startsWith('theme.colors.') ? 'color' : 'text'} readOnly={spec.readonly} value={String(value ?? '')} onChange={event => onChange(event.target.value)} /></label>{optionalRemove}</div>;
 }

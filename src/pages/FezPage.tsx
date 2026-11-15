@@ -4,6 +4,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { FezToursCtaSection } from '../components/FezToursCtaSection';
@@ -133,7 +134,7 @@ export const FezPage: React.FC<FezPageProps> = ({
                 : 'text-[#445250] hover:text-[#005F5A]'
             }`}
           >
-            {language === 'es' ? 'Todas las experiencias' : `All Experiences (${fezPillars.length})`}
+            {copyText(document, 'ui.filter.allExperiences', language, { count: fezPillars.length })}
           </button>
           {fezPillars.map((p) => (
             <button
@@ -174,11 +175,9 @@ export const FezPage: React.FC<FezPageProps> = ({
         {/* Authentic Medina Photo Gallery */}
         <ApprovedSection id="gallery"><div className="space-y-6 pt-6">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : (language === 'es' ? "Galería del patrimonio vivo" : 'Living Heritage Gallery')}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : copyText(document, 'ui.gallery.fez.eyebrow', language)}</span>
             <h3 className="text-2xl font-bold text-[#005F5A]">{document ? gallery?.title?.[language] ?? '' : (language === 'es' ? "Escenas reales de las calles de Fez" : 'Real Scenes From the Streets of Fez')}</h3>
-            <p className="text-xs text-[#52605E]">{document && gallery?.description !== undefined ? gallery.description[language] : (language === 'es'
-                ? "Fotografías auténticas de talleres artesanales, puertas y rincones tranquilos."
-                : 'Authentic photos of craftsman workshops, gates, and quiet corners.')}</p>
+            <p className="text-xs text-[#52605E]">{document && gallery?.description !== undefined ? gallery.description[language] : copyText(document, 'ui.gallery.fez.description', language)}</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

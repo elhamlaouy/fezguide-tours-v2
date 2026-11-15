@@ -29,7 +29,8 @@ export class AdminApiError extends Error {
 }
 
 async function request(path: string, method: string, body?: object | Blob, extraHeaders: Record<string, string> = {}, signal?: AbortSignal): Promise<Record<string, unknown>> {
-  const response = await globalThis.fetch(path, {
+  let response: Response;
+  try { response = await globalThis.fetch(path, {
     method, signal,
     credentials: 'same-origin',
     cache: 'no-store',
@@ -39,7 +40,11 @@ async function request(path: string, method: string, body?: object | Blob, extra
       ...extraHeaders,
     },
     ...(body ? { body: body instanceof Blob ? body : JSON.stringify(body) } : {}),
-  });
+  }); } catch (error) {
+    // Offline / DNS / connection reset: surface a stable code the editor can explain. Aborts stay aborts.
+    if (signal?.aborted || (error instanceof DOMException && error.name === 'AbortError')) throw error;
+    throw new AdminApiError(0, 'network_error');
+  }
   const raw = await response.text();
   let payload: Record<string, unknown> = {};
   if (raw) {

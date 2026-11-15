@@ -6,6 +6,7 @@ import { businessContactHref } from '../cms/business-contact';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { contentLanguage as pageLanguage, localizedText, resolveImage } from '../cms/render-utils';
 import { responsiveImageProps } from '../cms/optimized-image';
+import { copyText } from '../cms/ui-copy';
 import type { Localized } from '../cms/schema';
 import { EXPERIENCE_EXTRAS, ExperienceExtraDetails } from '../data/experienceDetails';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
@@ -532,7 +533,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'es' ? 'Visita 100 % privada para ti y tu grupo' : language === 'fr' ? 'Visite 100% privée pour votre groupe' : '100% Private (Your party only)'}
+                    {copyText(document, 'ui.trust.private', language)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
@@ -544,13 +545,13 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'es' ? 'Guías oficiales autorizados por el Ministerio de Turismo' : language === 'fr' ? 'Guides officiels agréés par l’État' : 'Official Ministry-licensed guides'}
+                    {copyText(document, 'ui.trust.licensed', language)}
                   </span>
                 </div>
                 <div className="flex items-center gap-2.5 text-xs text-[#445250]">
                   <Check className="w-4 h-4 text-[#00A896] shrink-0" />
                   <span>
-                    {language === 'es' ? 'Sin comisiones ni paradas obligatorias en tiendas' : language === 'fr' ? 'Zéro boutique ou arrêt forcé' : 'Zero tourist shop traps or kickbacks'}
+                    {copyText(document, 'ui.trust.noShops', language)}
                   </span>
                 </div>
               </div>
@@ -626,7 +627,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       </p>
                     </div>
                     <div className="pt-2 flex items-center justify-between text-xs font-bold text-[#005F5A]">
-                      <span>{language === 'es' ? "Ver detalles" : language === 'fr' ? 'Voir détails' : 'View Details'}</span>
+                      <span>{copyText(document, 'ui.card.viewDetails', language)}</span>
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
