@@ -5,6 +5,7 @@ import { ApprovedSection, useApprovedContent } from '../cms/approved-content';
 import { resolveImage, visibleLink } from '../cms/render-utils';
 import { businessContactHref } from '../cms/business-contact';
 import { responsiveImageProps } from '../cms/optimized-image';
+import { InternalLink, usePagePath } from './InternalLink';
 
 interface FezToursCtaSectionProps {
   language: Language;
@@ -35,10 +36,13 @@ const copy = {
 
 export const FezToursCtaSection: React.FC<FezToursCtaSectionProps> = ({ language, onExploreTours, onNavigate }) => {
   const {document,section}=useApprovedContent();
+  const pathFor=usePagePath();
   const cta=section('fez-tours-cta','cta');
   const image=document && cta?.image ? resolveImage(document,cta.image,language) : undefined;
   const link=document ? cta?.links.find(link=>visibleLink(document,link)) : undefined;
   const text=document ? {intro:cta?.description?.[language] ?? '',lead:cta?.title?.[language] ?? '',cta:link?.label[language] ?? '',imageAlt:image?.alt ?? ''} : copy[language];
+
+  const ctaClass="w-full sm:w-fit inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] transition-colors cursor-pointer";
 
   return (
     <ApprovedSection id="fez-tours-cta"><section className="grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-3xl bg-[#005F5A] text-white shadow-xl">
@@ -52,13 +56,16 @@ export const FezToursCtaSection: React.FC<FezToursCtaSectionProps> = ({ language
       <div className="p-7 sm:p-10 lg:p-12 flex flex-col justify-center gap-5">
         <p className="text-base sm:text-lg leading-relaxed text-[#E6F4F2]">{text.intro}</p>
         <p className="text-xl sm:text-2xl font-extrabold leading-snug">{text.lead}</p>
-        {(!document || link) && <button
-          onClick={() => { if (link?.pageId && onNavigate) onNavigate(link.pageId as PageId); else if (link?.href) window.location.assign(businessContactHref(document!,link.href)); else onExploreTours(); }}
-          className="w-full sm:w-fit inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] transition-colors cursor-pointer"
-        >
+        {(!document || link) && (link?.pageId && onNavigate ? <InternalLink href={pathFor(link.pageId, language)} onNavigate={() => onNavigate(link.pageId as PageId)} className={ctaClass}>
           {text.cta}
           <ArrowRight className="w-4 h-4" aria-hidden="true" />
-        </button>}
+        </InternalLink> : link?.href ? <a href={businessContactHref(document!,link.href)} className={ctaClass}>
+          {text.cta}
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+        </a> : <InternalLink href={pathFor('our-fez-tours', language)} onNavigate={onExploreTours} className={ctaClass}>
+          {text.cta}
+          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+        </InternalLink>)}
       </div>
     </section></ApprovedSection>
   );

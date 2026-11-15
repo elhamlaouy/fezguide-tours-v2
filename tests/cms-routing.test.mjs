@@ -67,11 +67,11 @@ test('mounted public shell tracks locale URLs, CMS-only navigation and popstate 
     await act(async () => { root.render(createElement(App)); await new Promise(resolve => setTimeout(resolve, 30)); });
     assert.equal(window.document.documentElement.lang, 'fr');
     assert.match(host.querySelector('main').textContent, /Fès|guides|Guides/);
-    await act(async () => { [...host.querySelectorAll('nav button')].find(button => button.textContent.trim() === 'Route test').click(); });
+    await act(async () => { [...host.querySelectorAll('nav a')].find(button => button.textContent.trim() === 'Route test').click(); });
     assert.equal(window.location.pathname, '/fr/bespoke-morocco-experiences');
     assert.ok(host.querySelector('h1'));
     assert.match(host.querySelector('h1').textContent, /Voyages Sur Mesure/);
-    assert.equal(window.document.title, document.pages.find(page => page.id === 'page-bespoke-itinerary').seo.title.fr);
+    assert.equal(window.document.title, document.pages.find(page => page.id === 'page-bespoke-itinerary').seo.title.fr + ' | Fez Guide Tours');
     assert.equal(window.document.querySelector('link[rel="canonical"]').href, 'https://fezguidetours.com/fr/bespoke-morocco-experiences');
     await act(async () => { window.history.back(); await new Promise(resolve => setTimeout(resolve, 10)); });
     assert.equal(window.location.pathname, '/fr/about');

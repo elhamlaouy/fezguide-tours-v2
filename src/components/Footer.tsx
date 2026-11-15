@@ -2,6 +2,8 @@ import React from 'react';
 import { Language, PageId } from '../types';
 import { UI_TEXT } from '../data/shared-ui';
 import { Logo } from './Logo';
+import { InternalLink } from './InternalLink';
+import { pagePath } from '../cms/routing';
 import { businessContactHref } from '../cms/business-contact';
 import { useCms } from '../context/CmsContext';
 import type { CmsDocument } from '../cms/schema';
@@ -47,7 +49,7 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
           {/* Col 1: Brand & Mission */}
           <div className="lg:col-span-5 space-y-4">
             <div className="bg-white/95 px-3 py-2 rounded-xl inline-block shadow-sm">
-              <Logo brandName={contact.siteName} size="sm" onClick={() => onNavigate('home')} />
+              <Logo brandName={contact.siteName} size="sm" href={pagePath(cms, 'home', language)} onClick={() => onNavigate('home')} />
             </div>
             <p className="text-sm leading-relaxed text-[#A4B5B3] max-w-md">
               {aboutText}
@@ -67,12 +69,13 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
               {cms ? footerShellLinks(cms, language).map((link) => (
                 <li key={link.id}>
                   {link.pageId ? (
-                    <button
-                      onClick={() => openPage(link.pageId as PageId)}
-                      className="text-[#B3C4C2] hover:text-white transition-colors cursor-pointer text-start"
+                    <InternalLink
+                      href={pagePath(cms, link.pageId, language)}
+                      onNavigate={() => openPage(link.pageId as PageId)}
+                      className="text-[#B3C4C2] hover:text-white transition-colors cursor-pointer text-start inline-block"
                     >
                       {localizedText(link.label, language)}
-                    </button>
+                    </InternalLink>
                   ) : (
                     <a
                       href={cms ? businessContactHref(cms, link.href ?? '') : link.href}
@@ -87,34 +90,37 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
                 <>
               {links.map((link) => (
                 <li key={link.id}>
-                  <button
-                    onClick={() => openPage(link.id)}
-                    className="text-[#B3C4C2] hover:text-white transition-colors cursor-pointer text-start"
+                  <InternalLink
+                    href={pagePath(cms, link.id, language)}
+                    onNavigate={() => openPage(link.id)}
+                    className="text-[#B3C4C2] hover:text-white transition-colors cursor-pointer text-start inline-block"
                   >
                     {link.label}
-                  </button>
+                  </InternalLink>
                 </li>
               ))}
               {blogPosts.length > 0 && (
                 <li>
-                  <button
-                    onClick={() => openPage('blog')}
-                    className="text-[#00A896] hover:text-white transition-colors cursor-pointer text-start font-medium"
+                  <InternalLink
+                    href={pagePath(cms, 'blog', language)}
+                    onNavigate={() => openPage('blog')}
+                    className="text-[#00A896] hover:text-white transition-colors cursor-pointer text-start font-medium inline-block"
                   >
                     {language === 'es' ? "Blog y relatos de viaje" : 'Blog & Travel Stories'}
-                  </button>
+                  </InternalLink>
                 </li>
               )}
               {customPages
                 .filter((p) => p.published !== false && (language !== 'es' || Boolean(p.title.es)))
                 .map((cp) => (
                   <li key={cp.id}>
-                    <button
-                      onClick={() => openPage(cp.slug)}
+                    <InternalLink
+                      href={pagePath(cms, cp.slug, language)}
+                      onNavigate={() => openPage(cp.slug)}
                       className="text-[#B3C4C2] hover:text-white transition-colors cursor-pointer text-start truncate max-w-xs block"
                     >
                       {cp.title[language] || (language === 'es' ? '' : cp.title.en)}
-                    </button>
+                    </InternalLink>
                   </li>
                 ))}
                 </>

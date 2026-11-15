@@ -1,10 +1,13 @@
 import React from 'react';
+import { InternalLink } from './InternalLink';
 
 interface LogoProps {
   className?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
+  /** When set the logo is a real link to this URL; onClick then runs for plain clicks only. */
+  href?: string;
   brandName?: string;
 }
 
@@ -13,6 +16,7 @@ export const Logo: React.FC<LogoProps> = ({
   showText = true,
   size = 'md',
   onClick,
+  href,
   brandName = 'FezGuideTours',
 }) => {
   const iconDimensions = {
@@ -27,15 +31,9 @@ export const Logo: React.FC<LogoProps> = ({
     lg: 'text-3xl',
   }[size];
 
-  return (
-    <div
-      onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      className={`inline-flex items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`}
-      aria-label={`${brandName} Logo`}
-      onKeyDown={onClick ? event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } } : undefined}
-    >
+  const classes = `inline-flex items-center gap-2.5 max-[360px]:gap-1.5 select-none ${onClick || href ? 'cursor-pointer hover:opacity-95 transition-opacity' : ''} ${className}`;
+  const body = (
+    <>
       <div className="relative shrink-0 flex items-center justify-center">
         <svg
           width={iconDimensions.width}
@@ -123,6 +121,19 @@ export const Logo: React.FC<LogoProps> = ({
           {brandName === 'FezGuideTours' ? <><span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>FezGuide</span><span className={`text-[#C84B31] font-bold ${textSizes} max-[360px]:text-lg`}>Tours</span></> : <span className={`text-[#005F5A] font-bold ${textSizes} max-[360px]:text-lg`}>{brandName}</span>}
         </div>
       )}
+    </>
+  );
+  if (href) return <InternalLink href={href} onNavigate={onClick} className={classes} aria-label={`${brandName} Logo`}>{body}</InternalLink>;
+  return (
+    <div
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      className={classes}
+      aria-label={`${brandName} Logo`}
+      onKeyDown={onClick ? event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onClick(); } } : undefined}
+    >
+      {body}
     </div>
   );
 };

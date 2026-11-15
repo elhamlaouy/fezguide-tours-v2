@@ -44,7 +44,7 @@ const LegacyEditorialPage = React.lazy(async () => {
   }) => {
     const article = editorialArticleById(pillar.id);
     return article?.template === 'editorial-guide' ? <EditorialArticlePage article={article} language={language}
-      onBack={() => onNavigate(pillar.pageId)} onNavigate={onNavigate}
+      onBack={() => onNavigate(pillar.pageId)} parentPageId={pillar.pageId} onNavigate={onNavigate}
       onOpenProduct={() => { if (article.productId) onExplore(article.productId); }} /> : <ExperienceDetailPage pillar={pillar} language={language} onNavigate={onNavigate} onSelectExperience={item => onExplore(item.id)} onBookTour={onBook} />;
   } };
 });

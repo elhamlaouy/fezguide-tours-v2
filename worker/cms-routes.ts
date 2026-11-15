@@ -84,18 +84,18 @@ export function publicCmsDocument(value: object) {
 // projection per isolate, keyed by the immutable published revision number. Every
 // stored revision was validated on write (save/publish/rollback/restore all pass
 // through CmsStore.validate), and revisions can never be updated in place.
-const publicCache = new WeakMap<CmsD1Database, { version: number; document: PublicRecord }>();
-export async function readPublicDocument(db: CmsD1Database): Promise<{ version: number; document: PublicRecord } | null> {
+const publicCache = new WeakMap<CmsD1Database, { version: number; document: PublicRecord; createdAt: string | null }>();
+export async function readPublicDocument(db: CmsD1Database): Promise<{ version: number; document: PublicRecord; createdAt: string | null } | null> {
   const pointer = await db.prepare('SELECT published_revision FROM cms_documents WHERE id = 1').first<{ published_revision: number | null }>();
   const version = pointer?.published_revision;
   if (!version) return null;
   const cached = publicCache.get(db);
   if (cached && cached.version === version) return cached;
-  const row = await db.prepare('SELECT document FROM cms_revisions WHERE version = ?').bind(version).first<{ document: string }>();
+  const row = await db.prepare('SELECT document, created_at FROM cms_revisions WHERE version = ?').bind(version).first<{ document: string; created_at?: string }>();
   if (!row) return null;
   const parsed: unknown = JSON.parse(row.document);
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray((parsed as PublicRecord).pages)) throw new CmsError(503, 'cms_unavailable');
-  const entry = { version, document: publicCmsDocument(parsed) };
+  const entry = { version, document: publicCmsDocument(parsed), createdAt: row.created_at ?? null };
   publicCache.set(db, entry);
   return entry;
 }

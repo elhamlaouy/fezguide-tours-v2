@@ -56,7 +56,7 @@ test('footer matches rendered source links including Blog and published non-navi
     const html = renderSource(Footer, { language });
     const list = /<ul\b[^>]*>([\s\S]*?)<\/ul>/.exec(html);
     assert.ok(list, 'source footer link list');
-    const labels = [...list[1].matchAll(/<button\b[^>]*>([\s\S]*?)<\/button>/g)].map(m => htmlText(m[1]));
+    const labels = [...list[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)].map(m => htmlText(m[1]));
     assert.deepEqual(seed.footer.links.map(l => l.label[language]), labels, `${language}: source footer labels/order`);
     assert.ok(seed.footer.links.every(l => l.enabled));
   }

@@ -83,7 +83,7 @@ test('fresh HTML resolves published locale page metadata before JS and replaces 
     assert.equal(response.status, 200);
     const html = await response.text();
     assert.match(html, /<html lang="fr"/);
-    assert.match(html, /<title>Titre publié &lt;test&gt; &amp; &quot;citation&quot;<\/title>/);
+    assert.match(html, /<title>Titre publié &lt;test&gt; &amp; &quot;citation&quot; \| Fez Guide Tours<\/title>/);
     assert.equal((html.match(/<title>/g) ?? []).length, 1);
     assert.equal((html.match(/name="description"/g) ?? []).length, 1);
     assert.equal((html.match(/property="og:title"/g) ?? []).length, 1);
@@ -95,8 +95,8 @@ test('fresh HTML resolves published locale page metadata before JS and replaces 
     assert.doesNotMatch(html.split('</head>')[0], /attacker.example/);
     const schemas = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(match => JSON.parse(match[1]));
     assert.equal(schemas.length, 1);
-    assert.deepEqual(schemas[0].map(item => item['@type']), ['WebSite', 'TravelAgency', 'WebPage']);
-    assert.doesNotMatch(JSON.stringify(schemas), /Product|AggregateRating|openingHoursSpecification|GeoCoordinates/);
+    assert.deepEqual(schemas[0].map(item => item['@type']), ['WebSite', 'TravelAgency', 'WebPage', 'BreadcrumbList']);
+    assert.doesNotMatch(JSON.stringify(schemas), /Product|AggregateRating|openingHoursSpecification/);
     assert.ok(html.includes('/src/main.tsx'), 'existing asset URLs survive rewriting');
     assert.deepEqual(assets, ['/index.html'], 'serve the asset entrypoint, not an unknown per-route asset');
   } finally { sqlite.close(); }

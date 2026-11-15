@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Language, PageId } from '../types';
 import { EditorialArticle } from '../data/editorialArticles';
 import { PageCrumbBar } from './PageCrumbBar';
+import { InternalLink, usePagePath } from './InternalLink';
 import { TripadvisorReviewsSection } from './TripadvisorReviewsSection';
 import { useApprovedContent, ApprovedSection, ApprovedSections } from '../cms/approved-content';
 import { contentLanguage, visibleLink } from '../cms/render-utils';
@@ -36,6 +37,8 @@ interface EditorialArticlePageProps {
   article: Omit<EditorialArticle, 'sections'> & { sections: (EditorialArticle['sections'][number] & { storyId?: string; photosId?: string })[] };
   language: Language;
   onBack: () => void;
+  /** Parent page id for breadcrumb links; defaults to the CMS page's parent, then home. */
+  parentPageId?: string;
   onNavigate: (page: PageId) => void;
   onOpenProduct: () => void;
 }
@@ -47,9 +50,11 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
   article,
   language,
   onBack,
+  parentPageId,
   onNavigate,
   onOpenProduct,
 }) => {
+  const pathFor = usePagePath();
   const { document, page } = useApprovedContent(article.id);
   const bodyLanguage = page ? contentLanguage(page, language) : language;
   const ctaSection = page?.sections.find(section => section.id === 'product-cta' && section.type === 'cta');
@@ -66,6 +71,7 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
         parentLabel={parentLabel}
         currentTitle={text(article.title, language)}
         onHome={() => onNavigate('home')}
+        parentPageId={parentPageId ?? page?.parentId ?? 'home'}
         onParent={onBack}
       />
 
@@ -138,7 +144,10 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
           <div className="p-7 sm:p-10 lg:p-12 flex flex-col justify-center gap-5">
             <p className="text-base sm:text-lg leading-relaxed text-[#E6F4F2]">{text(article.cta.intro, language)}</p>
             <p className="text-xl sm:text-2xl font-extrabold leading-snug">{text(article.cta.lead, language)}</p>
-            {document ? (ctaLink ? (ctaLink.pageId ? <button onClick={() => ctaLink.pageId === article.productId ? onOpenProduct() : onNavigate(ctaLink.pageId!)} className={ctaClass}>{text(ctaLink.label, bodyLanguage)}<ArrowRight className="w-4 h-4" aria-hidden="true" /></button> : <a href={businessContactHref(document, ctaLink.href ?? '')} className={ctaClass}>{text(ctaLink.label, bodyLanguage)}<ArrowRight className="w-4 h-4" aria-hidden="true" /></a>) : null) : <button onClick={onOpenProduct} className={ctaClass}>
+            {document ? (ctaLink ? (ctaLink.pageId ? <InternalLink href={pathFor(ctaLink.pageId, language)} onNavigate={() => ctaLink.pageId === article.productId ? onOpenProduct() : onNavigate(ctaLink.pageId!)} className={ctaClass}>{text(ctaLink.label, bodyLanguage)}<ArrowRight className="w-4 h-4" aria-hidden="true" /></InternalLink> : <a href={businessContactHref(document, ctaLink.href ?? '')} className={ctaClass}>{text(ctaLink.label, bodyLanguage)}<ArrowRight className="w-4 h-4" aria-hidden="true" /></a>) : null) : article.productId ? <InternalLink href={pathFor(article.productId, language)} onNavigate={onOpenProduct} className={ctaClass}>
+              {text(article.cta.button, language)}
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </InternalLink> : <button onClick={onOpenProduct} className={ctaClass}>
               {text(article.cta.button, language)}
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </button>}

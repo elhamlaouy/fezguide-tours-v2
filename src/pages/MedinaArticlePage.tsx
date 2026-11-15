@@ -10,6 +10,8 @@ import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSecti
 interface MedinaArticlePageProps {
   language: Language;
   onBack: () => void;
+  /** Parent page id for the breadcrumb link. */
+  parentPageId?: string;
   onNavigate: (page: PageId) => void;
   onExploreTours: () => void;
 }
@@ -96,7 +98,7 @@ const imageAlts = [
 ];
 const spanishImageAlts = ["Calle de un mercado tradicional de la medina de Fez con banderas marroquíes", "Calle de la zona moderna de Fez", "Plaza pública y vida cotidiana en Fez", "Artesano trabajando en un taller tradicional de Fez", "Artesano dando forma al metal a mano en Fez", "Artesanos trabajando juntos en un taller de Fez", "Artesano local del cuero en la medina", "Puerta histórica a la entrada de la medina de Fez", "Pasaje comercial estrecho dentro de la medina de Fez", "Arquitectura histórica y patio en Fez", "Panadería tradicional y comida local en Fez", "Vista panorámica de los tejados de Fez", "Fuente y luces de la Ciudad Nueva de Fez por la noche"];
 
-export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, onNavigate, onExploreTours }) => {
+export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, onBack, parentPageId, onNavigate, onExploreTours }) => {
   const cms = useFezEditorial('fez-explore-medina', language);
   const source = content[language];
   const copy = { ...source, title: cms.document ? cms.page?.title[cms.locale] ?? '' : source.title, paragraphs: source.paragraphs.map((paragraph, index) => cms.story(index === 0 ? 'introduction' : `story-${index}`, paragraph)) };
@@ -108,6 +110,7 @@ export const MedinaArticlePage: React.FC<MedinaArticlePageProps> = ({ language, 
         parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={copy.title}
         onHome={() => onNavigate('home')}
+        parentPageId={parentPageId}
         onParent={onBack}
       />
 

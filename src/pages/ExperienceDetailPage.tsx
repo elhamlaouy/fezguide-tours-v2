@@ -9,6 +9,7 @@ import { responsiveImageProps } from '../cms/optimized-image';
 import type { Localized } from '../cms/schema';
 import { EXPERIENCE_EXTRAS, ExperienceExtraDetails } from '../data/experienceDetails';
 import { TripadvisorReviewsSection } from '../components/TripadvisorReviewsSection';
+import { InternalLink, usePagePath } from '../components/InternalLink';
 import {
   Clock,
   Users,
@@ -40,6 +41,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
   onBookTour,
 }) => {
   const { tours, siteSettings } = useCms();
+  const pathFor = usePagePath();
   const { document, page, section } = useApprovedContent(sourcePillar.id);
   const contentLanguage = page ? pageLanguage(page, language) : language;
   const read = (value?: Partial<Localized>) => value?.[contentLanguage] ?? localizedText(value, contentLanguage);
@@ -127,34 +129,37 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
       <div className="bg-white border-b border-[#E7E2DA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between text-xs text-[#52605E]">
           <nav className="flex items-center gap-1.5 sm:gap-2 flex-wrap" aria-label={language === 'es' ? "Ruta de navegación" : "Breadcrumb"}>
-            <button
-              onClick={() => onNavigate('home')}
+            <InternalLink
+              href={pathFor('home', language)}
+              onNavigate={() => onNavigate('home')}
               className="hover:text-[#005F5A] transition-colors cursor-pointer"
             >
               {language === 'es' ? "Inicio" : language === 'fr' ? 'Accueil' : 'Home'}
-            </button>
+            </InternalLink>
             <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0]" />
-            <button
-              onClick={() => onNavigate(categoryNav.id)}
+            <InternalLink
+              href={pathFor(categoryNav.id, language)}
+              onNavigate={() => onNavigate(categoryNav.id)}
               className="hover:text-[#005F5A] font-medium transition-colors cursor-pointer"
             >
               {categoryNav.label}
-            </button>
+            </InternalLink>
             <ChevronRight className="w-3.5 h-3.5 text-[#A5B2B0]" />
-            <span className="text-[#1C2524] font-bold truncate max-w-[200px] sm:max-w-md">
+            <span aria-current="page" className="text-[#1C2524] font-bold truncate max-w-[200px] sm:max-w-md">
               {document ? read(header?.title) : pillar.title[language]}
             </span>
           </nav>
 
-          <button
-            onClick={() => onNavigate(categoryNav.id)}
+          <InternalLink
+            href={pathFor(categoryNav.id, language)}
+            onNavigate={() => onNavigate(categoryNav.id)}
             className="flex items-center gap-1 text-[#005F5A] hover:text-[#004743] font-bold text-xs transition-colors cursor-pointer shrink-0"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>
               {language === 'es' ? "Volver a la lista" : language === 'fr' ? 'Retour' : 'Back to list'}
             </span>
-          </button>
+          </InternalLink>
         </div>
       </div>
 
@@ -576,21 +581,23 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                   {document && section('related', 'cardGrid')?.title !== undefined ? read(section('related', 'cardGrid')?.title) : language === 'es' ? "También os puede interesar" : language === 'fr' ? 'Complétez votre séjour à Fès' : 'You Might Also Like'}
                 </h2>
               </div>
-              <button
-                onClick={() => onNavigate(categoryNav.id)}
+              <InternalLink
+                href={pathFor(categoryNav.id, language)}
+                onNavigate={() => onNavigate(categoryNav.id)}
                 className="text-xs font-bold text-[#005F5A] hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <span>{language === 'es' ? "Ver todo" : language === 'fr' ? 'Voir tout' : 'View all'}</span>
                 <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              </InternalLink>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedTours.map((t) => (
-                <div
+                <InternalLink
                   key={t.id}
                   data-product-id={t.id}
-                  onClick={() => onSelectExperience(t)}
+                  href={pathFor(t.id, language)}
+                  onNavigate={() => onSelectExperience(t)}
                   className="bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all group cursor-pointer flex flex-col justify-between"
                 >
                   <div className="relative aspect-16/10 w-full bg-[#1C2524] overflow-hidden">
@@ -623,7 +630,7 @@ export const ExperienceDetailPage: React.FC<ExperienceDetailPageProps> = ({
                       <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
-                </div>
+                </InternalLink>
               ))}
             </div>
           </div></ApprovedSection>

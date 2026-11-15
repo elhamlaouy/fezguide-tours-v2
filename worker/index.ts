@@ -1,6 +1,7 @@
 import { validateCmsDocument } from '../src/cms/schema';
 import { createCmsHandler, isCmsAdminPath, type CmsRoutesEnv } from './cms-routes';
 import { publicSeoResponse } from './seo';
+import { canonicalOrigin } from '../src/cms/seo';
 
 interface KVNamespaceReader {
   get(key: string): Promise<string | null>;
@@ -9,6 +10,8 @@ interface KVNamespaceReader {
 export interface Env extends CmsRoutesEnv {
   CANONICAL_ORIGIN?: string;
   CMS_SLUG_REDIRECTS?: string;
+  /** Comma-separated hostnames that 301 to CANONICAL_ORIGIN (e.g. www). */
+  CMS_REDIRECT_HOSTS?: string;
   CMS_PUBLIC_RATE_LIMIT_REQUIRED?: string;
   /** Comma-separated hostnames that serve only the editor (e.g. app.fezguidetours.com). */
   CMS_EDITOR_HOSTS?: string;
@@ -56,6 +59,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
+    if (env.CMS_REDIRECT_HOSTS) {
+      const hosts = env.CMS_REDIRECT_HOSTS.split(',').map(host => host.trim().toLowerCase()).filter(Boolean);
+      if (hosts.includes(url.hostname.toLowerCase())) {
+        const target = new URL(`${url.pathname}${url.search}`, canonicalOrigin(env.CANONICAL_ORIGIN));
+        return new Response(null, { status: 301, headers: { Location: target.href, 'Cache-Control': 'public, max-age=3600' } });
+      }
+    }
     // Admin is always gated, including when D1 is absent, so writes and /admin
     // cannot fall through to assets. Public D1 routes replace KV only when CMS_DB exists.
     const admin = isCmsAdminPath(path);
