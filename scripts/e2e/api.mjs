@@ -49,6 +49,8 @@ export async function run(ctx) {
     if (r.status === 429) { s.warn('backup export rate-limited (6/hour recovery budget already used); content not verified'); return; }
     // Workers Free allows ~10 ms CPU per request: a full export of a long revision history (each ~650 KB) cannot fit.
     // Cloudflare answers 503 "error code: 1102". Surface it loudly; D1 Time Travel / `wrangler d1 export` are the backups.
+    // The in-Worker export is bounded (24 MiB of history); with retention keeping 100 revisions the history is larger.
+    if (r.status === 413) { s.warn('backup export refused: revision history exceeds the in-Worker backup bound (413) — use D1 Time Travel or `wrangler d1 export` for full backups'); return; }
     if (r.status === 503 && /1102/.test(await r.clone().text())) { s.warn('backup export exceeded the Workers Free CPU limit (error 1102) for this revision history — use D1 Time Travel or `wrangler d1 export` for full backups'); return; }
     assert.equal(r.status, 200);
     const b = await r.json(); writeFileSync(join(ctx.out, 'backup-before-test.json'), JSON.stringify(b));
