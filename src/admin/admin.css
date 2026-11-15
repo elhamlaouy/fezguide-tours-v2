@@ -123,3 +123,5 @@
 .cms-copy-group{margin:1.1rem 0 .2rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--cms-muted)}
 .cms-copy-item{border-top:1px solid #edf1f3;padding-top:.3rem}
 .cms-copy-item>button{font-size:.7rem;margin:.2rem 0 .5rem}
+/* Typing in the editor must not relayout/repaint the preview, and vice versa. */
+.cms-admin-preview,.cms-work-panel{contain:layout paint style}

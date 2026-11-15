@@ -98,20 +98,28 @@ async function waitFor(predicate) {
   }
   throw new Error(`timed out: ${window.document.body.textContent?.slice(0, 400)}`);
 }
+import { reveal as revealControl } from './fixtures/reveal.mjs';
+globalThis.__cmsPreviewDelayMs = 0;
+const reveal = selector => revealControl(window, act, selector);
 async function typeInto(selector, value) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   const proto = el.tagName === 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
   await act(async () => {
     Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, value);
     el.dispatchEvent(new window.Event('input', { bubbles: true }));
   });
+  await settle();
 }
 async function click(selector) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   await act(async () => { el.click(); });
   await settle();
+  await settle();
 }
 async function choose(selector, value) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   const proto = window.HTMLSelectElement.prototype;
   await act(async () => {
@@ -206,7 +214,7 @@ serial('selected-page Pricing edits the canonical product, previews and saves on
  assert.equal(document.querySelector('[name="price-amount"]').value,'170');
  assert.equal(puts().length,0);
  await typeInto('[name="price-amount"]','211');
- assert.equal(document.querySelector('[name="save-draft"]').disabled,false,'a valid price must be saveable without an extra estimate choice');
+ await reveal('[name="save-draft"]');assert.equal(document.querySelector('[name="save-draft"]').disabled,false,'a valid price must be saveable without an extra estimate choice');
  assert.ok(previewQuery('[data-price-product-id="our-fez-tours"]').textContent.includes('211'));
  await click('[name="save-draft"]');
  assert.equal(saved.products.find(p=>p.id==='our-fez-tours').price.amount,211);
@@ -262,7 +270,7 @@ serial('unapplied pricing survives workspace navigation and participates in the 
  await render();await choose('[name="current-page"]','our-fez-tours');await click('[name="edit-page-pricing"]');await typeInto('[name="price-amount"]','219');
  const before=new window.Event('beforeunload',{cancelable:true});window.dispatchEvent(before);assert.equal(before.defaultPrevented,true);
  await click('[data-workspace-tab="sections"]');
- assert.equal(document.querySelector('[name="save-draft"]').disabled,false,'a valid typed price is already in the draft and can be saved');
+ await reveal('[name="save-draft"]');assert.equal(document.querySelector('[name="save-draft"]').disabled,false,'a valid typed price is already in the draft and can be saved');
  await click('[name="edit-page-pricing"]');assert.equal(document.querySelector('[name="price-amount"]').value,'219');
  await click('[name="cancel-price"]');assert.equal(document.querySelector('[name="price-amount"]').value,'170');assert.equal(document.querySelector('[name="save-draft"]').disabled,false);
 });
@@ -272,7 +280,7 @@ serial('global experience forms offer Pricing instead of independent competing p
  await render();await click('[data-workspace-tab="content"]');
  assert.ok(!document.querySelector('[data-path="products.0.practicalInfo.priceEUR"]'),'compatibility price must not have a competing input');
  assert.ok(!document.querySelector('[data-path="products.0.price.amount"]'),'main price must use focused editor');
- assert.ok(document.querySelector('[data-price-readonly="products.0.price"]'));
+ await reveal('[data-price-readonly="products.0.price"]');assert.ok(document.querySelector('[data-price-readonly="products.0.price"]'));
  await click('[data-open-pricing="our-fez-tours"]');assert.ok(document.querySelector('[data-price-editor="our-fez-tours"]'));
  assert.equal(document.querySelectorAll('[data-workspace-tab]').length,7);
 });
@@ -512,8 +520,8 @@ serial('estimate-only changes apply deliberately without an unnecessary main-pri
 serial('unapplied pricing locks document replacement so imports or rollback cannot strand a stale price buffer', async () => {
  const doc=pricingDocument();installFetch(({url})=>url.endsWith('/revisions')?{body:{revisions:[]}}:{body:content(doc)});
  await render();await choose('[name="current-page"]','our-fez-tours');await click('[name="edit-page-pricing"]');await typeInto('[name="price-amount"]','');await click('[data-workspace-tab="history"]');
- assert.equal(document.querySelector('[name="rollback"]').disabled,true);
+ await reveal('[name="rollback"]');assert.equal(document.querySelector('[name="rollback"]').disabled,true);
  assert.equal(document.querySelector('[name="import-draft"]').disabled,true);
  await click('[name="return-to-pricing"]');await click('[name="cancel-price"]');
- assert.equal(document.querySelector('[name="rollback"]').disabled,false);
+ await reveal('[name="rollback"]');assert.equal(document.querySelector('[name="rollback"]').disabled,false);
 });

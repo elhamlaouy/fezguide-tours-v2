@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { blockFields, editorDefault, isAdvancedEditorField, nextEditorId, setEditorPath, type EditorField } from '../cms/editor-controls';
 import type { CmsDocument } from '../cms/schema';
 import type { Language } from '../types';
@@ -39,8 +39,66 @@ export function fieldLabel(path: string, value: unknown, spec: EditorField, docu
   if (/^products\.[^.]+\.pageId$/.test(path)) return editorLabel('shownUnder', language);
   return editorLabel(last, language);
 }
-export function StructuredFields(props: Props): React.JSX.Element {
+/** Performance: only fields whose own value or relevant library slice changed re-render while typing. */
+const DOCUMENT_SLICES = ['media', 'products', 'reviews', 'faqs', 'teamMembers', 'blogPosts', 'editorialEntries', 'navigation'] as const;
+const pagesSignatures = new WeakMap<object, string>();
+function pagesSignature(pages: CmsDocument['pages']): string {
+  let signature = pagesSignatures.get(pages);
+  if (signature === undefined) {
+    signature = pages.map(page => `${page.id}|${page.title?.en}|${page.title?.fr}|${page.title?.es}`).join('\n');
+    pagesSignatures.set(pages, signature);
+  }
+  return signature;
+}
+function sameDocumentForField(a: CmsDocument, b: CmsDocument, path: string): boolean {
+  if (a === b) return true;
+  for (const key of DOCUMENT_SLICES) if (a[key] !== b[key]) return false;
+  if (a.footer.links !== b.footer.links) return false;
+  if (a.pages !== b.pages) {
+    // Page titles/ids feed the page pickers; page bodies only matter to a product's bound prose notice.
+    if (pagesSignature(a.pages) !== pagesSignature(b.pages)) return false;
+    if (path === 'products' || path.startsWith('products.')) return false;
+  }
+  return true;
+}
+function samePropsIgnoringDocument(a: Props, b: Props): boolean {
+  if (!sameDocumentForField(a.document, b.document, a.path)) return false;
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]) as Set<keyof Props>;
+  for (const key of keys) if (key !== 'document' && !Object.is(a[key], b[key])) return false;
+  return true;
+}
+type ChildHandler = (key: string | number, next: unknown) => void;
+/** A per-key onChange that never changes identity, so memoized children are not invalidated by new closures. */
+function useChildChange(handler: React.MutableRefObject<ChildHandler>) {
+  const cache = useRef(new Map<string | number, (next: unknown) => void>());
+  return useCallback((key: string | number) => {
+    let fn = cache.current.get(key);
+    if (!fn) { fn = next => handler.current(key, next); cache.current.set(key, fn); }
+    return fn;
+  }, [handler]);
+}
+const LOCALIZED_LIST_ITEM_SPEC: EditorField = { type: 'array', item: { type: 'text' } };
+/** Large collections render items lazily: a collapsed item mounts none of its fields until it is opened. */
+const LAZY_COLLECTIONS = new Set(['products', 'blogPosts', 'teamMembers', 'faqs', 'media', 'editorialEntries', 'reviews']);
+export const COLLECTION_PAGE_SIZE = 40;
+function LazyItem({ summary, defaultOpen, path, children }: { summary: string; defaultOpen: boolean; path: string; children: React.ReactNode }): React.JSX.Element {
+  const [open, setOpen] = useState(defaultOpen);
+  return <details className="cms-lazy-item" data-lazy="" data-lazy-item={path} open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary>{summary}</summary>{open ? children : null}</details>;
+}
+/** A `<details>` whose body is created only while it is open (and dropped when closed). */
+export function LazyDetails({ summary, defaultOpen = false, children, ...rest }: { summary: React.ReactNode; defaultOpen?: boolean; children: React.ReactNode } & Omit<React.DetailsHTMLAttributes<HTMLDetailsElement>, 'open' | 'onToggle'>): React.JSX.Element {
+  const [open, setOpen] = useState(defaultOpen);
+  return <details {...rest} data-lazy="" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary>{summary}</summary>{open ? children : null}</details>;
+}
+export const StructuredFields = memo(StructuredFieldsView, samePropsIgnoringDocument);
+function StructuredFieldsView(props: Props): React.JSX.Element {
   const { spec, value, path, document, language, locale, onChange } = props;
+  const handler = useRef<ChildHandler>(() => {});
+  const childChange = useChildChange(handler);
+  const [visibleCount, setVisibleCount] = useState(COLLECTION_PAGE_SIZE);
+  const openOnMount = useRef<number | null>(null);
+  const itemCount = Array.isArray(value) ? value.length : 0;
+  useEffect(() => { if (openOnMount.current !== null && itemCount > openOnMount.current) openOnMount.current = null; });
   const label = props.label ?? fieldLabel(path, value, spec, document, language);
   const t = (key: string) => editorLabel(key, language);
   const shellLinkMatch = /^(navigation|footer\.links)\.(\d+)/.exec(path);
@@ -57,7 +115,7 @@ export function StructuredFields(props: Props): React.JSX.Element {
   if (spec.type === 'object') {
     const record = (value ?? {}) as Record<string, unknown>;
     const actual = path.includes('.blocks.') ? blockFields(String(record.type)).fields : spec.fields;
-    const field = ([key, child]: [string, EditorField], inAdvanced: boolean) => <StructuredFields key={key} {...props} label={undefined} inAdvanced={inAdvanced} spec={child} value={record[key]} path={`${path}.${key}`} onChange={next => {
+    handler.current = (key, next) => {
       if (key === 'type' && path.includes('.blocks.')) {
         const nextBlock = editorDefault(blockFields(String(next)), document) as Record<string, unknown>;
         const convertedText = record.text ?? (record.items ? Object.fromEntries(Object.entries(record.items as Record<string, string[]>).map(([locale, items]) => [locale, items.join('\n')])) : undefined);
@@ -67,8 +125,9 @@ export function StructuredFields(props: Props): React.JSX.Element {
         const nextRecord = setEditorPath(record, [key], next) as Record<string, unknown>;
         if (next !== undefined) delete nextRecord[key === 'pageId' ? 'href' : 'pageId'];
         onChange(nextRecord);
-      } else onChange(setEditorPath(record, [key], next));
-    }} />;
+      } else onChange(setEditorPath(record, [String(key)], next));
+    };
+    const field = ([key, child]: [string, EditorField], inAdvanced: boolean) => <StructuredFields key={key} {...props} label={undefined} inAdvanced={inAdvanced} spec={child} value={record[key]} path={`${path}.${key}`} onChange={childChange(key)} />;
     const entries = Object.entries(actual ?? {});
     const advanced = props.inAdvanced ? [] : entries.filter(([key]) => isAdvancedEditorField(`${path}.${key}`));
     const primary = entries.filter(([key]) => !advanced.some(([other]) => other === key));
@@ -85,14 +144,18 @@ export function StructuredFields(props: Props): React.JSX.Element {
     const seoKind = spec.type === 'localized' ? /^pages\.[^.]+\.seo\.(title|description)$/.exec(path)?.[1] as 'title' | 'description' | undefined : undefined;
     const seoLength = seoKind ? String(record[locale] ?? '').trim().length : 0;
     const seoLimit = seoKind === 'title' ? SEO_TITLE_LIMIT : SEO_DESCRIPTION_LIMIT;
+    handler.current = (_key, next) => onChange({ ...record, [locale]: next });
     const seoHint = seoKind ? <p className={seoLength > seoLimit ? 'cms-admin-note cms-seo-counter is-warning' : 'cms-admin-note cms-seo-counter'} data-seo-counter={path} aria-live="polite">{seoLength}/{seoLimit} · {SEO_HINTS[seoKind][seoLength === 0 ? 'empty' : 'help'][language]}</p> : null;
-    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({languageName(locale)}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} label={undefined} spec={{ type: 'array', item: { type: 'text' } }} value={record[locale]} path={`${path}.${locale}`} onChange={next => onChange({ ...record, [locale]: next })} />}{seoHint}{optionalRemove}</div>;
+    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({languageName(locale)}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} label={undefined} spec={LOCALIZED_LIST_ITEM_SPEC} value={record[locale]} path={`${path}.${locale}`} onChange={childChange(locale)} />}{seoHint}{optionalRemove}</div>;
   }
   if (spec.type === 'array') {
     const items = Array.isArray(value) ? value : [];
     const itemSpec = spec.item!;
     const reviewRecords = path === 'reviews';
+    const lazy = LAZY_COLLECTIONS.has(path);
     const create = () => {
+      openOnMount.current = items.length;
+      if (lazy) setVisibleCount(count => Math.max(count, items.length + 1));
       if (props.onAdd?.(path)) return;
       const next = itemSpec.type === 'reference' && itemSpec.collection ? document[itemSpec.collection].find(item => !items.includes(item.id))?.id : editorDefault(itemSpec, document);
       if (next && typeof next === 'object' && !Array.isArray(next) && Object.hasOwn(next, 'id')) {
@@ -102,23 +165,30 @@ export function StructuredFields(props: Props): React.JSX.Element {
       }
       onChange([...items, next]);
     };
+    handler.current = (index, next) => onChange(items.map((item, i) => i === index ? next : item));
     const move = (i: number, delta: number) => { const next = [...items]; const [item] = next.splice(i, 1); next.splice(i + delta, 0, item); onChange(next); };
     const collection = itemSpec.collection;
     const itemLabel = (index: number, item: unknown) => fieldLabel(`${path}.${index}`, item, itemSpec, document, language);
     const limit = path === 'media' ? 1000 : path === 'editorialEntries' ? 150 : 100;
     const canAdd = !reviewRecords && items.length < limit && (!collection || document[collection].some(item => !items.includes(item.id)));
-    return <fieldset data-array={path}><legend>{label}</legend><ol>{items.map((item, index) => <li key={index} data-array-item={`${path}.${index}`} {...(path === 'navigation' ? { 'data-nav-link': item.id, 'data-nav-page': item.pageId ?? '' } : path === 'footer.links' ? { 'data-footer-link': item.id, 'data-link-page': item.pageId ?? '' } : {})}>
-      <StructuredFields {...props} label={undefined} spec={itemSpec} value={item} path={`${path}.${index}`} onChange={next => onChange(items.map((item, i) => i === index ? next : item))} />
-      <div className="cms-array-actions">
-        <button type="button" data-array-move={`${path}.${index}:up`} {...(path === 'footer.links' ? { 'data-footer-move': 'up', 'data-link': item.id } : {})} aria-label={`${t('up')}: ${itemLabel(index, item)}`} disabled={index === 0} onClick={() => move(index, -1)}>{t('up')}</button>
-        <button type="button" data-array-move={`${path}.${index}:down`} {...(path === 'footer.links' ? { 'data-footer-move': 'down', 'data-link': item.id } : {})} aria-label={`${t('down')}: ${itemLabel(index, item)}`} disabled={index === items.length - 1} onClick={() => move(index, 1)}>{t('down')}</button>
-        {!reviewRecords && <button type="button" data-array-remove={`${path}.${index}`} aria-label={`${t('remove')}: ${itemLabel(index, item)}`} onClick={() => {
-          if (!window.confirm(t('confirmRemove'))) return;
-          const next = items.filter((_, i) => i !== index);
-          if (props.onRemove) props.onRemove(`${path}.${index}`, next); else onChange(next);
-        }}>{t('remove')}</button>}
-      </div>
-    </li>)}</ol><button type="button" data-add={path} disabled={!canAdd} onClick={create}>{t('add')}: {label}</button>{optionalRemove}</fieldset>;
+    const shown = lazy ? Math.min(items.length, visibleCount) : items.length;
+    return <fieldset data-array={path}><legend>{label}</legend><ol>{items.slice(0, shown).map((item, index) => {
+      const body = <>
+        <StructuredFields {...props} label={undefined} spec={itemSpec} value={item} path={`${path}.${index}`} onChange={childChange(index)} />
+        <div className="cms-array-actions">
+          <button type="button" data-array-move={`${path}.${index}:up`} {...(path === 'footer.links' ? { 'data-footer-move': 'up', 'data-link': item.id } : {})} aria-label={`${t('up')}: ${itemLabel(index, item)}`} disabled={index === 0} onClick={() => move(index, -1)}>{t('up')}</button>
+          <button type="button" data-array-move={`${path}.${index}:down`} {...(path === 'footer.links' ? { 'data-footer-move': 'down', 'data-link': item.id } : {})} aria-label={`${t('down')}: ${itemLabel(index, item)}`} disabled={index === items.length - 1} onClick={() => move(index, 1)}>{t('down')}</button>
+          {!reviewRecords && <button type="button" data-array-remove={`${path}.${index}`} aria-label={`${t('remove')}: ${itemLabel(index, item)}`} onClick={() => {
+            if (!window.confirm(t('confirmRemove'))) return;
+            const next = items.filter((_, i) => i !== index);
+            if (props.onRemove) props.onRemove(`${path}.${index}`, next); else onChange(next);
+          }}>{t('remove')}</button>}
+        </div>
+      </>;
+      return <li key={lazy && typeof item?.id === 'string' ? item.id : index} data-array-item={`${path}.${index}`} {...(path === 'navigation' ? { 'data-nav-link': item.id, 'data-nav-page': item.pageId ?? '' } : path === 'footer.links' ? { 'data-footer-link': item.id, 'data-link-page': item.pageId ?? '' } : {})}>
+        {lazy ? <LazyItem summary={itemLabel(index, item)} path={`${path}.${index}`} defaultOpen={openOnMount.current === index}>{body}</LazyItem> : body}
+      </li>;
+    })}</ol>{shown < items.length && <button type="button" data-show-more={path} onClick={() => setVisibleCount(count => count + COLLECTION_PAGE_SIZE)}>{t('showMore')} ({items.length - shown})</button>}<button type="button" data-add={path} disabled={!canAdd} onClick={create}>{t('add')}: {label}</button>{optionalRemove}</fieldset>;
   }
   const inputPath = { 'data-path': path };
   if (spec.type === 'boolean') return <div><label className="cms-admin-check"><input {...inputPath} type="checkbox" checked={value === true} onChange={event => onChange(event.target.checked)} />{label}</label>{optionalRemove}</div>;

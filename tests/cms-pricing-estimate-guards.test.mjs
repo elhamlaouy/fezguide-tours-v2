@@ -32,7 +32,8 @@ const q=selector=>document.querySelector(selector);
 async function mount(Component){const host=document.createElement('div');document.body.append(host);root=createRoot(host);await act(async()=>root.render(h(Component)));}
 async function input(name,value){const el=q(`[name="${name}"]`);assert.ok(el,name);await act(async()=>{Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set.call(el,value);el.dispatchEvent(new window.Event('input',{bubbles:true}));});}
 async function choose(name,value){const el=q(`[name="${name}"]`);assert.ok(el,name);await act(async()=>{el.value=value;el.dispatchEvent(new window.Event('change',{bubbles:true}));});}
-async function click(selector){assert.ok(q(selector),selector);await act(async()=>q(selector).click());}
+import { reveal as revealControl } from './fixtures/reveal.mjs';
+async function click(selector){await revealControl(window,act,selector);assert.ok(q(selector),selector);await act(async()=>q(selector).click());}
 async function harness(mutate=()=>{}){
  const doc=createCmsSeed();mutate(doc.products[0]);
  function Harness(){const [current,setCurrent]=React.useState(doc);latest=current;replace=setCurrent;return h(PriceEditor,{document:current,productId:doc.products[0].id,language:'en',onPendingChange:value=>{pending=value;},onChange:(id,change)=>setCurrent(before=>{const next=structuredClone(before),p=next.products.find(p=>p.id===id);p.price=change.price;for(const c of ['EUR','MAD','USD'])delete p.practicalInfo[`price${c}`];Object.entries(change.equivalents).forEach(([c,n])=>p.practicalInfo[`price${c}`]=n);p.practicalInfo[`price${change.price.currency}`]=change.price.amount;return next;})});}
