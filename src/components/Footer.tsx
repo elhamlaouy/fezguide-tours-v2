@@ -8,6 +8,7 @@ import { businessContactHref } from '../cms/business-contact';
 import { useCms } from '../context/CmsContext';
 import type { CmsDocument } from '../cms/schema';
 import { localizedText, uiText } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { footerShellLinks, isShellDocument } from '../cms/public-document';
 import { MapPin, Phone, Mail, Award, ShieldCheck, Heart, Lock } from 'lucide-react';
 
@@ -157,7 +158,7 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors underline decoration-[#00A896]/50"
                 >
-                  {contact.phoneNumber} (WhatsApp 24/7)
+                  {[contact.phoneNumber, copyText(cms, 'ui.footer.whatsappSuffix', language)].filter(Boolean).join(' ')}
                 </a>
 
               </div>

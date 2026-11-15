@@ -13,6 +13,7 @@ import { businessContactHref } from '../src/cms/business-contact';
 import { footerShellLinks, visibleShellLinks } from '../src/cms/public-document';
 import { escapeHtml as esc } from '../src/cms/seo';
 import { UI_TEXT } from '../src/data/shared-ui';
+import { copyText } from '../src/cms/ui-copy';
 
 // Approved hand-built product layouts (src/cms/ApprovedPageRenderer.tsx) omit a few generic labels.
 // The fidelity test renders every seed page through the real client, so drift here is caught.
@@ -153,7 +154,7 @@ function footer(document: CmsDocument, language: Language): string {
   const settings = document.siteSettings;
   const links = footerShellLinks(document, language).map(link => anchor(document, link, language)).filter(Boolean);
   const address = localizedText(settings.address, language) || t.address[language];
-  const phone = `${settings.phoneNumber} (WhatsApp 24/7)`;
+  const phone = [settings.phoneNumber, copyText(document, 'ui.footer.whatsappSuffix', language)].filter(Boolean).join(' ');
   const whatsapp = `https://wa.me/${(settings.whatsappNumber || '212719603009').replace(/[^0-9]/g, '')}`;
   const contact = [tag('li', address), `<li><a href="${esc(whatsapp)}" rel="noopener noreferrer" target="_blank">${esc(phone)}</a></li>`,
     isSafeCmsUrl(`mailto:${settings.email}`) ? `<li><a href="${esc(`mailto:${settings.email}`)}">${esc(settings.email)}</a></li>` : ''].join('');

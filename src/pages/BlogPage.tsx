@@ -3,6 +3,7 @@ import { Language, BlogPost } from '../types';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, ApprovedContentProvider, useApprovedContent } from '../cms/approved-content';
 import { visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { BookOpen, Calendar, Clock, User, ArrowRight, X, ChevronRight } from 'lucide-react';
 
@@ -125,7 +126,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
                     : 'text-[#445250] hover:text-[#005F5A]'
                 }`}
               >
-                {cat === 'all' ? language === 'es' ? 'Todos los artículos' : language === 'fr' ? 'Tous les articles' : 'All Articles' : cat}
+                {cat === 'all' ? copyText(document, 'ui.blog.allArticles', language) : cat}
               </button>
             ))}
           </div>
@@ -186,7 +187,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
                     className="text-xs font-bold text-[#005F5A] hover:text-[#C84B31] flex items-center gap-1 cursor-pointer transition-colors"
                   >
                     <span>
-                      {language === 'es' ? 'Leer más' : language === 'fr' ? 'Lire la suite' : 'Read More'}
+                      {copyText(document, 'ui.blog.readMore', language)}
                     </span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
@@ -254,11 +255,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
               {/* Author & Booking CTA */}
               <div className="pt-6 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="text-xs text-[#728280]">
-                  {language === 'es'
-                    ? 'Escrito con pasión por los guías oficiales de FezGuideTours.'
-                    : language === 'fr'
-                    ? 'Rédigé avec passion par les guides certifiés de FezGuideTours.'
-                    : 'Written with love by the certified guides of FezGuideTours.'}
+                  {copyText(document, 'ui.blog.writtenWith', language)}
                 </div>
                 <button
                   onClick={() => {
@@ -267,11 +264,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
                   }}
                   className="py-2.5 px-5 bg-[#C84B31] hover:bg-[#B33D25] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
                 >
-                  {language === 'es'
-                    ? 'Reserva una visita en Fez'
-                    : language === 'fr'
-                    ? 'Réserver une visite'
-                    : 'Book a Tour in Fez'}
+                  {copyText(document, 'ui.blog.bookTour', language)}
                 </button>
               </div>
             </div>

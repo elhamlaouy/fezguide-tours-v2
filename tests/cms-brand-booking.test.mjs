@@ -175,6 +175,7 @@ test('normal UI-copy keys all correspond to real consumers and seed their effect
  const files=['components/BookingModal.tsx','components/FloatingWhatsAppButton.tsx','components/Navbar.tsx','components/Footer.tsx','cms/SectionRenderer.tsx'];
  const contents=Object.fromEntries(files.map(file=>[file,readFileSync(new URL(`../src/${file}`,import.meta.url),'utf8')]));
  const consumers=new Set();for(const source of Object.values(contents))for(const match of source.matchAll(/uiText\([^,]+,\s*'([^']+)'/g))consumers.add(match[1]);
+ const {readdirSync}=await import('node:fs');for(const dir of ['components','pages'])for(const file of readdirSync(new URL(`../src/${dir}/`,import.meta.url)))if(file.endsWith('.tsx'))for(const match of readFileSync(new URL(`../src/${dir}/${file}`,import.meta.url),'utf8').matchAll(/copyText\([^,]+,\s*'([^']+)'/g))consumers.add(match[1]);
  const bookingKeys=[...contents['components/BookingModal.tsx'].matchAll(/bookingText\('([^']+)'\)/g)].map(match=>match[1]);
  assert.deepEqual([...new Set(bookingKeys)].sort(),Object.keys(BOOKING_COPY).sort());bookingKeys.forEach(key=>consumers.add(`ui.booking.${key}`));
  const floatingKeys=[...contents['components/FloatingWhatsAppButton.tsx'].matchAll(/floatingText\('([^']+)'\)/g)].map(match=>match[1]);

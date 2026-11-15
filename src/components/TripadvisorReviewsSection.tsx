@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Language } from '../types';
 import { useApprovedContent, ApprovedSection } from '../cms/approved-content';
 import { contentLanguage, uiText } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 
 interface TripadvisorReviewsSectionProps {
   language: Language;
@@ -68,7 +69,7 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
   return (
   <ApprovedSection id="reviews"><section id="tripadvisor-reviews" className="space-y-8 overflow-hidden">
     <div className="text-center max-w-xl mx-auto space-y-2 px-4">
-      <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">Tripadvisor · 5.0 / 5</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{copyText(document, 'ui.reviews.ratingBadge', language)}</span>
       <h2 className="text-2xl sm:text-3xl font-extrabold text-[#005F5A] tracking-tight">
         {document ? configured?.title?.[locale] ?? '' : language === 'fr' ? 'De vrais avis de voyageurs à Fès' : language === 'es' ? 'Historias reales de viajeros en Fez' : 'Real stories from travelers in Fez'}
       </h2>
@@ -104,7 +105,7 @@ export const TripadvisorReviewsSection: React.FC<TripadvisorReviewsSectionProps>
 
     <div className="text-center">
       {listing && <a href={listing} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs font-bold text-[#005F5A] hover:text-[#C84B31] transition-colors">
-        {language === 'fr' ? 'Lire les 82 avis sur Tripadvisor' : language === 'es' ? 'Leer las 82 opiniones en Tripadvisor' : 'Read all 82 reviews on Tripadvisor'} <ArrowRight className="w-4 h-4" />
+        {copyText(document, 'ui.reviews.readAll', language)} <ArrowRight className="w-4 h-4" />
       </a>}
     </div>
   </section></ApprovedSection>

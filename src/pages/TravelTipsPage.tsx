@@ -6,6 +6,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { HelpCircle, DollarSign, Compass, ShieldCheck, MapPin, Footprints, AlertCircle, Clock } from 'lucide-react';
@@ -164,7 +165,7 @@ export const TravelTipsPage: React.FC<TravelTipsPageProps> = ({
         {/* Real Visual Tips Gallery */}
         <ApprovedSection id="gallery"><div className="space-y-4 pt-2">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : (language === 'es' ? "Guía visual de Fez" : 'Visual Guide to Fez')}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#005F5A]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : copyText(document, 'ui.gallery.tips.eyebrow', language)}</span>
             <h3 className="text-xl font-bold text-[#1C2524]">{document ? gallery?.title?.[language] ?? '' : (language === 'es' ? "Escenas cotidianas y orientación práctica" : 'Everyday Scenes & Practical Navigation')}</h3>
           </div>
 

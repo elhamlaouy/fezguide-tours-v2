@@ -7,6 +7,7 @@ import { InternalLink, usePagePath } from './InternalLink';
 import { TripadvisorReviewsSection } from './TripadvisorReviewsSection';
 import { useApprovedContent, ApprovedSection, ApprovedSections } from '../cms/approved-content';
 import { contentLanguage, visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { businessContactHref } from '../cms/business-contact';
 
@@ -62,7 +63,7 @@ export const EditorialArticlePage: React.FC<EditorialArticlePageProps> = ({
   const ctaClass = 'w-full sm:w-fit inline-flex items-center justify-center gap-2 rounded-xl bg-[#C84B31] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#B33D25] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-[0.98] transition-colors cursor-pointer';
   const parentLabel = article.parentLabel
     ? text(article.parentLabel, language)
-    : language === 'es' ? 'Visitas gastronómicas' : language === 'fr' ? 'Tours culinaires' : 'Food Tours';
+    : copyText(document, 'ui.editorial.foodToursCrumb', language);
 
   return (
     <div className="bg-[#FAF8F5] pb-20">
