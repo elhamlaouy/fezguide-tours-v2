@@ -4,6 +4,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { InternalLink, usePagePath } from '../components/InternalLink';
@@ -160,7 +161,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
                 : 'text-[#445250] hover:text-[#005F5A]'
             }`}
           >
-            {language === 'es' ? 'Todas las experiencias gastronómicas' : `All Food Experiences (${foodPillars.length})`}
+            {copyText(document, 'ui.filter.allFood', language, { count: foodPillars.length })}
           </button>
           {foodPillars.map((p) => (
             <button
@@ -193,7 +194,7 @@ export const FoodToursPage: React.FC<FoodToursPageProps> = ({
         {/* Real Food Gallery from Google Drive */}
         <ApprovedSection id="gallery"><div className="space-y-6 pt-4">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : (language === 'es' ? "Galería de gastronomía auténtica" : 'Authentic Food Gallery')}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : copyText(document, 'ui.gallery.food.eyebrow', language)}</span>
             <h3 className="text-2xl font-bold text-[#005F5A]">{document ? gallery?.title?.[language] ?? '' : (language === 'es' ? "Sabores auténticos de la vida culinaria de Fez" : 'Real Flavours of Fassi Culinary Life')}</h3>
           </div>
 

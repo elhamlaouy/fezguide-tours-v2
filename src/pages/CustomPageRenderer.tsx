@@ -3,6 +3,7 @@ import { CustomPage, Language, PageId } from '../types';
 import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, useApprovedContent } from '../cms/approved-content';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { InternalLink, usePagePath } from '../components/InternalLink';
 import { Calendar, Check, Compass, MessageCircle, ArrowLeft } from 'lucide-react';
@@ -72,7 +73,7 @@ export const CustomPageRenderer: React.FC<CustomPageRendererProps> = ({
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>
-              {language === 'es' ? 'Volver al inicio' : language === 'fr' ? 'Retour à l’accueil' : 'Back to Home'}
+              {copyText(document, 'ui.page.backHome', language)}
             </span>
           </InternalLink>
         </div>

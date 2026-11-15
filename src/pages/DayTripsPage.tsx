@@ -4,6 +4,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useCms } from '../context/CmsContext';
 import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/approved-content';
 import { visibleLink } from '../cms/render-utils';
+import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
 import { InternalLink, usePagePath } from '../components/InternalLink';
@@ -165,7 +166,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
                 : 'text-[#445250] hover:text-[#005F5A]'
             }`}
           >
-            {language === 'es' ? 'Todas las excursiones de un día' : `All Day Trips (${dayTripPillars.length})`}
+            {copyText(document, 'ui.filter.allDayTrips', language, { count: dayTripPillars.length })}
           </button>
           {dayTripPillars.map((p) => (
             <button
@@ -198,7 +199,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
         {/* Scenic Gallery from Google Drive */}
         <ApprovedSection id="gallery"><div className="space-y-6 pt-4">
           <div className="text-center max-w-xl mx-auto space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : (language === 'es' ? "Paisajes y patrimonio" : 'Scenic Landscapes & Heritage')}</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#C84B31]">{document && gallery?.eyebrow !== undefined ? gallery.eyebrow[language] : copyText(document, 'ui.gallery.dayTrips.eyebrow', language)}</span>
             <h3 className="text-2xl font-bold text-[#005F5A]">{document ? gallery?.title?.[language] ?? '' : (language === 'es' ? "Lo que descubriréis más allá de la ciudad" : 'What You Discover Beyond the City')}</h3>
           </div>
 
@@ -212,14 +213,10 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
               </div>
               <div className="p-4 space-y-1">
                 <h4 className="font-bold text-sm text-[#1C2524]">{image.caption?.[language] ?? ''}</h4>
-                <p className="text-xs text-[#52605E]">{(language === 'es' ? [
-                  'La plaza Uta el-Hammam, la histórica kasbah y Ras El Maa.',
-                  'Antiguos mosaicos romanos, la ciudad de peregrinación de Moulay Idriss y Bab Mansour.',
-                  'Espacios verdes, el león de piedra y paisajes de montaña más allá de Fez.'
-                ] : [
-                  'Plaza Uta el-Hammam, the historic Kasbah, and Ras El Maa.',
-                  'Ancient Roman mosaics, Moulay Idriss pilgrimage town, and Bab Mansour.',
-                  'Green spaces, the stone lion, and mountain landscapes beyond Fez.'
+                <p className="text-xs text-[#52605E]">{([
+                  copyText(document, 'ui.gallery.dayTrips.caption1', language),
+                  copyText(document, 'ui.gallery.dayTrips.caption2', language),
+                  copyText(document, 'ui.gallery.dayTrips.caption3', language),
                 ])[['/images/daytrip-chefchaouen/blue-alley.webp','/images/daytrip-meknes/bab-mansour.webp','/images/daytrip-ifrane/mountain-countryside.webp'].indexOf(imageSource(image.mediaId) ?? '')] ?? ''}</p>
               </div>
             </div>)) : (<>

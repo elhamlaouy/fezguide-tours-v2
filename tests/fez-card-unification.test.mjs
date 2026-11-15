@@ -62,9 +62,12 @@ test('the four Fez guide and tour cards use concise, distinct localized summarie
   }
 });
 
-test('the Fez cards share guide wording while keeping the tour action distinct', () => {
-  assert.match(card, /Read the Guide/);
-  assert.match(card, /View Tour Details/);
+test('the Fez cards share guide wording while keeping the tour action distinct', async () => {
+  const copy = read('src/cms/ui-copy.ts');
+  assert.match(card, /ui\.card\.readGuide/);
+  assert.match(card, /ui\.card\.viewTour/);
+  assert.match(copy, /entry\('ui\.card\.readGuide'.*L\('Read the Guide', 'Lire le guide', 'Leer la guía'\)\)/);
+  assert.match(copy, /entry\('ui\.card\.viewTour'.*L\('View Tour Details'/);
   assert.match(card, /fez-overview-card/);
   assert.match(card, /fez-overview-card-highlights/);
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { SectionPillar, Language } from '../types';
 import { UI_TEXT } from '../data/shared-ui';
 import { useApprovedContent } from '../cms/approved-content';
+import { copyText } from '../cms/ui-copy';
 import { formatPrice } from '../cms/SectionRenderer';
 import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
 import { InternalLink, usePagePath } from './InternalLink';
@@ -34,17 +35,17 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   const getActionConfig = () => {
     const label = isFezOverviewCard
       ? isArticle
-        ? language === 'fr' ? 'Lire le guide' : language === 'es' ? 'Leer la guía' : 'Read the Guide'
-        : language === 'fr' ? 'Voir les détails de la visite' : language === 'es' ? 'Ver los detalles de la visita' : 'View Tour Details'
+        ? copyText(document, 'ui.card.readGuide', language)
+        : copyText(document, 'ui.card.viewTour', language)
       : isArticle
       ? pillar.id === 'fez-history-landmarks'
         ? (language === 'es' ? 'Leer el relato' : language === 'fr' ? 'Lire le récit' : 'Read the Story')
         : pillar.id === 'fez-things-to-do'
-          ? (language === 'es' ? 'Leer la guía' : language === 'fr' ? 'Lire le guide' : 'Read the Guide')
-        : (language === 'es' ? 'Leer el artículo' : language === 'fr' ? 'Lire l’article' : 'Read the Article')
+          ? copyText(document, 'ui.card.readGuide', language)
+        : copyText(document, 'ui.card.readArticle', language)
       : pillar.id === 'our-fez-tours'
       ? (language === 'es' ? 'Ver la visita y el precio' : language === 'fr' ? 'Voir la visite et le prix' : 'View Tour & Pricing')
-      : (language === 'es' ? 'Ver los detalles y el itinerario' : language === 'fr' ? 'Voir détails & programme' : 'View Details & Itinerary');
+      : copyText(document, 'ui.card.viewDetailsItinerary', language);
     return {
       label,
       icon: Compass,
