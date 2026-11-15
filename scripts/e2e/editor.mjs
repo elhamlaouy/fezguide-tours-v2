@@ -130,25 +130,26 @@ export async function run(ctx) {
 
     let hiddenId, hiddenTitle;
     await s.check('live preview: human mouse clicks on preview links produce zero console errors and never leave /admin', async () => {
-      await choosePage('home'); await tab('sections');
-      const consoleErrors = []; const onConsole = m => { if (m.type() === 'error') consoleErrors.push(m.text()); };
-      ed.on('console', onConsole);
-      // Positions are computed from the PARENT document only: no script runs inside the sandboxed frame.
-      const boxes = () => ed.evaluate(() => { const fr = document.querySelector('.cms-admin-preview iframe'); const r = fr.getBoundingClientRect(); const k = r.width / fr.offsetWidth;
-        return [...fr.contentDocument.querySelectorAll('a[data-internal-link]')].map(a => { const q = a.getBoundingClientRect(); return { x: r.left + (q.left + q.width / 2) * k, y: r.top + (q.top + q.height / 2) * k, w: q.width, h: q.height }; })
-          .filter(q => q.w > 0 && q.h > 0 && q.y > r.top + 4 && q.y < Math.min(r.bottom, innerHeight) - 4).slice(0, 4); });
+      // Fresh page: measures the site, not state accumulated by earlier Playwright frame helpers on the main page.
+      const fresh = await bctx.newPage(); const consoleErrors = []; const pageErrors = [];
+      fresh.on('console', m => { if (m.type() === 'error') consoleErrors.push(m.text()); }); fresh.on('pageerror', e => pageErrors.push(e.message)); fresh.on('dialog', d => d.accept());
       try {
+        await fresh.goto(B + '/admin', { waitUntil: 'domcontentloaded' }); await ready(fresh);
+        // Positions are computed from the PARENT document only: no script runs inside the sandboxed frame.
+        const boxes = () => fresh.evaluate(() => { const fr = document.querySelector('.cms-admin-preview iframe'); const r = fr.getBoundingClientRect(); const k = r.width / fr.offsetWidth;
+          return [...fr.contentDocument.querySelectorAll('a[data-internal-link]')].map(a => { const q = a.getBoundingClientRect(); return { x: r.left + (q.left + q.width / 2) * k, y: r.top + (q.top + q.height / 2) * k, w: q.width, h: q.height }; })
+            .filter(q => q.w > 0 && q.h > 0 && q.y > r.top + 4 && q.y < Math.min(r.bottom, innerHeight) - 4).slice(0, 4); });
         for (const mode of ['select', 'browse']) {
-          await ed.click(`button[name=preview-${mode}]`); await ed.waitForTimeout(200);
+          await fresh.click(`button[name=preview-${mode}]`); await fresh.waitForTimeout(200);
           const list = await boxes(); assert.ok(list.length > 0, `no visible preview links in ${mode} mode`);
           for (const q of list) {
-            await ed.mouse.click(q.x, q.y); await ed.waitForTimeout(300);
-            assert.match(new URL(ed.url()).pathname, /^\/admin/, 'editor must stay on /admin');
-            if (mode === 'browse') { await ed.click('button[name=preview-browse]'); await ed.waitForTimeout(150); }
+            await fresh.mouse.click(q.x, q.y); await fresh.waitForTimeout(300);
+            assert.match(new URL(fresh.url()).pathname, /^\/admin/, 'editor must stay on /admin');
+            if (mode === 'browse') { await fresh.click('button[name=preview-browse]'); await fresh.waitForTimeout(150); }
           }
         }
-        assert.deepEqual(consoleErrors, [], 'human clicks in the preview must not log console errors');
-      } finally { ed.off('console', onConsole); await ed.click('button[name=preview-select]').catch(() => {}); }
+        assert.deepEqual([...pageErrors, ...consoleErrors], [], 'human clicks in the preview must not log errors');
+      } finally { await fresh.close(); }
     });
 
     await s.check('change a tour price with the Pricing tool', async () => {
