@@ -48,5 +48,5 @@ NODE_USE_ENV_PROXY=1 NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt NODE_PATH=$(np
 
 ## Known findings (not weakened, reported)
 
-- Clicking a link inside the live-preview iframe logs 6 console errors per click: `Blocked script execution in 'about:blank' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.` The editor suite surfaces this as a `WARN` rather than failing the "no browser errors" check.
+- `Blocked script execution in 'about:blank' … sandboxed` messages are a **test-harness artifact**: Playwright injects helper scripts into frames to drive locators, and the live-preview iframe is deliberately sandboxed without `allow-scripts`. They are ignored by the generic error watcher. A dedicated check clicks preview links with real mouse coordinates (no frame injection) and requires **zero** console errors.
 - Meta descriptions outside 120-160 characters are reported as a `WARN` (SEO content, not a defect).

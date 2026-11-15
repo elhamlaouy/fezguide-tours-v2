@@ -19,8 +19,10 @@ export async function run(ctx) {
   const bctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, extraHTTPHeaders: ctx.accessHeaders() });
   const ed = await bctx.newPage();
   const errors = [];
-  // KNOWN PRODUCT ISSUE (reported, not weakened silently): every click on a link inside the sandboxed preview iframe
-  // logs 6x "Blocked script execution in 'about:blank' ... sandboxed". Counted and surfaced as a WARN instead of failing.
+  // TEST-HARNESS ARTIFACT (investigated): Playwright injects helper scripts into frames to drive locators. The live
+  // preview iframe is deliberately sandboxed without allow-scripts, so those injections log "Blocked script execution in
+  // 'about:blank' ... sandboxed". Real (coordinate) mouse clicks produce zero console errors — asserted strictly by the
+  // dedicated check below — so these specific harness messages are ignored here.
   const sandboxNoise = [];
   const watch = p => {
     p.on('pageerror', e => errors.push(`[${s.current}] ${e.message}`));
@@ -127,6 +129,28 @@ export async function run(ctx) {
     });
 
     let hiddenId, hiddenTitle;
+    await s.check('live preview: human mouse clicks on preview links produce zero console errors and never leave /admin', async () => {
+      await choosePage('home'); await tab('sections');
+      const consoleErrors = []; const onConsole = m => { if (m.type() === 'error') consoleErrors.push(m.text()); };
+      ed.on('console', onConsole);
+      // Positions are computed from the PARENT document only: no script runs inside the sandboxed frame.
+      const boxes = () => ed.evaluate(() => { const fr = document.querySelector('.cms-admin-preview iframe'); const r = fr.getBoundingClientRect(); const k = r.width / fr.offsetWidth;
+        return [...fr.contentDocument.querySelectorAll('a[data-internal-link]')].map(a => { const q = a.getBoundingClientRect(); return { x: r.left + (q.left + q.width / 2) * k, y: r.top + (q.top + q.height / 2) * k, w: q.width, h: q.height }; })
+          .filter(q => q.w > 0 && q.h > 0 && q.y > r.top + 4 && q.y < Math.min(r.bottom, innerHeight) - 4).slice(0, 4); });
+      try {
+        for (const mode of ['select', 'browse']) {
+          await ed.click(`button[name=preview-${mode}]`); await ed.waitForTimeout(200);
+          const list = await boxes(); assert.ok(list.length > 0, `no visible preview links in ${mode} mode`);
+          for (const q of list) {
+            await ed.mouse.click(q.x, q.y); await ed.waitForTimeout(300);
+            assert.match(new URL(ed.url()).pathname, /^\/admin/, 'editor must stay on /admin');
+            if (mode === 'browse') { await ed.click('button[name=preview-browse]'); await ed.waitForTimeout(150); }
+          }
+        }
+        assert.deepEqual(consoleErrors, [], 'human clicks in the preview must not log console errors');
+      } finally { ed.off('console', onConsole); await ed.click('button[name=preview-select]').catch(() => {}); }
+    });
+
     await s.check('change a tour price with the Pricing tool', async () => {
       await choosePage('daytrip-custom'); await ed.click('button[name=edit-page-pricing]'); await ed.waitForSelector('[data-price-editor]');
       await ed.fill('input[name=price-amount]', String(NEW_PRICE));
@@ -271,7 +295,6 @@ export async function run(ctx) {
     });
 
     await s.check('no browser errors anywhere during the test', async () => { assert.deepEqual(errors, []); });
-    if (sandboxNoise.length) s.warn(`product issue: ${sandboxNoise.length} console error(s) "Blocked script execution in 'about:blank' because the document's frame is sandboxed" from the live-preview iframe, raised on clicks of links inside it (step: ${[...new Set(sandboxNoise)].join('; ').slice(0, 120)})`);
   } finally {
     ctx.failShot = null;
     await browser.close().catch(() => {});
