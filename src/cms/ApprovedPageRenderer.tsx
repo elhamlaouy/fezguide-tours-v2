@@ -59,10 +59,10 @@ export function approvedPage(props:PageRendererProps):React.ReactNode | undefine
     case 'travel-tips':return <TravelTipsPage language={language} onExplore={explore} onBookTour={book}/>;
     case 'about':return <AboutPage language={language} onNavigate={onNavigate}/>;
     case 'blog':return <BlogPage language={language} onBookTour={book}/>;
-    case 'our-fez-tours':return <OurFezToursPage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} onNavigate={onNavigate} onBookTour={()=>onBook(page.productId ?? page.id)}/>;
-    case 'fez-explore-medina':return <MedinaArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
-    case 'fez-history-landmarks':return <HistoryCultureArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
-    case 'fez-things-to-do':return <ThingsToDoArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
+    case 'our-fez-tours':return <OurFezToursPage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onBookTour={()=>onBook(page.productId ?? page.id)}/>;
+    case 'fez-explore-medina':return <MedinaArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
+    case 'fez-history-landmarks':return <HistoryCultureArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
+    case 'fez-things-to-do':return <ThingsToDoArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
   }
   if (page.kind==='product' && ['daytrip-chefchaouen','daytrip-meknes','daytrip-ifrane','daytrip-custom','our-food-tours'].includes(page.id)) {
     const product=document.products.find(product=>product.id===page.productId);
@@ -70,7 +70,7 @@ export function approvedPage(props:PageRendererProps):React.ReactNode | undefine
   }
   if (['food-tasting-walk','food-culture-life','food-markets-souks','food-traditional-fassi','tips-getting-around','tips-plan-trip','tips-practical'].includes(page.id)) {
     const article=approvedEditorial(document,page);
-    return <EditorialArticlePage article={article} language={language} onBack={()=>onNavigate(page.parentId ?? 'home')} onNavigate={onNavigate} onOpenProduct={()=>{if(article.productId)onNavigate(article.productId);}}/>;
+    return <EditorialArticlePage article={article} language={language} onBack={()=>onNavigate(page.parentId ?? 'home')} parentPageId={page.parentId ?? 'home'} onNavigate={onNavigate} onOpenProduct={()=>{if(article.productId)onNavigate(article.productId);}}/>;
   }
   const post=document.blogPosts.find(post=>post.id===page.id);
   if (post) return <BlogPage language={language} initialPostId={post.id} onBookTour={book}/>;

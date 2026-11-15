@@ -28,6 +28,7 @@
   color: var(--cms-button-text); cursor: pointer; display: inline-flex; font-size: calc(.875rem * var(--cms-font-scale)); font-weight: 750; justify-content: center;
   min-height: 2.75rem; padding: .8rem 1.4rem; text-decoration: none;
 }
+.cms-page a.cms-card { text-decoration: none; }
 .cms-button:hover { filter: brightness(.94); }
 .cms-button:focus-visible, .cms-card:focus-visible, .cms-review-card:focus-visible { outline: 2px solid var(--cms-primary); outline-offset: 3px; }
 .cms-actions { display: flex; flex-wrap: wrap; gap: .75rem; }

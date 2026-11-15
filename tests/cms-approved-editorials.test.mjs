@@ -159,7 +159,8 @@ test('source fallback and seeded CMS preserve approved baseline DOM geometry and
   }
   const review = baseline('src/components/TripadvisorReviewsSection.tsx');
   modules.set('../components/TripadvisorReviewsSection', review); modules.set('./TripadvisorReviewsSection', review);
-  const shapes = node => [node.tagName, node.className?.baseVal ?? node.className, [...node.children].map(shapes)];
+  // Navigation buttons became real <a href> links (InternalLink) with identical classes and children; compare them as the same shape.
+  const shapes = node => [node.tagName === 'A' && node.hasAttribute('data-internal-link') ? 'BUTTON' : node.tagName, node.className?.baseVal ?? node.className, [...node.children].map(shapes)];
   // Only React-escaped renderToStaticMarkup output enters this detached test DOM.
   const parse = html => { const host = window.document.createElement('div'); host.innerHTML = html; return host; };
   const doc = createCmsSeed();

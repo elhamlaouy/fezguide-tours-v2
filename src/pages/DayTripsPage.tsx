@@ -6,6 +6,7 @@ import { ApprovedSection, ApprovedSections, useApprovedContent } from '../cms/ap
 import { visibleLink } from '../cms/render-utils';
 import { responsiveImageProps } from '../cms/optimized-image';
 import { SectionCard } from '../components/SectionCard';
+import { InternalLink, usePagePath } from '../components/InternalLink';
 import { MapPin, Car, ShieldCheck, Clock, Users, Sparkles, Navigation } from 'lucide-react';
 
 interface DayTripsPageProps {
@@ -20,6 +21,7 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
   onBookTour,
 }) => {
   const { tours } = useCms();
+  const pathFor = usePagePath();
   const { document, section } = useApprovedContent('day-trips');
   const callout = section('custom-itinerary', 'cta');
   const hero = section('hero', 'hero');
@@ -293,10 +295,10 @@ export const DayTripsPage: React.FC<DayTripsPageProps> = ({
               ? 'Indiquez-nous vos envies et nous concevrons un itinéraire confortable au départ de Fès. Véhicule climatisé, horaires flexibles et guide privé.'
               : 'Tell us what you would like to see and we can help you create a comfortable itinerary from Fez. Private vehicle, flexible schedule, and travel with driver only or driver + guide.')}</p>
           <div className="pt-2">
-            {document ? (callout?.links ?? []).filter(link => visibleLink(document, link)).map(link => (<button key={link.id}
-              onClick={() => { if (link.pageId) { const target = tours.find(tour => tour.id === link.pageId); if (target) onExplore(target); } else if (link.href) window.location.assign(link.href); }}
-              className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
-            >{link.label[language]}</button>)) : (<button
+            {document ? (callout?.links ?? []).filter(link => visibleLink(document, link)).map(link => {
+              if (link.pageId) { const target = tours.find(tour => tour.id === link.pageId); return target ? <InternalLink key={link.id} href={pathFor(target.id, language)} onNavigate={() => onExplore(target)} className="inline-block py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer">{link.label[language]}</InternalLink> : null; }
+              return link.href ? <a key={link.id} href={link.href} className="inline-block py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer">{link.label[language]}</a> : null;
+            }) : (<button
               onClick={() => onBookTour('Custom Private Day Trip')}
               className="py-3 px-8 bg-[#005F5A] hover:bg-[#004A46] text-white font-bold text-xs sm:text-sm rounded-xl shadow-xs transition-colors cursor-pointer"
             >

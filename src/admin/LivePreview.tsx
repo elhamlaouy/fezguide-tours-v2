@@ -11,6 +11,7 @@ import { Footer } from '../components/Footer';
 import { CmsPreviewProvider } from '../context/CmsContext';
 import './live-preview.css';
 import { workspaceText } from './editor-workspace';
+import { isPlainLeftClick } from '../components/InternalLink';
 
 export interface LivePreviewProps {
   document: CmsDocument;
@@ -145,8 +146,8 @@ export function LivePreview({ document: model, page, language, selectedSectionId
       button.type = 'button'; button.dataset.editPrice = id;
       button.className = 'cms-preview-price-edit';
       button.textContent = workspaceText('editPrice', language);
-      // Keep shortcuts outside product-card buttons: no nested interactive controls.
-      (element.closest('button') ?? element).after(button);
+      // Keep shortcuts outside product-card buttons/links: no nested interactive controls.
+      (element.closest('button, a') ?? element).after(button);
       buttons.push(button);
     }
     return () => buttons.forEach(button => button.remove());
@@ -186,7 +187,11 @@ export function LivePreview({ document: model, page, language, selectedSectionId
     const section = target.closest?.<HTMLElement>('[data-section-id]');
     if (!selecting) {
       // Browse can exercise internal navigation and accordions, never external destinations.
-      if (target.closest?.('a, form, [data-contact-action], [data-action="book"]')) { event.preventDefault(); event.stopPropagation(); }
+      // A plain click on an internal page link reaches InternalLink, which cancels the browser
+      // navigation itself and calls the in-preview handler; everything else is cancelled here.
+      const anchor = target.closest?.('a');
+      if (anchor?.hasAttribute('data-internal-link') && event.type === 'click' && isPlainLeftClick(event as MouseEvent)) return;
+      if (anchor || target.closest?.('form, [data-contact-action], [data-action="book"]')) { event.preventDefault(); event.stopPropagation(); }
       return;
     }
     event.preventDefault();
@@ -196,6 +201,11 @@ export function LivePreview({ document: model, page, language, selectedSectionId
     if (productId && onEditPrice && model.products.some(product => product.id === productId)) { onEditPrice(productId); return; }
     const id = section?.dataset.sectionId;
     if (id && page.sections.some(item => item.id === id)) onSelectSection(id);
+  };
+
+  // Last line of defence: no anchor activation may ever navigate the preview frame away.
+  const cancelFrameNavigation = (event: MouseEvent) => {
+    if ((event.target as Element).closest?.('a')) event.preventDefault();
   };
 
   const navigate = (pageId: string) => {
@@ -225,7 +235,7 @@ export function LivePreview({ document: model, page, language, selectedSectionId
         </div>
       </div>
     </div>
-    {mount && createPortal(<div data-cms-site data-cms-themed={String(approvedThemeActive(model.theme))} data-button-variant={model.theme.buttonVariant} data-card-variant={model.theme.cardVariant} className={selecting ? 'cms-preview-select' : 'cms-preview-browse'} style={themeStyle(model.theme)} onClickCapture={selectSection} onAuxClickCapture={selectSection} onSubmitCapture={event => event.preventDefault()} onKeyDownCapture={event => {
+    {mount && createPortal(<div data-cms-site data-cms-themed={String(approvedThemeActive(model.theme))} data-button-variant={model.theme.buttonVariant} data-card-variant={model.theme.cardVariant} className={selecting ? 'cms-preview-select' : 'cms-preview-browse'} style={themeStyle(model.theme)} onClickCapture={selectSection} onClick={cancelFrameNavigation} onAuxClickCapture={selectSection} onSubmitCapture={event => event.preventDefault()} onKeyDownCapture={event => {
       if (selecting && (event.key === 'Enter' || event.key === ' ')) selectSection(event);
     }}>
       <CmsPreviewProvider document={model}>

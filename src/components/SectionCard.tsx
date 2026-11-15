@@ -4,6 +4,7 @@ import { UI_TEXT } from '../data/shared-ui';
 import { useApprovedContent } from '../cms/approved-content';
 import { formatPrice } from '../cms/SectionRenderer';
 import { authoredCardImageSizes, responsiveImageProps } from '../cms/optimized-image';
+import { InternalLink, usePagePath } from './InternalLink';
 import { Clock, Calendar, Compass } from 'lucide-react';
 
 interface SectionCardProps {
@@ -22,6 +23,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   imageSizes,
 }) => {
   const { document, page } = useApprovedContent();
+  const href = usePagePath()(pillar.id, language);
   const product = document?.products.find(item => item.id === pillar.id && item.published !== false);
   const livePrice = product?.price ? formatPrice(product, language) : '';
   const isArticle = pillar.kind === 'article' || pillar.id === 'fez-explore-medina' || pillar.id === 'fez-history-landmarks' || pillar.id === 'fez-things-to-do';
@@ -56,11 +58,10 @@ export const SectionCard: React.FC<SectionCardProps> = ({
   return (
     <div className={`group bg-white rounded-2xl border border-[#E7E2DA] overflow-hidden shadow-xs hover:shadow-md transition-all flex flex-col h-full ${isFezOverviewCard ? 'fez-overview-card' : ''}`}>
       {/* Visual Asset Container - Clickable */}
-      <div
-        onClick={() => onExplore(pillar)}
-        className="relative aspect-4/3 w-full bg-[#1C2524] overflow-hidden cursor-pointer"
-        role="button"
-        tabIndex={0}
+      <InternalLink
+        href={href}
+        onNavigate={() => onExplore(pillar)}
+        className="relative aspect-4/3 w-full bg-[#1C2524] overflow-hidden cursor-pointer block"
         aria-label={pillar.title[language]}
       >
         <img
@@ -92,15 +93,14 @@ export const SectionCard: React.FC<SectionCardProps> = ({
             </span>
           ) : null}
         </div>
-      </div>
+      </InternalLink>
 
       {/* Card Body */}
       <div className={`p-5 sm:p-6 flex flex-col flex-1 gap-4 ${isFezOverviewCard ? '' : 'justify-between'}`}>
-        <div
-          onClick={() => onExplore(pillar)}
-          className={`space-y-2 cursor-pointer ${isFezOverviewCard ? 'fez-overview-card-copy' : ''}`}
-          role="button"
-          tabIndex={0}
+        <InternalLink
+          href={href}
+          onNavigate={() => onExplore(pillar)}
+          className={`block space-y-2 cursor-pointer ${isFezOverviewCard ? 'fez-overview-card-copy' : ''}`}
         >
           {/* Subtitle kicker (clean text, no pill) */}
           <span className={`text-[11px] font-bold uppercase tracking-wider text-[#C84B31] block ${isFezOverviewCard ? 'fez-overview-card-eyebrow' : ''}`}>
@@ -114,7 +114,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
           <p className={`text-xs text-[#52605E] leading-relaxed ${isFezOverviewCard ? 'fez-overview-card-description' : 'line-clamp-3'}`}>
             {pillar.shortDescription[language]}
           </p>
-        </div>
+        </InternalLink>
 
         {/* Highlights Preview */}
         {pillar.highlights[language].length > 0 && (
@@ -132,13 +132,14 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 
         {/* Clear Action Button (View More / Explore / Book a Tour) */}
         <div className={`pt-2 ${isFezOverviewCard ? 'mt-auto grid grid-cols-1' : isArticle ? 'grid grid-cols-1' : 'flex items-center gap-2'}`}>
-          <button
-            onClick={actionCfg.action}
+          <InternalLink
+            href={href}
+            onNavigate={actionCfg.action}
             className="w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer bg-[#FAF8F5] hover:bg-[#005F5A] text-[#005F5A] hover:text-white border border-[#DCD5CB]"
           >
             <IconComponent className="w-3.5 h-3.5" />
             <span>{actionCfg.label}</span>
-          </button>
+          </InternalLink>
 
           {/* Secondary Quick Action: If primary is explore, also allow quick booking */}
           {pillar.actionType !== 'book_tour' && !isArticle && (

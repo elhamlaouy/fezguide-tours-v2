@@ -117,10 +117,10 @@ test('section click and keyboard selection use canonical IDs and suppress action
   assert.match(inside('[data-section-id="next"]').dataset.cmsPreviewLabel, /Call to action/);
   assert.equal(inside('[data-section-id="next"]').tabIndex, 0);
   await click(inside('[data-section-id="intro"] p'));
-  await click(inside('[data-section-id="next"] button'));
+  await click(inside('[data-section-id="next"] a[data-page-id="about"]'));
   assert.deepEqual(selections, ['intro', 'next']);
   assert.deepEqual(navigation, []);
-  const link = inside('a');
+  const link = inside('a[href^="https://wa.me"]');
   const event = new window.MouseEvent('click', { bubbles: true, cancelable: true });
   await act(async () => link.dispatchEvent(event));
   assert.equal(event.defaultPrevented, true);
@@ -133,11 +133,11 @@ test('browse mode allows local draft page navigation, but external contact stays
   await render();
   await click(document.querySelector('[name="preview-browse"]'));
   assert.equal(inside('[data-section-id="intro"]').hasAttribute('tabindex'), false);
-  await click(inside('[data-section-id="next"] button'));
+  await click(inside('[data-section-id="next"] a[data-page-id="about"]'));
   assert.deepEqual(navigation, ['about']);
   assert.deepEqual(selections, []);
   const event = new window.MouseEvent('click', { bubbles: true, cancelable: true });
-  await act(async () => inside('a').dispatchEvent(event));
+  await act(async () => inside('a[href^="https://wa.me"]').dispatchEvent(event));
   assert.equal(event.defaultPrevented, true);
   assert.equal(window.location.pathname, '/admin');
 });
@@ -167,4 +167,36 @@ test('French and Spanish controls, hints, frame language and friendly section la
     assert.doesNotMatch(document.querySelector('.cms-live-preview-tools').textContent, /Select sections|Browse preview/);
     assert.doesNotMatch(inside('[data-section-id="next"]').dataset.cmsPreviewLabel, /Call to action/);
   }
+});
+
+test('internal page links are real anchors whose default navigation is cancelled in both modes, so the frame never leaves the preview', async () => {
+  await render();
+  const link = () => inside('[data-section-id="next"] a[data-page-id="about"]');
+  assert.equal(link().getAttribute('href'), '/about');
+  const fire = async (init, target = link()) => {
+    const event = new window.MouseEvent('click', { bubbles: true, cancelable: true, ...init });
+    await act(async () => target.dispatchEvent(event));
+    return event;
+  };
+  // Select mode: selects the section, never navigates.
+  assert.equal((await fire({ button: 0 })).defaultPrevented, true);
+  assert.deepEqual(navigation, []);
+  assert.equal(selections.at(-1), 'next');
+  await click(document.querySelector('[name="preview-browse"]'));
+  // Browse mode: plain click performs the in-preview navigation and cancels the browser's.
+  assert.equal((await fire({ button: 0 })).defaultPrevented, true);
+  assert.deepEqual(navigation, ['about']);
+  // Modified clicks would open a tab or window natively; the preview cancels them and does not navigate.
+  for (const init of [{ ctrlKey: true }, { metaKey: true }, { shiftKey: true }, { altKey: true }]) {
+    assert.equal((await fire(init)).defaultPrevented, true, JSON.stringify(init));
+  }
+  const aux = new window.MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 });
+  await act(async () => link().dispatchEvent(aux));
+  assert.equal(aux.defaultPrevented, true);
+  // Chrome links (logo, navigation, footer) are covered too.
+  for (const anchor of frame().contentDocument.querySelectorAll('a')) {
+    assert.equal((await fire({ button: 0 }, anchor)).defaultPrevented, true, anchor.outerHTML.slice(0, 80));
+  }
+  assert.deepEqual(navigation.filter(id => id === 'about').length >= 1, true);
+  assert.equal(window.location.pathname, '/admin');
 });

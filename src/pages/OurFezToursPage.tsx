@@ -23,6 +23,8 @@ import { PageCrumbBar } from '../components/PageCrumbBar';
 interface OurFezToursPageProps {
   language: Language;
   onBack: () => void;
+  /** Parent page id for the breadcrumb link. */
+  parentPageId?: string;
   onNavigate: (page: PageId) => void;
   onBookTour: (tourTitle: string) => void;
 }
@@ -269,7 +271,7 @@ const itinerary = [
   { title: 'Zaouia of Moulay Idriss II', titleEs: "Zauía de Moulay Idriss II", en: 'A sacred place for locals. Non-Muslims view it from outside.', fr: 'Lieu sacré pour les habitants. Les non-musulmans le voient de l’extérieur.', es: "Un lugar sagrado para los habitantes. Los no musulmanes lo contemplan desde fuera.", time: '5 min', ticket: 'free' },
 ];
 
-export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, onNavigate, onBookTour }) => {
+export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBack, parentPageId, onNavigate, onBookTour }) => {
   const { siteSettings } = useCms();
   const { document, page, section } = useApprovedContent('our-fez-tours');
   const contentLanguage = page ? pageLanguage(page, language) : language;
@@ -333,6 +335,7 @@ export const OurFezToursPage: React.FC<OurFezToursPageProps> = ({ language, onBa
         parentLabel={language === 'es' ? "Fez" : language === 'fr' ? 'Fès' : 'Fez'}
         currentTitle={text.title}
         onHome={() => onNavigate('home')}
+        parentPageId={parentPageId}
         onParent={onBack}
       />
 

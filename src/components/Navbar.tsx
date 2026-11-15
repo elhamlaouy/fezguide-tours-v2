@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Language, PageId } from '../types';
 import { UI_TEXT } from '../data/shared-ui';
 import { Logo } from './Logo';
+import { InternalLink } from './InternalLink';
+import { pagePath } from '../cms/routing';
 import { businessContactHref } from '../cms/business-contact';
 import { useCms } from '../context/CmsContext';
 import type { CmsDocument, CmsLink } from '../cms/schema';
@@ -109,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 max-[360px]:px-3 h-20 flex items-center justify-between gap-4 max-[360px]:gap-2">
         {/* Zone 1: Brand Wordmark / Logo */}
         <div className="flex items-center">
-          <Logo brandName={contact.siteName} onClick={() => handleLinkClick('home')} size="md" className="max-[360px]:gap-1.5" />
+          <Logo brandName={contact.siteName} href={pagePath(cms, 'home', language)} onClick={() => handleLinkClick('home')} size="md" className="max-[360px]:gap-1.5" />
         </div>
 
         {/* Zone 2: Primary Nav Links (Single line, text with hover underlines) */}
@@ -127,16 +129,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               );
             }
             return (
-              <button
+              <InternalLink
                 key={link.key}
-                onClick={() => link.pageId && handleLinkClick(link.pageId)}
+                href={pagePath(cms, link.pageId ?? 'home', language)}
+                onNavigate={() => link.pageId && handleLinkClick(link.pageId)}
                 className={className}
+                aria-current={link.active ? 'page' : undefined}
               >
                 {link.label}
                 {link.active && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#005F5A] rounded-full" />
                 )}
-              </button>
+              </InternalLink>
             );
           })}
         </nav>
@@ -229,13 +233,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 );
               }
               return (
-                <button
+                <InternalLink
                   key={link.key}
-                  onClick={() => link.pageId && handleLinkClick(link.pageId)}
+                  href={pagePath(cms, link.pageId ?? 'home', language)}
+                  onNavigate={() => link.pageId && handleLinkClick(link.pageId)}
                   className={className}
+                  aria-current={link.active ? 'page' : undefined}
                 >
                   {link.label}
-                </button>
+                </InternalLink>
               );
             })}
           </div>
