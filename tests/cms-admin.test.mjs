@@ -35,6 +35,8 @@ assign('getComputedStyle', window.getComputedStyle.bind(window));
 assign('requestAnimationFrame', window.requestAnimationFrame.bind(window));
 assign('cancelAnimationFrame', window.cancelAnimationFrame.bind(window));
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+// Most tests are about behaviour, not timing: settle the live preview immediately. One test restores the real delay.
+globalThis.__cmsPreviewDelayMs = 0;
 
 const React = await import('react');
 const { createRoot } = await import('react-dom/client');
@@ -127,20 +129,49 @@ async function waitFor(predicate) {
   }
   throw new Error(`timed out: ${window.document.body.textContent?.slice(0, 400)}`);
 }
+const WORKSPACE_TABS = ['sections', 'page', 'content', 'photos', 'appearance', 'settings', 'history'];
+// The editor mounts only the open workspace and opens collection items on demand. Go where the control lives.
+async function reveal(selector) {
+  const has = () => window.document.querySelector(selector);
+  if (has()) return;
+  for (const tab of WORKSPACE_TABS) {
+    await act(async () => { window.document.querySelector(`[data-workspace-tab="${tab}"]`)?.click(); });
+    await openLazy(has);
+    if (has()) return;
+    for (const panel of ['photos', 'layout', 'advanced', 'content']) {
+      if (!window.document.querySelector(`[data-section-panel="${panel}"]`)) break;
+      await act(async () => { window.document.querySelector(`[data-section-panel="${panel}"]`).click(); });
+      await openLazy(has);
+      if (has()) return;
+    }
+  }
+}
+async function openLazy(done = () => false) {
+  for (let round = 0; round < 4 && !done(); round += 1) {
+    const closed = [...window.document.querySelectorAll('details[data-lazy]:not([open])')];
+    if (!closed.length) return;
+    await act(async () => { for (const details of closed) { details.open = true; details.dispatchEvent(new window.Event('toggle')); } });
+  }
+}
 async function typeInto(selector, value) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   const proto = el.tagName === 'TEXTAREA' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
   await act(async () => {
     Object.getOwnPropertyDescriptor(proto, 'value').set.call(el, value);
     el.dispatchEvent(new window.Event('input', { bubbles: true }));
   });
+  await settle(); // let the (debounced, deferred) live preview catch up
 }
 async function click(selector) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   await act(async () => { el.click(); });
   await settle();
+  await settle();
 }
 async function choose(selector, value) {
+  await reveal(selector);
   const el = await waitFor(() => window.document.querySelector(selector));
   const proto = window.HTMLSelectElement.prototype;
   await act(async () => {
@@ -218,6 +249,7 @@ serial('editor uploads, selects and privately previews a new photo without impli
   const upload = [...document.querySelectorAll('.cms-admin-upload button')].find(button => button.textContent === 'Upload photo');
   assert.ok(upload);
   await act(async () => upload.click());
+  await reveal(`[data-media-pick="${id}"]`);
   await waitFor(() => document.querySelector(`[data-media-pick="${id}"]`));
   assert.equal(document.querySelector(`[data-media-pick="${id}"]`).getAttribute('aria-pressed'), 'true');
   const preview = previewQuery('img');
@@ -493,6 +525,7 @@ serial('creates an enabled page and adds navigation only when checked', async ()
   await typeInto('input[name="new-page-id"]', 'night-walk');
   await click('input[name="show-in-navigation"]');
   await click('button[name="add-page"]');
+  await reveal('[data-nav-page="night-walk"]');
   await waitFor(() => document.querySelector('[data-nav-page="night-walk"]'));
   assert.equal(document.querySelector('[data-nav-page="summer-walk"]'), null);
   await click('button[name="save-draft"]');
@@ -525,6 +558,7 @@ serial('media picker sets a library id and rejects an unknown id before save', a
     throw new Error(`unexpected ${method} ${url}`);
   });
   await render();
+  await reveal('[data-media-pick="gate"]');
   await waitFor(() => document.querySelector('[data-media-pick="gate"]'));
   assert.ok(document.querySelector('.cms-admin-upload input[type="file"]'));
   await click('button[data-media-pick="gate"]');
@@ -558,9 +592,13 @@ serial('media picker sets a library id and rejects an unknown id before save', a
 serial('full structured controls expose SEO, globals and numeric theme fields', async () => {
   installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(cmsDoc()) });
   await render();
+  await reveal('[data-path="pages.home.seo.description.en"]');
   assert.ok(document.querySelector('[data-path="pages.home.seo.description.en"]'), 'SEO control');
+  await reveal('[data-path="theme.fontScale"]');
   assert.ok(document.querySelector('[data-path="theme.fontScale"]'), 'numeric theme control');
+  await reveal('[data-path="siteSettings.email"]');
   assert.ok(document.querySelector('[data-path="siteSettings.email"]'), 'contact control');
+  await reveal('[data-add="faqs"]');
   assert.ok(document.querySelector('[data-add="faqs"]'), 'entity creation control');
 });
 
@@ -603,19 +641,26 @@ serial('language tabs, navigation labels, and footer order stay on existing page
     throw new Error(`unexpected ${method} ${url}`);
   });
   await render();
+  await reveal('textarea[data-path="pages.home.title.en"]');
   await waitFor(() => document.querySelector('textarea[data-path="pages.home.title.en"]'));
   await click('button[data-locale="fr"]');
   assert.equal(document.querySelector('textarea[data-path="pages.home.title.en"]'), null);
   await typeInto('textarea[data-path="pages.home.title.fr"]', 'Titre');
   await typeInto('input[data-nav-label="nav-home"]', 'Accueil');
   await click('button[data-locale="en"]');
+  await reveal('textarea[data-path="pages.home.title.en"]');
   assert.equal(document.querySelector('textarea[data-path="pages.home.title.en"]').value, 'Home title');
+  await reveal('input[data-nav-label="nav-home"]');
   assert.equal(document.querySelector('input[data-nav-label="nav-home"]').value, 'Home');
   await click('button[data-locale="es"]');
+  await reveal('textarea[data-path="pages.home.title.es"]');
   assert.equal(document.querySelector('textarea[data-path="pages.home.title.es"]').value, 'Home title');
   await click('button[data-locale="fr"]');
+  await reveal('textarea[data-path="pages.home.title.fr"]');
   assert.equal(document.querySelector('textarea[data-path="pages.home.title.fr"]').value, 'Titre');
+  await reveal('input[data-nav-label="nav-home"]');
   assert.equal(document.querySelector('input[data-nav-label="nav-home"]').value, 'Accueil');
+  await reveal('select[data-footer-page="foot-a"]');
   const options = [...document.querySelectorAll('select[data-footer-page="foot-a"] option')].map(option => option.value);
   assert.deepEqual(options, ['home']);
   await choose('select[data-footer-page="foot-a"]', 'missing-page');
@@ -648,6 +693,7 @@ serial('Spanish editor controls and locale tabs edit Spanish without changing EN
   assert.equal(editor.dir, 'ltr');
   assert.match(editor.textContent, /Editor de contenido/);
   assert.equal(document.querySelector('button[name="save-draft"]').textContent, 'Guardar borrador');
+  await reveal('input[name="theme-color-primary"]');
   assert.equal(document.querySelector('input[name="theme-color-primary"]').parentElement.textContent.trim(), 'principal');
   assert.deepEqual([...document.querySelectorAll('[data-locale]')].map(tab => tab.dataset.locale), ['en', 'fr', 'es']);
   assert.deepEqual([...document.querySelectorAll('[data-locale]')].map(tab => tab.textContent), ['English', 'Français', 'Español']);
@@ -708,8 +754,11 @@ serial('structured global entities SEO theme arrays and UI copy survive draft sa
   assert.equal(saved.uiCopy['ui.common.bookNow'].en, 'Reserve with our guide');
   assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
   await render();
+  await reveal('[data-path="pages.home.seo.description.en"]');
   assert.equal(document.querySelector('[data-path="pages.home.seo.description.en"]').value, 'Edited search description');
+  await reveal('[data-path="faqs.0.answer.en"]');
   assert.equal(document.querySelector('[data-path="faqs.0.answer.en"]').value, 'New owner answer.');
+  await reveal('[data-path="theme.fontScale"]');
   assert.equal(document.querySelector('[data-path="theme.fontScale"]').value, '1.2');
 });
 
@@ -741,6 +790,7 @@ serial('entity creation keeps product graph valid and referenced page removal hi
   let saved;
   installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, { body: { version: 3, draftRevision: 3, published: false } }) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(cmsDoc()) });
   await render();
+  await reveal('[name="remove-page"]');
   assert.equal(document.querySelector('[name="remove-page"]').disabled, true);
   await click('[data-add="products"]');
   await click('[data-open-pricing="experience"]');
@@ -787,6 +837,7 @@ serial('invalid and oversized JSON imports never save or publish; valid import i
   assert.equal(puts().length, 0);
   const imported = structuredClone(doc); imported.pages[0].title.en = 'Imported title';
   await importFile(fakeFile(JSON.stringify(imported)));
+  await reveal('[data-path="pages.home.title.en"]');
   assert.equal(document.querySelector('[data-path="pages.home.title.en"]').value, 'Imported title');
   assert.match(document.querySelector('.cms-admin-bar').textContent, /Unsaved changes/);
   assert.equal(puts().length, 0); assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
@@ -812,6 +863,7 @@ serial('every section family mounts approved variants and structured array creat
   for (const section of doc.pages[0].sections) {
     await click(`[data-section-tab="${section.id}"]`);
     const prefix = `pages.home.sections.${section.id}`;
+    await reveal(`[data-path="${prefix}.variant"]`);
     assert.deepEqual([...document.querySelectorAll(`[data-path="${prefix}.variant"] option`)].map(o => o.value), SECTION_VARIANTS[section.type]);
     const variant = SECTION_VARIANTS[section.type].find(v => v !== section.variant && v !== 'booking') ?? section.variant;
     await choose(`[data-path="${prefix}.variant"]`, variant);
@@ -829,7 +881,9 @@ serial('every section family mounts approved variants and structured array creat
   }
   await click('[name="save-draft"]');
   assert.equal(validateCmsDocument(saved).valid, true, validateCmsDocument(saved).errors?.join('\n'));
+  await reveal('[data-path="reviews.0.quote"]');
   assert.equal(document.querySelector('[data-path="reviews.0.quote"]').readOnly, true);
+  await reveal('[data-add="reviews"]');
   assert.equal(document.querySelector('[data-add="reviews"]').disabled, true);
   assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
 });
@@ -877,6 +931,7 @@ serial('export uses the actual draft Blob and pending import disables save publi
     Object.defineProperty(input, 'files', { configurable: true, value: [{ size: 2, text: () => new Promise(resolve => { release = resolve; }) }] });
     input.dispatchEvent(new window.Event('change', { bubbles: true }));
   });
+  await reveal('[name="rollback"]');
   for (const name of ['save-draft', 'publish', 'rollback']) assert.equal(document.querySelector(`[name="${name}"]`).disabled, true, name);
   await act(async () => release('{}')); await settle();
   assert.equal(puts().length, 0); assert.equal(calls.some(call => call.url.endsWith('/publish')), false);
@@ -887,6 +942,7 @@ serial('French structured controls and validation keep diagnostic paths with loc
   installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(cmsDoc()) });
   await render('fr');
   assert.equal(document.querySelector('[name="save-draft"]').textContent, 'Enregistrer le brouillon');
+  await reveal('[data-path="theme.containerWidth"]');
   assert.match(document.querySelector('[data-path="theme.containerWidth"]').parentElement.textContent, /Largeur du contenu/);
   await typeInto('[data-path="theme.fontScale"]', '2');
   await click('[name="save-draft"]');
@@ -899,10 +955,11 @@ serial('focused workspaces separate page settings, photos and advanced controls 
   installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(cmsDoc()) });
   await render();
   assert.equal(document.querySelector('.cms-admin').dataset.workspace, 'sections');
-  assert.equal(document.querySelector('.cms-page-settings').hidden, true);
+  // Only the open workspace is mounted; the others cost nothing until chosen.
+  assert.equal(document.querySelector('.cms-page-settings'), null);
   assert.equal(document.querySelector('.cms-photo-workspace').hidden, true);
   assert.equal(document.querySelector('.cms-section-outline').open, false);
-  assert.equal(document.querySelector('[data-section-fields="advanced"]').hidden, true);
+  assert.equal(document.querySelector('[data-section-fields="advanced"]'), null);
   assert.equal(document.querySelector('[name="current-section"]').value, 'intro');
   for (const key of ['page','content','photos','appearance','settings','history','sections']) {
     await click(`[data-workspace-tab="${key}"]`);
@@ -910,8 +967,8 @@ serial('focused workspaces separate page settings, photos and advanced controls 
     assert.equal(document.querySelector(`[data-workspace-tab="${key}"]`).getAttribute('aria-pressed'), 'true');
   }
   await click('[data-section-panel="layout"]');
-  assert.equal(document.querySelector('[data-section-fields="layout"]').hidden, false);
-  assert.equal(document.querySelector('[data-section-fields="content"]').hidden, true);
+  assert.ok(document.querySelector('[data-section-fields="layout"]'));
+  assert.equal(document.querySelector('[data-section-fields="content"]'), null);
   assert.equal(puts().length, 0);
   assert.equal(calls.some(call => call.method === 'POST'), false);
 });
@@ -981,6 +1038,7 @@ serial('custom product prose visibly warns that its independently formatted page
   assert.equal(validateCmsDocument(doc).valid,true,'focused fixture retains the real validated relationship');
   installFetch(({url})=>url.endsWith('/revisions')?{body:{revisions:[]}}:{body:content(doc)});
   await render();await click('[data-workspace-tab="content"]');
+  await reveal(`[data-projection-notice="products.${index}.fullDescription"]`);
   const notice=document.querySelector(`[data-projection-notice="products.${index}.fullDescription"]`);
   assert.ok(notice);assert.match(notice.textContent,/custom formatting|Edit that page section directly/);
   assert.equal(puts().length,0);
@@ -999,6 +1057,7 @@ serial('pending media upload blocks save publish rollback without a document wri
   });
   const upload = [...document.querySelectorAll('.cms-admin-upload button')].find(button => button.textContent === 'Upload photo');
   await act(async () => upload.click()); await settle();
+  await reveal('[name="rollback"]');
   for (const name of ['save-draft', 'publish', 'rollback']) assert.equal(document.querySelector(`[name="${name}"]`).disabled, true, name);
   assert.equal(puts().length, 0);
   await act(async () => release({ status: 201, body: { media: { id, src: `/media/${id}.png`, alt: text('Image'), width: 1, height: 1, source: 'cms-upload' }, previewSrc: `/api/admin/media/${id}.png` } }));
@@ -1059,6 +1118,7 @@ serial('Site settings no longer offers fallback-only hero fields, explains where
   await render();
   for (const field of ['heroTitle', 'heroTagline', 'heroSubtitle']) assert.equal(document.querySelector(`[data-path^="siteSettings.${field}"]`), null, field);
   assert.equal(document.querySelector('.cms-legacy-settings'), null);
+  await reveal('[data-hero-hint]');
   assert.match(document.querySelector('[data-hero-hint]').textContent, /^To change the homepage headline, open Page sections → Home → the first section\.$/);
   // heroImage still feeds Google structured data, so it stays editable (under Advanced).
   assert.ok(document.querySelector('.cms-advanced [data-path="siteSettings.heroImage"], .cms-advanced [data-enable="siteSettings.heroImage"]'));
@@ -1088,6 +1148,7 @@ serial('technical fields live in a collapsed Advanced disclosure but remain edit
   await click('[data-enable="pages.about.seo.canonical"]');
   await typeInto('[data-path="pages.about.seo.canonical"]', '/about-us');
   // Products: id/kind/action/gallery URLs are secondary, category is visible as "Shown under".
+  await reveal('[data-advanced="products.0"]');
   const product = document.querySelector('[data-array-item="products.0"]');
   const productAdvanced = product.querySelector('[data-advanced="products.0"]');
   assert.equal(productAdvanced.open, false);
@@ -1109,16 +1170,17 @@ serial('collections use plain names, editorial entries are hidden, and lists are
   const doc = await seedDocument();
   installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
   await render();
+  await click('[data-workspace-tab="content"]');
+  await openLazy();
   const summaries = [...document.querySelectorAll('.cms-global-fields > details > summary')].map(summary => summary.textContent);
   assert.ok(summaries.includes('Tours & experiences'));
   assert.ok(summaries.includes('Tripadvisor reviews (show/hide and order)'));
   assert.ok(!summaries.some(label => /Editorial entries|^Products$|attribution locked/.test(label)), summaries.join('|'));
   assert.equal(document.querySelector('[data-array="editorialEntries"]'), null);
-  const legend = path => document.querySelector(`[data-array-item="${path}"] > [data-object="${path}"] > legend`)?.textContent;
+  const legend = path => document.querySelector(`[data-array-item="${path}"] [data-object="${path}"] > legend`)?.textContent;
   assert.equal(legend('products.0'), `1. ${doc.products[0].title.en}`);
   assert.equal(legend('products.1'), `2. ${doc.products[1].title.en}`);
   assert.equal(legend('teamMembers.0'), `1. ${doc.teamMembers[0].name}`);
-  assert.equal(legend('navigation.0'), `1. ${doc.navigation[0].label.en}`);
   assert.match(document.querySelector('[data-array-move="products.0:down"]').getAttribute('aria-label'), new RegExp(`Move down: 1\\. ${doc.products[0].title.en.slice(0, 20)}`));
   const text0 = [...document.querySelectorAll('[data-array-item="products.0"] label')].filter(label => !label.closest('.cms-advanced')).map(label => label.textContent).join('\n');
   assert.match(text0, /Photo description \(for Google & screen readers\)/);
@@ -1128,6 +1190,9 @@ serial('collections use plain names, editorial entries are hidden, and lists are
   const blogText = [...blog.querySelectorAll('label')].map(label => label.textContent).join('\n');
   assert.match(blogText, /Short summary/); assert.match(blogText, /Article text/); assert.match(blogText, /Show on website/);
   assert.match(blogText, /Web address \(after fezguidetours\.com\/\)/);
+  await click('[data-workspace-tab="settings"]');
+  await openLazy();
+  assert.equal(legend('navigation.0'), `1. ${doc.navigation[0].label.en}`);
 });
 
 serial('header shows a friendly publish status with revision numbers as a small secondary detail', async () => {
@@ -1154,6 +1219,7 @@ serial('interface text editor lists every supported key with a human label and d
   let saved;
   installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, saveOk({ version: 3, draftRevision: 3, published: false })) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
   await render();
+  await reveal('[data-copy-key]');
   const entries = uiCopyRegistry(SUPPORTED_UI_COPY, 'en');
   assert.ok(entries.length > 0);
   for (const entry of entries) {
@@ -1210,4 +1276,96 @@ serial('a version conflict explains itself in plain language and the conflict ba
   const banner = await waitFor(() => document.querySelector('[data-admin-conflict]'));
   assert.match(banner.textContent, /Someone else saved at the same time \(edit conflict\)/);
   assert.equal(banner.dataset.code, 'version_conflict');
+});
+
+// ---- Phone performance: mount only what is on screen -------------------------------------------------------------
+serial('only the open workspace is mounted; switching tabs mounts the next one and drops the last', async () => {
+  const doc = cmsDoc();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  const mounted = () => ({
+    sections: !!document.querySelector('.cms-section-workspace'),
+    page: !!document.querySelector('.cms-page-settings'),
+    appearance: !!document.querySelector('[name="theme-font"]'),
+    settings: !!document.querySelector('[data-ui-copy]'),
+    history: !!document.querySelector('[name="rollback"]'),
+    content: [...document.querySelectorAll('.cms-global-fields > details > summary')].some(summary => summary.textContent === 'FAQ'),
+  });
+  const none = { sections: false, page: false, appearance: false, settings: false, history: false, content: false };
+  assert.deepEqual(mounted(), { ...none, sections: true });
+  for (const key of ['page', 'appearance', 'settings', 'history', 'content']) {
+    await click(`[data-workspace-tab="${key}"]`);
+    assert.deepEqual(mounted(), { ...none, [key]: true }, key);
+  }
+  // Only the chosen section panel exists, not all four.
+  await click('[data-workspace-tab="sections"]');
+  assert.deepEqual([...document.querySelectorAll('[data-section-fields]')].map(el => el.dataset.sectionFields), ['content']);
+});
+
+serial('collection items stay collapsed (children not mounted) until opened, and a new item opens itself', async () => {
+  const doc = cmsDoc();
+  doc.faqs = [1, 2, 3].map(n => ({ id: `faq-${n}`, category: 'general', question: text(`Question ${n}`), answer: text(`Answer ${n}`) }));
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-workspace-tab="content"]');
+  const faqsDetails = [...document.querySelectorAll('.cms-global-fields > details')].find(details => details.querySelector('summary').textContent === 'FAQ');
+  await act(async () => { faqsDetails.open = true; faqsDetails.dispatchEvent(new window.Event('toggle')); });
+  const faqsRoot = await waitFor(() => document.querySelector('[data-array="faqs"]'));
+  assert.equal(faqsRoot.querySelectorAll('[data-array-item]').length, 3);
+  assert.equal(faqsRoot.querySelectorAll('input, textarea, select').length, 0, 'collapsed items mount no fields');
+  assert.match(faqsRoot.querySelector('[data-lazy-item="faqs.1"] summary').textContent, /^2\. Question 2/);
+  const second = faqsRoot.querySelector('[data-lazy-item="faqs.1"]');
+  await act(async () => { second.open = true; second.dispatchEvent(new window.Event('toggle')); });
+  assert.equal(document.querySelector('[data-path="faqs.1.question.en"]').value, 'Question 2');
+  assert.equal(document.querySelector('[data-path="faqs.0.question.en"]'), null, 'siblings remain unmounted');
+  await act(async () => { second.open = false; second.dispatchEvent(new window.Event('toggle')); });
+  assert.equal(document.querySelector('[data-path="faqs.1.question.en"]'), null);
+  await click('[data-add="faqs"]');
+  assert.ok(document.querySelector('[data-lazy-item="faqs.3"][open]'), 'a freshly added item is open for editing');
+  assert.ok(document.querySelector('[data-path="faqs.3.question.en"]'));
+});
+
+serial('the live preview trails typing by a short pause but then shows the edit', async () => {
+  const doc = cmsDoc();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  const saved = globalThis.__cmsPreviewDelayMs;
+  delete globalThis.__cmsPreviewDelayMs;
+  try {
+    await render();
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 150)); }); // first preview paints right after the editor
+    await typeInto('textarea[data-path="pages.home.sections.intro.blocks.0.text.en"]', 'Typed once');
+    assert.equal(document.querySelector('textarea[data-path="pages.home.sections.intro.blocks.0.text.en"]').value, 'Typed once', 'the field itself updates at once');
+    assert.doesNotMatch(previewQuery().textContent, /Typed once/, 'preview waits for typing to pause');
+    await act(async () => { await new Promise(resolve => setTimeout(resolve, 400)); });
+    await settle();
+    assert.match(previewQuery().textContent, /Typed once/);
+  } finally { globalThis.__cmsPreviewDelayMs = saved; }
+});
+
+serial('SEO length counters update live while typing and edits survive tab and page switches', async () => {
+  window.confirm = () => true;
+  const doc = cmsDoc();
+  let savedDoc;
+  installFetch(({ url, method, body }) => method === 'PUT' ? (savedDoc = body.document, saveOk({ version: 3, draftRevision: 3, published: false })) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-workspace-tab="page"]');
+  await typeInto('[data-path="pages.home.seo.title.en"]', 'Hello');
+  assert.match(document.querySelector('[data-seo-counter="pages.home.seo.title"]').textContent, /^5\/42/);
+  await typeInto('[data-path="pages.home.seo.title.en"]', 'Hello there');
+  assert.match(document.querySelector('[data-seo-counter="pages.home.seo.title"]').textContent, /^11\/42/);
+  await typeInto('[data-path="pages.home.title.en"]', 'Kept title');
+  // Away to another workspace and a freshly added page, then back: nothing is lost.
+  await click('[data-workspace-tab="page"]');
+  await typeInto('input[name="new-page-id"]', 'second-page');
+  await click('button[name="add-page"]');
+  await choose('select[name="current-page"]', 'home');
+  await click('[data-workspace-tab="page"]');
+  assert.equal(document.querySelector('[data-path="pages.home.title.en"]').value, 'Kept title');
+  assert.equal(document.querySelector('[data-path="pages.home.seo.title.en"]').value, 'Hello there');
+  assert.match(document.querySelector('.cms-draft-state').textContent, /Unsaved/);
+  await click('button[name="save-draft"]');
+  assert.equal(savedDoc.pages[0].title.en, 'Kept title');
+  assert.equal(savedDoc.pages[0].seo.title.en, 'Hello there');
+  assert.ok(savedDoc.pages.some(page => page.id === 'second-page'));
+  assert.match(document.querySelector('.cms-draft-state').textContent, /saved/i);
 });
