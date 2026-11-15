@@ -117,3 +117,27 @@ test('a product description authored through the document editor reaches its pub
   assert.equal(render(doc, 'our-fez-tours', 'fr'), render(before, 'our-fez-tours', 'fr'));
   assert.deepEqual(doc.legacy, before.legacy, 'archive is never rewritten by canonical edits');
 });
+
+test('a blog post "published" switch publishes and unpublishes its detail page (new and existing posts)', async () => {
+  const { syncEntityEdits } = await import('../src/cms/entity-projection.ts');
+  const { isPublicPage } = await import('../src/cms/render-utils.ts');
+  const { validateCmsDocument } = await import('../src/cms/schema.ts');
+  const seed = createCmsSeed();
+  // A post created unpublished with its disabled detail page (what the editor's Add button produces).
+  const id = 'blog-post';
+  const title = { en: 'New story', fr: 'Nouvelle histoire', es: 'Nueva historia' };
+  const draft = structuredClone(seed);
+  draft.blogPosts.push({ ...structuredClone(seed.blogPosts[0]), id, slug: id, title, published: false });
+  draft.pages.push({ id, slug: id, kind: 'editorial', enabled: false, title, parentId: 'blog', seo: { title, description: { en: '', fr: '', es: '' } }, sections: [{ id: 'content', type: 'richText', enabled: true, variant: 'story', blocks: [{ type: 'paragraph', text: { en: 'Body', fr: 'Corps', es: 'Cuerpo' } }] }], source: 'cms-blog' });
+  const page = doc => doc.pages.find(p => p.id === id);
+  assert.equal(isPublicPage(draft, page(draft)), false);
+  const published = syncEntityEdits(draft, { ...draft, blogPosts: draft.blogPosts.map(p => p.id === id ? { ...p, published: true } : p) });
+  assert.equal(page(published).enabled, true); assert.equal(isPublicPage(published, page(published)), true, 'ticking published makes the post public');
+  assert.ok(validateCmsDocument(published).valid);
+  const hidden = syncEntityEdits(published, { ...published, blogPosts: published.blogPosts.map(p => p.id === id ? { ...p, published: false } : p) });
+  assert.equal(page(hidden).enabled, false, 'unticking hides the detail page again');
+  // Existing seeded posts follow the same rule.
+  const existing = seed.blogPosts[0].id;
+  const off = syncEntityEdits(seed, { ...seed, blogPosts: seed.blogPosts.map(p => p.id === existing ? { ...p, published: false } : p) });
+  assert.equal(off.pages.find(p => p.id === existing).enabled, false);
+});

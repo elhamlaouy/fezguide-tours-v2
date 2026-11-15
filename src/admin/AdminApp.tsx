@@ -585,7 +585,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     if (!draft || !['products', 'editorialEntries', 'blogPosts', 'teamMembers', 'faqs', 'media'].includes(path)) return false;
     const key = path as 'products' | 'editorialEntries' | 'blogPosts' | 'teamMembers' | 'faqs' | 'media';
     const items = draft[key];
-    const id = nextEditorId([...draft.pages, ...items], path === 'products' ? 'experience' : path === 'editorialEntries' ? 'article' : 'item');
+    const id = nextEditorId([...draft.pages, ...items], path === 'products' ? 'experience' : path === 'editorialEntries' ? 'article' : path === 'blogPosts' ? 'blog-post' : 'item');
     const item = editorDefault(GLOBAL_FIELDS[key].item!, draft) as Record<string, unknown>;
     item.id = id;
     if ('title' in item) item.title = { en: id, fr: id, es: id };

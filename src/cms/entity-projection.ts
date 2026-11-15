@@ -181,6 +181,8 @@ export function syncEntityEdits(before: CmsDocument, after: CmsDocument, options
       let next = page;
       if (changed(previous?.title, post.title)) next = { ...next, title: copy(next.title, previous?.title, post.title, empty()) };
       if (changed(previous?.slug, post.slug)) next = { ...next, slug: post.slug };
+      // The post's "published" switch is what owners use: its detail page follows it (on publish and unpublish).
+      if (previous && changed(previous.published, post.published)) next = { ...next, enabled: post.published === true };
       if (changed(previous?.content, post.content)) next = syncParagraphs(next, 'content', previous?.content, post.content);
       if (changed(previous?.excerpt, post.excerpt)) next = syncParagraphs(next, 'excerpt', previous?.excerpt, post.excerpt);
       if (changed(previous?.coverImage ? replace(previous.coverImage) : undefined, post.coverImage) || changed(previous?.title, post.title)) {

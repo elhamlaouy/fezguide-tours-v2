@@ -216,6 +216,27 @@ export async function run(ctx) {
       await tab('page'); await ed.fill('textarea[data-path="pages.e2e-test-page.title.en"]', 'E2E Test Page');
     });
 
+    const BLOG = { slug: `e2e-blog-${stamp}`, en: 'E2E blog post', fr: 'Article E2E', es: 'Artículo E2E', body: 'E2E blog second paragraph' };
+    let blogId;
+    await s.check('add a blog post (EN/FR/ES) and tick "published"', async () => {
+      await tab('content');
+      await openDetails(ed.locator('details:has(> summary:text-is("Blog posts"))'));
+      const i = (await ctx.admin()).document.blogPosts.length;
+      await ed.click('button[data-add="blogPosts"]'); await ed.waitForTimeout(500);
+      const p = `blogPosts.${i}`; blogId = await ed.inputValue(`[data-path="${p}.id"]`);
+      assert.match(blogId, /^blog-post/, 'new posts get a readable id');
+      await ed.fill(`[data-path="${p}.slug"]`, BLOG.slug);
+      for (const l of ['en', 'fr', 'es']) {
+        await locale(l);
+        await ed.fill(`[data-path="${p}.title.${l}"]`, BLOG[l]);
+        await ed.fill(`[data-path="${p}.excerpt.${l}"]`, `${BLOG[l]} excerpt`);
+        await ed.fill(`[data-path="${p}.content.${l}"]`, `${BLOG[l]} first paragraph.\n\n${BLOG.body}`);
+      }
+      await locale('en');
+      await ed.fill(`[data-path="${p}.author"]`, 'E2E');
+      await ed.check(`[data-path="${p}.published"]`);
+    });
+
     await s.check('change the design (corner radius)', async () => { await tab('appearance'); await ed.selectOption('select[name=theme-radius]', 'pill'); });
 
     await s.check('save draft: all edits stored privately, photo still private', async () => {
@@ -230,6 +251,7 @@ export async function run(ctx) {
       assert.equal((await ctx.http(src, { auth: false })).status, 404, 'unpublished upload must not be public');
       assert.equal((await ctx.http(src.replace('/media/', '/api/admin/media/'))).status, 200, 'editor can see its draft upload');
       assert.equal((await ctx.html('/e2e-test-page')).status, 404, 'draft page must not be public');
+      assert.equal((await ctx.html(`/${BLOG.slug}`)).status, 404, 'draft blog post must not be public');
     });
 
     await s.check('publish: every change goes live (EN/FR/ES, price, hidden section, new page, photo)', async () => {
@@ -243,6 +265,7 @@ export async function run(ctx) {
       assert.equal(d.products.find(p => p.id === 'daytrip-custom').price.amount, NEW_PRICE);
       assert.ok(!d.pages.find(p => p.id === 'home').sections.some(x => x.id === hiddenId), 'hidden section must not be public');
       const np = await ctx.html('/e2e-test-page'); assert.equal(np.status, 200);
+      for (const [prefix, l] of [['', 'en'], ['/fr', 'fr'], ['/es', 'es']]) { const bp = await ctx.html(`${prefix}/${BLOG.slug}`); assert.equal(bp.status, 200, `blog post ${prefix || '/'} not public`); assert.ok(bp.text.includes(BLOG[l]), `blog post ${l} title missing`); }
       assert.ok(d.navigation.some(n => n.pageId === 'e2e-test-page'));
       const src = d.media.find(m => m.id === uploadId).src; const img = await ctx.http(src, { auth: false }); assert.equal(img.status, 200); assert.match(img.headers.get('content-type'), /image\//);
     });
@@ -256,6 +279,10 @@ export async function run(ctx) {
         await v.goto(B + '/', { waitUntil: 'networkidle' }); assert.match(await v.locator('h1').first().innerText(), /E2E check/);
         assert.ok(!(await v.locator('main').innerText()).includes(hiddenTitle), 'hidden section visible');
         assert.ok(await v.locator('nav').getByText('E2E Test Page').count() || (await v.content()).includes('E2E Test Page'), 'new page not in navigation');
+        await v.goto(B + '/blog', { waitUntil: 'networkidle' });
+        const card = v.locator('article, li, div').filter({ has: v.getByText(BLOG.en) }).filter({ has: v.getByText('Read More') }).last();
+        await card.getByText('Read More').click(); await v.waitForTimeout(800);
+        assert.ok((await v.locator('body').innerText()).includes(BLOG.body), 'new blog post not readable from /blog');
         await v.goto(B + '/fez', { waitUntil: 'networkidle' }); assert.ok((await v.content()).includes(uploadId), 'uploaded photo not on Fez page');
         await v.screenshot({ path: join(ctx.out, '04-public-fez-photo.png') });
       } finally { await v.close(); }
@@ -292,6 +319,7 @@ export async function run(ctx) {
       assert.equal(a.publishedRevision, a.version); assert.deepEqual(a.document, base.document);
       const p = await ctx.pubDoc(); assert.deepEqual(p.document, basePublic.document);
       assert.equal((await ctx.html('/e2e-test-page')).status, 404);
+      assert.equal((await ctx.html(`/${BLOG.slug}`)).status, 404, 'rolled-back blog post must be gone');
       for (const [path, l] of [['/', 'en'], ['/fr', 'fr'], ['/es', 'es']]) assert.ok(!(await ctx.html(path)).text.includes(T[l]));
     });
 
