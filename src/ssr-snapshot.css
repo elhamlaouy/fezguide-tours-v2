@@ -1,0 +1,43 @@
+/* Server-rendered text snapshot inside #root (worker/ssr-snapshot.ts). React replaces it on mount, so it
+   mirrors the real shell: same header height, container width, colours and footer, and stays visible. */
+.ssr-snapshot { background: #FAF8F5; color: #1C2524; display: flex; flex-direction: column; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; min-height: 100vh; }
+.ssr-snapshot a { color: inherit; text-decoration: none; }
+.ssr-snapshot ul, .ssr-snapshot ol { list-style: none; margin: 0; padding: 0; }
+.ssr-snapshot h1, .ssr-snapshot h2, .ssr-snapshot h3, .ssr-snapshot p { margin: 0; }
+.ssr-header { background: #FAF8F5; border-bottom: 1px solid #E7E2DA; height: 5rem; }
+.ssr-bar { align-items: center; display: flex; gap: 1rem; height: 100%; margin-inline: auto; max-width: 80rem; padding-inline: 1rem; }
+.ssr-brand { align-items: center; display: inline-flex; flex-shrink: 0; font-size: 1.5rem; font-weight: 700; gap: .625rem; letter-spacing: -.025em; white-space: nowrap; }
+.ssr-brand::before { content: ""; display: block; flex-shrink: 0; height: 3rem; width: 2.75rem; }
+.ssr-brand span:first-child { color: #005F5A; }
+.ssr-brand span:last-child:not(:first-child) { color: #C84B31; }
+.ssr-header nav { display: flex; flex: 1; gap: 1.5rem; justify-content: flex-end; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.ssr-header nav a { color: #44504E; flex-shrink: 0; font-size: .875rem; font-weight: 600; padding-block: .25rem; white-space: nowrap; }
+.ssr-snapshot main { flex: 1; margin-inline: auto; max-width: 80rem; padding: 2rem 1rem 5rem; width: 100%; }
+.ssr-snapshot main > article { display: grid; gap: 2.5rem; }
+.ssr-crumbs { color: #52605E; display: flex; flex-wrap: wrap; font-size: .75rem; gap: .5rem; margin-bottom: 1.5rem; }
+.ssr-crumbs [aria-current] { color: #1C2524; font-weight: 700; }
+.ssr-snapshot main h1 { color: #005F5A; font-size: 1.875rem; font-weight: 800; letter-spacing: -.025em; line-height: 1.15; text-wrap: balance; }
+.ssr-snapshot main h2 { color: #005F5A; font-size: 1.5rem; font-weight: 800; letter-spacing: -.025em; line-height: 1.2; text-wrap: balance; }
+.ssr-snapshot main h3 { color: #1C2524; font-size: 1.05rem; font-weight: 700; }
+.ssr-snapshot main section { display: grid; gap: .75rem; }
+.ssr-snapshot main p, .ssr-snapshot main li { color: #4E5B59; font-size: .875rem; line-height: 1.65; }
+.ssr-snapshot main li { margin-top: .5rem; }
+.ssr-snapshot main .ssr-eyebrow { color: #C84B31; font-size: .75rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.ssr-snapshot main .ssr-lead { font-size: 1rem; max-width: 65ch; }
+.ssr-snapshot main .ssr-price { color: #005F5A; font-size: 1.5rem; font-weight: 800; }
+.ssr-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+.ssr-snapshot main .ssr-actions li { margin: 0; }
+.ssr-actions a { background: #C84B31; border-radius: .5rem; color: #fff; display: inline-block; font-size: .875rem; font-weight: 700; padding: .6rem 1.1rem; }
+.ssr-cards, .ssr-facts { display: grid; gap: 1rem; }
+.ssr-snapshot main .ssr-cards li, .ssr-snapshot main .ssr-facts li { background: #fff; border: 1px solid #E7E2DA; border-radius: 1rem; margin: 0; padding: 1rem; }
+.ssr-footer { background: #15201F; color: #B3C4C2; font-size: .875rem; line-height: 1.6; padding: 3.5rem 0 2.5rem; }
+.ssr-footer .ssr-wrap { display: grid; gap: .75rem; margin-inline: auto; max-width: 80rem; padding-inline: 1rem; }
+.ssr-footer h2 { color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .05em; margin-top: 1.25rem; text-transform: uppercase; }
+.ssr-footer li { margin-top: .5rem; }
+.ssr-footer .ssr-brand span:first-child { color: #fff; }
+@media (min-width: 40rem) { .ssr-bar, .ssr-snapshot main, .ssr-footer .ssr-wrap { padding-inline: 1.5rem; } .ssr-snapshot main h1 { font-size: 2.25rem; } }
+@media (min-width: 64rem) {
+  .ssr-bar, .ssr-snapshot main, .ssr-footer .ssr-wrap { padding-inline: 2rem; }
+  .ssr-header nav { gap: 1.75rem; overflow: visible; }
+  .ssr-cards, .ssr-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

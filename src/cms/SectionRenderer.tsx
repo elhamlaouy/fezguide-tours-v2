@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 import type { Language } from '../types';
 import type { CmsDocument, CmsImage, CmsLink, CmsPage, CmsProduct, CmsSection, Localized } from './schema';
 import { isSafeCmsUrl } from './schema';
-import { blogMetadata, localizedList, localizedText, productPage, publicPage, publicProduct, resolveImage, uiText, visibleLink, pageLocaleAvailable } from './render-utils';
+import { formatPrice, blogMetadata, localizedList, localizedText, productPage, publicPage, publicProduct, resolveImage, uiText, visibleLink, pageLocaleAvailable } from './render-utils';
 
 export interface SectionRendererProps {
   document: CmsDocument;
@@ -57,26 +57,13 @@ function domId(id: string): string | undefined {
   return /^[a-z0-9][a-z0-9-]*$/.test(id) ? id : undefined;
 }
 
+export { formatPrice };
+
 /** Booking actions exist only on the matching public product page. */
 export function visibleBookingProduct(document: CmsDocument, page: CmsPage, section: CmsSection): string | undefined {
   if (section.type !== 'cta' || section.variant !== 'booking' || page.kind !== 'product') return undefined;
   if (!section.productId || section.productId !== page.productId) return undefined;
   return publicProduct(document, section.productId)?.id;
-}
-
-export function formatPrice(product: CmsProduct, language: Language): string {
-  const price = product.price;
-  if (!price || typeof price.amount !== 'number' || !Number.isFinite(price.amount)) return '';
-  const amount = price.currency === 'EUR' ? `€${price.amount}` : price.currency === 'USD' ? `$${price.amount}` : price.currency === 'MAD' ? `${price.amount} MAD` : '';
-  if (!amount) return '';
-  const basis = price.basis === 'person'
-    ? { en: 'per person', fr: 'par personne', es: 'por persona' }
-    : price.basis === 'group'
-      ? { en: 'per group', fr: 'par groupe', es: 'por grupo' }
-      : price.basis === 'vehicle'
-        ? { en: 'per vehicle', fr: 'par véhicule', es: 'por vehículo' }
-        : undefined;
-  return basis ? `${amount} ${localizedText(basis, language)}` : amount;
 }
 
 function mediaFromSrc(document: CmsDocument, src: string | undefined, language: Language, alt?: Localized) {

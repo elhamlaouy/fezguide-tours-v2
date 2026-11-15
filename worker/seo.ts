@@ -4,6 +4,7 @@ import { pagePath, resolveRoute, type PublicRoute } from '../src/cms/routing';
 import { resolveImage } from '../src/cms/render-utils';
 import { imageSizes, optimizedImageSrc, responsiveImageProps } from '../src/cms/optimized-image';
 import { readPublicDocument, type CmsRoutesEnv } from './cms-routes';
+import { cachedSnapshot } from './ssr-snapshot';
 
 export interface PublicSeoEnv extends CmsRoutesEnv {
   CANONICAL_ORIGIN?: string;
@@ -14,7 +15,7 @@ export interface PublicSeoEnv extends CmsRoutesEnv {
 import { canonicalOrigin, routeSeoHead, safeJson, notFound } from '../src/cms/seo';
 
 /** The Vite entrypoint is controlled markup, not arbitrary CMS HTML. Preserve all non-SEO assets. */
-export function rewriteRouteHtml(html: string, document: CmsDocument, route: PublicRoute, origin: string): string {
+export function rewriteRouteHtml(html: string, document: CmsDocument, route: PublicRoute, origin: string, revision?: number): string {
   const attribute = (tag: string, name: string) => new RegExp(`\\b${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i').exec(tag)?.slice(1).find(value => value !== undefined)?.toLowerCase();
   let result = html.replace(/<title\b[^>]*>[\s\S]*?<\/title\s*>/gi, '')
     .replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi, tag => attribute(tag, 'type') === 'application/ld+json' || attribute(tag, 'id') === 'cms-published-document' ? '' : tag)
@@ -60,8 +61,9 @@ export function rewriteRouteHtml(html: string, document: CmsDocument, route: Pub
   result = result.replace(/<html\b[^>]*>/i, `<html lang="${route.language}" dir="ltr">`)
     .replace(/<\/head\s*>/i, `${routeSeoHead(document, route, origin)}\n<meta name="cms-canonical-origin" content="${origin}">\n</head>`)
     .replace(/<\/body\s*>/i, `<script id="cms-published-document" type="application/json">${safeJson(bootstrap)}</script>\n</body>`);
-  if (!route.page) result = result.replace(/(<div\s+id=["']root["'][^>]*>)[\s\S]*?(<\/div>)/i, `$1<main><h1>404 — ${notFound(route.language)}</h1></main>$2`);
-  return result;
+  // The visible page text, replaced by React on mount. Cached per (revision, page, language); built from public data only.
+  const body = route.page ? cachedSnapshot(document, route.page, route.language, revision) : `<main><h1>404 — ${notFound(route.language)}</h1></main>`;
+  return result.replace(/(<div\s+id=["']root["'][^>]*>)[\s\S]*?(<\/div>)/i, (_, open: string, close: string) => `${open}${body}${close}`);
 }
 
 const textResponse = (body: string, type: string, status = 200) => new Response(body, { status, headers: { 'Content-Type': `${type}; charset=utf-8`, 'Cache-Control': 'no-store' } });
@@ -109,6 +111,6 @@ export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Pr
   const assetUrl = new URL('/index.html', url);
   const asset = await env.ASSETS.fetch(new Request(assetUrl, { headers: { Accept: 'text/html' } }));
   if (!asset.ok || !asset.headers.get('Content-Type')?.includes('text/html')) return textResponse('Public assets are unavailable', 'text/plain', 503);
-  const html = rewriteRouteHtml(await asset.text(), document, route, origin);
+  const html = rewriteRouteHtml(await asset.text(), document, route, origin, published.version);
   return new Response(request.method === 'HEAD' ? null : html, { status: route.page ? 200 : 404, headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 }
