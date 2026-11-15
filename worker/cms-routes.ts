@@ -1,5 +1,6 @@
 import { consumeCmsRequest } from './cms-request-budget';
 import { withinByteLimit } from '../src/cms/schema';
+import { articleMediaIds } from '../src/cms/article-format';
 import { exportBackup, restoreBackup, orphanDryRun, MAX_BACKUP_BYTES } from './cms-recovery';
 import { MEDIA_KEY_PATTERN, uploadMedia, serveMedia, publishedMediaReferenced, type CmsMediaEnv } from './media';
 import { createAccessVerifier, type AccessVerifierOptions, type CmsAccessEnv } from './cms-auth';
@@ -71,6 +72,8 @@ export function publicCmsDocument(value: object) {
         mediaReferences(item, ids);
       }
     } else if (mediaSources.has(child)) ids.add(mediaSources.get(child));
+    // Photos placed inside article text (`![…](media:<id>)`) count as references from that post.
+    else if (typeof child === 'string' && child.includes('](media:')) articleMediaIds(child).forEach(id => ids.add(id));
     return ids;
   }
   if (Array.isArray(result.media)) {

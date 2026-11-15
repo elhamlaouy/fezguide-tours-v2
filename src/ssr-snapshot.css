@@ -41,3 +41,18 @@
   .ssr-header nav { gap: 1.75rem; overflow: visible; }
   .ssr-cards, .ssr-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+/* Blog article body in the snapshot: same typography as .article-body (src/index.css). */
+.ssr-article { display: grid; gap: 1.1rem; }
+.ssr-snapshot main .ssr-article p, .ssr-snapshot main .ssr-article li, .ssr-snapshot main .ssr-article blockquote { font-size: .9375rem; line-height: 1.75; white-space: pre-line; }
+.ssr-snapshot main .ssr-article h2 { margin-top: 1.25rem; }
+.ssr-snapshot main .ssr-article h3 { margin-top: .75rem; }
+.ssr-snapshot main .ssr-article ul, .ssr-snapshot main .ssr-article ol { display: grid; gap: .4rem; padding-left: 1.4rem; }
+.ssr-snapshot main .ssr-article ul { list-style: disc; }
+.ssr-snapshot main .ssr-article ol { list-style: decimal; }
+.ssr-snapshot main .ssr-article li { margin: 0; }
+.ssr-snapshot main .ssr-article blockquote { border-left: 4px solid #005F5A; font-style: italic; margin: 0; padding: .5rem 1rem; }
+.ssr-snapshot main .ssr-article a { color: #005F5A; font-weight: 600; text-decoration: underline; }
+.ssr-snapshot main .ssr-article figure { margin: .75rem 0; }
+.ssr-snapshot main .ssr-article img { border-radius: .75rem; display: block; height: auto; max-width: 100%; width: 100%; }
+.ssr-snapshot main .ssr-article figcaption { color: #728280; font-size: .75rem; margin-top: .5rem; text-align: center; }
