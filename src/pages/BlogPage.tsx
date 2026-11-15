@@ -5,6 +5,8 @@ import { ApprovedSection, ApprovedSections, ApprovedContentProvider, useApproved
 import { visibleLink } from '../cms/render-utils';
 import { copyText } from '../cms/ui-copy';
 import { responsiveImageProps } from '../cms/optimized-image';
+import { ArticleBody } from '../cms/ArticleBody';
+import { articleOverride } from '../cms/article-format';
 import { BookOpen, Calendar, Clock, User, ArrowRight, X, ChevronRight } from 'lucide-react';
 
 interface BlogPageProps {
@@ -32,13 +34,17 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
     const body = (blocks: Extract<NonNullable<typeof content>, { type: 'richText' }>['blocks']) => Object.fromEntries(['en', 'fr', 'es'].map(locale => [locale, blocks.map(block => 'text' in block ? block.text[locale as Language] : block.items[locale as Language].join('\n')).join('\n\n')])) as BlogPost['content'];
     return { ...post, title: page?.title ?? blank,
       coverImage: cover?.type === 'gallery' && cover.enabled ? imageSource(cover.images[0]?.mediaId) ?? '' : '',
-      content: content?.type === 'richText' && content.enabled ? body(content.blocks) : blank,
+      content: content?.type === 'richText' && content.enabled ? Object.fromEntries(['en', 'fr', 'es'].map(locale => [locale, articleOverride(post, content, locale as Language) ?? body(content.blocks)[locale as Language]])) as BlogPost['content'] : blank,
       excerpt: excerpt?.type === 'richText' ? excerpt.enabled ? body(excerpt.blocks) : blank : post.excerpt };
   };
   const [selectedPostId, setSelectedPostId] = useState<string | null>(initialPostId ?? null);
   const selectedRecord = (document?.blogPosts ?? blogPosts).find(post => post.id === selectedPostId && post.published !== false && (!document || document.pages.some(page => page.id === post.id && page.enabled)));
   const selectedPost = selectedRecord ? projectPost(selectedRecord) : null;
   const selectedPage = document?.pages.find(page => page.id === selectedPostId);
+  // Formatted article text (per language) comes from the post itself; otherwise the page's own blocks, as before.
+  const selectedContentSection = selectedPage?.sections.find(section => section.id === 'content' && section.type === 'richText');
+  const articleSource = !selectedRecord ? undefined : !document ? selectedRecord.content[language]
+    : selectedContentSection?.type === 'richText' && selectedContentSection.enabled ? articleOverride(selectedRecord, selectedContentSection, language) : undefined;
   const selectedCover = selectedPage?.sections.find(section => section.id === 'cover' && section.type === 'gallery');
   const selectedCoverAlt = selectedCover?.type === 'gallery' ? selectedCover.images[0]?.alt[language] ?? '' : selectedPost?.title[language] ?? '';
   useEffect(() => { setSelectedPostId(initialPostId ?? null); }, [initialPostId]);
@@ -248,9 +254,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ language, onBookTour, initia
                 {selectedPost.excerpt[language]}
               </p>
 
-              <div className="text-sm text-[#42504E] leading-relaxed whitespace-pre-line space-y-4">
-                {selectedPost.content[language]}
-              </div>
+              <ArticleBody text={articleSource ?? selectedPost.content[language]} plain={articleSource === undefined} language={language} document={document} />
 
               {/* Author & Booking CTA */}
               <div className="pt-6 border-t border-[#E7E2DA] flex flex-col sm:flex-row items-center justify-between gap-4">

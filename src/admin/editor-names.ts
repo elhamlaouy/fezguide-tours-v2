@@ -45,3 +45,29 @@ export function numberedLabel(position: number, name: string, language: Language
   return `${position + 1}. ${name || editorLabel('itemNumber', language)}`;
 }
 export function isLanguageKey(segment: string): boolean { return LANGUAGES.includes(segment); }
+
+const NESTED_ITEMS: Record<string, readonly [string, string, string]> = {
+  highlights: ['Highlight', 'Atout', 'Punto destacado'],
+  galleryImages: ['Photo', 'Photo', 'Foto'],
+  itinerary: ['Stop', 'Étape', 'Parada'],
+  included: ['Included item', 'Élément inclus', 'Elemento incluido'],
+  excluded: ['Not included item', 'Élément non inclus', 'Elemento no incluido'],
+  whatToBring: ['Thing to bring', 'À apporter', 'Qué llevar'],
+  suitableFor: ['Suitable for', 'Convient à', 'Apto para'],
+};
+/**
+ * Meaningful names for list items inside a tour or post: "Highlight 1", "Photo 1 — description", "Stop 2 — title".
+ * Top-level collection rows keep "1. Name"; undefined means this path is not such a nested list item.
+ */
+export function nestedItemLabel(path: string, value: unknown, document: CmsDocument, language: Language): string | undefined {
+  const segments = path.split('.');
+  if ((segments[0] !== 'products' && segments[0] !== 'blogPosts') || !/^\d+$/.test(segments[1] ?? '') || segments.length < 4) return undefined;
+  const last = segments[segments.length - 1];
+  const names = NESTED_ITEMS[segments[2]];
+  if (!names || !/^\d+$/.test(last)) return undefined;
+  const base = `${names[languageIndex(language)]} ${Number(last) + 1}`;
+  const detail = segments[2] === 'galleryImages' && typeof value === 'string'
+    ? clip(pick(document.media.find(item => item.src === value)?.alt, language))
+    : segments[2] === 'itinerary' ? itemName(value, language) : '';
+  return detail ? `${base} — ${detail}` : base;
+}

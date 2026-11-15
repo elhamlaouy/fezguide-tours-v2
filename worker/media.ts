@@ -1,5 +1,6 @@
 import { CmsError, type CmsD1Database } from './cms-store';
 import { reserveUpload, markUploadWrite, finishUpload, releaseUpload } from './media-budget';
+import { postArticleMediaIds } from '../src/cms/article-format';
 
 export const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
 export const MAX_MEDIA_PIXELS = 12_000_000;
@@ -196,6 +197,10 @@ export function publishedMediaReferenced(document: object, src: string): boolean
   const record = document as Record<string, unknown>;
   const entry = Array.isArray(record.media) ? record.media.find(item => item && item.src === src) : null;
   if (!entry) return false;
+  // A photo placed in a visible post's article text (`![…](media:<id>)`, any language) is public too.
+  const pages = Array.isArray(record.pages) ? record.pages : [];
+  if (Array.isArray(record.blogPosts) && record.blogPosts.some(post => post && typeof post === 'object' && post.published !== false
+    && pages.some(page => page && page.id === post.id && page.enabled !== false) && postArticleMediaIds(post.content).includes(entry.id))) return true;
   function referenced(value: unknown): boolean {
     if (value === src) return true;
     if (Array.isArray(value)) return value.some(referenced);
