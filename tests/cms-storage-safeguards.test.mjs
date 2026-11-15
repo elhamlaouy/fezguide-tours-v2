@@ -43,3 +43,16 @@ test('durable storage reservation admits only one concurrent final slot and char
   assert.equal(db.sqlite.prepare('SELECT bytes FROM cms_upload_reservations').get().bytes,40,'completed uploads cannot release storage');
  } finally {db.sqlite.close();}
 });
+
+test('migration 0007 raises the revision storage cap to 300 MiB on the v2 schema', async () => {
+  const { DatabaseSync } = await import('node:sqlite');
+  const { readFileSync } = await import('node:fs');
+  const sqlite = new DatabaseSync(':memory:');
+  for (const name of ['0004_cms_schema.sql', '0005_cms_media.sql', '0006_cms_budgets.sql', '0007_cms_revision_budget_300mb.sql']) sqlite.exec(readFileSync(new URL(`../migrations/${name}`, import.meta.url), 'utf8'));
+  const insert = (v, bytes) => sqlite.prepare("INSERT INTO cms_revisions (version, document, kind, actor, created_at) VALUES (?, ?, 'draft', 'test', 'now')").run(v, JSON.stringify({ x: 'a'.repeat(bytes) }));
+  // 40 revisions of ~650 KB (~26 MB) used to be refused after ~37.
+  for (let v = 1; v <= 40; v++) insert(v, 650_000);
+  assert.equal(sqlite.prepare('SELECT revision_count FROM cms_revision_budget').get().revision_count, 40);
+  sqlite.prepare('UPDATE cms_revision_budget SET document_bytes = ?').run(314572800 - 100);
+  assert.throws(() => insert(41, 1000), /cms_revision_storage_budget/, 'the new cap still fails closed');
+});
