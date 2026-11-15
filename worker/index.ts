@@ -32,7 +32,8 @@ const securityHeaders = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 };
 
-const cms = createCmsHandler({ validateDocument: validateCmsDocument });
+// Worker documents always come from JSON.parse and are size-checked where stored: use the cheap safety/size paths.
+const cms = createCmsHandler({ validateDocument: value => validateCmsDocument(value, { parsedJson: true, sizeCheckedByCaller: true }) });
 
 function jsonResponse(data: unknown, status = 200, cacheControl = 'no-store'): Response {
   return new Response(JSON.stringify(data), {

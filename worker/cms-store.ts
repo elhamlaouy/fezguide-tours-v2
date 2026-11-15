@@ -15,6 +15,7 @@ export interface CmsD1Database {
   // D1 batch executes all statements atomically and rolls back on any failure.
   batch(statements: CmsD1Statement[]): Promise<CmsD1Result[]>;
 }
+import { withinByteLimit } from '../src/cms/schema';
 export type CmsDocument = object;
 // Accept a validated document or the schema module's discriminated result.
 // The injected validator must reject unknown/private fields and unsafe content.
@@ -59,9 +60,7 @@ export class CmsStore {
         if (validation.valid !== true || !validation.document || typeof validation.document !== 'object' || Array.isArray(validation.document)) throw new Error();
         result = validation.document;
       }
-      if (new TextEncoder().encode(JSON.stringify(result)).byteLength > MAX_DOCUMENT_BYTES) {
-        throw new CmsError(413, 'document_too_large');
-      }
+      // The serialized size is enforced where the document is stored (append), avoiding a second full serialization here.
       return result;
     } catch (error) {
       if (error instanceof CmsError) throw error;
@@ -69,18 +68,26 @@ export class CmsStore {
     }
   }
 
+  /** Stored revisions were fully validated when written and are immutable (no UPDATE/DELETE triggers), so reads only
+   * need a cheap shape check. Re-validating ~650 KB on every editor load cost >10 ms of CPU (Workers Free limit). */
+  private stored(raw: string): CmsDocument {
+    const value: unknown = JSON.parse(raw);
+    if (!value || typeof value !== 'object' || Array.isArray(value) || !Array.isArray((value as { pages?: unknown }).pages)) throw new CmsError(503, 'cms_unavailable');
+    return value;
+  }
+
   async read() {
     const row = await this.db.prepare(`SELECT d.version, d.draft_revision, d.published_revision, r.document
       FROM cms_documents d LEFT JOIN cms_revisions r ON r.version = d.draft_revision WHERE d.id = 1`).first<StateRow>();
     if (!row) throw new CmsError(503, 'cms_unavailable');
     return { version: row.version, draftRevision: row.draft_revision, publishedRevision: row.published_revision,
-      document: row.document === null ? null : this.validate(JSON.parse(row.document)) };
+      document: row.document === null ? null : this.stored(row.document) };
   }
 
   async readPublished() {
     const row = await this.db.prepare(`SELECT r.version, r.document FROM cms_documents d
       JOIN cms_revisions r ON r.version = d.published_revision WHERE d.id = 1`).first<{ version: number; document: string }>();
-    return row ? { version: row.version, document: this.validate(JSON.parse(row.document)) } : null;
+    return row ? { version: row.version, document: this.stored(row.document) } : null;
   }
 
   async revisions(limit = 50, before = Number.MAX_SAFE_INTEGER) {
@@ -93,12 +100,12 @@ export class CmsStore {
     return result.results ?? [];
   }
 
-  async readRevision(version: number) {
+  async readRevision(version: number, revalidate = false) {
     requireVersion(version);
     const row = await this.db.prepare('SELECT * FROM cms_revisions WHERE version = ?').bind(version).first<RevisionRow>();
     if (!row) throw new CmsError(404, 'revision_not_found');
     return { version: row.version, kind: row.kind, createdAt: row.created_at, sourceRevision: row.source_revision,
-      document: this.validate(JSON.parse(row.document)) };
+      document: revalidate ? this.validate(JSON.parse(row.document)) : this.stored(row.document) };
   }
 
   async requireBoundedRecovery() {
@@ -125,7 +132,8 @@ export class CmsStore {
 
   async rollback(revision: number, expectedVersion: number, actor: string) {
     requireVersion(expectedVersion);
-    const source = await this.readRevision(revision);
+    // Republishing old content goes through the current validator.
+    const source = await this.readRevision(revision, true);
     // Rollback intentionally publishes a new immutable copy of the selected revision.
     return this.append(source.document, expectedVersion, actor, 'rollback', revision);
   }
@@ -135,7 +143,7 @@ export class CmsStore {
     requireVersion(expectedVersion);
     if (typeof actor !== 'string' || actor.length < 1 || actor.length > 256) throw new CmsError(400, 'invalid_actor');
     const raw = JSON.stringify(document);
-    if (new TextEncoder().encode(raw).byteLength > MAX_DOCUMENT_BYTES) throw new CmsError(413, 'document_too_large');
+    if (!withinByteLimit(raw, MAX_DOCUMENT_BYTES)) throw new CmsError(413, 'document_too_large');
     const version = expectedVersion + 1;
     // Both statements check the same version inside one D1 transaction. No preflight
     // read or temporary uniqueness claim can permit a stale writer to change a pointer.
