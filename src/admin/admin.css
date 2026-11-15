@@ -109,3 +109,5 @@
 .cms-admin-bootstrap{max-width:40rem;margin:1.5rem 0;padding:1.25rem 1.5rem;border:1px solid #d7e2e1;border-radius:12px;background:#fff;display:grid;gap:.6rem;justify-items:start}
 .cms-admin-bootstrap p{margin:0}
 .cms-admin-bootstrap button[name=bootstrap-from-site]{background:var(--cms-accent);border-color:var(--cms-accent);color:#fff;font-weight:600;padding:.6rem 1.2rem}
+.cms-seo-counter{font-variant-numeric:tabular-nums}
+.cms-seo-counter.is-warning{color:#9a3412;font-weight:600}

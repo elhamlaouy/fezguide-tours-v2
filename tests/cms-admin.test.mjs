@@ -1023,3 +1023,21 @@ test('empty store offers a one-click private draft seeded from the current site 
   assert.ok(validateCmsDocument(save[0].body.document).valid, 'seed passes the shared validator');
   assert.equal(calls.filter(call => call.url.endsWith('/publish')).length, 0, 'bootstrapping never publishes');
 });
+
+test('page SEO fields show a live Google length counter with localized guidance', async () => {
+  const doc = cmsDoc();
+  installFetch(({ url }) => url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render('fr');
+  await click('[data-workspace-tab="page"]');
+  const counter = () => window.document.querySelector('[data-seo-counter="pages.home.seo.description"]');
+  await waitFor(counter);
+  assert.match(counter().textContent, /^16\/155 · Google affiche environ 155 caractères/);
+  assert.ok(!counter().classList.contains('is-warning'));
+  await typeInto('textarea[data-path="pages.home.seo.description.fr"]', 'x'.repeat(170));
+  assert.match(counter().textContent, /^170\/155/);
+  assert.ok(counter().classList.contains('is-warning'), 'too long is highlighted');
+  await typeInto('textarea[data-path="pages.home.seo.description.fr"]', '');
+  assert.match(counter().textContent, /résumé est pris automatiquement/);
+  const title = window.document.querySelector('[data-seo-counter="pages.home.seo.title"]');
+  assert.match(title.textContent, /\/42 · .*Fez Guide Tours/);
+});

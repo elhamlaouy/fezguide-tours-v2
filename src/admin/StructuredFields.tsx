@@ -12,6 +12,19 @@ interface Props {
   onAdd?: (path: string) => boolean;
   onEditPrice?: (productId: string) => void;
 }
+// Google shows ~60 title characters; " | Fez Guide Tours" (18) is appended automatically. Descriptions show ~155.
+export const SEO_TITLE_LIMIT = 42;
+export const SEO_DESCRIPTION_LIMIT = 155;
+const SEO_HINTS = {
+  title: {
+    help: { en: 'Google shows about 60 characters. “ | Fez Guide Tours” is added automatically — do not type it.', fr: 'Google affiche environ 60 caractères. « | Fez Guide Tours » est ajouté automatiquement — ne le saisissez pas.', es: 'Google muestra unos 60 caracteres. « | Fez Guide Tours » se añade automáticamente: no lo escribas.' },
+    empty: { en: 'Empty: Google will use the page title.', fr: 'Vide : Google utilisera le titre de la page.', es: 'Vacío: Google usará el título de la página.' },
+  },
+  description: {
+    help: { en: 'Google shows about 155 characters. Write one or two sentences that make people want to click.', fr: 'Google affiche environ 155 caractères. Écrivez une ou deux phrases qui donnent envie de cliquer.', es: 'Google muestra unos 155 caracteres. Escribe una o dos frases que inviten a hacer clic.' },
+    empty: { en: 'Empty: a summary is taken automatically from the page text.', fr: 'Vide : un résumé est pris automatiquement dans le texte de la page.', es: 'Vacío: se toma automáticamente un resumen del texto de la página.' },
+  },
+} as const;
 export function StructuredFields(props: Props): React.JSX.Element {
   const { spec, value, path, document, language, locale, onChange } = props;
   const label = editorLabel(path.split('.').at(-1) ?? '', language);
@@ -50,7 +63,12 @@ export function StructuredFields(props: Props): React.JSX.Element {
     const sectionId = binding ? ({ fullDescription: 'overview', meetingPointDetails: 'meeting', cancellationPolicy: 'cancel' } as Record<string,string>)[binding[2]] : undefined;
     const bound = product ? document.pages.find(page => page.kind === 'product' && page.productId === product.id)?.sections.find(section => section.id === sectionId) : undefined;
     const custom = bound && (bound.type !== 'richText' || bound.blocks.some(block => block.type !== 'paragraph'));
-    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({locale}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} spec={{ type: 'array', item: { type: 'text' } }} value={record[locale]} path={`${path}.${locale}`} onChange={next => onChange({ ...record, [locale]: next })} />}{optionalRemove}</div>;
+    // Google result guidance for page SEO fields: live length counter in the editor's language.
+    const seoKind = spec.type === 'localized' ? /^pages\.[^.]+\.seo\.(title|description)$/.exec(path)?.[1] as 'title' | 'description' | undefined : undefined;
+    const seoLength = seoKind ? String(record[locale] ?? '').trim().length : 0;
+    const seoLimit = seoKind === 'title' ? SEO_TITLE_LIMIT : SEO_DESCRIPTION_LIMIT;
+    const seoHint = seoKind ? <p className={seoLength > seoLimit ? 'cms-admin-note cms-seo-counter is-warning' : 'cms-admin-note cms-seo-counter'} data-seo-counter={path} aria-live="polite">{seoLength}/{seoLimit} · {SEO_HINTS[seoKind][seoLength === 0 ? 'empty' : 'help'][language]}</p> : null;
+    return <div>{custom && <p className="cms-admin-note" data-projection-notice={path}>{t('customProseHelp')}</p>}{spec.type === 'localized' ? <label>{label} ({locale}){shellLink && path.endsWith('.label') ? <input {...labelAttributes} data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} /> : <textarea data-path={`${path}.${locale}`} value={String(record[locale] ?? '')} onChange={event => onChange({ ...record, [locale]: event.target.value })} />}</label> : <StructuredFields {...props} spec={{ type: 'array', item: { type: 'text' } }} value={record[locale]} path={`${path}.${locale}`} onChange={next => onChange({ ...record, [locale]: next })} />}{seoHint}{optionalRemove}</div>;
   }
   if (spec.type === 'array') {
     const items = Array.isArray(value) ? value : [];
