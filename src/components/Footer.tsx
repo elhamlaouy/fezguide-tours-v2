@@ -11,6 +11,8 @@ import { localizedText, uiText } from '../cms/render-utils';
 import { copyText } from '../cms/ui-copy';
 import { footerShellLinks, isShellDocument } from '../cms/public-document';
 import { MapPin, Phone, Mail, Award, ShieldCheck, Heart, Lock } from 'lucide-react';
+import { analyticsAvailable, openConsentSettings } from '../analytics';
+import { COOKIE_SETTINGS_LABEL } from './CookieConsent';
 
 interface FooterProps {
   language: Language;
@@ -216,6 +218,16 @@ export const Footer: React.FC<FooterProps> = ({ language, onNavigate, onOpenAdmi
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-[#8EA19E]">
           <p className="text-center lg:text-start">{copyright}</p>
+
+          {analyticsAvailable() && (
+            <button
+              type="button"
+              onClick={openConsentSettings}
+              className="text-[#8EA19E] hover:text-white underline-offset-2 hover:underline transition-colors cursor-pointer"
+            >
+              {COOKIE_SETTINGS_LABEL[language]}
+            </button>
+          )}
 
           <a
             href="https://atlastactics.com"

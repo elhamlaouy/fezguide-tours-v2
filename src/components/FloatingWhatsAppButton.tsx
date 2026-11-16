@@ -4,6 +4,7 @@ import { useCms } from '../context/CmsContext';
 import { localizedText, uiText } from '../cms/render-utils';
 import { FLOATING_COPY } from '../cms/ui-copy';
 import { X, Send, Clock, CheckCircle2 } from 'lucide-react';
+import { trackEvent } from '../analytics';
 
 interface FloatingWhatsAppButtonProps {
   language: Language;
@@ -101,6 +102,7 @@ export const FloatingWhatsAppButton: React.FC<FloatingWhatsAppButtonProps> = ({
 
   const handleOpenWhatsApp = (customText?: string) => {
     const url = buildWhatsAppUrl(customText);
+    trackEvent('whatsapp_click', { method: 'whatsapp', link_area: 'floating_button' });
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 

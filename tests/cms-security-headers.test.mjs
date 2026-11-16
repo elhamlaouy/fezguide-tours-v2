@@ -10,7 +10,7 @@ test('HTML and API responses enforce the tested non-inline-script CSP and framin
  for(const path of ['/','/missing-page','/api/unknown']){
   const response=await worker.fetch(new Request(`https://site.example${path}`),env);
   const csp=response.headers.get('Content-Security-Policy');
-  assert.ok(csp);assert.match(csp,/script-src 'self' https:\/\/static\.cloudflareinsights\.com;/);assert.match(csp,/connect-src 'self' https:\/\/cloudflareinsights\.com;/);assert.doesNotMatch(csp,/script-src[^;]*unsafe-inline/);
+  assert.ok(csp);assert.match(csp,/script-src 'self' https:\/\/static\.cloudflareinsights\.com https:\/\/www\.googletagmanager\.com;/);assert.match(csp,/connect-src 'self' https:\/\/cloudflareinsights\.com https:\/\/\*\.google-analytics\.com https:\/\/\*\.analytics\.google\.com https:\/\/www\.googletagmanager\.com;/);assert.doesNotMatch(csp,/script-src[^;]*unsafe-inline/);
   assert.match(csp,/frame-ancestors 'none'/);assert.match(csp,/object-src 'none'/);assert.match(csp,/form-action 'none'/);
   assert.equal(response.headers.get('X-Frame-Options'),'DENY');assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');
  }

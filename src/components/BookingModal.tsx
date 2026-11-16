@@ -5,6 +5,7 @@ import { useCms } from '../context/CmsContext';
 import { localizedText, publicProduct, uiText } from '../cms/render-utils';
 import { BOOKING_COPY } from '../cms/booking-copy';
 import { X, Calendar, Users, Phone, Mail, CheckCircle2, MessageCircle, AlertCircle } from 'lucide-react';
+import { trackEvent } from '../analytics';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -68,6 +69,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) trackEvent('booking_open', { tour_name: initialTourTitle || undefined });
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // Clean WhatsApp number removing non-digits
@@ -126,6 +131,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       .slice(-10)}`;
     setBookingRef(ref);
     setIsSubmitted(true);
+    trackEvent('booking_submit', { tour_name: selectedTour || undefined, guests, tour_language: languagePreference });
   };
 
   const getWhatsAppMessage = () => {

@@ -11,6 +11,8 @@ import { Footer } from './components/Footer';
 import { BookingModal } from './components/BookingModal';
 import { DetailModal } from './components/DetailModal';
 import { FloatingWhatsAppButton } from './components/FloatingWhatsAppButton';
+import { CookieConsent } from './components/CookieConsent';
+import { initAnalytics, installContactClickTracking, trackPageView } from './analytics';
 import type { CmsDocument } from './cms/schema';
 import { approvedThemeActive } from './cms/approved-content';
 import { PageRenderer } from './cms/PageRenderer';
@@ -143,6 +145,16 @@ function AppContent() {
 
   useEffect(() => {
     if (!admin && publishedDocument) applyRouteSeo(document, publishedDocument, resolveRoute(new URL(window.location.href), publishedDocument));
+  }, [admin, publishedDocument, currentPage, language, pathname]);
+
+  // Google Analytics (consent-gated, production host only). Runs after the SEO effect so the title is current.
+  useEffect(() => {
+    initAnalytics();
+    return installContactClickTracking();
+  }, []);
+
+  useEffect(() => {
+    if (!admin) trackPageView();
   }, [admin, publishedDocument, currentPage, language, pathname]);
 
   const handleOpenBooking = (tourId?: string, tourTitle?: string) => {
@@ -405,6 +417,8 @@ function AppContent() {
         currentPage={currentPage}
         activePillar={selectedExperience}
       />
+
+      <CookieConsent language={language} />
     </div>
   );
 }
