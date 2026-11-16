@@ -21,7 +21,8 @@ import { PublishDialog, type PublishPreview } from './PublishDialog';
 import { summarizeChanges } from './change-summary';
 import { describeRevision } from './history';
 import { safetyCopy } from './safety-copy';
-import { UNSAVED_COPY_DELAY_MS, clearUnsavedCopy, formatWhen, readUnsavedCopy, writeUnsavedCopy, type UnsavedCopy } from './unsaved-copy';
+import { PENDING_COPY_KEY, UNSAVED_COPY_DELAY_MS, clearPendingCopy, clearUnsavedCopy, formatWhen, promotePendingCopy, readUnsavedCopy, writeUnsavedCopy, type UnsavedCopy } from './unsaved-copy';
+import { whoDid } from './history';
 import './admin.css';
 
 const SPANISH_LABELS: Record<string, string> = {
@@ -346,7 +347,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   const localCopyRef = useRef<UnsavedCopy | null>(null);
   localCopyRef.current = localCopy;
   const [copyProblem, setCopyProblem] = useState(false);
-  const [restoredNote, setRestoredNote] = useState(false);
+  const [restoredNote, setRestoredNote] = useState<false | 'plain' | 'older'>(false);
   const [publishPreview, setPublishPreview] = useState<PublishPreview | null>(null);
   const publishToken = useRef(0);
   /** Revisions never change once stored, so the live version is fetched at most once per revision number. */
@@ -357,10 +358,11 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   /** Writes the unsaved document to this browser. Only called after typing pauses, on hide/unload, and before a reload replaces the draft. */
   const flushUnsaved = useCallback(() => {
     const current = draftRef.current;
-    if (!current || current === baseline.current || localCopyRef.current) return;
+    if (!current || current === baseline.current) return;
     const json = JSON.stringify(current);
     if (json === savedJson.current) return;
-    writeUnsavedCopy({ baseVersion: versionRef.current, savedAt: new Date().toISOString(), json });
+    // While an older copy waits for Restore / Discard, new edits go to a separate slot so neither is lost.
+    writeUnsavedCopy({ baseVersion: versionRef.current, savedAt: new Date().toISOString(), json }, localCopyRef.current ? PENDING_COPY_KEY : undefined);
   }, []);
 
   const applyContent = useCallback((payload: AdminContent) => {
@@ -376,8 +378,9 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     setSelectedPageId(current => next?.pages.some(page => page.id === current) ? current : next?.pages[0]?.id ?? '');
     setStatus('ready');
     // A local copy that equals the server draft is pointless; one that differs is offered back to the owner.
+    if (!readUnsavedCopy()) promotePendingCopy();
     const copy = readUnsavedCopy();
-    if (copy && copy.json === savedJson.current) clearUnsavedCopy();
+    if (copy && copy.json === savedJson.current) clearUnsavedCopy(true);
     setLocalCopy(copy && copy.json !== savedJson.current ? copy : null);
     setCopyProblem(false);
   }, [flushUnsaved]);
@@ -438,7 +441,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     if (JSON.stringify(result.document) === savedJson.current) {
       baseline.current = current;
       setVerifiedClean(current);
-      if (!localCopyRef.current) clearUnsavedCopy();
+      if (localCopyRef.current) clearPendingCopy(); else clearUnsavedCopy();
       return { version: versionRef.current, draftRevision: versionRef.current, published: false };
     }
     try {
@@ -446,7 +449,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       savedJson.current = JSON.stringify(result.document);
       baseline.current = current;
       setVerifiedClean(current);
-      if (!localCopyRef.current) clearUnsavedCopy();
+      if (localCopyRef.current) clearPendingCopy(); else clearUnsavedCopy();
       rememberWrite(saved, 'Saved revision');
       return saved;
     } catch (error) {
@@ -685,7 +688,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   // Safety copy: written ~1 s after typing pauses (never per keystroke), dropped once the draft matches the saved one again.
   useEffect(() => {
     if (!draft || draft === baseline.current) return;
-    if (draft === verifiedClean) { if (!localCopyRef.current) clearUnsavedCopy(); return; }
+    if (draft === verifiedClean) { if (localCopyRef.current) clearPendingCopy(); else clearUnsavedCopy(); return; }
     const timer = setTimeout(flushUnsaved, UNSAVED_COPY_DELAY_MS);
     return () => clearTimeout(timer);
   }, [draft, verifiedClean, flushUnsaved]);
@@ -703,16 +706,19 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     let result: ReturnType<typeof validateCmsDocument> | null = null;
     try { result = validateCmsDocument(JSON.parse(copy.json)); } catch { result = null; }
     if (!result || !result.valid) { setCopyProblem(true); return; }
-    // The copy keeps the version it was edited from: if the server moved on, saving ends in the normal version conflict instead of overwriting.
-    versionRef.current = copy.baseVersion;
+    // Edits typed while the banner was open would be replaced: say so first (they stay in the pending slot).
+    if (isDirty() && !window.confirm(safety.restoreOverEdits)) return;
+    // The copy loads on top of the CURRENT server version, so the next save is an ordinary one (still compare-and-swap):
+    // a change made by someone else after this point is still refused with the normal conflict.
     setDraft(result.document);
     setSelectedPageId(current => result.document.pages.some(page => page.id === current) ? current : result.document.pages[0]?.id ?? '');
     setErrors([]); setConflict(''); setNotice(null);
-    setCopyProblem(false); setLocalCopy(null); setRestoredNote(true);
+    clearUnsavedCopy(true); clearPendingCopy();
+    setCopyProblem(false); setLocalCopy(null); setRestoredNote(copy.baseVersion !== version ? 'older' : 'plain');
   };
   const discardCopy = () => {
     if (!window.confirm(safety.discardConfirm)) return;
-    clearUnsavedCopy(); setLocalCopy(null); setCopyProblem(false);
+    clearUnsavedCopy(true); promotePendingCopy(); setLocalCopy(null); setCopyProblem(false);
   };
   async function openPublish() {
     const current = draftRef.current;
@@ -761,7 +767,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   }, [isDirty, uploading, importing, busy, language]);
   const leave = () => {
     if (uploading || importing || busy) return;
-    if (isDirty()) { if (!window.confirm(editorLabel('discard', language))) return; if (!localCopyRef.current) clearUnsavedCopy(); }
+    if (isDirty()) { if (!window.confirm(editorLabel('discard', language))) return; if (localCopyRef.current) clearPendingCopy(); else clearUnsavedCopy(); }
     onClose();
   };
   // The live preview trails typing: settle ~250 ms after the last keystroke, then render at low priority.
@@ -839,14 +845,18 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       {localCopy && <section className="cms-restore-banner" data-restore-banner aria-labelledby="cms-restore-title">
         <h2 id="cms-restore-title">{safety.copyTitle(formatWhen(localCopy.savedAt, language) ?? '')}</h2>
         <p>{safety.copyBody}</p>
-        {localCopy.baseVersion !== version && <p data-restore-stale>{safety.copyStale(localCopy.baseVersion, version)}</p>}
+        {localCopy.baseVersion !== version && (() => {
+          const newer = revisions.find(item => item.version === draftRevision);
+          return <p data-restore-stale>{safety.copyOlder(newer ? formatWhen(newer.created_at, language) : null, newer ? whoDid(typeof newer.actor === 'string' ? newer.actor : '', language) : null)}</p>;
+        })()}
+        {dirty && <p data-restore-pending>{safety.pendingNote}</p>}
         {copyProblem && <p role="alert" data-restore-problem>{safety.restoreInvalid}</p>}
         <div className="cms-restore-actions">
-          <button type="button" name="restore-unsaved" className="cms-primary" disabled={busy} onClick={restoreCopy}>{safety.restore}</button>
+          <button type="button" name="restore-unsaved" className="cms-primary" disabled={busy} onClick={restoreCopy}>{localCopy.baseVersion !== version ? safety.restoreAnyway : safety.restore}</button>
           <button type="button" name="discard-unsaved" onClick={discardCopy}>{safety.discard}</button>
         </div>
       </section>}
-      {restoredNote && dirty && <p className="cms-admin-notice" role="status" data-restored-note>{safety.restored}</p>}
+      {restoredNote && dirty && <p className="cms-admin-notice" role="status" data-restored-note>{restoredNote === 'older' ? safety.restoredOlder : safety.restored}</p>}
       {pricingPending && <p className="cms-admin-notice" role="status">{w('pendingPrice')} <button type="button" name="return-to-pricing" onClick={() => { setWorkspace('pricing'); setLayout('split'); }}>{w('pricing')}</button></p>}
       {conflict && <p className="cms-admin-alert" data-admin-conflict data-code={conflict} title={conflict} role="alert">{friendlyApiError(conflict, language)}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}

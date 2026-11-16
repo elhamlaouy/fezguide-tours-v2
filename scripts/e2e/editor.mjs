@@ -428,6 +428,30 @@ export async function run(ctx) {
       assert.equal(await ed.locator('[data-restore-banner]').count(), 0, 'no banner once saved');
     });
 
+    await s.check('an older local copy is explained, and "Restore anyway" saves it on top of a newer draft without a conflict loop', async () => {
+      const KEY = 'fgt-cms-unsaved-v1';
+      await ed.evaluate(key => localStorage.removeItem(key), KEY);
+      await choosePage('about'); await tab('page');
+      const sel = 'textarea[data-path="pages.about.title.en"]';
+      await ed.fill(sel, 'E2E stale copy');
+      await ed.waitForFunction(key => !!localStorage.getItem(key), KEY, { timeout: 10000 });
+      // Someone else (here: the API) saves a newer draft before this copy is restored.
+      const cur = await ctx.admin(); const doc = structuredClone(cur.document);
+      doc.pages.find(p => p.id === 'about').title.en = 'E2E newer API draft';
+      const put = await ctx.http('/api/admin/content/draft', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ expectedVersion: cur.version, document: doc }) });
+      assert.equal(put.status, 200); V = cur.version + 1;
+      await ed.reload({ waitUntil: 'domcontentloaded' }); await ready();
+      const banner = ed.locator('[data-restore-banner]'); await banner.waitFor({ timeout: 15000 });
+      assert.match(await banner.innerText(), /This copy is older than the draft/);
+      assert.equal(await ed.locator('button[name=restore-unsaved]').innerText(), 'Restore anyway');
+      await ed.click('button[name=restore-unsaved]'); await banner.waitFor({ state: 'detached' });
+      await choosePage('about'); await tab('page');
+      assert.equal(await ed.inputValue(sel), 'E2E stale copy');
+      await ed.click('button[name=save-draft]'); V += 1; await waitRevision(V);
+      assert.equal(await ed.locator('[data-admin-conflict]').count(), 0, 'no conflict');
+      assert.equal((await ctx.admin()).document.pages.find(p => p.id === 'about').title.en, 'E2E stale copy', 'content equals the copy');
+    });
+
     await s.check('roll back from History & backups restores the exact original content', async () => {
       await ed.reload({ waitUntil: 'domcontentloaded' }); await ready(); await tab('history');
       await ed.fill('input[name=rollback-revision]', String(base.publishedRevision)); await ed.click('button[name=rollback]');

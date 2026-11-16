@@ -4,6 +4,8 @@
  * storage can be missing, full or blocked (private windows), and the editor must work without it.
  */
 export const UNSAVED_COPY_KEY = 'fgt-cms-unsaved-v1';
+/** Edits made while an older copy is still waiting for Restore / Discard. The older copy is never overwritten. */
+export const PENDING_COPY_KEY = 'fgt-cms-unsaved-v1-pending';
 /** Quiet time after the last edit before the copy is written. Writing serialises the whole document, so never per keystroke. */
 export const UNSAVED_COPY_DELAY_MS = 1000;
 
@@ -19,9 +21,9 @@ function storage(): Storage | null {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
 
-export function readUnsavedCopy(): UnsavedCopy | null {
+export function readUnsavedCopy(key: string = UNSAVED_COPY_KEY): UnsavedCopy | null {
   try {
-    const raw = storage()?.getItem(UNSAVED_COPY_KEY);
+    const raw = storage()?.getItem(key);
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return null;
@@ -32,17 +34,28 @@ export function readUnsavedCopy(): UnsavedCopy | null {
 }
 
 /** Returns false when the browser refused (quota, blocked storage); callers ignore it. */
-export function writeUnsavedCopy(copy: UnsavedCopy): boolean {
+export function writeUnsavedCopy(copy: UnsavedCopy, key: string = UNSAVED_COPY_KEY): boolean {
   try {
     const store = storage();
     if (!store) return false;
-    store.setItem(UNSAVED_COPY_KEY, JSON.stringify({ v: 1, ...copy }));
+    store.setItem(key, JSON.stringify({ v: 1, ...copy }));
     return true;
   } catch { return false; }
 }
 
-export function clearUnsavedCopy(): void {
+/** Clears the main copy and, unless `keepPending`, the pending one too. */
+export function clearUnsavedCopy(keepPending = false): void {
   try { storage()?.removeItem(UNSAVED_COPY_KEY); } catch { /* nothing to clear */ }
+  if (!keepPending) clearPendingCopy();
+}
+export function clearPendingCopy(): void {
+  try { storage()?.removeItem(PENDING_COPY_KEY); } catch { /* nothing to clear */ }
+}
+/** After the owner settles the older copy, edits written meanwhile become the main copy. */
+export function promotePendingCopy(): void {
+  const pending = readUnsavedCopy(PENDING_COPY_KEY);
+  clearPendingCopy();
+  if (pending) writeUnsavedCopy(pending);
 }
 
 /** "15 Nov 2026, 22:55" in the editor language, in the viewer's own time zone. */

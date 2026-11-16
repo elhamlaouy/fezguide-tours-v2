@@ -248,7 +248,7 @@ test('changes are described with the editor names, grouped by area', () => {
     'Blog post added: Ten tips',
     'Site settings changed',
     'Design changed',
-    'Photo library: 1 added',
+    'Photo library: 1 photo added',
   ]);
   const fr = summarizeChanges(live, draft, 'fr').lines.map(line => line.text);
   assert.equal(fr[0], 'Page : About — 2 sections modifiées');
@@ -258,7 +258,7 @@ test('changes are described with the editor names, grouped by area', () => {
 test('a first publication has no live version to compare with and lists everything as new', () => {
   const draft = cmsDoc(); draft.media.push({ id: 'p', src: '/images/a.jpg', alt: text('x') });
   const { lines } = summarizeChanges(null, draft, 'en');
-  assert.ok(lines.some(line => line.text === 'Photo library: 1 added'));
+  assert.ok(lines.some(line => line.text === 'Photo library: 1 photo added'));
 });
 
 // ---- history labels ----
@@ -353,24 +353,68 @@ serial('a differing copy shows the banner; Restore brings the edits back as unsa
   assert.equal(puts().length, 1);
   assert.equal(stored(), null);
 });
-serial('a copy made from an older server version says so, and saving it goes through the version conflict', async () => {
+serial('a copy older than the saved draft is explained, and Restore anyway saves on top of the current version', async () => {
+  window.localStorage.clear();
+  window.localStorage.setItem(KEY, JSON.stringify(copyOf(cmsDoc('Old base edit'), 2)));
+  let server = 5;
+  let saved;
+  installFetch(({ url, method, body }) => {
+    if (url === '/api/admin/content') return { body: content(cmsDoc('Newer server text'), server) };
+    if (url === '/api/admin/content/revisions') return { body: { revisions: [{ version: 5, kind: 'draft', actor: 'owner@example.com', created_at: '2026-11-15T23:10:00.000Z', source_revision: null }] } };
+    if (url === '/api/admin/content/draft' && method === 'PUT') {
+      assert.equal(body.expectedVersion, server, 'the copy is saved on top of the current version');
+      if (server === 99) return { status: 409, body: { error: 'version_conflict' } };
+      saved = body.document; server += 1;
+      return { body: { version: server, draftRevision: server, published: false } };
+    }
+    throw new Error(`unexpected ${method} ${url}`);
+  });
+  await render();
+  const banner = await waitFor(() => document.querySelector('[data-restore-banner]'));
+  await waitFor(() => /owner@example\.com/.test(banner.textContent));
+  assert.match(banner.querySelector('[data-restore-stale]').textContent, /This copy is older than the draft saved on 15 Nov 2026, 23:10 by owner@example\.com\. Restoring it will replace that newer draft\./);
+  assert.equal(banner.querySelector('button[name="restore-unsaved"]').textContent, 'Restore anyway');
+  await click('button[name="restore-unsaved"]');
+  assert.match(document.querySelector('[data-restored-note]').textContent, /replace the newer draft/);
+  await click('button[name="save-draft"]');
+  assert.equal(puts().length, 1);
+  assert.equal(saved.pages[0].sections[0].blocks[0].text.en, 'Old base edit');
+  assert.equal(document.querySelector('[data-admin-conflict]'), null, 'no conflict loop');
+  assert.equal(stored(), null);
+});
+serial('a concurrent change after Restore anyway still gets the normal conflict', async () => {
   window.localStorage.clear();
   window.localStorage.setItem(KEY, JSON.stringify(copyOf(cmsDoc('Old base edit'), 2)));
   installFetch(({ url, method, body }) => {
     if (url === '/api/admin/content') return { body: content(cmsDoc('Newer server text'), 5) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [] } };
-    if (url === '/api/admin/content/draft' && method === 'PUT') { assert.equal(body.expectedVersion, 2, 'the copy keeps the version it came from'); return { status: 409, body: { error: 'version_conflict' } }; }
+    if (url === '/api/admin/content/draft' && method === 'PUT') { assert.equal(body.expectedVersion, 5); return { status: 409, body: { error: 'version_conflict' } }; }
     throw new Error(`unexpected ${method} ${url}`);
   });
   await render();
-  const banner = await waitFor(() => document.querySelector('[data-restore-banner]'));
-  assert.match(banner.querySelector('[data-restore-stale]').textContent, /version 2.*now version 5/);
+  await waitFor(() => document.querySelector('[data-restore-banner]'));
+  assert.match(document.querySelector('[data-restore-stale]').textContent, /This copy is older than the draft saved since\./);
   await click('button[name="restore-unsaved"]');
   await click('button[name="save-draft"]');
   await waitFor(() => document.querySelector('[data-admin-conflict]'));
-  assert.equal(document.querySelector(TEXTAREA).value, 'Newer server text', 'the newer draft is not overwritten');
-  assert.ok(stored(), 'the copy is kept after a conflict');
-  assert.ok(document.querySelector('[data-restore-banner]'), 'and offered again');
+  assert.equal(document.querySelector(TEXTAREA).value, 'Newer server text', 'the concurrent draft is not overwritten');
+});
+serial('editing while the banner is open keeps both the older copy and the new edits', async () => {
+  window.localStorage.clear();
+  window.localStorage.setItem(KEY, JSON.stringify(copyOf(cmsDoc('Older copy'), 2)));
+  installFetch(({ url }) => url === '/api/admin/content' ? { body: content(cmsDoc(), 2) } : { body: { revisions: [] } });
+  await render();
+  await waitFor(() => document.querySelector('[data-restore-banner]'));
+  await typeInto(TEXTAREA, 'Fresh edit');
+  await act(async () => { window.dispatchEvent(new window.Event('pagehide')); });
+  assert.match(stored().json, /Older copy/, 'the older copy is untouched');
+  const pending = JSON.parse(window.localStorage.getItem(unsaved.PENDING_COPY_KEY));
+  assert.match(pending.json, /Fresh edit/, 'new edits go to the pending slot');
+  assert.ok(document.querySelector('[data-restore-pending]'), 'the banner says the older copy is still kept');
+  window.confirm = () => true;
+  await click('button[name="discard-unsaved"]');
+  assert.match(stored().json, /Fresh edit/, 'discarding the old copy promotes the new edits');
+  assert.equal(window.localStorage.getItem(unsaved.PENDING_COPY_KEY), null);
 });
 serial('Discard asks first and removes the copy; an identical copy never shows a banner', async () => {
   window.localStorage.clear();

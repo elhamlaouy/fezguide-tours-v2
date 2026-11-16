@@ -170,7 +170,7 @@ export function summarizeChanges(published: CmsDocument | null, draft: CmsDocume
   if (!deepEqual(before.theme, draft.theme)) add('design', t.design);
 
   const media = delta(before.media, draft.media);
-  const photos = countParts(media, t);
+  const photos = [media.added.length && t.photoAdded(media.added.length), media.changed.length && t.photoChanged(media.changed.length), media.removed.length && t.photoRemoved(media.removed.length)].filter(Boolean).join(', ');
   if (photos) add('photos', `${t.photos}${t.colon} ${photos}`);
 
   lines.sort((a, b) => AREA_ORDER[a.area] - AREA_ORDER[b.area]);
