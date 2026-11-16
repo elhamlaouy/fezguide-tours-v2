@@ -105,9 +105,14 @@ export async function readPublicDocument(db: CmsD1Database): Promise<{ version: 
 }
 export function publicCmsCompatibility(value: object) {
   const legacy = (value as PublicRecord).legacy;
+  const wrapped = Boolean(legacy && typeof legacy === 'object' && !Array.isArray(legacy));
   // Reuse the full projection so compatibility copies cannot bypass canonical visibility.
-  return publicCmsDocument(legacy && typeof legacy === 'object' && !Array.isArray(legacy)
-    ? value : { legacy: pick(value, LEGACY_FIELDS) }).legacy;
+  const projected = publicCmsDocument(wrapped ? value : { legacy: pick(value, LEGACY_FIELDS) });
+  const archive = projected.legacy as PublicRecord;
+  if (!wrapped) return archive;
+  // Slim documents omit archive duplicates of the canonical collections: answer from the canonical copy.
+  return Object.fromEntries(LEGACY_FIELDS.flatMap(field => Object.hasOwn(archive, field) ? [[field, archive[field]]]
+    : field !== 'tours' && field !== 'customPages' && Object.hasOwn(projected, field) ? [[field, projected[field]]] : []));
 }
 function json(value: unknown, status = 200, allow?: string) {
   return new Response(JSON.stringify(value), { status, headers: {
@@ -221,7 +226,7 @@ export function createCmsHandler(options: CmsHandlerOptions) {
         const body = await requestJson(request, MAX_BACKUP_BYTES);
         exactFields(body, ['backup','revision','expectedVersion']);
         requireVersion(body.revision); requireVersion(body.expectedVersion);
-        return json(await restoreBackup(store,env.CMS_MEDIA,body.backup,body.revision,body.expectedVersion,identity!.subject));
+        return json(await restoreBackup(store,env.CMS_MEDIA,body.backup,body.revision,body.expectedVersion,(identity!.email ?? identity!.subject)));
       }
       if (path === '/api/admin/media') return json(await uploadMedia(request, env, { db: env.CMS_DB, actor: identity!.subject }), 201);
       if (mediaKey !== null) {
@@ -255,10 +260,10 @@ export function createCmsHandler(options: CmsHandlerOptions) {
       }
       exactFields(body, path.endsWith('/draft') ? ['expectedVersion', 'document'] : path.endsWith('/rollback') ? ['expectedVersion', 'revision'] : ['expectedVersion']);
       requireVersion(body.expectedVersion);
-      if (path.endsWith('/draft')) return json(await store.saveDraft(body.document, body.expectedVersion, identity!.subject));
-      if (path.endsWith('/publish')) return json(await store.publish(body.expectedVersion, identity!.subject));
+      if (path.endsWith('/draft')) return json(await store.saveDraft(body.document, body.expectedVersion, (identity!.email ?? identity!.subject)));
+      if (path.endsWith('/publish')) return json(await store.publish(body.expectedVersion, (identity!.email ?? identity!.subject)));
       requireVersion(body.revision);
-      return json(await store.rollback(body.revision, body.expectedVersion, identity!.subject));
+      return json(await store.rollback(body.revision, body.expectedVersion, (identity!.email ?? identity!.subject)));
     } catch (error) {
       // Never echo document values, identities, JWTs, database/provider errors, or stack traces.
       const response = error instanceof CmsError ? json({ error: error.code }, error.status) : json({ error: 'cms_unavailable' }, 503);

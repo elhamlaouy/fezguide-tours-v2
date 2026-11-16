@@ -30,7 +30,7 @@ test('HTML omits redundant legacy collections without altering canonical content
   assert.deepEqual(original, before, 'never mutate the saved/published source');
   assert.deepEqual({ ...output.document, legacy: undefined, pages: undefined }, { ...original, legacy: undefined, pages: undefined });
   assert.deepEqual(output.document.pages.map(({ sections, ...page }) => page), original.pages.map(({ sections, ...page }) => page), 'all route metadata remains intact');
-  assert.deepEqual(output.document.legacy.siteSettings, original.legacy.siteSettings);
+  assert.equal(output.document.legacy.siteSettings, undefined, 'the unread archive site settings never enter the HTML bootstrap');
   assert.equal(validateCmsDocument(output.document).valid, true, 'snapshot remains a valid CMS document');
   assert.ok(gzipSync(output.html).length < gzipSync(JSON.stringify(original)).length, 'actual compressed payload decreases');
   let routes = 0;

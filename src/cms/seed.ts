@@ -27,6 +27,7 @@ const externalLink = (id: string, href: string, label: Localized): CmsLink => ({
  * UI-only source strings live in uiCopy; public compatibility records live in legacy.
  */
 import { pageDescription } from './seo';
+import { slimLegacy } from './legacy-slim';
 
 export function createCmsSeed(): CmsDocument {
   const media: CmsMedia[] = [];
@@ -248,6 +249,7 @@ export function createCmsSeed(): CmsDocument {
     blogPosts, teamMembers, faqs: FAQ_ITEMS, media, reviews,
     legacy: { tours, customPages, blogPosts, teamMembers, faqs: FAQ_ITEMS, siteSettings: DEFAULT_SITE_SETTINGS },
   };
+  document.legacy = slimLegacy(document);
   const detached = structuredClone(document);
   for (const page of detached.pages) for (const language of languages) {
     if (!page.seo.description[language].trim()) page.seo.description[language] = pageDescription(detached, page, language);
