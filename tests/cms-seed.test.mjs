@@ -47,7 +47,7 @@ test('footer matches rendered source links including Blog and published non-navi
   const seed = createCmsSeed();
   const basePages = ['home', 'fez', 'day-trips', 'food-tours', 'travel-tips', 'about'];
   assert.deepEqual(seed.footer.links.map(l => l.pageId), [
-    ...basePages, ...(seed.legacy.blogPosts.length ? ['blog'] : []),
+    ...basePages, ...(seed.blogPosts.length ? ['blog'] : []),
     ...seed.legacy.customPages.filter(p => p.published !== false).map(p => p.id),
   ]);
   assert.ok(seed.footer.links.some(l => l.pageId === 'page-bespoke-itinerary'));
@@ -88,7 +88,7 @@ test('seed is validated, independent JSON data with current approved contact val
   const result = validateCmsDocument(seed);
   assert.equal(result.valid, true, result.errors.join('\n'));
   assert.deepEqual(seed.siteSettings, DEFAULT_SITE_SETTINGS);
-  assert.deepEqual(seed.legacy.siteSettings, DEFAULT_SITE_SETTINGS);
+  assert.equal(seed.legacy.siteSettings, undefined, 'the slim archive does not duplicate site settings');
   assert.deepEqual(JSON.parse(JSON.stringify(seed)), seed);
   seed.pages[0].title.en = 'Edited'; seed.siteSettings.email = 'changed@example.com';
   assert.notEqual(createCmsSeed().pages[0].title.en, 'Edited');
@@ -179,6 +179,11 @@ test('legacy tours preserve protected source values, extras, card ordering and p
   assert.deepEqual(seed.legacy.tours.map(t => t.id), pillars.map(t => t.id));
   for (const source of pillars) {
     const tour = seed.legacy.tours.find(t => t.id === source.id);
+    if (source.actionType === 'book_tour') {
+      // Bookable tours are slim archive entries; their content lives in the canonical product (covered by the product tests).
+      assert.deepEqual(tour, { id: source.id, pageId: source.pageId, actionType: 'book_tour', ...(source.kind ? { kind: source.kind } : {}), ...(tour.published !== undefined ? { published: tour.published } : {}) }, `${source.id}: slim archive entry`);
+      continue;
+    }
     for (const field of ['title', 'subtitle', 'shortDescription', 'fullDescription', 'highlights', 'practicalInfo', 'imageAlt', 'actionType']) assert.deepEqual(tour[field], source[field], `${source.id}.${field}`);
     const extra = EXPERIENCE_EXTRAS[source.id];
     assert.deepEqual(tour.galleryImages, (extra?.galleryImages ?? [source.image]).map(s => s.replace('/src/assets/images/', '/images/')));
@@ -374,5 +379,5 @@ test('only attributed real Tripadvisor records are seeded, never private or inve
   assert.ok(seed.reviews.every(r => r.source === 'tripadvisor' && r.url.startsWith('https://www.tripadvisor.com/ShowUserReviews-')));
   assert.equal(seed.reviews[0].author, 'Mathilde H');
   assert.ok(!JSON.stringify(seed).includes('BookingInquiry'));
-  assert.deepEqual(Object.keys(seed.legacy).sort(), ['blogPosts', 'customPages', 'faqs', 'siteSettings', 'teamMembers', 'tours']);
+  assert.deepEqual(Object.keys(seed.legacy).sort(), ['customPages', 'tours']);
 });

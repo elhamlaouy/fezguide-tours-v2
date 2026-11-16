@@ -105,9 +105,14 @@ export async function readPublicDocument(db: CmsD1Database): Promise<{ version: 
 }
 export function publicCmsCompatibility(value: object) {
   const legacy = (value as PublicRecord).legacy;
+  const wrapped = Boolean(legacy && typeof legacy === 'object' && !Array.isArray(legacy));
   // Reuse the full projection so compatibility copies cannot bypass canonical visibility.
-  return publicCmsDocument(legacy && typeof legacy === 'object' && !Array.isArray(legacy)
-    ? value : { legacy: pick(value, LEGACY_FIELDS) }).legacy;
+  const projected = publicCmsDocument(wrapped ? value : { legacy: pick(value, LEGACY_FIELDS) });
+  const archive = projected.legacy as PublicRecord;
+  if (!wrapped) return archive;
+  // Slim documents omit archive duplicates of the canonical collections: answer from the canonical copy.
+  return Object.fromEntries(LEGACY_FIELDS.flatMap(field => Object.hasOwn(archive, field) ? [[field, archive[field]]]
+    : field !== 'tours' && field !== 'customPages' && Object.hasOwn(projected, field) ? [[field, projected[field]]] : []));
 }
 function json(value: unknown, status = 200, allow?: string) {
   return new Response(JSON.stringify(value), { status, headers: {

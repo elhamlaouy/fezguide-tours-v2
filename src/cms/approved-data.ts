@@ -7,7 +7,7 @@ const blankList=():Localized<string[]>=>({en:[],fr:[],es:[]});
 /** Canonical data remains complete when the HTML bootstrap trims compatibility duplicates. */
 export function approvedPublicData(document:CmsDocument):PublicCmsData {
   const cards=document.pages.flatMap(page=>page.sections.flatMap(section=>section.type==='cardGrid'?section.cards:[]));
-  const legacy=new Map(document.legacy.tours.map(tour=>[tour.id,tour]));
+  const legacy=new Map(document.legacy.tours.flatMap(tour=>'title' in tour?[[tour.id,tour] as const]:[]));
   const products=new Map(document.products.map(product=>[product.id,product]));
   const eligible=document.pages.filter(page=>isPublicPage(document,page));
   const toursById=new Map<string,SectionPillar>();

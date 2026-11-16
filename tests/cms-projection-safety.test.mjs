@@ -241,7 +241,7 @@ test('raw URL reference inventory includes every canonical string-backed image f
   doc.blogPosts[0].coverImage = urls[2];
   doc.teamMembers[0].avatarUrl = urls[3];
   doc.siteSettings.heroImage = urls[4];
-  doc.legacy.teamMembers = structuredClone(doc.legacy.teamMembers);
+  doc.legacy.teamMembers = structuredClone(doc.teamMembers);
   doc.legacy.teamMembers[0].avatarUrl = 'https://example.org/archive-only.jpg';
   const refs = projection.referencedMediaUrls(doc);
   for (const url of urls) assert.ok(refs.has(url), url);

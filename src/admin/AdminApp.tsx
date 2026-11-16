@@ -2,6 +2,7 @@ import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useSt
 import { LivePreview } from './LivePreview';
 import { PriceEditor, PRICE_CURRENCIES, type PriceChange } from './PriceEditor';
 import { validateCmsDocument, type CmsDocument, type CmsPage, type CmsSection } from '../cms/schema';
+import { slimCmsDocument } from '../cms/legacy-slim';
 import {
   AdminApiError, loadAdminContent, loadAdminRevisionDocument, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
   type AdminContent, type AdminRevision, type AdminWriteResult,
@@ -300,6 +301,12 @@ function previewDelay(): number {
   return typeof override === 'number' ? override : PREVIEW_DELAY_MS;
 }
 
+/** True when a stored copy equals the saved draft once both are in the slim shape the editor saves. */
+function sameAsSaved(json: string, saved: string): boolean {
+  if (json === saved) return true;
+  try { return JSON.stringify(slimCmsDocument(JSON.parse(json) as CmsDocument)) === saved; } catch { return false; }
+}
+
 export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; onClose: () => void }): React.JSX.Element {
   const translate = (label: string): string => language === 'es' ? SPANISH_LABELS[label] ?? label : language === 'fr' ? FRENCH_ADMIN_LABELS[label] ?? editorLabel(label, language) : label;
   const [status, setStatus] = useState<'loading' | 'unauthorized' | 'error' | 'ready'>('loading');
@@ -367,7 +374,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
 
   const applyContent = useCallback((payload: AdminContent) => {
     flushUnsaved(); // edits still in the editor are kept as a local copy before the loaded draft replaces them
-    const next = payload.document ? structuredClone(payload.document) : null;
+    const next = payload.document ? slimCmsDocument(structuredClone(payload.document)) : null;
     versionRef.current = payload.version;
     savedJson.current = next ? JSON.stringify(next) : '';
     baseline.current = next;
@@ -380,8 +387,10 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     // A local copy that equals the server draft is pointless; one that differs is offered back to the owner.
     if (!readUnsavedCopy()) promotePendingCopy();
     const copy = readUnsavedCopy();
-    if (copy && copy.json === savedJson.current) clearUnsavedCopy(true);
-    setLocalCopy(copy && copy.json !== savedJson.current ? copy : null);
+    // Compare in the slim shape the editor saves, so a copy that only differs by the old archive is not offered back.
+    const same = !!copy && sameAsSaved(copy.json, savedJson.current);
+    if (copy && same) clearUnsavedCopy(true);
+    setLocalCopy(copy && !same ? copy : null);
     setCopyProblem(false);
   }, [flushUnsaved]);
 
@@ -432,7 +441,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     const current = draftRef.current;
     if (!current) return null;
     const unknown = unknownMediaIds(current);
-    const result = validateCmsDocument(current);
+    const result = validateCmsDocument(slimCmsDocument(current));
     if (unknown.length || !result.valid) {
       setErrors([...unknown.map(id => `media: unknown id ${id}`), ...(result.valid ? [] : result.errors)]);
       return null;
