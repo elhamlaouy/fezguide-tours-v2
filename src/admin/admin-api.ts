@@ -85,6 +85,14 @@ export async function loadAdminRevisions(): Promise<AdminRevision[]> {
   });
 }
 
+/** One stored revision's full document (read-only). Revisions are immutable, so callers may cache by version. */
+export async function loadAdminRevisionDocument(version: number): Promise<CmsDocument> {
+  const payload = await request(`/api/admin/content/revisions/${version}`, 'GET');
+  const document = payload.document;
+  if (!document || typeof document !== 'object' || Array.isArray(document)) throw new AdminApiError(502, 'invalid_response');
+  return document as CmsDocument;
+}
+
 function writeResult(payload: Record<string, unknown>): AdminWriteResult {
   const version = integer(payload.version);
   const draftRevision = integer(payload.draftRevision);

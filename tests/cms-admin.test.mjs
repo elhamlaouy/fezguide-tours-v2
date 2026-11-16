@@ -360,6 +360,7 @@ serial('publish sends the edited document then the real publish endpoint', async
   installFetch(({ url, method, body }) => {
     if (url === '/api/admin/content' && method === 'GET') return { body: content(cmsDoc(), version) };
     if (url === '/api/admin/content/revisions') return { body: { revisions: [{ version: 2, kind: 'publish', actor: 'owner', created_at: '2026-01-01T00:00:00.000Z', source_revision: null }] } };
+    if (url === '/api/admin/content/revisions/1') return { body: { version: 1, kind: 'publish', document: cmsDoc() } };
     if (url === '/api/admin/content/draft' && method === 'PUT') {
       assert.deepEqual(Object.keys(body).sort(), ['document', 'expectedVersion']);
       assert.equal(body.expectedVersion, version);
@@ -378,6 +379,10 @@ serial('publish sends the edited document then the real publish endpoint', async
   await waitFor(() => document.querySelector('[data-admin-status="ready"]'));
   await typeInto('textarea[data-path="pages.home.sections.intro.blocks.0.text.en"]', 'Published paragraph');
   await click('button[name="publish"]');
+  await waitFor(() => document.querySelector('[data-publish-changes]'));
+  assert.equal(calls.filter(call => call.method === 'PUT').length, 0, 'the dialog opens before anything is written');
+  assert.match(document.querySelector('[data-publish-changes]').textContent, /Page: Home — 1 section changed/);
+  await click('button[name="confirm-publish"]');
   await waitFor(() => document.querySelector('[data-revision="6"]'));
   assert.equal(saved.pages[0].sections[0].blocks[0].text.en, 'Published paragraph');
   assert.equal(calls.filter(call => call.url === '/api/admin/content/publish' && call.method === 'POST').length, 1);

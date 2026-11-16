@@ -3,7 +3,7 @@ import { LivePreview } from './LivePreview';
 import { PriceEditor, PRICE_CURRENCIES, type PriceChange } from './PriceEditor';
 import { validateCmsDocument, type CmsDocument, type CmsPage, type CmsSection } from '../cms/schema';
 import {
-  AdminApiError, loadAdminContent, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
+  AdminApiError, loadAdminContent, loadAdminRevisionDocument, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
   type AdminContent, type AdminRevision, type AdminWriteResult,
 } from './admin-api';
 import { MediaUpload } from './MediaUpload';
@@ -17,6 +17,11 @@ import { editorLabel, FRENCH_ADMIN_LABELS } from './editor-labels';
 import { GLOBAL_FIELDS, PAGE_FIELDS, sectionFields, editorDefault, nextEditorId, setEditorPath, removeEditorPage, HIDDEN_EDITOR_COLLECTIONS, FALLBACK_ONLY_SITE_SETTINGS } from '../cms/editor-controls';
 import { blogPageCover, coversToChoose, todayIso } from './article-edit';
 import { syncEntityEdits } from '../cms/entity-projection';
+import { PublishDialog, type PublishPreview } from './PublishDialog';
+import { summarizeChanges } from './change-summary';
+import { describeRevision } from './history';
+import { safetyCopy } from './safety-copy';
+import { UNSAVED_COPY_DELAY_MS, clearUnsavedCopy, formatWhen, readUnsavedCopy, writeUnsavedCopy, type UnsavedCopy } from './unsaved-copy';
 import './admin.css';
 
 const SPANISH_LABELS: Record<string, string> = {
@@ -336,9 +341,30 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   /** The draft object known to equal what is saved; any other object is unsaved until a deep check says otherwise. */
   const baseline = useRef<CmsDocument | null>(null);
   const [verifiedClean, setVerifiedClean] = useState<CmsDocument | null>(null);
+  /** A browser-local copy of earlier unsaved edits that differs from the loaded draft; the owner decides what happens to it. */
+  const [localCopy, setLocalCopy] = useState<UnsavedCopy | null>(null);
+  const localCopyRef = useRef<UnsavedCopy | null>(null);
+  localCopyRef.current = localCopy;
+  const [copyProblem, setCopyProblem] = useState(false);
+  const [restoredNote, setRestoredNote] = useState(false);
+  const [publishPreview, setPublishPreview] = useState<PublishPreview | null>(null);
+  const publishToken = useRef(0);
+  /** Revisions never change once stored, so the live version is fetched at most once per revision number. */
+  const publishedDoc = useRef<{ revision: number; document: CmsDocument } | null>(null);
+  const safety = safetyCopy(language);
   draftRef.current = draft;
 
+  /** Writes the unsaved document to this browser. Only called after typing pauses, on hide/unload, and before a reload replaces the draft. */
+  const flushUnsaved = useCallback(() => {
+    const current = draftRef.current;
+    if (!current || current === baseline.current || localCopyRef.current) return;
+    const json = JSON.stringify(current);
+    if (json === savedJson.current) return;
+    writeUnsavedCopy({ baseVersion: versionRef.current, savedAt: new Date().toISOString(), json });
+  }, []);
+
   const applyContent = useCallback((payload: AdminContent) => {
+    flushUnsaved(); // edits still in the editor are kept as a local copy before the loaded draft replaces them
     const next = payload.document ? structuredClone(payload.document) : null;
     versionRef.current = payload.version;
     savedJson.current = next ? JSON.stringify(next) : '';
@@ -349,7 +375,12 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     setDraft(next);
     setSelectedPageId(current => next?.pages.some(page => page.id === current) ? current : next?.pages[0]?.id ?? '');
     setStatus('ready');
-  }, []);
+    // A local copy that equals the server draft is pointless; one that differs is offered back to the owner.
+    const copy = readUnsavedCopy();
+    if (copy && copy.json === savedJson.current) clearUnsavedCopy();
+    setLocalCopy(copy && copy.json !== savedJson.current ? copy : null);
+    setCopyProblem(false);
+  }, [flushUnsaved]);
 
   const rememberWrite = useCallback((result: AdminWriteResult, label: string) => {
     versionRef.current = result.version;
@@ -377,6 +408,13 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
 
   useEffect(() => { void reload(); }, [reload]);
   useEffect(() => { setLocale(language); }, [language]);
+  // History lists what the server holds now: refresh it when the tab opens and after every save, publish or rollback.
+  useEffect(() => {
+    if (workspace !== 'history' || status !== 'ready') return;
+    let current = true;
+    loadAdminRevisions().then(rows => { if (current) setRevisions(rows); }).catch(() => {});
+    return () => { current = false; };
+  }, [workspace, version, status]);
 
   const failConflict = useCallback(async () => {
     setConflict('version_conflict');
@@ -400,6 +438,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     if (JSON.stringify(result.document) === savedJson.current) {
       baseline.current = current;
       setVerifiedClean(current);
+      if (!localCopyRef.current) clearUnsavedCopy();
       return { version: versionRef.current, draftRevision: versionRef.current, published: false };
     }
     try {
@@ -407,6 +446,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
       savedJson.current = JSON.stringify(result.document);
       baseline.current = current;
       setVerifiedClean(current);
+      if (!localCopyRef.current) clearUnsavedCopy();
       rememberWrite(saved, 'Saved revision');
       return saved;
     } catch (error) {
@@ -642,6 +682,73 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     const timer = setTimeout(() => { if (draftRef.current === draft && JSON.stringify(draft) === savedJson.current) setVerifiedClean(draft); }, 400);
     return () => clearTimeout(timer);
   }, [draft, verifiedClean]);
+  // Safety copy: written ~1 s after typing pauses (never per keystroke), dropped once the draft matches the saved one again.
+  useEffect(() => {
+    if (!draft || draft === baseline.current) return;
+    if (draft === verifiedClean) { if (!localCopyRef.current) clearUnsavedCopy(); return; }
+    const timer = setTimeout(flushUnsaved, UNSAVED_COPY_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [draft, verifiedClean, flushUnsaved]);
+  useEffect(() => {
+    const hide = () => flushUnsaved();
+    const hidden = () => { if (document.visibilityState === 'hidden') flushUnsaved(); };
+    window.addEventListener('pagehide', hide);
+    window.addEventListener('beforeunload', hide);
+    document.addEventListener('visibilitychange', hidden);
+    return () => { window.removeEventListener('pagehide', hide); window.removeEventListener('beforeunload', hide); document.removeEventListener('visibilitychange', hidden); };
+  }, [flushUnsaved]);
+  const restoreCopy = () => {
+    const copy = localCopyRef.current;
+    if (!copy || busyRef.current) return;
+    let result: ReturnType<typeof validateCmsDocument> | null = null;
+    try { result = validateCmsDocument(JSON.parse(copy.json)); } catch { result = null; }
+    if (!result || !result.valid) { setCopyProblem(true); return; }
+    // The copy keeps the version it was edited from: if the server moved on, saving ends in the normal version conflict instead of overwriting.
+    versionRef.current = copy.baseVersion;
+    setDraft(result.document);
+    setSelectedPageId(current => result.document.pages.some(page => page.id === current) ? current : result.document.pages[0]?.id ?? '');
+    setErrors([]); setConflict(''); setNotice(null);
+    setCopyProblem(false); setLocalCopy(null); setRestoredNote(true);
+  };
+  const discardCopy = () => {
+    if (!window.confirm(safety.discardConfirm)) return;
+    clearUnsavedCopy(); setLocalCopy(null); setCopyProblem(false);
+  };
+  async function openPublish() {
+    const current = draftRef.current;
+    if (!current || busyRef.current || uploading || importing || pricingPending) return;
+    const token = ++publishToken.current;
+    const base = { first: publishedRevision === null, unsaved: isDirty() };
+    setPublishPreview({ ...base, status: 'loading', summary: null });
+    try {
+      let live: CmsDocument | null = null;
+      if (publishedRevision !== null) {
+        const cached = publishedDoc.current;
+        live = cached?.revision === publishedRevision ? cached.document : await loadAdminRevisionDocument(publishedRevision);
+        publishedDoc.current = { revision: publishedRevision, document: live };
+      }
+      if (token !== publishToken.current) return;
+      setPublishPreview({ ...base, status: 'ready', summary: summarizeChanges(live, draftRef.current ?? current, language) });
+    } catch (error) {
+      if (token !== publishToken.current) return;
+      if (error instanceof AdminApiError && error.status === 401) { setPublishPreview(null); setStatus('unauthorized'); return; }
+      setPublishPreview({ ...base, status: 'failed', summary: null });
+    }
+  }
+  const cancelPublish = () => { publishToken.current += 1; setPublishPreview(null); };
+  const confirmPublish = () => {
+    publishToken.current += 1;
+    setPublishPreview(null);
+    void run(async () => {
+      const saved = await persist();
+      if (!saved) return;
+      try { rememberWrite(await publishAdminDraft(saved.version), 'Published revision'); }
+      catch (error) {
+        if (error instanceof AdminApiError && error.status === 409) await failConflict();
+        else setErrors([error instanceof AdminApiError ? error.code : 'publish_failed']);
+      }
+    });
+  };
   const stateKey = dirty ? 'unsaved' : publishedRevision !== null && publishedRevision === draftRevision ? 'published' : 'draft';
   useEffect(() => {
     const guard = (event: BeforeUnloadEvent) => { if (isDirty() || uploading || importing || busy) { event.preventDefault(); event.returnValue = ''; } };
@@ -652,7 +759,11 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     window.addEventListener('cms-before-navigation', historyGuard);
     return () => { window.removeEventListener('beforeunload', guard); window.removeEventListener('cms-before-navigation', historyGuard); };
   }, [isDirty, uploading, importing, busy, language]);
-  const leave = () => { if (!uploading && !importing && !busy && (!isDirty() || window.confirm(editorLabel('discard', language)))) onClose(); };
+  const leave = () => {
+    if (uploading || importing || busy) return;
+    if (isDirty()) { if (!window.confirm(editorLabel('discard', language))) return; if (!localCopyRef.current) clearUnsavedCopy(); }
+    onClose();
+  };
   // The live preview trails typing: settle ~250 ms after the last keystroke, then render at low priority.
   const previewInput = useMemo(() => draft && page ? { draft, page } : null, [draft, page]);
   const settledPreview = useSettledValue(previewInput, previewDelay(), page?.id);
@@ -708,15 +819,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
         <div className="cms-admin-actions">
           <span className={`cms-draft-state is-${stateKey}`} data-state={stateKey} role="status">{w(stateKey === 'unsaved' ? 'stateUnsaved' : stateKey === 'published' ? 'statePublished' : 'stateDraft')}</span>
           <button type="button" name="save-draft" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => { await persist(); })}>{translate('Save draft')}</button>
-          <button type="button" name="publish" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void run(async () => {
-            const saved = await persist();
-            if (!saved) return;
-            try { rememberWrite(await publishAdminDraft(saved.version), 'Published revision'); }
-            catch (error) {
-              if (error instanceof AdminApiError && error.status === 409) await failConflict();
-              else setErrors([error instanceof AdminApiError ? error.code : 'publish_failed']);
-            }
-          })}>{translate('Publish')}</button>
+          <button type="button" name="publish" disabled={busy || uploading || importing || pricingPending || !draft} onClick={() => void openPublish()}>{translate('Publish')}</button>
           <button type="button" onClick={leave}>{translate('Close')}</button>
         </div>
       </header>
@@ -733,10 +836,22 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
         <label className="cms-space-control" hidden={layout !== 'split'}>{w('editorWidth')}<input name="editor-width" type="range" min="28" max="58" value={editorWidth} onChange={event => setEditorWidth(Number(event.target.value))} /></label>
       </div>
       <p className="cms-first-step">{w('intro')}</p>
+      {localCopy && <section className="cms-restore-banner" data-restore-banner aria-labelledby="cms-restore-title">
+        <h2 id="cms-restore-title">{safety.copyTitle(formatWhen(localCopy.savedAt, language) ?? '')}</h2>
+        <p>{safety.copyBody}</p>
+        {localCopy.baseVersion !== version && <p data-restore-stale>{safety.copyStale(localCopy.baseVersion, version)}</p>}
+        {copyProblem && <p role="alert" data-restore-problem>{safety.restoreInvalid}</p>}
+        <div className="cms-restore-actions">
+          <button type="button" name="restore-unsaved" className="cms-primary" disabled={busy} onClick={restoreCopy}>{safety.restore}</button>
+          <button type="button" name="discard-unsaved" onClick={discardCopy}>{safety.discard}</button>
+        </div>
+      </section>}
+      {restoredNote && dirty && <p className="cms-admin-notice" role="status" data-restored-note>{safety.restored}</p>}
       {pricingPending && <p className="cms-admin-notice" role="status">{w('pendingPrice')} <button type="button" name="return-to-pricing" onClick={() => { setWorkspace('pricing'); setLayout('split'); }}>{w('pricing')}</button></p>}
       {conflict && <p className="cms-admin-alert" data-admin-conflict data-code={conflict} title={conflict} role="alert">{friendlyApiError(conflict, language)}</p>}
       {notice && <p className="cms-admin-notice" data-revision={notice.version}>{translate(notice.label)} {notice.version}</p>}
       {errors.length > 0 && <ul className="cms-admin-errors" data-field-errors role="alert">{errors.map(error => { const described = describeEditorError(error, language, draft ?? undefined); return <li key={error} title={described.code} data-code={described.code}>{described.text}</li>; })}</ul>}
+      {publishPreview && <PublishDialog language={language} preview={publishPreview} onConfirm={confirmPublish} onCancel={cancelPublish} />}
       {!draft || !page ? (
         <div className="cms-admin-bootstrap" data-admin-bootstrap>
           <p>{translate('No draft is stored yet.')}</p>
@@ -953,12 +1068,25 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
             </div>
             {workspace === 'history' && <fieldset>
               <legend>{translate('Revisions')}</legend>
-              <ul>
-                {revisions.map(revision => (
-                  <li key={revision.version}>
-                    <button type="button" onClick={() => setRollbackId(String(revision.version))}>{translate('Revision')} {revision.version} ({translate(revision.kind)})</button>
-                  </li>
-                ))}
+              <p className="cms-admin-note">{safety.historyHelp}</p>
+              <ul className="cms-history" data-history>
+                {revisions.map(revision => {
+                  const view = describeRevision(revision, language, draftRevision, publishedRevision);
+                  return (
+                    <li key={revision.version} data-history-version={revision.version}>
+                      <button type="button" className="cms-history-entry" aria-pressed={rollbackId === String(revision.version)} onClick={() => setRollbackId(String(revision.version))}>
+                        <span className="cms-history-when">{view.when}</span>
+                        <span className="cms-history-what">{view.what}</span>
+                        <span className="cms-history-who">{safety.by} {view.who}</span>
+                        <span className="cms-history-version">{safety.version} {view.version}</span>
+                        {(view.live || view.current) && <span className="cms-history-marks">
+                          {view.live && <span className="cms-history-mark is-live" data-mark="live">{safety.liveNow}</span>}
+                          {view.current && <span className="cms-history-mark is-draft" data-mark="draft">{safety.currentDraft}</span>}
+                        </span>}
+                      </button>
+                    </li>
+                  );
+                })}
                 {revisions.length === 0 && <li>{translate('No revisions loaded.')}</li>}
               </ul>
               <label>

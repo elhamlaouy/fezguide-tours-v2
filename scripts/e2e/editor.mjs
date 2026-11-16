@@ -307,6 +307,14 @@ export async function run(ctx) {
 
     await s.check('publish: every change goes live (EN/FR/ES, price, hidden section, new page, photo)', async () => {
       const before = (await ctx.admin()).publishedRevision; await ed.click('button[name=publish]');
+      // The "what changed" confirmation lists the edits made above in plain language, and nothing is live until it is confirmed.
+      await ed.waitForSelector('[data-publish-dialog] [data-publish-changes]', { timeout: 30000 });
+      const listed = await ed.locator('[data-publish-changes]').innerText();
+      for (const expected of [/Page: Home/, /Page added/, /Tour: .+ — prices changed/, /Blog post added: /, /Design changed/, /Photo library: /, /Menu changed/]) assert.match(listed, expected);
+      assert.ok(!/\b(?:pages|products|blogPosts|siteSettings)\.\d/.test(listed), 'no raw paths in the list');
+      assert.equal((await ctx.admin()).publishedRevision, before, 'nothing is published while the dialog is open');
+      await snap('06-publish-dialog');
+      await ed.click('[data-publish-dialog] button[name=confirm-publish]');
       let a; for (let i = 0; i < 60; i++) { a = await ctx.admin(); if (a.publishedRevision > before && a.publishedRevision === a.version) break; await sleep(1000); }
       assert.ok(a.publishedRevision > before, 'publish did not complete');
       await ed.waitForFunction(v => (document.querySelector('.cms-version-details')?.innerText || '').includes(`Published revision ${v}.`), a.version, { timeout: 30000 });
@@ -319,6 +327,23 @@ export async function run(ctx) {
       for (const [prefix, l] of [['', 'en'], ['/fr', 'fr'], ['/es', 'es']]) { const bp = await ctx.html(`${prefix}/${BLOG.slug}`); assert.equal(bp.status, 200, `blog post ${prefix || '/'} not public`); assert.ok(bp.text.includes(BLOG[l]), `blog post ${l} title missing`); }
       assert.ok(d.navigation.some(n => n.pageId === 'e2e-test-page'));
       const src = d.media.find(m => m.id === uploadId).src; const img = await ctx.http(src, { auth: false }); assert.equal(img.status, 200); assert.match(img.headers.get('content-type'), /image\//);
+    });
+
+    await s.check('History shows when, who and what for each revision, with a "Live now" marker on the published one', async () => {
+      await tab('history');
+      const live = ed.locator('[data-history] li[data-history-version]', { has: ed.locator('[data-mark=live]') });
+      await live.first().waitFor({ timeout: 30000 });
+      assert.equal(await live.count(), 1, 'exactly one revision is marked live');
+      assert.equal(await live.first().getAttribute('data-history-version'), String(V));
+      const row = await live.first().innerText();
+      assert.match(row, /\b\d{1,2} [A-Z][a-z]{2} \d{4}, \d{2}:\d{2}\b/, 'local date and time');
+      assert.match(row, /Published/); assert.match(row, /Live now/);
+      assert.match(row, /by (Editor|Automated test|\S+@\S+)/, 'who did it, never a raw account id');
+      const all = await ed.locator('[data-history]').innerText();
+      assert.ok(!/service:/.test(all), 'no raw service-token ids');
+      assert.ok(await ed.locator('[data-history] [data-mark=draft]').count() >= 1, 'current draft marker');
+      await snap('07-history');
+      await tab('sections');
     });
 
     await s.check('visitor browser shows the published changes', async () => {
@@ -375,6 +400,32 @@ export async function run(ctx) {
         await choosePage('home', m); for (const key of ['sections', 'page', 'photos', 'appearance']) { await tab(key, m); await m.waitForTimeout(250); assert.ok(await over() <= 1, `overflow ${await over()}px on the ${key} tab`); }
         await m.screenshot({ path: join(ctx.out, '05-mobile-editor.png') });
       } finally { await m.close(); }
+    });
+
+    await s.check('unsaved edits survive a reload as a local copy and can be restored, then saved', async () => {
+      const KEY = 'fgt-cms-unsaved-v1';
+      await ed.evaluate(key => localStorage.removeItem(key), KEY);
+      await choosePage('about'); await tab('page');
+      const sel = 'textarea[data-path="pages.about.title.en"]';
+      await ed.fill(sel, 'E2E unsaved copy');
+      assert.equal(await ed.evaluate(key => localStorage.getItem(key), KEY), null, 'nothing is written per keystroke');
+      await ed.waitForFunction(key => !!localStorage.getItem(key), KEY, { timeout: 10000 });
+      await ed.reload({ waitUntil: 'domcontentloaded' }); await ready();
+      const banner = ed.locator('[data-restore-banner]');
+      await banner.waitFor({ timeout: 15000 });
+      assert.match(await banner.innerText(), /You have unsaved changes from \d{1,2} [A-Z][a-z]{2} \d{4}, \d{2}:\d{2}\./);
+      await snap('08-restore-banner');
+      await ed.click('button[name=restore-unsaved]');
+      await banner.waitFor({ state: 'detached' });
+      await choosePage('about'); await tab('page');
+      assert.equal(await ed.inputValue(sel), 'E2E unsaved copy', 'restored as an unsaved edit');
+      assert.equal(await ed.locator('[data-state]').getAttribute('data-state'), 'unsaved');
+      assert.equal((await ctx.admin()).document.pages.find(p => p.id === 'about').title.en, 'E2E editor A', 'restoring alone saves nothing');
+      await ed.click('button[name=save-draft]'); V += 1; await waitRevision(V);
+      assert.equal((await ctx.admin()).document.pages.find(p => p.id === 'about').title.en, 'E2E unsaved copy');
+      assert.equal(await ed.evaluate(key => localStorage.getItem(key), KEY), null, 'saving clears the local copy');
+      await ed.reload({ waitUntil: 'domcontentloaded' }); await ready();
+      assert.equal(await ed.locator('[data-restore-banner]').count(), 0, 'no banner once saved');
     });
 
     await s.check('roll back from History & backups restores the exact original content', async () => {

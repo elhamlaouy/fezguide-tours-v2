@@ -450,7 +450,7 @@ test('SQL payloads remain bound data and hostile revision/version values cannot 
     const before = schema();
     const seed = createCmsSeed();
     seed.pages.find(page => page.id === 'home').title.en = payload;
-    const token = await signedToken({ sub: payload });
+    const token = await signedToken({ sub: payload, email: undefined }); // no email claim: the subject is the recorded actor
     env.ACCESS_ALLOWED_SUBJECTS = payload;
     const headers = { 'Cf-Access-Jwt-Assertion': token };
     assert.equal((await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed }, headers)).status, 200);
@@ -520,7 +520,7 @@ test('userId tenantId role and isAdmin spoofing cannot select authorization or r
     assert.equal(db.sqlite.prepare('SELECT version FROM cms_documents').get().version, 0);
     assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM cms_revisions').get().n, 0);
     assert.equal((await call('/api/admin/content/draft', 'PUT', { expectedVersion: 0, document: seed })).status, 200);
-    assert.equal(db.sqlite.prepare('SELECT actor FROM cms_revisions WHERE version = 1').get().actor, 'editor');
+    assert.equal(db.sqlite.prepare('SELECT actor FROM cms_revisions WHERE version = 1').get().actor, 'editor@example.test', 'the signed email, when present, is the readable actor shown in History');
   } finally { db.sqlite.close(); }
 });
 
