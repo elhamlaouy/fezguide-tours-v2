@@ -55,7 +55,7 @@ export function rewriteRouteHtml(html: string, document: CmsDocument, route: Pub
       return [];
     }) };
   });
-  const snapshot = { ...document, pages, legacy: { ...document.legacy, tours: document.legacy.tours.filter(tour => !productIds.has(tour.id)), customPages: document.legacy.customPages.filter(custom => document.pages.find(page => page.id === custom.id)?.source !== 'src/data/translations.ts'), blogPosts: [], teamMembers: [], faqs: [] } };
+  const snapshot = { ...document, pages, legacy: { tours: document.legacy.tours.filter(tour => !productIds.has(tour.id)), customPages: document.legacy.customPages.filter(custom => document.pages.find(page => page.id === custom.id)?.source !== 'src/data/translations.ts'), blogPosts: [], teamMembers: [], faqs: [] } };
   // The scope is an explicit bootstrap envelope, never part of saved/API documents.
   const bootstrap = { scope: { version: 1, pageId: route.page?.id ?? null, language: route.language }, document: snapshot };
   result = result.replace(/<html\b[^>]*>/i, `<html lang="${route.language}" dir="ltr">`)

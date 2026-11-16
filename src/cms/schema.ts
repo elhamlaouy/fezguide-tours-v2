@@ -57,6 +57,17 @@ export interface CmsMedia {
 }
 export interface CmsReview { id: string; author: string; title: string; quote: string; date: string; url: string; source: 'tripadvisor'; enabled: boolean }
 export interface PublicCmsData { tours: SectionPillar[]; customPages: CustomPage[]; blogPosts: BlogPost[]; teamMembers: TeamMember[]; faqs: FaqItem[]; siteSettings: SiteSettings }
+/** Product copy kept in the archive after slimming: only what ordering, hiding and classification read. */
+export interface SlimLegacyTour { id: string; pageId: string; actionType: 'book_tour'; kind?: 'product'; published?: boolean }
+/**
+ * Pre-CMS archive. Slim documents keep only the parts something still reads: editorial tour cards (fallback
+ * fields), custom pages, tour order/classification. Blog posts, team, FAQs and site settings are optional
+ * duplicates of the canonical collections; older, full-size revisions still validate unchanged.
+ */
+export interface CmsLegacy {
+  tours: (SectionPillar | SlimLegacyTour)[]; customPages: CustomPage[];
+  blogPosts?: BlogPost[]; teamMembers?: TeamMember[]; faqs?: FaqItem[]; siteSettings?: SiteSettings;
+}
 export interface CmsDocument {
   schemaVersion: 1; siteSettings: SiteSettings; theme: CmsTheme; navigation: CmsLink[];
   footer: { text: Localized; links: CmsLink[] }; uiCopy: Record<string, Localized>;
@@ -64,7 +75,7 @@ export interface CmsDocument {
   editorialEntries: { id: string; pageId: string; source: string; productId?: string }[];
   blogPosts: BlogPost[]; teamMembers: TeamMember[]; faqs: FaqItem[]; media: CmsMedia[]; reviews: CmsReview[];
   /** Compatibility data is public-only; never include bookings, credentials or drafts. */
-  legacy: PublicCmsData;
+  legacy: CmsLegacy;
 }
 export type CmsValidationResult = { valid: true; errors: string[]; document: CmsDocument } | { valid: false; errors: string[] };
 
@@ -282,6 +293,12 @@ class Checker {
     galleryImages: this.opt(this.array(this.url(true))), itinerary: this.opt(this.array(this.stop)), included: this.opt(this.list), excluded: this.opt(this.list), whatToBring: this.opt(this.list), meetingPointDetails: this.opt(this.copy),
   };
   pillar = this.record(this.pillarFields);
+  slimTour = this.record({ id: this.id, pageId: this.id, actionType: this.oneOf('book_tour'), kind: this.opt(this.oneOf('product')), published: this.opt(this.bool) });
+  /** Full pillar (every older revision) or its slim product form; a record without a title is judged as slim. */
+  legacyTour: FieldCheck = (v, p) => {
+    if (v && typeof v === 'object' && !Array.isArray(v) && !Object.hasOwn(v, 'title')) this.slimTour(v, p);
+    else this.pillar(v, p);
+  };
   customPage = this.record({ id: this.id, slug: this.id, title: this.title, subtitle: this.title, heroImage: this.url(true), content: this.copy, highlights: this.list, showInNav: this.bool, published: this.bool, createdAt: this.date });
   blog = this.record({ id: this.id, slug: this.id, title: this.title, excerpt: this.copy, content: this.copy, coverImage: this.url(true), category: this.title, author: this.text(200), date: this.date, readTime: this.title, published: this.bool });
   team = this.record({ id: this.id, name: this.text(200), role: this.title, bio: this.copy, languages: this.array(this.text(100)), experience: this.title, licenseNumber: this.opt(this.text(100)), avatarUrl: this.url(true) });
@@ -323,7 +340,7 @@ class Checker {
     blogPosts: this.array(this.blog), teamMembers: this.array(this.team), faqs: this.array(this.faq),
     media: this.array(this.mediaItem, CMS_LIMITS.media),
     reviews: this.array(this.review),
-    legacy: this.record({ tours: this.array(this.pillar, CMS_LIMITS.pages), customPages: this.array(this.customPage), blogPosts: this.array(this.blog), teamMembers: this.array(this.team), faqs: this.array(this.faq), siteSettings: this.siteSettings }),
+    legacy: this.record({ tours: this.array(this.legacyTour, CMS_LIMITS.pages), customPages: this.array(this.customPage), blogPosts: this.opt(this.array(this.blog)), teamMembers: this.opt(this.array(this.team)), faqs: this.opt(this.array(this.faq)), siteSettings: this.opt(this.siteSettings) }),
   });
 }
 
@@ -354,7 +371,7 @@ function checkReferences(c: Checker, d: CmsDocument): void {
   const faqIds = ids(d.faqs, 'faqs');
   const teamIds = ids(d.teamMembers, 'teamMembers');
   ids(d.blogPosts, 'blogPosts'); ids(d.editorialEntries, 'editorialEntries');
-  ids(d.legacy.tours, 'legacy.tours'); ids(d.legacy.customPages, 'legacy.customPages'); ids(d.legacy.blogPosts, 'legacy.blogPosts'); ids(d.legacy.faqs, 'legacy.faqs'); ids(d.legacy.teamMembers, 'legacy.teamMembers');
+  ids(d.legacy.tours, 'legacy.tours'); ids(d.legacy.customPages, 'legacy.customPages'); ids(d.legacy.blogPosts ?? [], 'legacy.blogPosts'); ids(d.legacy.faqs ?? [], 'legacy.faqs'); ids(d.legacy.teamMembers ?? [], 'legacy.teamMembers');
   const ref = (id: string | undefined, set: Set<string>, path: string) => { if (id !== undefined && !set.has(id)) fail(path, 'missing reference'); };
   const checkImage = (img: CmsImage | undefined, path: string) => ref(img?.mediaId, mediaIds, path);
   const links = (items: CmsLink[], path: string) => { ids(items, path); items.forEach(l => ref(l.pageId, pageIds, path)); };

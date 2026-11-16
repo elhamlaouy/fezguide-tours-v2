@@ -9,6 +9,7 @@ const { default: worker } = await import('../worker/index.ts');
 const { CmsStore } = await import('../worker/cms-store.ts');
 const { validateCmsDocument } = await import('../src/cms/schema.ts');
 const { createCmsSeed } = await import('../src/cms/seed.ts');
+import { withFullLegacy } from './fixtures/full-legacy.mjs';
 
 const root = new URL('..', import.meta.url);
 const SENTINEL = 'DRAFT-SENTINEL-NOT-PUBLIC';
@@ -174,7 +175,7 @@ test('CMS_DB public routes follow published state and ignore KV and drafts', asy
     assert.equal(hasKey(compatibility, 'bookings'), false);
     assert.equal(JSON.stringify(compatibility).includes('kv@example.test'), false);
 
-    const draft = structuredClone(seed);
+    const draft = withFullLegacy(seed);
     draft.siteSettings.heroTitle = { ...draft.siteSettings.heroTitle, en: SENTINEL };
     draft.legacy.siteSettings.heroTitle = { ...draft.legacy.siteSettings.heroTitle, en: SENTINEL };
     draft.uiCopy['ui.booking.fullName'] = { ...draft.uiCopy['ui.booking.fullName'], en: SENTINEL };

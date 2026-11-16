@@ -2,6 +2,7 @@ import React, { useCallback, useDeferredValue, useEffect, useMemo, useRef, useSt
 import { LivePreview } from './LivePreview';
 import { PriceEditor, PRICE_CURRENCIES, type PriceChange } from './PriceEditor';
 import { validateCmsDocument, type CmsDocument, type CmsPage, type CmsSection } from '../cms/schema';
+import { slimCmsDocument } from '../cms/legacy-slim';
 import {
   AdminApiError, loadAdminContent, loadAdminRevisions, publishAdminDraft, rollbackAdminRevision, saveAdminDraft,
   type AdminContent, type AdminRevision, type AdminWriteResult,
@@ -339,7 +340,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
   draftRef.current = draft;
 
   const applyContent = useCallback((payload: AdminContent) => {
-    const next = payload.document ? structuredClone(payload.document) : null;
+    const next = payload.document ? slimCmsDocument(structuredClone(payload.document)) : null;
     versionRef.current = payload.version;
     savedJson.current = next ? JSON.stringify(next) : '';
     baseline.current = next;
@@ -391,7 +392,7 @@ export function AdminApp({ language, onClose }: { language: 'en' | 'fr' | 'es'; 
     const current = draftRef.current;
     if (!current) return null;
     const unknown = unknownMediaIds(current);
-    const result = validateCmsDocument(current);
+    const result = validateCmsDocument(slimCmsDocument(current));
     if (unknown.length || !result.valid) {
       setErrors([...unknown.map(id => `media: unknown id ${id}`), ...(result.valid ? [] : result.errors)]);
       return null;

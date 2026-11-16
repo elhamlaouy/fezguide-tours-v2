@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { register } from 'tsx/esm/api';
 register();
+import { withFullLegacy } from './fixtures/full-legacy.mjs';
 
 // Execute the handler's actual SQL against SQLite, with D1's transactional batch semantics.
 function database() {
@@ -108,7 +109,7 @@ test('anonymous public routes exclude hidden records, references and legacy copi
   const { createCmsSeed } = await import('../src/cms/seed.ts');
   const { db, call, handler, env } = await apiFixture(validateCmsDocument);
   try {
-    const seed = createCmsSeed();
+    const seed = withFullLegacy(createCmsSeed());
     const privateCopy = { en: 'PRIVATE-RECORD-SENTINEL', fr: 'PRIVATE-RECORD-SENTINEL', es: 'PRIVATE-RECORD-SENTINEL' };
     const home = seed.pages.find(page => page.id === 'home');
     const product = seed.products[0];
@@ -188,7 +189,7 @@ test('public visibility follows either canonical or legacy flags without changin
   const { validateCmsDocument } = await import('../src/cms/schema.ts');
   const { createCmsSeed } = await import('../src/cms/seed.ts');
   const { publicCmsDocument, publicCmsCompatibility } = await import('../worker/cms-routes.ts');
-  const seed = createCmsSeed();
+  const seed = withFullLegacy(createCmsSeed());
   const product = seed.products[0];
   const productPage = seed.pages.find(page => page.productId === product.id);
   const tour = seed.legacy.tours.find(copy => copy.id === product.id);
