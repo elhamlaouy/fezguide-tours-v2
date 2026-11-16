@@ -29,7 +29,7 @@ async function port() {
   return value;
 }
 try {
-  await writeFile(config, `name = "cms-seo-local-proof"\nmain = ${JSON.stringify(path.join(root, 'worker/index.ts'))}\ncompatibility_date = "2026-10-01"\nworkers_dev = false\n[assets]\ndirectory = ${JSON.stringify(path.join(root, 'dist'))}\nbinding = "ASSETS"\nnot_found_handling = "single-page-application"\nrun_worker_first = true\n[[d1_databases]]\nbinding = "CMS_DB"\ndatabase_name = "cms-seo-local-proof"\ndatabase_id = "00000000-0000-0000-0000-000000000000"\nmigrations_dir = ${JSON.stringify(path.join(root, 'migrations'))}\n`);
+  await writeFile(config, `name = "cms-seo-local-proof"\nmain = ${JSON.stringify(path.join(root, 'worker/index.ts'))}\ncompatibility_date = "2026-10-01"\nworkers_dev = false\n[assets]\ndirectory = ${JSON.stringify(path.join(root, 'dist'))}\nbinding = "ASSETS"\nnot_found_handling = "none"\nrun_worker_first = true\n[[d1_databases]]\nbinding = "CMS_DB"\ndatabase_name = "cms-seo-local-proof"\ndatabase_id = "00000000-0000-0000-0000-000000000000"\nmigrations_dir = ${JSON.stringify(path.join(root, 'migrations'))}\n`);
   await run(['d1', 'migrations', 'apply', 'cms-seo-local-proof', '--local', '--config', config, '--persist-to', persist]);
   const dbDir = path.join(persist, 'v3/d1/miniflare-D1DatabaseObject');
   const dbFile = path.join(dbDir, (await readdir(dbDir)).find(name => name.endsWith('.sqlite') && name !== 'metadata.sqlite'));

@@ -144,7 +144,22 @@ export default {
     }
 
     if (env.ASSETS) {
-      const assetResponse = await env.ASSETS.fetch(request);
+      let assetResponse = await env.ASSETS.fetch(request);
+      // A missing file (`/.env`, `/old-photo.jpg`, `/wp-login.php`) must not receive the SPA's
+      // index.html with 200: that is a soft-404 for search engines and hides broken links.
+      const fileLike = /\.[a-z0-9]+$/i.test(path) && !/\.html?$/i.test(path);
+      const reserved = /^\/(?:assets|images|fonts|media|\.well-known)(?:\/|$)/.test(path);
+      // not_found_handling is "none": page-style routes (the /admin editor, or every route while no
+      // CMS revision is published) get the app shell here, never missing files or reserved folders.
+      if (assetResponse.status === 404 && !fileLike && !reserved && ['GET', 'HEAD'].includes(request.method)) {
+        await assetResponse.body?.cancel();
+        assetResponse = await env.ASSETS.fetch(new Request(new URL('/index.html', url), { method: request.method, headers: { Accept: 'text/html' } }));
+      }
+      if ((fileLike || reserved) && assetResponse.ok && (assetResponse.headers.get('Content-Type') ?? '').includes('text/html')) {
+        await assetResponse.body?.cancel();
+        return new Response('Not found', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store',
+          'X-Robots-Tag': 'noindex', ...securityHeaders, 'Strict-Transport-Security': 'max-age=31536000' } });
+      }
       const headers = new Headers(assetResponse.headers);
       for (const [name, value] of Object.entries(securityHeaders)) {
         headers.set(name, value);
