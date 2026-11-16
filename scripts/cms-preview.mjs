@@ -60,7 +60,7 @@ export async function startPreview({port=9196,upstream=9197,inspector=9497,state
  }
  try {
   const wrangler=await wranglerPath();
-  const scratch=process.env.TMPDIR??path.join(os.homedir(),'.hermes/profiles/website-builder/cache/scratch');
+  const scratch=process.env.TMPDIR??os.tmpdir();
   temporary=await mkdtemp(path.join(scratch,'cms-owner-preview-'));
   const pair=await crypto.subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
   const jwk={...await crypto.subtle.exportKey('jwk',pair.publicKey),kid:crypto.randomUUID(),alg:'RS256',use:'sig'};
@@ -69,7 +69,7 @@ export async function startPreview({port=9196,upstream=9197,inspector=9497,state
   const entry=path.join(temporary,'local-signed-worker.ts');
   // Only the existing trusted-JWKS fetch test seam changes. The unchanged Access
   // verifier still enforces algorithm, RSA signature, issuer, audience, expiry and subject.
-  await writeFile(entry,`import {createCmsHandler,isCmsAdminPath} from ${JSON.stringify(path.join(root,'worker/cms-routes.ts'))};\nimport {validateCmsDocument} from ${JSON.stringify(path.join(root,'src/cms/schema.ts'))};\nimport productionWorker from ${JSON.stringify(path.join(root,'worker/index.ts'))};\nconst handler=createCmsHandler({validateDocument:validateCmsDocument,access:{fetch:async(url)=>url===${JSON.stringify(`${issuer}/cdn-cgi/access/certs`)}?Response.json({keys:[${JSON.stringify(jwk)}]}):new Response(null,{status:404})}});\nexport default {async fetch(request,env){return await handler(request,env)??(isCmsAdminPath(new URL(request.url).pathname)?env.ASSETS.fetch(request):productionWorker.fetch(request,env));}};\n`);
+  await writeFile(entry,`import {createCmsHandler,isCmsAdminPath} from ${JSON.stringify(path.join(root,'worker/cms-routes.ts'))};\nimport {validateCmsDocument} from ${JSON.stringify(path.join(root,'src/cms/schema.ts'))};\nimport productionWorker from ${JSON.stringify(path.join(root,'worker/index.ts'))};\nconst handler=createCmsHandler({validateDocument:validateCmsDocument,access:{fetch:async(url)=>url===${JSON.stringify(`${issuer}/cdn-cgi/access/certs`)}?Response.json({keys:[${JSON.stringify(jwk)}]}):new Response(null,{status:404})}});\nexport default {async fetch(request,env){return await handler(request,env)??(isCmsAdminPath(new URL(request.url).pathname)?env.ASSETS.fetch(new Request(new URL('/index.html',request.url),{method:request.method,headers:{Accept:'text/html'}})):productionWorker.fetch(request,env));}};\n`);
   const template=await readFile(path.join(root,'wrangler.cms-preview.toml'),'utf8');
   const config=path.join(temporary,'wrangler.toml');
   await writeFile(config,template.replace('main = "worker/index.ts"',`main = ${JSON.stringify(entry)}`).replace('directory = "./dist"',`directory = ${JSON.stringify(assetsDirectory)}`).replace('migrations_dir = "migrations"',`migrations_dir = ${JSON.stringify(path.join(root,'migrations'))}`)+`\n[vars]\nACCESS_TEAM_DOMAIN = "local-preview.cloudflareaccess.com"\nACCESS_AUD = ${JSON.stringify(audience)}\nACCESS_ALLOWED_SUBJECTS = ${JSON.stringify(subject)}\n`);

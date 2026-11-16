@@ -170,9 +170,11 @@ test('missing published content preserves actual asset fallback; store failure i
     assert.equal((await call('/about')).status, 503);
     for (const path of ['/assets/app.js', '/images/real/about.jpg', '/media/other.jpg']) {
       const response = await call(path);
-      assert.equal(response.status, 200);
-      assert.equal(await response.text(), template);
+      // Routed straight to ASSETS (never SEO-rendered); an HTML shell answering a file path is a missing
+      // file, so it becomes a real 404 rather than a soft-404 page with 200.
       assert.equal(assets.at(-1), path);
+      assert.equal(response.status, 404);
+      assert.notEqual(await response.text(), template);
     }
     assert.equal((await call('/api/unknown')).status, 404);
     assert.equal((await call('/admin')).status, 401);
