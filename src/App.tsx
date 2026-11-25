@@ -28,6 +28,7 @@ const FoodToursPage = React.lazy(() => import('./pages/FoodToursPage').then(modu
 const TravelTipsPage = React.lazy(() => import('./pages/TravelTipsPage').then(module => ({ default: module.TravelTipsPage })));
 const AboutPage = React.lazy(() => import('./pages/AboutPage').then(module => ({ default: module.AboutPage })));
 const BlogPage = React.lazy(() => import('./pages/BlogPage').then(module => ({ default: module.BlogPage })));
+const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage').then(module => ({ default: module.BlogPostPage })));
 const CustomPageRenderer = React.lazy(() => import('./pages/CustomPageRenderer').then(module => ({ default: module.CustomPageRenderer })));
 const MedinaArticlePage = React.lazy(() => import('./pages/MedinaArticlePage').then(module => ({ default: module.MedinaArticlePage })));
 const HistoryCultureArticlePage = React.lazy(() => import('./pages/HistoryCultureArticlePage').then(module => ({ default: module.HistoryCultureArticlePage })));
@@ -87,7 +88,7 @@ export function PublicPageSwitch({
 }
 
 function AppContent() {
-  const { tours, customPages, publishedDocument } = useCms();
+  const { tours, customPages, blogPosts, publishedDocument } = useCms();
   const [currentPage, setCurrentPage] = useState<PageId>(() => typeof window === 'undefined' ? 'home' : resolveRoute(new URL(window.location.href), publishedDocument).pageId);
   const [language, setLanguage] = useState<Language>(() => typeof window === 'undefined' ? 'en' : resolveRoute(new URL(window.location.href), publishedDocument).language);
   const [selectedExperience, setSelectedExperience] = useState<SectionPillar | null>(null);
@@ -310,10 +311,22 @@ function AppContent() {
         return (
           <BlogPage
             language={language}
-            onBookTour={handleBookFromPillar}
+            onNavigate={handleNavigatePage}
           />
         );
       default: {
+        // 1b. A blog post is a page of its own (route key = post id or slug) even without a CMS document.
+        const matchedPost = blogPosts.find((post) => post.published !== false && (post.id === currentPage || post.slug === currentPage));
+        if (matchedPost) {
+          return (
+            <BlogPostPage
+              language={language}
+              postId={matchedPost.id}
+              onNavigate={handleNavigatePage}
+              onBookTour={handleBookFromPillar}
+            />
+          );
+        }
         // 2. Dynamic Custom Pages from CMS
         const matchedCustomPage = customPages.find((p) => p.slug === currentPage);
         if (matchedCustomPage) {

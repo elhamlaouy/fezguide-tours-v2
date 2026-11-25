@@ -102,6 +102,15 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
         description: localizedText(product.shortDescription, language) || description, brand: { '@type': 'Brand', name: BRAND_NAME },
         ...(imageUrl ? { image: imageUrl } : {}), ...(product.price ? { offers: { '@type': 'Offer', price: product.price.amount, priceCurrency: product.price.currency, url: canonical, availability: 'https://schema.org/InStock' } } : {}) });
     }
+    // FAQPage markup mirrors exactly the questions the visible faq sections render (same ids, same language fallback).
+    const faqIds = [...new Set(page.sections.flatMap(section => section.enabled && section.type === 'faq' ? section.faqIds : []))];
+    const questions = faqIds.flatMap(id => {
+      const faq = document.faqs.find(item => item.id === id);
+      const name = faq ? localizedText(faq.question, language).trim() : '';
+      const answer = faq ? localizedText(faq.answer, language).trim() : '';
+      return name && answer ? [{ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text: answer } }] : [];
+    });
+    if (questions.length) schema.push({ '@context': 'https://schema.org', '@type': 'FAQPage', url: canonical, inLanguage: language, mainEntity: questions });
     tags.push(`<script type="application/ld+json">${safeJson(schema)}</script>`);
   }
   return tags.join('\n');

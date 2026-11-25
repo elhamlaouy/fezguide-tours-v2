@@ -28,6 +28,7 @@ const externalLink = (id: string, href: string, label: Localized): CmsLink => ({
  */
 import { pageDescription } from './seo';
 import { slimLegacy } from './legacy-slim';
+import { buildFaqPage, buildFaqFooterLink, FAQ_HERO_IMAGE_SRC } from './faq-page';
 
 export function createCmsSeed(): CmsDocument {
   const media: CmsMedia[] = [];
@@ -217,6 +218,8 @@ export function createCmsSeed(): CmsDocument {
     { id: 'hero', type: 'hero', variant: 'banner', enabled: true, title: custom.title, description: custom.subtitle, image: photo(custom.heroImage, custom.title), links: [] },
     rich('content', [custom.content]), { id: 'highlights', type: 'richText', variant: 'panel', enabled: true, blocks: [{ type: 'list', items: custom.highlights }] },
   ], custom.subtitle), slug: custom.slug, enabled: custom.published, source: 'src/data/translations.ts' });
+  const faqPage: CmsPage = buildFaqPage({ faqIds: FAQ_ITEMS.map(item => item.id), image: photo(FAQ_HERO_IMAGE_SRC, text('Guide with visitors at a historic Fez monument', 'Guide avec des visiteurs devant un monument historique de Fès', 'Guía con visitantes junto a un monumento histórico de Fez')) });
+  pages.push(faqPage);
   pages.push({ ...page('blog', text('Blog', 'Blog', 'Blog'), 'landing', [
     { id: 'hero', type: 'hero', variant: 'banner', enabled: true,
       title: text('Fez Travel Stories, Heritage & Guides', 'Récits de Voyage, Patrimoine & Guides de Fès', "Blog de Fez: historias de su patrimonio, guías y secretos de la ciudad"),
@@ -243,7 +246,8 @@ export function createCmsSeed(): CmsDocument {
     navigation, footer: { text: UI_TEXT.footer.aboutText, links: [
       ...navigation.slice(0, 6),
       ...(blogPosts.length ? [pageLink('blog', 'blog', text('Blog & Travel Stories', 'Blog & Travel Stories', 'Blog y relatos de viaje'))] : []),
-      ...customPages.filter(p => p.published !== false).map(p => pageLink(`footer-${p.id}`, p.id, p.title)),
+      // The footer's last entry is the FAQ. Custom pages (e.g. the bespoke journeys page) stay published but are not footer-listed.
+      buildFaqFooterLink(faqPage),
     ] }, uiCopy,
     pages, products, editorialEntries: pages.filter(p => p.kind === 'editorial').map(p => ({ id: p.id, pageId: p.id, source: p.source || 'src/data/translations.ts', ...(p.id.startsWith('food-') ? { productId: 'our-food-tours' } : p.id.startsWith('fez-') ? { productId: 'our-fez-tours' } : {}) })),
     blogPosts, teamMembers, faqs: FAQ_ITEMS, media, reviews,

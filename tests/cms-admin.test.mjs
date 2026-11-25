@@ -1433,3 +1433,64 @@ serial('SEO length counters update live while typing and edits survive tab and p
   assert.ok(savedDoc.pages.some(page => page.id === 'second-page'));
   assert.match(document.querySelector('.cms-draft-state').textContent, /saved/i);
 });
+
+serial('the seeded FAQ page is editable end to end: questions, accordion membership, order, a brand-new FAQ, and referenced FAQs cannot vanish', async () => {
+  window.confirm = () => true;
+  const { createCmsSeed } = await import('../src/cms/seed.ts');
+  const doc = createCmsSeed();
+  const kept = new Set(['home', 'faq']);
+  doc.pages = doc.pages.filter(page => kept.has(page.id)).map(page => page.id === 'faq' ? page : { ...page, sections: [] });
+  doc.products = []; doc.editorialEntries = []; doc.blogPosts = []; doc.teamMembers = []; doc.reviews = [];
+  doc.navigation = doc.navigation.filter(link => !link.pageId || kept.has(link.pageId));
+  doc.footer.links = doc.footer.links.filter(link => !link.pageId || kept.has(link.pageId));
+  const mediaIds = new Set(doc.pages.flatMap(page => page.sections.flatMap(section => section.image ? [section.image.mediaId] : [])));
+  doc.media = doc.media.filter(media => mediaIds.has(media.id));
+  doc.legacy = { ...doc.legacy, tours: [], customPages: [], blogPosts: [], teamMembers: [], faqs: [] };
+  assert.equal(validateCmsDocument(doc).valid, true);
+  assert.equal(doc.footer.links.at(-1).pageId, 'faq');
+  let saved;
+  installFetch(({ url, method, body }) => method === 'PUT' ? (saved = body.document, { body: { version: 3, draftRevision: 3, published: false } }) : url.endsWith('/revisions') ? { body: { revisions: [] } } : { body: content(doc) });
+  await render();
+  await click('[data-page="faq"]');
+  // The page's own SEO and title are plain fields.
+  await reveal('[data-path="pages.faq.title.en"]');
+  assert.equal(document.querySelector('[data-path="pages.faq.title.en"]').value, 'Frequently Asked Questions');
+  assert.match(document.querySelector('[data-seo-counter="pages.faq.seo.title"]').textContent, /^38\/42/);
+  await typeInto('[data-path="pages.faq.seo.title.en"]', 'FAQ Fez Tours');
+  // The accordion lists every question by name, in order, with plain-language labels.
+  await click('[data-section-tab="questions"]');
+  const itemsPath = 'pages.faq.sections.questions.faqIds';
+  await reveal(`[data-array="${itemsPath}"]`);
+  assert.equal(document.querySelectorAll(`[data-array="${itemsPath}"] > ol > li`).length, 12);
+  assert.match(document.querySelector(`[data-array="${itemsPath}"] legend`).textContent, /FAQ entries/);
+  assert.match(document.querySelector(`[data-array="${itemsPath}"] > ol > li`).textContent, /1\. What types of experiences do you offer in Fez\?/);
+  // Edit an existing question's answer (library) and reorder the accordion.
+  await typeInto('[data-path="faqs.0.answer.en"]', 'Edited answer text.');
+  await click('[data-section-tab="questions"]');
+  await click(`[data-array-move="${itemsPath}.0:down"]`);
+  assert.match(previewQuery().textContent, /Edited answer text/);
+  // A referenced FAQ cannot be deleted from the library; drop it from the page first.
+  await click('[data-array-remove="faqs.0"]');
+  assert.ok(document.querySelector('[data-field-errors]'), 'deleting a FAQ the page uses is refused');
+  await click('[data-section-tab="questions"]');
+  await click(`[data-array-remove="${itemsPath}.11"]`);
+  assert.equal(document.querySelectorAll(`[data-array="${itemsPath}"] > ol > li`).length, 11);
+  // A brand-new FAQ joins the page through the editor alone: create it, then add it to the accordion.
+  await click('[data-add="faqs"]');
+  const created = doc.faqs.length; // library index of the new row
+  await typeInto(`[data-path="faqs.${created}.question.en"]`, 'Brand new owner question?');
+  await typeInto(`[data-path="faqs.${created}.answer.en"]`, 'Brand new owner answer.');
+  await click('[data-section-tab="questions"]');
+  await click(`[data-add="${itemsPath}"]`); // adds the next library FAQ not yet on the page (the one dropped above)
+  await click(`[data-add="${itemsPath}"]`); // and then the new one
+  assert.match(previewQuery().textContent, /Brand new owner answer/);
+  await click('button[name="save-draft"]');
+  assert.equal(validateCmsDocument(saved).valid, true);
+  const savedPage = saved.pages.find(page => page.id === 'faq');
+  assert.equal(savedPage.seo.title.en, 'FAQ Fez Tours');
+  assert.equal(savedPage.sections[1].faqIds.length, 13);
+  assert.equal(savedPage.sections[1].faqIds[1], 'faq-1', 'reordered');
+  assert.ok(savedPage.sections[1].faqIds.includes(saved.faqs.at(-1).id));
+  assert.equal(saved.faqs.at(-1).question.en, 'Brand new owner question?');
+  assert.equal(saved.faqs[0].answer.en, 'Edited answer text.');
+});

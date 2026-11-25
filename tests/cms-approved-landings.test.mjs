@@ -15,13 +15,13 @@ const { CmsPreviewProvider } = await import('../src/context/CmsContext.tsx');
 const { ApprovedContentProvider } = await import('../src/cms/approved-content.tsx');
 const components = Object.fromEntries(await Promise.all([
   ['home', 'HomePage'], ['fez', 'FezPage'], ['day-trips', 'DayTripsPage'], ['food-tours', 'FoodToursPage'],
-  ['travel-tips', 'TravelTipsPage'], ['about', 'AboutPage'], ['blog', 'BlogPage'], ['page-bespoke-itinerary', 'CustomPageRenderer'],
+  ['travel-tips', 'TravelTipsPage'], ['about', 'AboutPage'], ['blog', 'BlogPage'], ['blog-post', 'BlogPostPage'], ['page-bespoke-itinerary', 'CustomPageRenderer'],
 ].map(async ([id, name]) => [id, (await import(`../src/pages/${name}.tsx`))[name]])));
 const text = value => ({ en: value, fr: value, es: value });
-const render = (document, id, language = 'en', props = {}) => {
+const render = (document, id, language = 'en', props = {}, component = id) => {
   const page = document.pages.find(page => page.id === id);
   return renderToStaticMarkup(createElement(CmsPreviewProvider, { document },
-    createElement(ApprovedContentProvider, { document, page }, createElement(components[id], {
+    createElement(ApprovedContentProvider, { document, page }, createElement(components[component], {
       language, onNavigate() {}, onExplore() {}, onBookTour() {}, ...props,
     }))));
 };
@@ -89,7 +89,7 @@ test('blog listing reads owner card overrides, not the legacy entity mirror', ()
   assert.equal(render(document, 'blog').includes('Owner post card'), false);
 });
 
-test('direct blog post opens the original reader with authoritative title, content, photo and canonical metadata', () => {
+test('direct blog post renders as its own page with authoritative title, content, photo and canonical metadata', () => {
   const document = createCmsSeed();
   const post = document.blogPosts[0];
   const page = document.pages.find(page => page.id === post.id);
@@ -97,8 +97,9 @@ test('direct blog post opens the original reader with authoritative title, conte
   section(document, post.id, 'content').blocks = [{ type: 'paragraph', text: text('Owner direct story body') }];
   section(document, post.id, 'cover').images = [{ mediaId: document.media[0].id, alt: text('Owner direct photo') }];
   post.author = 'Owner canonical author';
-  const html = render(document, 'blog', 'en', { initialPostId: post.id });
-  for (const value of ['Owner direct story title', 'Owner direct story body', 'Owner direct photo', 'Owner canonical author', 'role="dialog"']) assert.ok(html.includes(value), value);
+  const html = render(document, post.id, 'en', { postId: post.id }, 'blog-post');
+  for (const value of ['Owner direct story title', 'Owner direct story body', 'Owner direct photo', 'Owner canonical author']) assert.ok(html.includes(value), value);
+  assert.ok(!html.includes('role="dialog"'));
 });
 
 test('custom landing uses authoritative hero, story and highlights, including deliberate blank locales', () => {

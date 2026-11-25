@@ -30,7 +30,9 @@ export function PageRenderer({ document, page, language, onNavigate, onBook }: P
   const approved = approvedPage({document, page, language:lang, onNavigate, onBook});
   if (approved !== undefined) {
     const originalIds = new Set(approvedSectionIds(page));
-    const additional = page.sections.filter(section => section.enabled && !originalIds.has(section.id) && (section.type !== 'cta' || section.variant !== 'booking' || visibleBookingProduct(document, page, section)));
+    // A post's `excerpt` section is the card/lead text; the article page already shows it as its lead paragraph.
+    const isPost = document.blogPosts.some(post => post.id === page.id);
+    const additional = page.sections.filter(section => section.enabled && !originalIds.has(section.id) && !(isPost && section.id === 'excerpt') && (section.type !== 'cta' || section.variant !== 'booking' || visibleBookingProduct(document, page, section)));
     return <CmsPreviewProvider document={document}><ApprovedContentProvider document={document} page={page} language={lang}><Suspense fallback={<p role="status" style={{minHeight:'100svh'}}>{lang === 'fr' ? 'Chargement…' : lang === 'es' ? 'Cargando…' : 'Loading…'}</p>}>{approved}</Suspense>{additional.length > 0 && <article className="cms-page" lang={lang} style={themeStyle(document.theme)}>{additional.map(section => <SectionRenderer key={section.id} document={document} page={page} section={section} language={lang} titleTag="h2" onNavigate={onNavigate} onBook={onBook} />)}</article>}</ApprovedContentProvider></CmsPreviewProvider>;
   }
   const sections = page.sections.filter(section =>

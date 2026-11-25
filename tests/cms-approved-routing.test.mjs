@@ -56,11 +56,11 @@ test('original product section headings replace generic seed labels without over
   assert.match(edited,/OWNER OVERVIEW/);assert.match(edited,/OWNER INCLUSIONS/);
 });
 
-test('direct blog reader retains its original blog background with one primary heading and reader-only edit markers', () => {
+test('direct blog post is a standalone page: one heading, no blog list or dialog behind it, cover and content edit markers', () => {
   const document=createCmsSeed(),post=document.blogPosts[0];
   const html=render(document,post.id);
-  assert.match(html,/Fez Travel Stories, Heritage &amp; Guides/);
-  assert.match(html,/role="dialog"/);
+  assert.doesNotMatch(html,/Fez Travel Stories, Heritage &amp; Guides/);
+  assert.doesNotMatch(html,/role="dialog"|aria-modal/);
   assert.equal((html.match(/<h1\b/g)||[]).length,1);
   assert.deepEqual([...html.matchAll(/data-section-id="([^"]+)"/g)].map(m=>m[1]),['cover','content']);
 });

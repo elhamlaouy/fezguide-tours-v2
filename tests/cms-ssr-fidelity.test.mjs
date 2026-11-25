@@ -54,7 +54,7 @@ function compare(document, label) {
 }
 
 test('every snapshot text node and link of every seed page appears in the client-rendered page, per language', () => {
-  assert.equal(compare(createCmsSeed(), 'seed'), 81);
+  assert.equal(compare(createCmsSeed(), 'seed'), 84);
 });
 
 test('fidelity holds after editor changes: hidden sections, hidden pages, disabled links, locale fallback', () => {

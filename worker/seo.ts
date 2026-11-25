@@ -44,7 +44,7 @@ export function rewriteRouteHtml(html: string, document: CmsDocument, route: Pub
   const customIds = new Set(document.legacy.customPages.map(page => page.id));
   const pages = document.pages.map(page => {
     // Cross-page card summaries feed approvedPublicData. Custom pages retain their
-    // authored projection; the blog's inline reader also needs every post body.
+    // authored projection; blog and post pages keep every post body (each post renders as its own page).
     if (page.id === route.page?.id || page.source === 'src/data/translations.ts' || customIds.has(page.id) ||
         blogRoute && (page.id === 'blog' || blogIds.has(page.id))) return page;
     const summary = page.kind === 'editorial' ? page.sections.find(section => section.enabled && section.type === 'richText' && section.blocks.some(block => block.type === 'paragraph')) : undefined;

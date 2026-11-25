@@ -42,7 +42,7 @@ test('Worker produces a valid explicit route-scoped snapshot with materially les
   console.log(JSON.stringify({ baselineRaw: Buffer.byteLength(baseline), scopedRaw: Buffer.byteLength(output.html), baselineGzip: gzipSync(baseline).length, scopedGzip: gzipSync(output.html).length, fullSections: original.pages.reduce((n,p)=>n+p.sections.length,0), scopedSections: output.document.pages.reduce((n,p)=>n+p.sections.length,0) }));
 });
 
-test('each of 27 public pages in every locale renders exactly like the full published revision', () => {
+test('each of 28 public pages in every locale renders exactly like the full published revision', () => {
   const original = publicCmsDocument(createCmsSeed());
   let count = 0;
   for (const page of original.pages) for (const language of ['en', 'fr', 'es']) {
@@ -52,7 +52,7 @@ test('each of 27 public pages in every locale renders exactly like the full publ
     assert.equal(render(output.document, page.id, language), render(original, page.id, language), path);
     count++;
   }
-  assert.equal(count, 81);
+  assert.equal(count, 84);
 });
 
 test('owner edits, custom blanks, arbitrary paths and independent gallery identities preserve every localized renderer', () => {
