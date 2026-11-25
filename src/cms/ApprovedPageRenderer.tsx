@@ -19,6 +19,7 @@ const FoodToursPage = approvedComponent(async () => ({ default: (await import('.
 const TravelTipsPage = approvedComponent(async () => ({ default: (await import('../pages/TravelTipsPage')).TravelTipsPage }));
 const AboutPage = approvedComponent(async () => ({ default: (await import('../pages/AboutPage')).AboutPage }));
 const BlogPage = approvedComponent(async () => ({ default: (await import('../pages/BlogPage')).BlogPage }));
+const BlogPostPage = approvedComponent(async () => ({ default: (await import('../pages/BlogPostPage')).BlogPostPage }));
 const CustomPageRenderer = approvedComponent(async () => ({ default: (await import('../pages/CustomPageRenderer')).CustomPageRenderer }));
 const MedinaArticlePage = approvedComponent(async () => ({ default: (await import('../pages/MedinaArticlePage')).MedinaArticlePage }));
 const HistoryCultureArticlePage = approvedComponent(async () => ({ default: (await import('../pages/HistoryCultureArticlePage')).HistoryCultureArticlePage }));
@@ -58,7 +59,7 @@ export function approvedPage(props:PageRendererProps):React.ReactNode | undefine
     case 'food-tours':return <FoodToursPage language={language} onExplore={explore} onBookTour={book}/>;
     case 'travel-tips':return <TravelTipsPage language={language} onExplore={explore} onBookTour={book}/>;
     case 'about':return <AboutPage language={language} onNavigate={onNavigate}/>;
-    case 'blog':return <BlogPage language={language} onBookTour={book}/>;
+    case 'blog':return <BlogPage language={language} onNavigate={onNavigate}/>;
     case 'our-fez-tours':return <OurFezToursPage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onBookTour={()=>onBook(page.productId ?? page.id)}/>;
     case 'fez-explore-medina':return <MedinaArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
     case 'fez-history-landmarks':return <HistoryCultureArticlePage language={language} onBack={()=>onNavigate(page.parentId ?? 'fez')} parentPageId={page.parentId ?? 'fez'} onNavigate={onNavigate} onExploreTours={()=>onNavigate('our-fez-tours')}/>;
@@ -73,7 +74,7 @@ export function approvedPage(props:PageRendererProps):React.ReactNode | undefine
     return <EditorialArticlePage article={article} language={language} onBack={()=>onNavigate(page.parentId ?? 'home')} parentPageId={page.parentId ?? 'home'} onNavigate={onNavigate} onOpenProduct={()=>{if(article.productId)onNavigate(article.productId);}}/>;
   }
   const post=document.blogPosts.find(post=>post.id===page.id);
-  if (post) return <BlogPage language={language} initialPostId={post.id} onBookTour={book}/>;
+  if (post) return <BlogPostPage language={language} postId={post.id} onNavigate={onNavigate} onBookTour={book}/>;
   const custom=data.customPages.find(custom=>custom.id===page.id || custom.slug===page.slug);
   if (custom) return <CustomPageRenderer page={custom} language={language} onNavigate={onNavigate} onBookTour={book}/>;
   return undefined;

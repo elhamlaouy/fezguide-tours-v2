@@ -331,7 +331,7 @@ test('API-unavailable source fallback still renders and navigates in memory in a
   }
 });
 
-test('scoped blog retains identical inline reader contents in all locales', async () => {
+test('scoped blog cards are real links to each post page, identical to the full document, in all locales', async () => {
   const { act, createElement } = await import('react');
   const { createRoot } = await import('react-dom/client');
   const { PageRenderer } = await import('../src/cms/PageRenderer.tsx');
@@ -350,13 +350,18 @@ test('scoped blog retains identical inline reader contents in all locales', asyn
         const host = document.createElement('div'); document.body.append(host);
         const root = createRoot(host);
         try {
-          await act(async () => root.render(createElement(PageRenderer, { document: candidate, page: candidate.pages.find(page => page.id === 'blog'), language, onNavigate() {}, onBook() {} })));
-          await act(async () => host.querySelector('[data-section-id="posts"] article button').click());
-          assert.ok(host.querySelector('[role="dialog"]'), 'reader opens in the current page without navigation');
+          const navigated = [];
+          await act(async () => root.render(createElement(PageRenderer, { document: candidate, page: candidate.pages.find(page => page.id === 'blog'), language, onNavigate: id => navigated.push(id), onBook() {} })));
+          const link = host.querySelector('[data-section-id="posts"] article h2 a');
+          const post = candidate.pages.find(page => page.id === candidate.blogPosts[0].id);
+          assert.equal(link.getAttribute('href'), `${language === 'en' ? '' : `/${language}`}/${post.slug}`, 'card links to the post page');
+          await act(async () => link.click());
+          assert.deepEqual(navigated, [post.id], 'plain click uses the app navigation');
+          assert.ok(!host.querySelector('[role="dialog"]'), 'no reader popup');
           outputs.push(host.innerHTML);
         } finally { await act(async () => root.unmount()); host.remove(); }
       }
-      assert.equal(outputs[1], outputs[0], `${language}: full selected reader and background equal full document`);
+      assert.equal(outputs[1], outputs[0], `${language}: blog list equals full document`);
     } finally {
       await window.happyDOM.close();
       for (const key of ['window', 'document', 'navigator', 'IS_REACT_ACT_ENVIRONMENT']) delete globalThis[key];

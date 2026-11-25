@@ -17,7 +17,7 @@ const { ArticleBody, PLAIN_ARTICLE_CLASS } = await import('../src/cms/ArticleBod
 const { createCmsSeed } = await import('../src/cms/seed.ts');
 const { CmsPreviewProvider } = await import('../src/context/CmsContext.tsx');
 const { ApprovedContentProvider } = await import('../src/cms/approved-content.tsx');
-const { BlogPage } = await import('../src/pages/BlogPage.tsx');
+const { BlogPostPage } = await import('../src/pages/BlogPostPage.tsx');
 const { buildSnapshot } = await import('../worker/ssr-snapshot.ts');
 const { publishedMediaReferenced } = await import('../worker/media.ts');
 const { publicCmsDocument } = await import('../worker/cms-routes.ts');
@@ -40,7 +40,7 @@ function withPhotos(document) {
 const readerHtml = (document, postId, language) => {
   const page = document.pages.find(page => page.id === postId);
   return renderToStaticMarkup(createElement(CmsPreviewProvider, { document },
-    createElement(ApprovedContentProvider, { document, page }, createElement(BlogPage, { language, initialPostId: postId, onNavigate() {}, onExplore() {}, onBookTour() {} }))));
+    createElement(ApprovedContentProvider, { document, page }, createElement(BlogPostPage, { language, postId, onNavigate() {}, onBookTour() {} }))));
 };
 const clientHtml = (document, pageId, language) => renderToStaticMarkup(createElement(CmsPreviewProvider, { document }, createElement('div', null,
   createElement(Navbar, { currentPage: pageId, language, document, onNavigate() {}, onLanguageChange() {}, onOpenBooking() {} }),
@@ -215,7 +215,7 @@ function formattedDocument() {
   post.content = { en: EN, fr: FR, es: ES };
   return { document, post, page: document.pages.find(page => page.id === post.id) };
 }
-test('formatted post: reader dialog and post page render each language from its own text', () => {
+test('formatted post: post page renders each language from its own text', () => {
   const { document, post } = formattedDocument();
   const expected = { en: ['<h2>The medina at dawn</h2>', '<ol>', '<blockquote>', '<figure'], fr: ['<h2>Le matin dans la médina</h2>', '<ul><li>Un</li>', '<blockquote>'], es: ['<h3>Subtítulo sin título</h3>', '<ol>', 'alt="Foto"'] };
   for (const language of LANGS) {
