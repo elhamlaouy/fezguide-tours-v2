@@ -216,3 +216,48 @@ test('blog post pages are marked up as articles (BlogPosting + og:type article);
   assert.ok(!html.includes('BlogPosting'));
   assert.ok(!html.includes('content="article"'));
 });
+
+test('guide articles (editorial pages filed under a section, no child pages) are Articles; hubs, About and others are not', () => {
+  const document = createCmsSeed();
+  const blogIds = new Set(document.blogPosts.map(post => post.id));
+  const parents = new Set(document.pages.map(page => page.parentId).filter(Boolean));
+  const expected = document.pages.filter(page => page.enabled && page.kind === 'editorial' && page.parentId && !blogIds.has(page.id) && !parents.has(page.id)).map(page => page.id).sort();
+  assert.deepEqual(expected, ['fez-explore-medina', 'fez-history-landmarks', 'fez-things-to-do', 'food-culture-life', 'food-markets-souks', 'food-tasting-walk', 'food-traditional-fassi', 'tips-getting-around', 'tips-plan-trip', 'tips-practical']);
+  const articleIds = [];
+  for (const page of document.pages.filter(page => page.enabled)) {
+    for (const prefix of ['', '/fr', '/es']) {
+      const html = head(document, `${prefix}/${page.slug === 'home' ? '' : page.slug}`);
+      const match = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html);
+      if (!match) continue;
+      const graph = JSON.parse(match[1]);
+      const article = byType(graph, 'Article');
+      if (blogIds.has(page.id)) { assert.equal(article, undefined, `${page.id}: posts use BlogPosting only`); continue; }
+      if (expected.includes(page.id)) {
+        assert.ok(article, `${page.id}${prefix}: Article present`);
+        assert.equal(article.url, `${ORIGIN}${prefix}/${page.slug}`);
+        assert.equal(article.mainEntityOfPage['@id'], article.url);
+        assert.equal(article.author['@type'], 'Organization');
+        assert.equal(article.datePublished, undefined, 'no invented date');
+        assert.ok(html.includes('property="og:type" content="article"'));
+        if (!prefix) articleIds.push(page.id);
+      } else {
+        assert.equal(article, undefined, `${page.id}${prefix}: not an Article`);
+      }
+    }
+  }
+  assert.deepEqual(articleIds.sort(), expected);
+  for (const id of ['about', 'travel-tips', 'home', 'blog', 'faq', 'our-fez-tours']) {
+    const page = document.pages.find(p => p.id === id);
+    if (!page) continue;
+    assert.ok(head(document, `/${id === 'home' ? '' : page.slug}`).includes('property="og:type" content="website"'), `${id}: website`);
+  }
+  // A future guide page added under a section is an Article automatically.
+  const tips = document.pages.find(p => p.id === 'tips-practical');
+  document.pages.push({ ...structuredClone(tips), id: 'tips-new-guide', slug: 'tips-new-guide' });
+  assert.ok(byType(ld(head(document, '/tips-new-guide')), 'Article'));
+  // An unpublished post whose page is still enabled never becomes a guide Article.
+  const post = document.blogPosts[0];
+  post.published = false;
+  const postHtml = head(document, `/${document.pages.find(p => p.id === post.id).slug}`);
+  assert.ok(!postHtml.includes('"Article"') && !postHtml.includes('BlogPosting'));
+});

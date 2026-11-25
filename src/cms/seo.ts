@@ -59,8 +59,12 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
   // A blog post page (same id as a published post) is marked up as an article, not a generic web page.
   const post = page ? document.blogPosts.find(item => item.id === page.id && item.published !== false) : undefined;
   const postDate = post && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? post.date : undefined;
+  // A guide article: an editorial page filed under a section (e.g. Fez, Food Tours, Travel Tips) with no pages of its own.
+  // Hubs (they have child pages) and standalone pages such as About stay generic web pages.
+  const guideArticle = Boolean(page && !document.blogPosts.some(item => item.id === page.id) && page.kind === 'editorial' && page.parentId
+    && document.pages.some(item => item.id === page.parentId) && !document.pages.some(item => item.parentId === page.id));
   const tags = [`<title>${escapeHtml(title)}</title>`, meta('description', description), meta('robots', !page || page.seo.noIndex ? 'noindex,follow' : 'index,follow'),
-    meta('og:title', title, true), meta('og:description', description, true), meta('og:type', post ? 'article' : 'website', true), meta('og:site_name', document.siteSettings.siteName, true),
+    meta('og:title', title, true), meta('og:description', description, true), meta('og:type', post || guideArticle ? 'article' : 'website', true), meta('og:site_name', document.siteSettings.siteName, true),
     meta('og:locale', { en: 'en_US', fr: 'fr_FR', es: 'es_ES' }[language], true), meta('twitter:card', imageUrl ? 'summary_large_image' : 'summary'), meta('twitter:title', title), meta('twitter:description', description)];
   if (imageUrl) tags.push(meta('og:image', imageUrl, true), meta('twitter:image', imageUrl));
   if (postDate) tags.push(meta('article:published_time', postDate, true));
@@ -123,6 +127,12 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
         mainEntityOfPage: { '@type': 'WebPage', '@id': canonical }, inLanguage: language, ...(imageUrl ? { image: imageUrl } : {}),
         ...(postDate ? { datePublished: postDate } : {}), ...(section ? { articleSection: section } : {}),
         author: author ? { '@type': 'Person', name: author } : { '@type': 'Organization', name: BRAND_NAME },
+        publisher: { '@type': 'Organization', name: BRAND_NAME, logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` } } });
+    } else if (guideArticle) {
+      // Guide articles carry no stored date or byline, so none is invented: the team is the author.
+      schema.push({ '@context': 'https://schema.org', '@type': 'Article', headline: plainTitle, description, url: canonical,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical }, inLanguage: language, ...(imageUrl ? { image: imageUrl } : {}),
+        author: { '@type': 'Organization', name: BRAND_NAME, url: `${origin}/` },
         publisher: { '@type': 'Organization', name: BRAND_NAME, logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` } } });
     }
     tags.push(`<script type="application/ld+json">${safeJson(schema)}</script>`);
