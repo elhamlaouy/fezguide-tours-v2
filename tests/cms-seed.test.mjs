@@ -43,21 +43,25 @@ test('generic product facts preserve all four rendered source facts in every loc
   }
 });
 
-test('footer matches rendered source links including Blog and published non-navigation custom pages', () => {
+test('footer matches rendered source links; the FAQ replaces the bespoke custom page as the last document entry', () => {
   const seed = createCmsSeed();
   const basePages = ['home', 'fez', 'day-trips', 'food-tours', 'travel-tips', 'about'];
-  assert.deepEqual(seed.footer.links.map(l => l.pageId), [
-    ...basePages, ...(seed.blogPosts.length ? ['blog'] : []),
-    ...seed.legacy.customPages.filter(p => p.published !== false).map(p => p.id),
-  ]);
-  assert.ok(seed.footer.links.some(l => l.pageId === 'page-bespoke-itinerary'));
+  const blog = seed.blogPosts.length ? ['blog'] : [];
+  assert.deepEqual(seed.footer.links.map(l => l.pageId), [...basePages, ...blog, 'faq']);
+  assert.equal(seed.footer.links.at(-1).id, 'footer-faq');
+  // The pre-CMS fallback footer (no document) still lists published custom pages; the CMS footer swaps them for the FAQ.
+  assert.ok(!seed.footer.links.some(l => l.pageId === 'page-bespoke-itinerary'));
+  assert.ok(seed.pages.some(page => page.id === 'page-bespoke-itinerary' && page.enabled), 'bespoke page stays published');
   assert.ok(!seed.navigation.some(l => l.pageId === 'page-bespoke-itinerary'));
+  const custom = seed.legacy.customPages.filter(p => p.published !== false).map(p => p.id);
   for (const language of ['en', 'fr', 'es']) {
     const html = renderSource(Footer, { language });
     const list = /<ul\b[^>]*>([\s\S]*?)<\/ul>/.exec(html);
     assert.ok(list, 'source footer link list');
     const labels = [...list[1].matchAll(/<a\b[^>]*>([\s\S]*?)<\/a>/g)].map(m => htmlText(m[1]));
-    assert.deepEqual(seed.footer.links.map(l => l.label[language]), labels, `${language}: source footer labels/order`);
+    const seedLabels = seed.footer.links.map(l => l.label[language]);
+    assert.deepEqual(seedLabels.slice(0, -1), labels.slice(0, seedLabels.length - 1), `${language}: shared source footer labels/order`);
+    assert.equal(labels.length, seedLabels.length - 1 + custom.length, `${language}: fallback footer ends with the custom pages`);
     assert.ok(seed.footer.links.every(l => l.enabled));
   }
 });
