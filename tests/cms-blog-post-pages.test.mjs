@@ -110,3 +110,18 @@ test('live published document: all posts are standalone pages (set CMS_LIVE_DOC 
     assert.ok(!/role="dialog"/.test(html));
   }
 });
+
+test('a post page does not repeat its excerpt as an extra block under the article', () => {
+  const document = createCmsSeed();
+  for (const post of document.blogPosts.filter(post => post.published !== false)) {
+    const page = document.pages.find(page => page.id === post.id);
+    // Live posts carry an enabled `excerpt` section (the card text); make the seed match so the case is exercised.
+    const excerpt = page.sections.find(section => section.id === 'excerpt');
+    if (excerpt) excerpt.enabled = true;
+    else page.sections.push({ id: 'excerpt', type: 'richText', enabled: true, blocks: [{ type: 'paragraph', text: { en: 'Lead', fr: 'Intro', es: 'Intro' } }] });
+    for (const language of LANGS) {
+      const html = render(document, post.id, language);
+      assert.equal(count(html, /class="cms-page\b/g), 0, `${post.id}/${language}: no generic extra-section article after the post`);
+    }
+  }
+});
