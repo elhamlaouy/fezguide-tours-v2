@@ -26,6 +26,18 @@ function splitAddress(text: string): { streetAddress: string; postalCode?: strin
 const httpsOnly = (value: string | undefined): string[] => value && isSafeCmsUrl(value) && value.startsWith('https://') ? [value] : [];
 export const notFound = (language: PublicRoute['language']) => language === 'fr' ? 'Page introuvable' : language === 'es' ? 'Página no encontrada' : 'Page not found';
 
+/** The published blog post a page presents (blog post pages share the post's id), if any. */
+export function publishedBlogPost(document: CmsDocument, page: CmsDocument['pages'][number]) {
+  return document.blogPosts.find(item => item.id === page.id && item.published !== false);
+}
+
+/** A guide article: an editorial page filed under a section page, with no pages of its own. Blog post pages,
+ * hubs (they have child pages) and standalone pages such as About are not guide articles. */
+export function isGuideArticle(document: CmsDocument, page: CmsDocument['pages'][number]): boolean {
+  return !document.blogPosts.some(item => item.id === page.id) && page.kind === 'editorial' && Boolean(page.parentId)
+    && document.pages.some(item => item.id === page.parentId) && !document.pages.some(item => item.parentId === page.id);
+}
+
 export function pageDescription(document: CmsDocument, page: CmsDocument['pages'][number], language: PublicRoute['language']): string {
   const authored = localizedText(page.seo.description, language).trim();
   if (authored) return authored;
@@ -57,12 +69,11 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
   const imageUrl = imageSrc ? new URL(imageSrc, origin).href : undefined;
   const meta = (name: string, value: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escapeHtml(value)}">`;
   // A blog post page (same id as a published post) is marked up as an article, not a generic web page.
-  const post = page ? document.blogPosts.find(item => item.id === page.id && item.published !== false) : undefined;
+  const post = page ? publishedBlogPost(document, page) : undefined;
   const postDate = post && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? post.date : undefined;
   // A guide article: an editorial page filed under a section (e.g. Fez, Food Tours, Travel Tips) with no pages of its own.
   // Hubs (they have child pages) and standalone pages such as About stay generic web pages.
-  const guideArticle = Boolean(page && !document.blogPosts.some(item => item.id === page.id) && page.kind === 'editorial' && page.parentId
-    && document.pages.some(item => item.id === page.parentId) && !document.pages.some(item => item.parentId === page.id));
+  const guideArticle = Boolean(page && isGuideArticle(document, page));
   const tags = [`<title>${escapeHtml(title)}</title>`, meta('description', description), meta('robots', !page || page.seo.noIndex ? 'noindex,follow' : 'index,follow'),
     meta('og:title', title, true), meta('og:description', description, true), meta('og:type', post || guideArticle ? 'article' : 'website', true), meta('og:site_name', document.siteSettings.siteName, true),
     meta('og:locale', { en: 'en_US', fr: 'fr_FR', es: 'es_ES' }[language], true), meta('twitter:card', imageUrl ? 'summary_large_image' : 'summary'), meta('twitter:title', title), meta('twitter:description', description)];

@@ -13,6 +13,7 @@ export interface PublicSeoEnv extends CmsRoutesEnv {
   ASSETS?: { fetch(request: Request): Promise<Response> };
 }
 import { canonicalOrigin, routeSeoHead, safeJson, notFound } from '../src/cms/seo';
+import { buildLlmsTxt } from '../src/cms/llms';
 
 /** The Vite entrypoint is controlled markup, not arbitrary CMS HTML. Preserve all non-SEO assets. */
 export function rewriteRouteHtml(html: string, document: CmsDocument, route: PublicRoute, origin: string, revision?: number): string {
@@ -70,7 +71,7 @@ const textResponse = (body: string, type: string, status = 200) => new Response(
 export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Promise<Response | null> {
   const url = new URL(request.url);
   const path = url.pathname;
-  const discovery = path === '/sitemap.xml' || path === '/robots.txt';
+  const discovery = path === '/sitemap.xml' || path === '/robots.txt' || path === '/llms.txt';
   if (!['GET', 'HEAD'].includes(request.method) || /^\/(?:admin|api|assets|images|media|\.well-known|cdn-cgi)(?:\/|$)/.test(path) || (!discovery && /\.[^/]+$/.test(path))) return null;
   const accept = request.headers.get('Accept') ?? '*/*';
   if (!discovery && !accept.includes('text/html') && !accept.includes('*/*')) return null;
@@ -81,6 +82,7 @@ export async function publicSeoResponse(request: Request, env: PublicSeoEnv): Pr
   const document = published.document as unknown as CmsDocument;
   const origin = canonicalOrigin(env.CANONICAL_ORIGIN);
   if (path === '/robots.txt') return textResponse(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`, 'text/plain');
+  if (path === '/llms.txt') return textResponse(request.method === 'HEAD' ? '' : buildLlmsTxt(document, origin), 'text/plain');
   if (path === '/sitemap.xml') {
     const parsedDate = published.createdAt ? new Date(published.createdAt) : undefined;
     const lastmod = parsedDate && !Number.isNaN(parsedDate.getTime()) ? `<lastmod>${parsedDate.toISOString()}</lastmod>` : '';
