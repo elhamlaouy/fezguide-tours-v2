@@ -56,10 +56,14 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
   const imageSrc = image ? resolveImage(document, image, language)?.src : undefined;
   const imageUrl = imageSrc ? new URL(imageSrc, origin).href : undefined;
   const meta = (name: string, value: string, property = false) => `<meta ${property ? 'property' : 'name'}="${name}" content="${escapeHtml(value)}">`;
+  // A blog post page (same id as a published post) is marked up as an article, not a generic web page.
+  const post = page ? document.blogPosts.find(item => item.id === page.id && item.published !== false) : undefined;
+  const postDate = post && /^\d{4}-\d{2}-\d{2}$/.test(post.date) ? post.date : undefined;
   const tags = [`<title>${escapeHtml(title)}</title>`, meta('description', description), meta('robots', !page || page.seo.noIndex ? 'noindex,follow' : 'index,follow'),
-    meta('og:title', title, true), meta('og:description', description, true), meta('og:type', 'website', true), meta('og:site_name', document.siteSettings.siteName, true),
+    meta('og:title', title, true), meta('og:description', description, true), meta('og:type', post ? 'article' : 'website', true), meta('og:site_name', document.siteSettings.siteName, true),
     meta('og:locale', { en: 'en_US', fr: 'fr_FR', es: 'es_ES' }[language], true), meta('twitter:card', imageUrl ? 'summary_large_image' : 'summary'), meta('twitter:title', title), meta('twitter:description', description)];
   if (imageUrl) tags.push(meta('og:image', imageUrl, true), meta('twitter:image', imageUrl));
+  if (postDate) tags.push(meta('article:published_time', postDate, true));
   if (canonical && page) {
     tags.push(`<link rel="canonical" href="${escapeHtml(canonical)}">`, meta('og:url', canonical, true));
     for (const lang of (['en', 'fr', 'es'] as const).filter(locale => pageLocaleAvailable(document, page, locale))) tags.push(`<link rel="alternate" hreflang="${lang}" href="${origin}${pagePath(document, page.id, lang)}">`);
@@ -111,6 +115,16 @@ export function routeSeoHead(document: CmsDocument, route: PublicRoute, origin: 
       return name && answer ? [{ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text: answer } }] : [];
     });
     if (questions.length) schema.push({ '@context': 'https://schema.org', '@type': 'FAQPage', url: canonical, inLanguage: language, mainEntity: questions });
+    if (post) {
+      // Author is stored as "Name — Brand"; the person is the part before the dash.
+      const author = (post.author ?? '').split(/\s+[—–-]\s+/)[0].trim();
+      const section = localizedText(post.category, language).trim();
+      schema.push({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: plainTitle, description, url: canonical,
+        mainEntityOfPage: { '@type': 'WebPage', '@id': canonical }, inLanguage: language, ...(imageUrl ? { image: imageUrl } : {}),
+        ...(postDate ? { datePublished: postDate } : {}), ...(section ? { articleSection: section } : {}),
+        author: author ? { '@type': 'Person', name: author } : { '@type': 'Organization', name: BRAND_NAME },
+        publisher: { '@type': 'Organization', name: BRAND_NAME, logo: { '@type': 'ImageObject', url: `${origin}/favicon.svg` } } });
+    }
     tags.push(`<script type="application/ld+json">${safeJson(schema)}</script>`);
   }
   return tags.join('\n');
