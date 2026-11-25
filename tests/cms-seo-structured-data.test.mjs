@@ -180,3 +180,39 @@ test('breadcrumb parents use their menu label and a parent loop always terminate
   assert.ok(Date.now() - started < 1000);
   assert.deepEqual(names, ['Home', page.title.en]);
 });
+
+test('blog post pages are marked up as articles (BlogPosting + og:type article); other pages are not', () => {
+  const document = createCmsSeed();
+  const posts = document.blogPosts.filter(post => post.published !== false);
+  assert.ok(posts.length > 0);
+  for (const post of posts) {
+    const page = document.pages.find(p => p.id === post.id);
+    for (const prefix of ['', '/fr', '/es']) {
+      const html = head(document, `${prefix}/${page.slug}`);
+      const article = byType(ld(html), 'BlogPosting');
+      assert.ok(article, `${post.id}${prefix}: BlogPosting present`);
+      assert.equal(article.url, `${ORIGIN}${prefix}/${page.slug}`);
+      assert.equal(article.mainEntityOfPage['@id'], article.url);
+      assert.equal(article.inLanguage, prefix ? prefix.slice(1) : 'en');
+      assert.equal(article.datePublished, post.date);
+      assert.ok(article.headline && !article.headline.includes('| Fez Guide Tours'));
+      assert.ok(article.author.name && !/[—–]/.test(article.author.name), `${post.id}: author is the person, not "Name — Brand"`);
+      assert.equal(article.publisher.name, 'Fez Guide Tours');
+      assert.ok(html.includes('property="og:type" content="article"'));
+      assert.ok(html.includes(`property="article:published_time" content="${post.date}"`));
+    }
+  }
+  for (const path of ['/', '/blog', '/faq', '/about']) {
+    const html = head(document, path);
+    assert.equal(byType(ld(html), 'BlogPosting'), undefined, `${path}: no BlogPosting`);
+    assert.ok(html.includes('property="og:type" content="website"'), `${path}: og:type website`);
+  }
+  // An unpublished post's page is not marked up as an article.
+  const hidden = posts[0];
+  hidden.published = false;
+  const hiddenPage = document.pages.find(p => p.id === hidden.id);
+  const html = head(document, `/${hiddenPage.slug}`);
+  // It resolves as a 404 (no structured data at all) and never as an article.
+  assert.ok(!html.includes('BlogPosting'));
+  assert.ok(!html.includes('content="article"'));
+});
